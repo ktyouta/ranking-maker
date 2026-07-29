@@ -5,7 +5,7 @@ import type { Database } from "../infrastructure/db";
 export type UserInfoType = {
   id: string;
   name: string;
-  birthday: string;
+  birthday: string | null;
 };
 
 export type AuthUserType = {

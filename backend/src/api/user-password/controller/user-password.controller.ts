@@ -1,7 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { UserId, UserPassword, UserSalt, Pepper } from "../../../domain";
+import { Pepper, UserId, UserPassword, UserSalt } from "../../../domain";
 import { authMiddleware, userOperationGuardMiddleware } from "../../../middleware";
 import { UserIdParamSchema } from "../../../schema";
 import type { AppEnv } from "../../../types";
@@ -39,11 +39,16 @@ const userPassword = new Hono<AppEnv>().patch(
             return c.json({ message: "パスワードの更新に失敗しました。" }, HTTP_STATUS.UNAUTHORIZED);
         }
 
+        if (!loginInfo.salt || !loginInfo.passwordHash) {
+            return c.json({ message: "パスワードの更新に失敗しました。" }, HTTP_STATUS.UNAUTHORIZED);
+        }
+
         const pepper = new Pepper(config.pepper);
         const salt = UserSalt.of(loginInfo.salt);
         const nowPassword = await UserPassword.hash(body.nowPassword, salt, pepper);
+        const passwordHash = loginInfo.passwordHash;
 
-        if (!service.isMatchPassword(nowPassword, loginInfo)) {
+        if (!service.isMatchPassword(nowPassword, passwordHash)) {
             return c.json({ message: "パスワードの更新に失敗しました。" }, HTTP_STATUS.UNAUTHORIZED);
         }
 
@@ -61,3 +66,4 @@ const userPassword = new Hono<AppEnv>().patch(
 );
 
 export { userPassword };
+

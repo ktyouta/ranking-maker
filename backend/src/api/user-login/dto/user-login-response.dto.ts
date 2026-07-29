@@ -5,7 +5,7 @@ export type UserLoginResponseType = {
   user: {
     id: string;
     name: string;
-    birthday: string;
+    birthday: string | null;
   };
 };
 

@@ -4,12 +4,12 @@ import { setCookie } from "hono/cookie";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
 import {
     AccessToken,
+    Pepper,
+    RefreshToken,
     UserId,
     UserName,
     UserPassword,
     UserSalt,
-    Pepper,
-    RefreshToken,
 } from "../../../domain";
 import type { AppEnv } from "../../../types";
 import { formatZodErrors } from "../../../util";
@@ -39,11 +39,16 @@ const userLogin = new Hono<AppEnv>().post(
             return c.json({ message: "IDかパスワードが間違っています。" }, HTTP_STATUS.UNAUTHORIZED);
         }
 
+        if (!loginInfo.salt || !loginInfo.passwordHash) {
+            return c.json({ message: "IDかパスワードが間違っています。" }, HTTP_STATUS.UNAUTHORIZED);
+        }
+
         const salt = UserSalt.of(loginInfo.salt);
         const pepper = new Pepper(config.pepper);
         const password = await UserPassword.hash(body.password, salt, pepper);
+        const passwordHash = loginInfo.passwordHash;
 
-        if (!service.isMatchPassword(password, loginInfo)) {
+        if (!service.isMatchPassword(password, passwordHash)) {
             return c.json({ message: "IDかパスワードが間違っています。" }, HTTP_STATUS.UNAUTHORIZED);
         }
 
@@ -69,3 +74,4 @@ const userLogin = new Hono<AppEnv>().post(
 );
 
 export { userLogin };
+

@@ -17,10 +17,10 @@ export class UserLoginService {
     await this.repository.updateLastLoginDate(userId);
   }
 
-  isMatchPassword(password: UserPassword, loginInfo: UserLoginMaster): boolean {
+  isMatchPassword(password: UserPassword, passwordHash: string): boolean {
     const encoder = new TextEncoder();
     const encodedInput = encoder.encode(password.value);
-    const encodedStored = encoder.encode(loginInfo.passwordHash);
+    const encodedStored = encoder.encode(passwordHash);
 
     if (encodedInput.length !== encodedStored.length) {
       return false;
