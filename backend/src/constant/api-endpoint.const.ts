@@ -3,6 +3,7 @@
  */
 export const API_ENDPOINT = {
   HEALTH: "/api/v1/health",
+  SAMPLE: "/api/v1/sample",
   USER: "/api/v1/user",
   USER_ID: "/api/v1/user/:userId",
   USER_LOGIN: "/api/v1/user-login",
@@ -10,6 +11,7 @@ export const API_ENDPOINT = {
   VERIFY: "/api/v1/verify",
   USER_LOGOUT: "/api/v1/user-logout",
   USER_PASSWORD: "/api/v1/user-password/:userId",
+  RANKING: "/api/v1/ranking",
 } as const;
 
 export type ApiEndpointType = (typeof API_ENDPOINT)[keyof typeof API_ENDPOINT];

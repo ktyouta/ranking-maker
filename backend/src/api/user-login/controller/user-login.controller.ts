@@ -46,9 +46,9 @@ const userLogin = new Hono<AppEnv>().post(
         const salt = UserSalt.of(loginInfo.salt);
         const pepper = new Pepper(config.pepper);
         const password = await UserPassword.hash(body.password, salt, pepper);
-        const passwordHash = loginInfo.passwordHash;
+        const passwordHash = UserPassword.of(loginInfo.passwordHash);
 
-        if (!service.isMatchPassword(password, passwordHash)) {
+        if (!password.equals(passwordHash)) {
             return c.json({ message: "IDかパスワードが間違っています。" }, HTTP_STATUS.UNAUTHORIZED);
         }
 

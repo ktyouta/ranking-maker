@@ -9,22 +9,6 @@ export class UserPasswordService {
     return await this.repository.getLoginUser(userId);
   }
 
-  isMatchPassword(password: UserPassword, passwordHash: string): boolean {
-    const encoder = new TextEncoder();
-    const encodedInput = encoder.encode(password.value);
-    const encodedStored = encoder.encode(passwordHash);
-
-    if (encodedInput.length !== encodedStored.length) {
-      return false;
-    }
-
-    if (!crypto.subtle.timingSafeEqual(encodedInput, encodedStored)) {
-      return false;
-    }
-
-    return true;
-  }
-
   async updateLoginUser(userId: UserId, newPassword: UserPassword) {
     return await this.repository.updateLoginUser(userId, newPassword);
   }

@@ -46,9 +46,9 @@ const userPassword = new Hono<AppEnv>().patch(
         const pepper = new Pepper(config.pepper);
         const salt = UserSalt.of(loginInfo.salt);
         const nowPassword = await UserPassword.hash(body.nowPassword, salt, pepper);
-        const passwordHash = loginInfo.passwordHash;
+        const passwordHash = UserPassword.of(loginInfo.passwordHash);
 
-        if (!service.isMatchPassword(nowPassword, passwordHash)) {
+        if (!nowPassword.equals(passwordHash)) {
             return c.json({ message: "パスワードの更新に失敗しました。" }, HTTP_STATUS.UNAUTHORIZED);
         }
 
