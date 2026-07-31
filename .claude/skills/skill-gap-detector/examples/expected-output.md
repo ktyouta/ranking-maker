@@ -13,7 +13,7 @@
 ## Skill Gap 検出結果
 
 ### NG 内容
-- backend/src/api/user/repository/ に `index.ts` が存在しない
+- backend/src/infrastructure/user/repository/ に `index.ts` が存在しない
 
 ### 原因分類
 - 分類: A（漏れ）

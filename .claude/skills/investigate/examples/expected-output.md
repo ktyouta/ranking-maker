@@ -9,11 +9,11 @@
 
 ```
 ## 読み込んだファイル
-- backend/src/api/item/controller/get-item.controller.ts
-- backend/src/api/item/service/get-item.service.ts
-- backend/src/api/item/repository/get-item.repository.ts
+- backend/src/presentation/item/controller/get-item.controller.ts
+- backend/src/application/item/usecase/get-item.usecase.ts
+- backend/src/infrastructure/item/repository/get-item.repository.ts
 - backend/src/middleware/auth.middleware.ts
-- backend/src/domain/user/user-id.ts
+- backend/src/domain/user/value-object/user-id/user-id.ts
 
 ## 調査結果
 

@@ -14,24 +14,31 @@
 ### バックエンド（新規作成）
 - `backend/src/infrastructure/db/schema.ts` — categoriesTable の定義を追加
 - `backend/drizzle/` — マイグレーションファイルを新規生成（`db:generate` で作成）
-- `backend/src/domain/category/category.ts` — ドメイン型定義
+- `backend/src/domain/category/entity/category.entity.ts` — Entity 定義
+- `backend/src/domain/category/entity/index.ts`
+- `backend/src/domain/category/repository/get-categories.repository.interface.ts`
+- `backend/src/domain/category/repository/create-category.repository.interface.ts`
+- `backend/src/domain/category/repository/index.ts`
 - `backend/src/domain/category/index.ts`
-- `backend/src/api/category/repository/get-categories.repository.ts`
-- `backend/src/api/category/repository/create-category.repository.ts`
-- `backend/src/api/category/repository/index.ts`
-- `backend/src/api/category/schema/create-category.schema.ts` — Zod バリデーション
-- `backend/src/api/category/schema/index.ts`
-- `backend/src/api/category/dto/get-categories-response.dto.ts`
-- `backend/src/api/category/dto/create-category-response.dto.ts`
-- `backend/src/api/category/dto/index.ts`
-- `backend/src/api/category/controller/get-categories.controller.ts`
-- `backend/src/api/category/controller/create-category.controller.ts`
-- `backend/src/api/category/controller/category.controller.ts` — ルーター結合
-- `backend/src/api/category/controller/index.ts`
-- `backend/src/api/category/index.ts`
+- `backend/src/infrastructure/category/repository/get-categories.repository.ts`
+- `backend/src/infrastructure/category/repository/create-category.repository.ts`
+- `backend/src/infrastructure/category/repository/index.ts`
+- `backend/src/application/category/usecase/get-categories.usecase.ts`
+- `backend/src/application/category/usecase/create-category.usecase.ts`
+- `backend/src/application/category/usecase/index.ts`
+- `backend/src/application/category/index.ts`
+- `backend/src/presentation/category/schema/create-category.schema.ts` — Zod バリデーション
+- `backend/src/presentation/category/schema/index.ts`
+- `backend/src/presentation/category/dto/get-categories-response.dto.ts`
+- `backend/src/presentation/category/dto/create-category-response.dto.ts`
+- `backend/src/presentation/category/dto/index.ts`
+- `backend/src/presentation/category/controller/get-categories.controller.ts`
+- `backend/src/presentation/category/controller/create-category.controller.ts`
+- `backend/src/presentation/category/controller/category.controller.ts` — ルーター結合
+- `backend/src/presentation/category/controller/index.ts`
+- `backend/src/presentation/category/index.ts`
 
 ### バックエンド（既存ファイル修正）
-- `backend/src/api/index.ts` — `export * from "./category"` を追加
 - `backend/src/index.ts` — `.route("/", category)` を routes に追加
 
 ### フロントエンド（新規作成）
@@ -51,5 +58,5 @@
 - `frontend/src/app/components/router.tsx` — ルート登録を追加
 
 ---
-合計: 28 ファイル（うち新規作成: 26）
+合計: 34 ファイル（うち新規作成: 32）
 ```

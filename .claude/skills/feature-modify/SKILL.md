@@ -14,7 +14,7 @@ description: |
   - バグ修正（→ bug-fix を使う）
   - リファクタリング（振る舞いを変えない変更 → refactor を使う）
   - 全く新しい機能の追加（既存コードへの依存がない場合 → feature-impl を使う）
-version: 1.0.0
+version: 2.0.0
 ---
 
 # Feature Modify Skill
@@ -62,7 +62,7 @@ UI 変更を含まない場合はこの Step をスキップする。
 以下を読んで現状を把握する：
 
 - `docs/[機能名]/plan.md`（設計書が存在する場合）
-- 改修対象の既存コード（controller / service / repository / component / hooks）
+- 改修対象の既存コード（controller(Presentation) / usecase(Application) / repository・entity・VO(Domain/Infrastructure) / component / hooks）
 
 **バグ修正を含む改修の場合は追加で以下を行う：**
 - 問題が発生しているイベントフロー・データフロー・呼び出し経路を図示またはコメントで明示する
@@ -96,7 +96,7 @@ horizontal-scope を実行し、今回の変更パターンと同じ対応が必
 
 ### バックエンド変更点
 - エンドポイント: ...
-- Service メソッド: ...
+- Usecase メソッド: ...
 - Repository メソッド: ...
 
 ### フロントエンド変更点
@@ -113,21 +113,24 @@ horizontal-scope を実行し、今回の変更パターンと同じ対応が必
 docs/[機能名]/spec.md が存在する場合のみ実施する。
 
 - spec.md から要件項目を抽出したか
-- 全ての要件項目が差分設計（エンドポイント・Service・Repository・コンポーネント）に反映されているか
+- 全ての要件項目が差分設計（エンドポイント・Usecase・Repository・コンポーネント）に反映されているか
 
 ### フォルダ構成チェック（CLAUDE.md 準拠）
+- `domain/{機能}/`（entity, value-object, repository interface）、`application/{機能}/usecase/`、`infrastructure/{機能}/repository/`、`presentation/{機能}/`（controller, dto, schema）の4層構成に沿っているか
 - エンドポイント単位のファイル分割になっているか
-- repository に .interface.ts がセットで存在するか
+- repository に .interface.ts が `domain/` 側にセットで存在するか
 - Container に -container.tsx サフィックスがついているか
 - api/ に query-key.ts が含まれているか
 
 ### バックエンド設計チェック（CLAUDE.md 準拠）
 バックエンドの変更がある場合のみ実施する。
 
-- Service メソッドが 1操作1メソッドになっているか（複数の DB アクセス・分岐・計算を1メソッドに詰め込んでいないか）
-- Controller の呼び出し順序でフローが読めるか（service メソッド名を上から読むだけで処理の流れが分かるか）
-- Controller が単一の `service.xxx()` 呼び出しで完結していないか
-- ロジックを含まない処理（単純な構築・変換）が Service に混入していないか
+- Usecase メソッドが 1操作1メソッドになっているか（複数の DB アクセス・分岐・計算を1メソッドに詰め込んでいないか）
+- Controller の呼び出し順序でフローが読めるか（usecase メソッド名を上から読むだけで処理の流れが分かるか）
+- Controller が単一の `usecase.xxx()` 呼び出しで完結していないか
+- Controller が Repository・Drizzle に直接触れていないか
+- ロジックを含まない処理（単純な構築・変換）が Usecase に混入していないか
+- 複数テーブル・複数モジュールへのアトミックな書き込みが必要な場合、1つの Repository メソッドに集約し `db.batch` を Infrastructure層内で完結させているか
 
 問題がなければ実装に進みます。よろしいですか？
 ```

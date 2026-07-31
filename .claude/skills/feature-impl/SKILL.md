@@ -11,7 +11,7 @@ description: |
   以下の場合は使用しない：
   - バグ修正（horizontal-scope を使う）
   - 調査・説明のみの場合
-version: 1.0.0
+version: 2.0.0
 ---
 
 # Feature Implementation Skill
@@ -56,7 +56,7 @@ impl-planner を実行し、設計内容・作成ファイル一覧・フォル�
 
 ### バックエンド
 - エンドポイント: ...
-- Service メソッド: ...
+- Usecase メソッド: ...
 - Repository メソッド: ...
 
 ### フロントエンド
@@ -67,8 +67,10 @@ impl-planner を実行し、設計内容・作成ファイル一覧・フォル�
 
 | ファイルパス | レイヤー | 操作 |
 |---|---|---|
-| backend/src/api/xxx/controller/get-xxx.controller.ts | Controller | 新規 |
-| backend/src/api/xxx/service/get-xxx.service.ts | Service | 新規 |
+| backend/src/presentation/xxx/controller/get-xxx.controller.ts | Controller (Presentation) | 新規 |
+| backend/src/application/xxx/usecase/get-xxx.usecase.ts | Usecase (Application) | 新規 |
+| backend/src/domain/xxx/repository/get-xxx.repository.interface.ts | Repository interface (Domain) | 新規 |
+| backend/src/infrastructure/xxx/repository/get-xxx.repository.ts | Repository実装 (Infrastructure) | 新規 |
 | frontend/src/features/xxx/api/get-xxx.ts | API | 新規 |
 | ... | ... | ... |
 
@@ -85,8 +87,9 @@ docs/[機能名]/spec.md が存在する場合のみ実施する。
 - 全ての要件項目が設計（エンドポイント・Service・Repository・コンポーネント）に反映されているか
 
 ### フォルダ構成チェック（CLAUDE.md 準拠）
+- `domain/{機能}/`（entity, value-object, repository interface）、`application/{機能}/usecase/`、`infrastructure/{機能}/repository/`、`presentation/{機能}/`（controller, dto, schema）の4層構成に沿っているか
 - エンドポイント単位のファイル分割になっているか
-- repository に .interface.ts がセットで存在するか
+- repository に .interface.ts が `domain/` 側にセットで存在するか
 - Container に -container.tsx サフィックスがついているか
 - api/ に query-key.ts が含まれているか
 - components/ 配下がフラットになっているか（サブフォルダを作っていないか）
@@ -94,12 +97,15 @@ docs/[機能名]/spec.md が存在する場合のみ実施する。
 ### バックエンド設計チェック（CLAUDE.md 準拠）
 バックエンドの変更がある場合のみ実施する。
 
-- Service メソッドが 1操作1メソッドになっているか（複数の DB アクセス・分岐・計算を1メソッドに詰め込んでいないか）
-- Controller の呼び出し順序でフローが読めるか（service メソッド名を上から読むだけで処理の流れが分かるか）
-- Controller が単一の `service.xxx()` 呼び出しで完結していないか
-- ロジックを含まない処理（単純な構築・変換）が Service に混入していないか
+- Usecase メソッドが 1操作1メソッドになっているか（複数の DB アクセス・分岐・計算を1メソッドに詰め込んでいないか）
+- Controller の呼び出し順序でフローが読めるか（usecase メソッド名を上から読むだけで処理の流れが分かるか）
+- Controller が単一の `usecase.xxx()` 呼び出しで完結していないか
+- Controller が Repository・Drizzle に直接触れていないか（Presentation層はUsecase呼び出しのみ）
+- ロジックを含まない処理（単純な構築・変換）が Usecase に混入していないか
+- 複数テーブル・複数モジュールへのアトミックな書き込みが必要な場合、1つの Repository メソッドに集約し `db.batch` を Infrastructure層内で完結させる設計になっているか（Usecase/Controller に Drizzle の書き込みAPIを持たせない）
 - 実装に必要な全 ID 型・値型に対応するドメイン型が `domain/` に存在するか確認したか
 - 存在しない場合、新規ドメイン型の作成をタスクに含めているか（既存型の流用で代替していないか）
+- 新しい Usecase が自モジュール以外の `domain/{他モジュール}/repository` interface に依存する場合、その越境が正当か（単なるモジュール分割漏れでないか）確認したか
 - join テーブルの PK が新規採番すべきか、既存の関連 ID を流用すべきか検討されているか
 
 問題がなければ実装に進みます。よろしいですか？

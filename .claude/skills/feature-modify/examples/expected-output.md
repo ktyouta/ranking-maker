@@ -14,7 +14,7 @@
 
 ### horizontal-scope 実行結果
 - horizontal-scope 実行済み、追加対象なし
-  - 理由: デフォルト優先度は `create-task.service.ts` の定数1箇所のみで定義されており、他ファイルに同じ値のハードコードはない
+  - 理由: デフォルト優先度は `create-task.usecase.ts` の定数1箇所のみで定義されており、他ファイルに同じ値のハードコードはない
 
 ### 変更内容
 - [変更前]: タスク作成時のデフォルト優先度 = "medium"
@@ -22,7 +22,7 @@
 
 ### バックエンド変更点
 - エンドポイント: 変更なし
-- Service メソッド: createTask() 内の定数 `DEFAULT_PRIORITY` を "medium" → "low" に変更
+- Usecase メソッド: createTask() 内の定数 `DEFAULT_PRIORITY` を "medium" → "low" に変更
 - Repository メソッド: 変更なし
 
 ### フロントエンド変更点
@@ -33,7 +33,7 @@
 
 | ファイルパス | レイヤー | 操作 |
 |---|---|---|
-| backend/src/api/task/service/create-task.service.ts | Service | 変更 |
+| backend/src/application/task/usecase/create-task.usecase.ts | Usecase (Application) | 変更 |
 
 ### フォルダ構成チェック（CLAUDE.md 準拠）
 - エンドポイント単位のファイル分割になっているか ✓
@@ -48,7 +48,7 @@
 ## バックエンド変更完了
 
 ### 変更ファイル
-- backend/src/api/task/service/create-task.service.ts: `DEFAULT_PRIORITY` を "medium" → "low" に変更
+- backend/src/application/task/usecase/create-task.usecase.ts: `DEFAULT_PRIORITY` を "medium" → "low" に変更
 
 ### 実装内容サマリー
 - デフォルト優先度定数の値を変更（振る舞いは仕様変更の範囲）

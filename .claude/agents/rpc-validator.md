@@ -26,7 +26,7 @@ npm run typecheck --prefix frontend
 ## 検証ワークフロー
 
 1. `git diff HEAD` で変更ファイルを確認する
-2. バックエンドの変更（`backend/src/api/`、`backend/src/rpc/`）を確認する
+2. バックエンドの変更（`backend/src/presentation/`（Controller/DTO/Schema）、`backend/src/rpc/`）を確認する
 3. フロントエンドの RPC 使用箇所（`frontend/src/features/`、`frontend/src/lib/`）を確認する
 4. 以下のチェックリストで検証する
 5. 違反箇所をレポートする

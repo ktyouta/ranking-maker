@@ -22,7 +22,7 @@
 ### 仕様と異なる実装
 - ステータス設定
   - 仕様: 登録後にステータスを `active` に設定する
-  - 実装: backend/src/api/task/service/create-task.service.ts:22 で `setStatus()` の呼び出しがない
+  - 実装: backend/src/application/task/usecase/create-task.usecase.ts:22 で `setStatus()` の呼び出しがない
   - 差分の概要: ステータス設定処理が実装されていない
 ```
 

@@ -14,10 +14,10 @@ Claude がカテゴリ機能のバックエンド実装を完了した直後に�
 
 ### 変更済みファイル（git diff より）
 - `backend/src/infrastructure/db/schema.ts`
-- `backend/src/domain/category/category.ts`
-- `backend/src/domain/category/index.ts`
-- `backend/src/api/category/` （全ファイル）
-- `backend/src/api/index.ts`
+- `backend/src/domain/category/` （全ファイル）
+- `backend/src/infrastructure/category/` （全ファイル）
+- `backend/src/application/category/` （全ファイル）
+- `backend/src/presentation/category/` （全ファイル）
 - `backend/src/index.ts`
 
 ### 漏れあり

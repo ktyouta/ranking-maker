@@ -16,20 +16,26 @@ tools: Read, Glob, Grep
 
 ## 実装順序の原則
 
-このプロジェクトのアーキテクチャにおける実装依存順序：
+このプロジェクトは DDD 4層アーキテクチャ（`presentation → application → domain ← infrastructure`）を採用している。実装依存順序：
 
 ```
-1. DB スキーマ定義（Drizzle ORM）
+1. DB スキーマ定義（Drizzle ORM, infrastructure/db/schema.ts）
 2. マイグレーション SQL 生成（npm run db:generate）
-3. ドメイン値オブジェクト（domain/）
-4. リポジトリ実装（infrastructure/）
-5. サービス実装（api/<機能>/service.ts）
-6. コントローラー実装（api/<機能>/controller.ts）
-7. ルーター定義（api/<機能>/index.ts）
+3. ドメイン Entity・Value Object・Repository interface（domain/<機能>/）
+4. リポジトリ実装（infrastructure/<機能>/repository/）
+5. ユースケース実装（application/<機能>/usecase/）
+6. コントローラー実装（presentation/<機能>/controller/）
+7. ルーター定義（presentation/<機能>/index.ts）
 8. RPC 集約への登録（rpc/index.ts）
 9. フロントエンド実装（features/<機能>/）
 10. テスト実装
 ```
+
+**機能がどのモジュール（`user` / `auth` / 等）に属するかは「変更理由の一致」で判断する。** 新しい機能が既存モジュールのどれにも当てはまらない場合のみ新規モジュールを切る。
+
+**モジュール跨ぎの依存**：Usecase が自モジュール以外の `domain/{他モジュール}/repository` interface に依存するのは正当（例: `create-user` usecase が `user` と `auth` 両方の repository を呼ぶ）。ただし domain 層の Entity/VO 同士が直接依存するのは禁止。
+
+**複数テーブルへのアトミックな書き込み**：Cloudflare D1 は `db.transaction()` 非対応のため `db.batch` を使うが、これは必ず1つの Repository メソッド内（Infrastructure層）で完結させる。Usecase・Controller から Drizzle のクエリビルダーを直接呼び出す実装は計画に含めない。
 
 ## 計画ワークフロー
 
@@ -66,9 +72,12 @@ tools: Read, Glob, Grep
 - 機能名・概要
 
 ### 変更ファイル一覧
-| ファイル | 新規/変更 | 概要 |
-|---------|---------|------|
-| backend/src/... | 新規 | 説明 |
+| ファイル | レイヤー | 新規/変更 | 概要 |
+|---------|---------|---------|------|
+| backend/src/domain/<機能>/... | Domain | 新規 | 説明 |
+| backend/src/application/<機能>/usecase/... | Application | 新規 | 説明 |
+| backend/src/infrastructure/<機能>/repository/... | Infrastructure | 新規 | 説明 |
+| backend/src/presentation/<機能>/controller/... | Presentation | 新規 | 説明 |
 
 ### 実装ステップ
 

@@ -16,11 +16,11 @@
 - 同一リクエストを短時間に2回送信すると、2件目も INSERT される
 
 ### 原因箇所
-- ファイル: backend/src/api/task/service/create-task.service.ts:18
+- ファイル: backend/src/application/task/usecase/create-task.usecase.ts:18
 - 原因: `checkDuplicate()` の戻り値を `undefined` チェックしているが、返却型が `null` のため常に falsy とならない
 
 ### 根本原因
-- Repository の戻り値型が `null` であるのに対し、Service が `undefined` チェックをしているため、重複している場合も INSERT に進んでしまう
+- Repository の戻り値型が `null` であるのに対し、Usecase が `undefined` チェックをしているため、重複している場合も INSERT に進んでしまう
 ```
 
 ### Step 3〜5 中間確認

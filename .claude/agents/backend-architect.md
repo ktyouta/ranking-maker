@@ -14,22 +14,44 @@ tools: Read, Glob, Grep
 - `git commit` や `git push` などのコミット・プッシュ操作は行わない
 - Bash コマンドは一切実行しない（ビルド・サーバー起動・デプロイを含む）
 
-## プロジェクトのバックエンド構成
+## プロジェクトのバックエンド構成（DDD 4層アーキテクチャ）
+
+依存方向: `presentation → application → domain ← infrastructure`
 
 ```
 backend/src/
-├── api/          # エンドポイント別ルーター（REST URL 設計）
-├── auth/         # 認証（repository + service）
+├── domain/            # Entity・Value Object・Repository interface（何にも依存しない）
+│   ├── user/          #   プロフィール管理
+│   ├── auth/          #   認証（login/logout/password/token/credential）
+│   ├── ranking/
+│   └── sample/
+├── application/        # Usecase（メインロジック。Repository interface経由でdomainを操作）
+│   ├── user/usecase/
+│   ├── auth/usecase/
+│   ├── ranking/usecase/
+│   └── sample/usecase/
+├── infrastructure/     # Repository実装（Drizzle ORM）・DBスキーマ・DBクライアント
+│   ├── db/
+│   ├── user/repository/
+│   ├── auth/repository/
+│   ├── ranking/repository/
+│   └── sample/repository/
+├── presentation/        # Controller・DTO・Zodスキーマ（HTTP入出力のみ）
+│   ├── user/
+│   ├── auth/
+│   ├── ranking/
+│   └── sample/
 ├── config/       # 環境変数（EnvConfig ファクトリ）
 ├── constant/     # 定数（エンドポイント名・HTTPステータス）
-├── domain/       # 値オブジェクト
-├── infrastructure/ # DB（Drizzle ORM）
 ├── middleware/   # Hono ミドルウェア
 ├── rpc/          # RPC エンドポイント集約
-├── schema/       # Zod バリデーションスキーマ
 ├── types/        # 型定義
 └── util/         # ユーティリティ
 ```
+
+**モジュール分割の考え方**：`user` はプロフィール管理専任、`auth` は認証・トークン・資格情報を扱う（login/logout/password/refresh/verifyはすべて`auth`に属する）。境界は「同じデータに触るか」ではなく「同じ理由で変更されるか」で判断する。
+
+**戦術パターンの採用範囲**：Entity・Value Object・Repository（interface/実装分離）のみを採用する。Aggregate Root・Domain Event・Specificationは現状の要件規模では導入しない（複数テーブルにまたがる整合性がDB制約で表現できなくなった場合に再検討する）。
 
 ## 設計規約
 
@@ -48,7 +70,7 @@ backend/src/
 
 ### API 設計
 - REST API の URL 設計を前提とする
-- ルーターは `api/<機能名>/` に配置
+- ルーター（Controller）は `presentation/<機能名>/controller/` に配置
 - RPC クライアント向けに `rpc/index.ts` で集約
 
 ## 分析・提案ワークフロー
@@ -61,14 +83,19 @@ backend/src/
 ## チェックリスト
 
 ### フォルダ・ファイル配置
-- 新しい API エンドポイントが `api/<機能名>/` に配置されているか
-- 値オブジェクトが `domain/` に集約されているか
-- インフラ層（DB アクセス）が `infrastructure/` に分離されているか
+- 新しい機能が `domain/<機能名>/`・`application/<機能名>/usecase/`・`infrastructure/<機能名>/repository/`・`presentation/<機能名>/` の4層に正しく配置されているか
+- Entity・Value Object・Repository interface が `domain/` に集約されているか
+- Repository実装（DB アクセス）が `infrastructure/` に分離されているか
 - 共通ロジックが適切なレイヤーに配置されているか
+- 機能の境界（どのモジュールに属するか）が「変更理由の一致」で切られているか（データの近さだけで判断していないか）
 
 ### レイヤー設計
-- コントローラー・サービス・リポジトリが適切に分離されているか
-- ドメイン層がインフラ層に依存していないか
+- Controller(presentation)・Usecase(application)・Repository(infrastructure)・Entity/VO(domain) が適切に分離されているか
+- 依存方向が `presentation → application → domain ← infrastructure` になっているか（domain が infrastructure/presentation を import していないか）
+- Controller が Repository・Drizzle に直接触れていないか（Usecase を経由しているか）
+- Repository interface の戻り値が Drizzle の推論型ではなく domain の Entity/VO になっているか
+- 複数モジュールにまたがるアトミックな書き込みが、1つの Repository メソッド内の `db.batch` に集約されているか（Controller/Usecase に漏れていないか）
+- Usecase が他モジュールの Repository interface に依存する場合、その越境が正当か（domain 層の Entity/VO 同士が直接依存していないか）
 - ミドルウェアの責務が明確か
 
 ### Hono の使い方

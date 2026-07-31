@@ -11,7 +11,7 @@
 
 ### バックエンド
 - エンドポイント: POST /api/tasks
-- Service メソッド: createTask(userId, data)
+- Usecase メソッド: createTask(userId, data)
 - Repository メソッド: insert(userId, data, createdAt)
 
 ### フロントエンド
@@ -22,11 +22,11 @@
 
 | ファイルパス | レイヤー | 操作 |
 |---|---|---|
-| backend/src/api/task/controller/create-task.controller.ts | Controller | 新規 |
-| backend/src/api/task/service/create-task.service.ts | Service | 新規 |
-| backend/src/api/task/repository/create-task.repository.ts | Repository | 新規 |
-| backend/src/api/task/repository/create-task.repository.interface.ts | Interface | 新規 |
-| backend/src/api/task/schema/create-task.schema.ts | Schema | 新規 |
+| backend/src/presentation/task/controller/create-task.controller.ts | Controller (Presentation) | 新規 |
+| backend/src/application/task/usecase/create-task.usecase.ts | Usecase (Application) | 新規 |
+| backend/src/domain/task/repository/create-task.repository.interface.ts | Interface (Domain) | 新規 |
+| backend/src/infrastructure/task/repository/create-task.repository.ts | Repository実装 (Infrastructure) | 新規 |
+| backend/src/presentation/task/schema/create-task.schema.ts | Schema (Presentation) | 新規 |
 | frontend/src/features/task/api/create-task.ts | API | 新規 |
 | frontend/src/features/task/api/query-key.ts | QueryKey | 新規 |
 | frontend/src/features/task/components/task-form-container.tsx | Container | 新規 |
@@ -49,13 +49,13 @@
 ## バックエンド実装完了
 
 ### 変更ファイル
-- backend/src/api/task/controller/create-task.controller.ts: POST /api/tasks エンドポイントを追加
-- backend/src/api/task/service/create-task.service.ts: タスク作成サービスを実装
-- backend/src/api/task/repository/create-task.repository.ts: INSERT 処理を実装
+- backend/src/presentation/task/controller/create-task.controller.ts: POST /api/tasks エンドポイントを追加
+- backend/src/application/task/usecase/create-task.usecase.ts: タスク作成ユースケースを実装
+- backend/src/infrastructure/task/repository/create-task.repository.ts: INSERT 処理を実装
 
 ### 実装内容サマリー
 - エンドポイント: POST /api/tasks
-- Service メソッド: createTask(userId, data)
+- Usecase メソッド: createTask(userId, data)
 - Repository メソッド: insert(data)
 
 ### backend-review 結果

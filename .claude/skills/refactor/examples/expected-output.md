@@ -5,13 +5,13 @@
 ## ケース1: リファクタリング成功
 
 ### 状況
-- `create-item.service.ts` の複数責務を分割してほしいというリファクタ依頼
+- `create-item.usecase.ts` の複数責務を分割してほしいというリファクタ依頼
 
 ### Step 1 出力（目的確認）
 
 ```
 ## リファクタリング目的
-- 対象: backend/src/api/item/service/create-item.service.ts
+- 対象: backend/src/application/item/usecase/create-item.usecase.ts
 - 現在の問題: `create()` メソッドが「重複チェック・INSERT・後処理」を1つのメソッドに詰め込んでいる
 - 改善後の期待状態: 各操作を独立した名前付きメソッドに分割し、Controller の呼び出し順でフローが読めるようにする
 - 振る舞いへの影響: なし（振る舞いを変えないことを確認）

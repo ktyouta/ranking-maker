@@ -36,7 +36,7 @@ version: 1.0.0
 （horizontal-scope と同じ観点で調査する）
 
 #### バックエンド観点
-- 同種のエンドポイントが存在する controller / service / repository
+- 同種のエンドポイントが存在する controller(presentation) / usecase(application) / repository(infrastructure) / entity・VO(domain)
 - router へのエンドポイント登録箇所
 - Drizzle スキーマ定義（DBスキーマ変更の場合）
 - バリデーションスキーマ（Zod）

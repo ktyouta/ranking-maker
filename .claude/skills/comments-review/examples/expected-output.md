@@ -5,7 +5,7 @@
 ## ケース1: 違反あり（WHAT コメント）
 
 ### 状況
-- バックエンドの Service に「アイテムを取得する」というコメントが書かれている
+- バックエンドの Usecase に「アイテムを取得する」というコメントが書かれている
 
 ### 出力
 
@@ -13,7 +13,7 @@
 ## Comments Review 結果
 
 ### 違反あり
-- **ファイル**: backend/src/api/item/service/get-item.service.ts:12
+- **ファイル**: backend/src/application/item/usecase/get-item.usecase.ts:12
 - **違反内容**: `// アイテムを取得する` — 関数名 `getItem` から明らかに読み取れる WHAT コメント
 - **修正方針**: 削除する（関数名で十分に意味が伝わる）
 ```
