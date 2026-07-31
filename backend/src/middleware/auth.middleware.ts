@@ -1,8 +1,8 @@
-﻿import type { MiddlewareHandler } from "hono";
-import { AuthRepository, AuthService } from "../auth";
+import type { MiddlewareHandler } from "hono";
+import { GetAuthenticatedUserUsecase } from "../application/auth";
 import { HTTP_STATUS } from "../constant";
-import { AccessToken } from "../domain";
-import { Header } from "../domain/header";
+import { AccessToken, Header } from "../domain/auth";
+import { GetUserProfileRepository } from "../infrastructure/user";
 import type { AppEnv } from "../types";
 
 
@@ -20,10 +20,10 @@ export const authMiddleware: MiddlewareHandler<AppEnv> = async (c, next) => {
         const userId = await accessToken.getPayload();
 
         const db = c.get('db');
-        const repository = new AuthRepository(db);
-        const service = new AuthService(repository);
+        const repository = new GetUserProfileRepository(db);
+        const usecase = new GetAuthenticatedUserUsecase(repository);
 
-        const userInfo = await service.getUserById(userId);
+        const userInfo = await usecase.execute(userId);
 
         if (!userInfo) {
             return c.json({ message: "認証エラー" }, HTTP_STATUS.UNAUTHORIZED);

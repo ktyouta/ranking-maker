@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { GetSampleParamSchema } from "../../../../src/api/sample/schema";
+import { GetSampleParamSchema } from "../../../../src/presentation/sample/schema";
 
 describe("GetSampleParamSchema", () => {
   it("正常なIDでバリデーションを通過すること", () => {

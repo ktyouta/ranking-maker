@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { CreateSampleSchema } from "../../../../src/api/sample/schema";
+import { CreateSampleSchema } from "../../../../src/presentation/sample/schema";
 
 describe("CreateSampleSchema", () => {
   it("正常なデータでバリデーションを通過すること", () => {

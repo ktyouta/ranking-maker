@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { UpdateSampleSchema, UpdateSampleParamSchema } from "../../../../src/api/sample/schema";
+import { UpdateSampleSchema, UpdateSampleParamSchema } from "../../../../src/presentation/sample/schema";
 
 describe("UpdateSampleSchema", () => {
   it("部分更新が可能であること", () => {

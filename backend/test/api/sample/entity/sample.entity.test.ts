@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { GetListSampleEntity } from "../../../../src/api/sample/entity";
+import { GetListSampleEntity } from "../../../../src/domain/sample";
 
 describe("GetListSampleEntity (get-list)", () => {
   it("fromRecordでエンティティを生成できること", () => {

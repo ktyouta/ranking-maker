@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { GetListSampleEntity } from "../../../../src/api/sample/entity";
-import { GetListSampleResponseDto } from "../../../../src/api/sample/dto";
+import { GetListSampleEntity } from "../../../../src/domain/sample";
+import { GetListSampleResponseDto } from "../../../../src/presentation/sample/dto";
 
 describe("GetListSampleResponseDto (get-list)", () => {
   it("エンティティ配列からDTO配列を生成できること", () => {

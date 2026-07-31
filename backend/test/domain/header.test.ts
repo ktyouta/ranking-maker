@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Header } from "../../src/domain/header/header";
+import { Header } from "../../src/domain/auth/value-object/header/header";
 
 /**
  * テスト用のモックRequestを作成

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { DeleteSampleParamSchema } from "../../../../src/api/sample/schema";
+import { DeleteSampleParamSchema } from "../../../../src/presentation/sample/schema";
 
 describe("DeleteSampleParamSchema", () => {
   it("正常なIDでバリデーションを通過すること", () => {

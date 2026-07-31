@@ -1,12 +1,8 @@
 import type { EnvBindings, EnvConfig } from "../config";
-import type { UserId } from "../domain";
+import type { UserId, UserProfile } from "../domain/user";
 import type { Database } from "../infrastructure/db";
 
-export type UserInfoType = {
-  id: string;
-  name: string;
-  birthday: string | null;
-};
+export type UserInfoType = UserProfile;
 
 export type AuthUserType = {
   userId: UserId;
