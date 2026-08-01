@@ -5,6 +5,8 @@ export type RankingListType = {
   title: string;
   userName: string;
   createdAt: string;
+  publicStatus: number;
+  publicStatusName: string;
 };
 
 /**
