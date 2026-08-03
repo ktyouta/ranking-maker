@@ -1,0 +1,52 @@
+import { and, eq } from "drizzle-orm";
+import { IGetMyRankingRepository, RankingOrderType, RankingType } from "../../../domain/my-ranking/repository";
+import { RankingId } from "../../../domain/my-ranking/value-object/ranking-id";
+import { UserId } from "../../../domain/user";
+import { publicStatusMaster, rankingMaster, rankingOrderMaster, type Database } from "../../db";
+
+/**
+ * ランキング取得リポジトリ実装
+ */
+export class GetMyRankingRepository implements IGetMyRankingRepository {
+  constructor(private readonly db: Database) { }
+
+  /**
+   * ランキングマスタ取得
+   */
+  async findRanking(userId: UserId, rankingId: RankingId): Promise<RankingType | null> {
+    const result = await this.db
+      .select({
+        id: rankingMaster.id,
+        title: rankingMaster.title,
+        createdAt: rankingMaster.createdAt,
+        updatedAt: rankingMaster.updatedAt,
+        publicStatus: rankingMaster.publicStatus,
+        publicStatusName: publicStatusMaster.name
+      })
+      .from(rankingMaster)
+      .innerJoin(publicStatusMaster, eq(publicStatusMaster.id, rankingMaster.publicStatus))
+      .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.userId, userId.value), eq(rankingMaster.id, rankingId.value)));
+
+    if (!result[0]) {
+      return null;
+    }
+
+    return result[0];
+  }
+
+  /**
+   * ランキングオーダー取得
+   * @param rankingId 
+   */
+  async findRankingOrder(rankingId: RankingId): Promise<RankingOrderType[]> {
+    return await this.db
+      .select({
+        id: rankingOrderMaster.id,
+        itemName: rankingOrderMaster.itemName,
+        memo: rankingOrderMaster.memo,
+        createdAt: rankingOrderMaster.createdAt,
+      })
+      .from(rankingOrderMaster)
+      .where(and(eq(rankingOrderMaster.deleteFlg, false), eq(rankingOrderMaster.rankingId, rankingId.value)));
+  }
+}

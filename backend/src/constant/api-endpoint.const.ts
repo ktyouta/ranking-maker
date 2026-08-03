@@ -13,6 +13,7 @@ export const API_ENDPOINT = {
   USER_PASSWORD: "/api/v1/user-password/:userId",
   RANKING: "/api/v1/ranking",
   MY_RANKING: "/api/v1/my-ranking",
+  MY_RANKING_ID: "/api/v1/my-ranking/:rankingId",
 } as const;
 
 export type ApiEndpointType = (typeof API_ENDPOINT)[keyof typeof API_ENDPOINT];

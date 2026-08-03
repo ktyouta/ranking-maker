@@ -4,16 +4,16 @@ import { RankingId } from "../value-object/ranking-id";
 export type RankingType = {
   id: string;
   title: string;
-  userName: string;
   createdAt: string;
+  updatedAt: string;
   publicStatus: number;
   publicStatusName: string;
 };
 
 export type RankingOrderType = {
   id: string;
-  title: string;
-  userName: string;
+  itemName: string;
+  memo: string | null;
   createdAt: string;
 };
 
@@ -24,11 +24,11 @@ export interface IGetMyRankingRepository {
   /**
    * ランキングマスタ取得
    */
-  findRanking(userId: UserId): Promise<RankingType>;
+  findRanking(userId: UserId, rankingId: RankingId): Promise<RankingType | null>;
 
   /**
    * ランキングオーダー取得
    * @param rankingId 
    */
-  findRankingOrder(rankingId: RankingId): Promise<RankingOrderType>;
+  findRankingOrder(rankingId: RankingId): Promise<RankingOrderType[]>;
 }
