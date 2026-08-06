@@ -2,7 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { GetMyRankingUsecase } from "../../../application/my-ranking";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { RankingId } from "../../../domain/my-ranking/value-object/ranking-id";
+import { RankingId } from "../../../domain/shared/value-object/ranking-id";
 import { UserId } from "../../../domain/user";
 import { GetMyRankingRepository } from "../../../infrastructure/my-ranking";
 import { authMiddleware } from "../../../middleware";

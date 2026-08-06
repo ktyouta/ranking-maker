@@ -1,13 +1,15 @@
 import { and, eq } from "drizzle-orm";
-import { IGetMyRankingRepository, RankingOrderType, RankingType } from "../../../domain/my-ranking/repository";
+import { RankingType } from "../../../domain/my-ranking/repository";
+import { ICreateMyRankingRepository } from "../../../domain/my-ranking/repository/create-my-ranking.repository.interface";
+import { RankingAggregate } from "../../../domain/shared/aggregate/ranking-aggregate";
 import { RankingId } from "../../../domain/shared/value-object/ranking-id";
 import { UserId } from "../../../domain/user";
-import { publicStatusMaster, rankingMaster, rankingOrderMaster, type Database } from "../../db";
+import { publicStatusMaster, rankingMaster, type Database } from "../../db";
 
 /**
- * ランキング取得リポジトリ実装
+ * ランキング作成リポジトリ実装
  */
-export class GetMyRankingRepository implements IGetMyRankingRepository {
+export class CreateMyRankingRepository implements ICreateMyRankingRepository {
   constructor(private readonly db: Database) { }
 
   /**
@@ -35,18 +37,21 @@ export class GetMyRankingRepository implements IGetMyRankingRepository {
   }
 
   /**
-   * ランキングオーダー取得
-   * @param rankingId 
+   * ランキング作成
+   * @param db 
+   * @param rankingAggregate 
    */
-  async findRankingOrder(rankingId: RankingId): Promise<RankingOrderType[]> {
-    return await this.db
-      .select({
-        id: rankingOrderMaster.id,
-        itemName: rankingOrderMaster.itemName,
-        memo: rankingOrderMaster.memo,
-        createdAt: rankingOrderMaster.createdAt,
-      })
-      .from(rankingOrderMaster)
-      .where(and(eq(rankingOrderMaster.deleteFlg, false), eq(rankingOrderMaster.rankingId, rankingId.value)));
+  async createRanking(rankingAggregate: RankingAggregate) {
+    const now = new Date().toISOString();
+
+    // await this.db.batch([
+    //   db.insert(rankingMaster).values({
+    //     id: rankingAggregate.rankingId,
+    //     deleteFlg: false,
+    //     createdAt: now,
+    //     updatedAt: now,
+    //   }),
+
+    // ]);
   }
 }

@@ -1,3 +1,4 @@
+import { RankingAggregate } from "../../shared/aggregate/ranking-aggregate";
 import { RankingId } from "../../shared/value-object/ranking-id";
 import { UserId } from "../../user";
 
@@ -10,25 +11,19 @@ export type RankingType = {
   publicStatusName: string;
 };
 
-export type RankingOrderType = {
-  id: string;
-  itemName: string;
-  memo: string | null;
-  createdAt: string;
-};
 
 /**
- * ランキング取得リポジトリインターフェース
+ * ランキング作成リポジトリインターフェース
  */
-export interface IGetMyRankingRepository {
+export interface ICreateMyRankingRepository {
   /**
    * ランキングマスタ取得
    */
   findRanking(userId: UserId, rankingId: RankingId): Promise<RankingType | null>;
 
   /**
-   * ランキングオーダー取得
-   * @param rankingId 
+   * ランキング作成
+   * @param rankingAggregate 
    */
-  findRankingOrder(rankingId: RankingId): Promise<RankingOrderType[]>;
+  createRanking(rankingAggregate: RankingAggregate): Promise<void>;
 }

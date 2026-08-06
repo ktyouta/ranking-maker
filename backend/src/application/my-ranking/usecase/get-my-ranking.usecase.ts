@@ -1,5 +1,5 @@
 import { IGetMyRankingRepository, RankingOrderType, RankingType } from "../../../domain/my-ranking/repository";
-import { RankingId } from "../../../domain/my-ranking/value-object/ranking-id";
+import { RankingId } from "../../../domain/shared/value-object/ranking-id";
 import { UserId } from "../../../domain/user";
 
 type ReturnType = {
