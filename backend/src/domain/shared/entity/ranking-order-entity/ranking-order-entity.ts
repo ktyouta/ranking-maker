@@ -21,6 +21,14 @@ export class RankingOrderEntity {
     return this._itemName.value;
   }
 
+  get order() {
+    return this._order.value;
+  }
+
+  get memo() {
+    return this._memo;
+  }
+
   /**
    * オーダー名変更
    * @param itemName 

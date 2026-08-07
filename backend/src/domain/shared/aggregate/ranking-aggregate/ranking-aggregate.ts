@@ -1,7 +1,6 @@
 import { UserId } from "../../../user";
-import { RankingOrderEntity } from "../../entity/ranking-order-entity";
-import { RankingId } from "../../value-object/ranking-id";
-import { RankingTitle } from "../../value-object/ranking-title";
+import { RankingOrderEntity } from "../../entity";
+import { RankingId, RankingTitle } from "../../value-object";
 
 /**
  * ランキング集約
@@ -48,23 +47,30 @@ export class RankingAggregate {
    * @param rankingOrderEntity 
    */
   addItem(rankingOrderEntity: RankingOrderEntity) {
+
+    if (this.isDuplicateOrder(rankingOrderEntity)) {
+      throw new Error(`順位が重複しています。order:${rankingOrderEntity.order}`);
+    }
+
+    if (this.isDuplicateItemName(rankingOrderEntity)) {
+      throw new Error(`名称が重複しています。order:${rankingOrderEntity.itemName}`);
+    }
+
     this._rankingOrderEntityList.push(rankingOrderEntity);
   }
 
   /**
    * 順位重複チェック
    */
-  isDuplicateOrder() {
-    const rankingOrderSet = new Set(this._rankingOrderEntityList.map((e) => e.rankingOrderIdValue));
-    return rankingOrderSet.size !== this._rankingOrderEntityList.length;
+  private isDuplicateOrder(rankingOrderEntity: RankingOrderEntity) {
+    return !!this._rankingOrderEntityList.find((e) => e.order === rankingOrderEntity.order);
   }
 
   /**
    * ランキング名重複チェック
    * @returns 
    */
-  isDuplicateItemName() {
-    const itemNameSet = new Set(this._rankingOrderEntityList.map((e) => e.itemName));
-    return itemNameSet.size !== this._rankingOrderEntityList.length;
+  private isDuplicateItemName(rankingOrderEntity: RankingOrderEntity) {
+    return !!this._rankingOrderEntityList.find((e) => e.itemName === rankingOrderEntity.itemName);
   }
 }
