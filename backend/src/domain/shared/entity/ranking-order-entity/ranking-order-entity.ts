@@ -13,7 +13,7 @@ export class RankingOrderEntity {
     private _memo: string,
   ) { }
 
-  get rankingOrderIdValue() {
+  get id() {
     return this._rankingOrderId.value;
   }
 

@@ -1,5 +1,4 @@
-import { IGetListMyRankingRepository } from "../../../domain/my-ranking/repository";
-import type { RankingListType } from "../../../domain/ranking";
+import { IGetListMyRankingRepository, MyRankingListType } from "../../../domain/my-ranking/repository";
 import { UserId } from "../../../domain/user";
 
 /**
@@ -11,7 +10,7 @@ export class GetListMyRankingUsecase {
   /**
    * 全件取得
    */
-  async execute(userId: UserId): Promise<RankingListType[]> {
+  async execute(userId: UserId): Promise<MyRankingListType[]> {
     return await this.repository.findAll(userId);
   }
 }

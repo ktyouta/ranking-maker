@@ -4,7 +4,7 @@ import { ICreateMyRankingRepository } from "../../../domain/my-ranking/repositor
 import { RankingAggregate } from "../../../domain/shared/aggregate/ranking-aggregate";
 import { RankingId } from "../../../domain/shared/value-object/ranking-id";
 import { UserId } from "../../../domain/user";
-import { publicStatusMaster, rankingMaster, type Database } from "../../db";
+import { publicStatusMaster, rankingMaster, rankingOrderMaster, type Database } from "../../db";
 
 /**
  * ランキング作成リポジトリ実装
@@ -43,15 +43,31 @@ export class CreateMyRankingRepository implements ICreateMyRankingRepository {
    */
   async createRanking(rankingAggregate: RankingAggregate) {
     const now = new Date().toISOString();
+    const rankingOrderEntityList = rankingAggregate.rankingOrderEntityList;
 
-    // await this.db.batch([
-    //   db.insert(rankingMaster).values({
-    //     id: rankingAggregate.rankingId,
-    //     deleteFlg: false,
-    //     createdAt: now,
-    //     updatedAt: now,
-    //   }),
-
-    // ]);
+    await this.db.batch([
+      this.db.insert(rankingMaster).values({
+        id: rankingAggregate.id,
+        userId: rankingAggregate.userId,
+        title: rankingAggregate.title,
+        publicStatus: rankingAggregate.publicStatus,
+        memo: rankingAggregate.memo,
+        deleteFlg: false,
+        createdAt: now,
+        updatedAt: now,
+      }),
+      ...rankingOrderEntityList.map((e) =>
+        this.db.insert(rankingOrderMaster).values({
+          id: e.id,
+          rankingId: rankingAggregate.id,
+          order: e.order,
+          itemName: e.itemName,
+          memo: e.memo,
+          deleteFlg: false,
+          createdAt: now,
+          updatedAt: now,
+        })
+      )
+    ]);
   }
 }

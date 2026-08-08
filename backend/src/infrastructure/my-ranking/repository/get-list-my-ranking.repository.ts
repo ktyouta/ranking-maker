@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { IGetListMyRankingRepository, RankingListType } from "../../../domain/my-ranking/repository";
+import { IGetListMyRankingRepository, MyRankingListType } from "../../../domain/my-ranking/repository";
 import { UserId } from "../../../domain/user";
 import type { Database } from "../../db";
 import { publicStatusMaster, rankingMaster, userMaster } from "../../db";
@@ -13,7 +13,7 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
   /**
    * 全件取得（論理削除されていないもの）
    */
-  async findAll(userId: UserId): Promise<RankingListType[]> {
+  async findAll(userId: UserId): Promise<MyRankingListType[]> {
     return await this.db
       .select({
         id: rankingMaster.id,

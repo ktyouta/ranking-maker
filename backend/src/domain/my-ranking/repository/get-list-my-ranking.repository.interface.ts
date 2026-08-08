@@ -1,6 +1,6 @@
 import { UserId } from "../../user";
 
-export type RankingListType = {
+export type MyRankingListType = {
   id: string;
   title: string;
   userName: string;
@@ -16,5 +16,5 @@ export interface IGetListMyRankingRepository {
   /**
    * 全件取得
    */
-  findAll(userId: UserId): Promise<RankingListType[]>;
+  findAll(userId: UserId): Promise<MyRankingListType[]>;
 }
