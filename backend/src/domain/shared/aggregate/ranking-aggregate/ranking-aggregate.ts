@@ -1,7 +1,7 @@
 import { UserId } from "../../../user";
 import { RankingOrderEntity } from "../../entity";
 import { PublicStatus, RankingId, RankingTitle } from "../../value-object";
-import { fail, ok, Result } from "../../../../util/result";
+import { ok, err, Result } from "neverthrow";
 import { Violation } from "../../../../util/violation";
 
 /**
@@ -33,7 +33,7 @@ export class RankingAggregate {
    * ランキング集約を生成する（新規作成・全置換更新の入口）。
    *
    * 集約の不変条件（順位・名称の重複禁止）を検証し、違反があれば
-   * すべて収集して Result.fail で返す。各項目の単一フィールド検証は
+   * すべて収集して err で返す。各項目の単一フィールド検証は
    * 値オブジェクトが担うため、ここでは集約横断の一意性のみを検証する。
    * @param params 集約の構成要素
    * @returns 検証成功時は集約、失敗時は違反一覧を持つ Result
@@ -42,7 +42,7 @@ export class RankingAggregate {
     const violations = RankingAggregate.collectItemViolations(params.rankingOrderEntityList);
 
     if (violations.length > 0) {
-      return fail(violations);
+      return err(violations);
     }
 
     return ok(

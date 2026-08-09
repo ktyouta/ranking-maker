@@ -1,7 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { RefreshToken } from "../../src/domain/refresh-token/refresh-token";
-import { Cookie, FrontUserId } from "../../src/domain";
+import { RefreshToken } from "../../src/domain/auth/value-object/refresh-token/refresh-token";
+import { Cookie, UserId } from "../../src/domain";
 import type { EnvConfig } from "../../src/config";
+
+const TEST_USER_ID = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
 
 const testConfig: EnvConfig = {
     accessTokenJwtKey: "test-jwt-secret-key-for-access-token",
@@ -11,12 +13,13 @@ const testConfig: EnvConfig = {
     pepper: "test-pepper",
     corsOrigin: ["http://localhost:5173"],
     isProduction: false,
+    allowUserOperation: true,
 };
 
 describe("RefreshToken", () => {
 
   it("リフレッシュトークンを生成できること", async () => {
-    const userId = FrontUserId.of(1);
+    const userId = UserId.of(TEST_USER_ID);
     const refreshToken = await RefreshToken.create(userId, testConfig);
 
     expect(refreshToken.value).toBeDefined();
@@ -24,7 +27,7 @@ describe("RefreshToken", () => {
   });
 
   it("JWT形式（3つのドット区切り）で生成されること", async () => {
-    const userId = FrontUserId.of(1);
+    const userId = UserId.of(TEST_USER_ID);
     const refreshToken = await RefreshToken.create(userId, testConfig);
 
     expect(refreshToken.value.split(".")).toHaveLength(3);
@@ -32,7 +35,7 @@ describe("RefreshToken", () => {
 
   describe("get", () => {
     it("Cookieからトークンを取得できること", async () => {
-      const userId = FrontUserId.of(1);
+      const userId = UserId.of(TEST_USER_ID);
       const createdToken = await RefreshToken.create(userId, testConfig);
 
       const cookie = new Cookie({ [RefreshToken.COOKIE_KEY]: createdToken.value });
@@ -50,17 +53,17 @@ describe("RefreshToken", () => {
 
   describe("getPayload", () => {
     it("ユーザーIDを取得できること", async () => {
-      const userId = FrontUserId.of(99);
+      const userId = UserId.of(TEST_USER_ID);
       const refreshToken = await RefreshToken.create(userId, testConfig);
 
       const extractedUserId = await refreshToken.getPayload();
-      expect(extractedUserId.value).toBe(99);
+      expect(extractedUserId.value).toBe(TEST_USER_ID);
     });
   });
 
   describe("isAbsoluteExpired", () => {
     it("期限内の場合にfalseを返すこと", async () => {
-      const userId = FrontUserId.of(1);
+      const userId = UserId.of(TEST_USER_ID);
       const refreshToken = await RefreshToken.create(userId, testConfig);
 
       const isExpired = await refreshToken.isAbsoluteExpired();
@@ -70,7 +73,7 @@ describe("RefreshToken", () => {
 
   describe("refresh", () => {
     it("新しいトークンを生成できること", async () => {
-      const userId = FrontUserId.of(1);
+      const userId = UserId.of(TEST_USER_ID);
       const originalToken = await RefreshToken.create(userId, testConfig);
 
       const newToken = await originalToken.refresh();
@@ -80,13 +83,13 @@ describe("RefreshToken", () => {
     });
 
     it("refresh後もユーザーIDが保持されること", async () => {
-      const userId = FrontUserId.of(123);
+      const userId = UserId.of(TEST_USER_ID);
       const originalToken = await RefreshToken.create(userId, testConfig);
 
       const newToken = await originalToken.refresh();
       const extractedUserId = await newToken.getPayload();
 
-      expect(extractedUserId.value).toBe(123);
+      expect(extractedUserId.value).toBe(TEST_USER_ID);
     });
   });
 

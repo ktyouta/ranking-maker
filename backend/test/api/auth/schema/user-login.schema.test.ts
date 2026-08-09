@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { FrontUserLoginSchema } from "../../../../src/api/front-user-login/schema";
+import { UserLoginSchema } from "../../../../src/presentation/auth/schema";
 
-describe("FrontUserLogin Schema Validation", () => {
-  describe("FrontUserLoginSchema", () => {
+describe("UserLogin Schema Validation", () => {
+  describe("UserLoginSchema", () => {
     it("正常なデータでバリデーションを通過すること", () => {
-      const result = FrontUserLoginSchema.safeParse({
+      const result = UserLoginSchema.safeParse({
         name: "testuser",
         password: "password123",
       });
@@ -12,7 +12,7 @@ describe("FrontUserLogin Schema Validation", () => {
     });
 
     it("ユーザー名が空の場合にエラーになること", () => {
-      const result = FrontUserLoginSchema.safeParse({
+      const result = UserLoginSchema.safeParse({
         name: "",
         password: "password123",
       });
@@ -25,7 +25,7 @@ describe("FrontUserLogin Schema Validation", () => {
     });
 
     it("パスワードが空の場合にエラーになること", () => {
-      const result = FrontUserLoginSchema.safeParse({
+      const result = UserLoginSchema.safeParse({
         name: "testuser",
         password: "",
       });
@@ -38,7 +38,7 @@ describe("FrontUserLogin Schema Validation", () => {
     });
 
     it("ユーザー名とパスワードが両方空の場合に複数エラーになること", () => {
-      const result = FrontUserLoginSchema.safeParse({
+      const result = UserLoginSchema.safeParse({
         name: "",
         password: "",
       });
