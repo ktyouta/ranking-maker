@@ -62,7 +62,7 @@ export class CreateMyRankingRepository implements ICreateMyRankingRepository {
           rankingId: rankingAggregate.id,
           order: e.order,
           itemName: e.itemName,
-          memo: e.memo,
+          itemMemo: e.memo,
           deleteFlg: false,
           createdAt: now,
           updatedAt: now,

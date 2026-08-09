@@ -43,7 +43,7 @@ export class GetMyRankingRepository implements IGetMyRankingRepository {
       .select({
         id: rankingOrderMaster.id,
         itemName: rankingOrderMaster.itemName,
-        memo: rankingOrderMaster.memo,
+        itemMemo: rankingOrderMaster.itemMemo,
         createdAt: rankingOrderMaster.createdAt,
       })
       .from(rankingOrderMaster)

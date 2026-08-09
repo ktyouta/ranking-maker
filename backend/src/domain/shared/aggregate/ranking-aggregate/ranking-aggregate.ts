@@ -2,7 +2,7 @@ import { err, ok, Result } from "neverthrow";
 import { Violation } from "../../../../util/violation";
 import { UserId } from "../../../user";
 import { RankingOrderEntity } from "../../entity";
-import { PublicStatus, RankingId, RankingTitle } from "../../value-object";
+import { PublicStatus, RankingId, RankingMemo, RankingTitle } from "../../value-object";
 
 /**
  * ランキング集約の生成・再構築に渡すパラメータ
@@ -11,7 +11,7 @@ type RankingAggregateParams = {
   rankingId: RankingId;
   rankingTitle: RankingTitle;
   publicStatus: PublicStatus;
-  memo: string;
+  memo: RankingMemo;
   userId: UserId;
   rankingOrderEntityList: RankingOrderEntity[];
 };
@@ -24,7 +24,7 @@ export class RankingAggregate {
   private constructor(private readonly _rankingId: RankingId,
     private readonly _rankingTitle: RankingTitle,
     private readonly _publicStatus: PublicStatus,
-    private readonly _memo: string,
+    private readonly _memo: RankingMemo,
     private readonly _userId: UserId,
     private readonly _rankingOrderEntityList: RankingOrderEntity[]
   ) { }
@@ -88,7 +88,7 @@ export class RankingAggregate {
   }
 
   get memo() {
-    return this._memo;
+    return this._memo.value;
   }
 
   get userId() {

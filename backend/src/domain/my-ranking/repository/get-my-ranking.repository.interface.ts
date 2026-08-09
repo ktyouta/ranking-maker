@@ -13,7 +13,7 @@ export type RankingType = {
 export type RankingOrderType = {
   id: string;
   itemName: string;
-  memo: string | null;
+  itemMemo: string | null;
   createdAt: string;
 };
 
