@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ItemName, PUBLIC_STATUS_VALUES, RankingTitle } from "../../../domain";
+import { ItemMemo, ItemName, PUBLIC_STATUS_VALUES, RankingMemo, RankingTitle } from "../../../domain";
 
 /**
  * ランキング作成リクエストスキーマ
@@ -18,7 +18,7 @@ export const CreateMyRankingSchema = z.object({
     .refine((value) => PUBLIC_STATUS_VALUES.includes(value), "公開ステータスが不正です"),
   memo: z
     .string()
-    .max(1000, "メモは1000文字以内で入力してください")
+    .max(RankingMemo.MAX_LENGTH, `メモは${RankingMemo.MAX_LENGTH}文字以内で入力してください`)
     .default(""),
   items: z
     .array(
@@ -33,7 +33,7 @@ export const CreateMyRankingSchema = z.object({
           .min(1, "順位は1以上で入力してください"),
         memo: z
           .string()
-          .max(1000, "メモは1000文字以内で入力してください")
+          .max(ItemMemo.MAX_LENGTH, `メモは${ItemMemo.MAX_LENGTH}文字以内で入力してください`)
           .default(""),
       })
     )

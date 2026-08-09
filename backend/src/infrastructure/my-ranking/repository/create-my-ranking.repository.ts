@@ -1,10 +1,9 @@
 import { and, eq } from "drizzle-orm";
-import { RankingType } from "../../../domain/my-ranking/repository";
+import { RankingTitle } from "../../../domain";
 import { ICreateMyRankingRepository } from "../../../domain/my-ranking/repository/create-my-ranking.repository.interface";
 import { RankingAggregate } from "../../../domain/shared/aggregate/ranking-aggregate";
-import { RankingId } from "../../../domain/shared/value-object/ranking-id";
 import { UserId } from "../../../domain/user";
-import { publicStatusMaster, rankingMaster, rankingOrderMaster, type Database } from "../../db";
+import { rankingMaster, rankingOrderMaster, type Database } from "../../db";
 
 /**
  * ランキング作成リポジトリ実装
@@ -15,25 +14,15 @@ export class CreateMyRankingRepository implements ICreateMyRankingRepository {
   /**
    * ランキングマスタ取得
    */
-  async findRanking(userId: UserId, rankingId: RankingId): Promise<RankingType | null> {
+  async findRanking(userId: UserId, rankingTitle: RankingTitle): Promise<{ id: string }[]> {
     const result = await this.db
       .select({
         id: rankingMaster.id,
-        title: rankingMaster.title,
-        createdAt: rankingMaster.createdAt,
-        updatedAt: rankingMaster.updatedAt,
-        publicStatus: rankingMaster.publicStatus,
-        publicStatusName: publicStatusMaster.name
       })
       .from(rankingMaster)
-      .innerJoin(publicStatusMaster, eq(publicStatusMaster.id, rankingMaster.publicStatus))
-      .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.userId, userId.value), eq(rankingMaster.id, rankingId.value)));
+      .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.userId, userId.value), eq(rankingMaster.title, rankingTitle.value)));
 
-    if (!result[0]) {
-      return null;
-    }
-
-    return result[0];
+    return result;
   }
 
   /**

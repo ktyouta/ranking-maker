@@ -2,21 +2,22 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { CreateMyRankingUsecase } from "../../../application/my-ranking/usecase/create-my-ranking.usecase";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { RankingId, UserId } from "../../../domain";
+import { UserId } from "../../../domain";
 import { CreateMyRankingRepository } from "../../../infrastructure/my-ranking/repository/create-my-ranking.repository";
 import { authMiddleware } from "../../../middleware";
-import { RankingIdParamSchema } from "../../../schema";
 import type { AppEnv } from "../../../types";
 import { formatZodErrors } from "../../../util";
+import { CreateMyRankingResponseDto } from "../dto";
+import { CreateMyRankingSchema } from "../schema";
 
 /**
  * ランキング作成
  */
 const createMyRanking = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING,
   authMiddleware,
-  zValidator("param", RankingIdParamSchema, (result, c) => {
+  zValidator("json", CreateMyRankingSchema, (result, c) => {
     if (!result.success) {
-      return c.json({ message: result.error.message, data: formatZodErrors(result.error) }, HTTP_STATUS.BAD_REQUEST);
+      return c.json({ message: "バリデーションエラー", data: formatZodErrors(result.error) }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
     }
   }),
   async (c) => {
@@ -26,13 +27,32 @@ const createMyRanking = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING,
       return c.json({ message: "認証エラー" }, HTTP_STATUS.UNAUTHORIZED);
     }
     const userId = UserId.of(user.userId.value);
-    const rankingId = RankingId.of(c.req.valid("param").rankingId);
+    const body = c.req.valid("json");
     const repository = new CreateMyRankingRepository(db);
     const service = new CreateMyRankingUsecase(repository);
 
-    const result = service.execute(userId, rankingId);
+    const result = await service.execute({ userId, body });
 
-    return c.json({ message: "ランキングを作成しました。", data: [] }, HTTP_STATUS.OK);
+    return result.match(
+      // 成功
+      (aggregate) => c.json(
+        { message: "ランキングを作成しました。", data: new CreateMyRankingResponseDto(aggregate).value },
+        HTTP_STATUS.CREATED,
+      ),
+      // 失敗
+      (error) => {
+        switch (error.type) {
+          case "VALIDATION":
+            return c.json({ message: "入力エラー", data: error.violations }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
+          case "DUPLICATE_TITLE":
+            return c.json({ message: "同名のランキングが既に存在します。" }, HTTP_STATUS.CONFLICT);
+          default: {
+            const _: never = error;
+            return c.json({ message: "サーバーエラー" }, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+          }
+        }
+      },
+    );
   });
 
 export { createMyRanking };
