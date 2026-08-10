@@ -1,4 +1,5 @@
-import { integer, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
+import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 /**
  * サンプルテーブル
@@ -65,7 +66,10 @@ export const rankingMaster = sqliteTable("ranking_master", {
   updatedAt: text("updated_at").notNull(),
 },
   (table) => [
-    unique().on(table.userId, table.title),
+    // 論理削除された行は一意判定の対象外とし、生存行のみで (userId, title) を一意にする
+    uniqueIndex("ux_ranking_master_user_title")
+      .on(table.userId, table.title)
+      .where(sql`${table.deleteFlg} = false`),
   ]);
 
 export type RankingMaster = typeof rankingMaster.$inferSelect;
@@ -86,7 +90,10 @@ export const rankingOrderMaster = sqliteTable("ranking_order_master", {
   updatedAt: text("updated_at").notNull(),
 },
   (table) => [
-    unique().on(table.rankingId, table.order),
+    // 論理削除された行は一意判定の対象外とし、生存行のみで (rankingId, order) を一意にする
+    uniqueIndex("ux_ranking_order_master_ranking_order")
+      .on(table.rankingId, table.order)
+      .where(sql`${table.deleteFlg} = false`),
   ]);
 
 export type RankingOrderMaster = typeof rankingOrderMaster.$inferSelect;

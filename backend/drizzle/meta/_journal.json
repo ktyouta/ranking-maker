@@ -15,6 +15,13 @@
       "when": 1778587508469,
       "tag": "0001_mute_stranger",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1786329585736,
+      "tag": "0002_far_silver_samurai",
+      "breakpoints": true
     }
   ]
 }
