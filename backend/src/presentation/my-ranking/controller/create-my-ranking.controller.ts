@@ -2,7 +2,8 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { CreateMyRankingUsecase } from "../../../application/my-ranking/usecase/create-my-ranking.usecase";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { UserId } from "../../../domain";
+import { RankingTitleUniquenessDomainService, UserId } from "../../../domain";
+import { RankingTitleUniquenessRepository } from "../../../infrastructure/my-ranking";
 import { CreateMyRankingRepository } from "../../../infrastructure/my-ranking/repository/create-my-ranking.repository";
 import { authMiddleware } from "../../../middleware";
 import type { AppEnv } from "../../../types";
@@ -28,8 +29,8 @@ const createMyRanking = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING,
     }
     const userId = UserId.of(user.userId.value);
     const body = c.req.valid("json");
-    const repository = new CreateMyRankingRepository(db);
-    const service = new CreateMyRankingUsecase(repository);
+    const uniquenessService = new RankingTitleUniquenessDomainService(new RankingTitleUniquenessRepository(db));
+    const service = new CreateMyRankingUsecase(new CreateMyRankingRepository(db), uniquenessService);
 
     const result = await service.execute({ userId, body });
 
