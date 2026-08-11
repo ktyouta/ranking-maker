@@ -1,5 +1,6 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { IRankingTitleUniquenessRepository, RankingTitle } from "../../../domain";
+import { RankingId } from "../../../domain/shared/value-object/ranking-id";
 import { UserId } from "../../../domain/user";
 import { rankingMaster, type Database } from "../../db";
 
@@ -11,14 +12,20 @@ export class RankingTitleUniquenessRepository implements IRankingTitleUniqueness
 
   /**
    * 同名ランキングの取得（同一ユーザー内・未削除のもの）
+   * rankingId 自身は除外する（更新時の自己重複を防ぐ）。
    */
-  async findRanking(userId: UserId, rankingTitle: RankingTitle): Promise<{ id: string }[]> {
+  async findRanking(userId: UserId, rankingTitle: RankingTitle, rankingId: RankingId): Promise<{ id: string }[]> {
     const result = await this.db
       .select({
         id: rankingMaster.id,
       })
       .from(rankingMaster)
-      .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.userId, userId.value), eq(rankingMaster.title, rankingTitle.value)));
+      .where(and(
+        eq(rankingMaster.deleteFlg, false),
+        eq(rankingMaster.userId, userId.value),
+        eq(rankingMaster.title, rankingTitle.value),
+        ne(rankingMaster.id, rankingId.value),
+      ));
 
     return result;
   }

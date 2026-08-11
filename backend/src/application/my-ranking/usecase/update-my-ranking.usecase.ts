@@ -1,35 +1,41 @@
 import { err, ok, Result } from "neverthrow";
-import { ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
-import { ICreateMyRankingRepository } from "../../../domain/my-ranking/repository/create-my-ranking.repository.interface";
+import { ItemMemo, ItemName, IUpdateMyRankingRepository, Order, PublicStatus, RankingAggregate, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
 import { UserId } from "../../../domain/user";
-import { CreateMyRankingSchemaType } from "../../../presentation/my-ranking/schema";
+import { UpdateMyRankingSchemaType } from "../../../presentation/my-ranking/schema";
 import { Violation } from "../../../util";
 
-export type CreateMyRankingError =
+export type UpdateMyRankingError =
   | { type: "DUPLICATE_TITLE" }
+  | { type: "NOT_FOUND" }
   | { type: "VALIDATION"; violations: Violation[] };
 
 type PropsType = {
   userId: UserId;
-  body: CreateMyRankingSchemaType;
+  rankingId: RankingId;
+  body: UpdateMyRankingSchemaType;
 }
 
 /**
- * ランキング作成ユースケース
+ * ランキング更新ユースケース
  */
-export class CreateMyRankingUsecase {
-  constructor(private readonly repository: ICreateMyRankingRepository,
+export class UpdateMyRankingUsecase {
+  constructor(private readonly repository: IUpdateMyRankingRepository,
     private readonly uniquenessService: RankingTitleUniquenessDomainService,
   ) { }
 
   /**
-   * ランキング作成
+   * ランキング更新
    */
-  async execute({ userId, body }: PropsType): Promise<Result<RankingAggregate, CreateMyRankingError>> {
+  async execute({ userId, rankingId, body }: PropsType): Promise<Result<RankingAggregate, UpdateMyRankingError>> {
 
-    const rankingId = RankingId.generate();
+    // ランキング存在チェック（他ユーザーのものは取得できないため所有権も担保する）
+    const result = await this.repository.findRanking(userId, rankingId);
+    if (result.length === 0) {
+      return err({ type: "NOT_FOUND" });
+    }
+
+    // タイトル重複（自身は除外し、他の同名ランキングのみ検出する）
     const rankingTitle = new RankingTitle(body.title);
-    // タイトル重複（rankingId は未使用の新規 ID のため自己除外は実質的に無効）
     if (await this.uniquenessService.isDuplicated({ userId, rankingTitle, rankingId })) {
       return err({ type: "DUPLICATE_TITLE" });
     }
@@ -57,8 +63,8 @@ export class CreateMyRankingUsecase {
     }
 
     const rankingAggrigate = aggregateResult.value;
-    // ランキング作成
-    await this.repository.createRanking(rankingAggrigate);
+    // ランキング更新
+    await this.repository.updateRanking(rankingAggrigate);
 
     return ok(rankingAggrigate);
   }
