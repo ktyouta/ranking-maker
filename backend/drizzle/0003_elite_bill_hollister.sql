@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `ux_ranking_order_master_ranking_item_name` ON `ranking_order_master` (`ranking_id`,`item_name`) WHERE "ranking_order_master"."delete_flg" = false;

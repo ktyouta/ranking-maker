@@ -94,6 +94,10 @@ export const rankingOrderMaster = sqliteTable("ranking_order_master", {
     uniqueIndex("ux_ranking_order_master_ranking_order")
       .on(table.rankingId, table.order)
       .where(sql`${table.deleteFlg} = false`),
+    // 論理削除された行は一意判定の対象外とし、生存行のみで (rankingId, itemName) を一意にする
+    uniqueIndex("ux_ranking_order_master_ranking_item_name")
+      .on(table.rankingId, table.itemName)
+      .where(sql`${table.deleteFlg} = false`),
   ]);
 
 export type RankingOrderMaster = typeof rankingOrderMaster.$inferSelect;
