@@ -1,8 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { UpdatePasswordUsecase } from "../../../application/auth";
+import { UpdatePasswordUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { UserPasswordRepository } from "../../../infrastructure/auth";
+import { UserPasswordRepository } from "../../../infrastructure";
 import { authMiddleware, userOperationGuardMiddleware } from "../../../middleware";
 import { UserIdParamSchema } from "../../../schema";
 import type { AppEnv } from "../../../types";

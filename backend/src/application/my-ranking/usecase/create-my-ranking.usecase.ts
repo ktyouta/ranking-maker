@@ -1,6 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
-import { ICreateMyRankingRepository } from "../../../domain/my-ranking/repository/create-my-ranking.repository.interface";
+import { ICreateMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
 import { UserId } from "../../../domain/user";
 import { CreateMyRankingSchemaType } from "../../../presentation/my-ranking/schema";
 import { Violation } from "../../../util";

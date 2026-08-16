@@ -1,4 +1,4 @@
-import type { UpdateSampleEntity } from "../../../domain/sample";
+import type { UpdateSampleEntity } from "../../../domain";
 
 /**
  * サンプルレスポンスの型

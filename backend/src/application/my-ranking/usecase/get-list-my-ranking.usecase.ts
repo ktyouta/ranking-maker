@@ -1,4 +1,4 @@
-import { IGetListMyRankingRepository, MyRankingListType } from "../../../domain/my-ranking/repository";
+import { IGetListMyRankingRepository, MyRankingListType } from "../../../domain";
 import { UserId } from "../../../domain/user";
 
 /**

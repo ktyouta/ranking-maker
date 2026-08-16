@@ -1,6 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { IGetMyRankingRepository, RankingOrderType, RankingType } from "../../../domain/my-ranking/repository";
-import { RankingId } from "../../../domain/shared/value-object/ranking-id";
+import { IGetMyRankingRepository, RankingId, RankingOrderType, RankingType } from "../../../domain";
 import { UserId } from "../../../domain/user";
 import { publicStatusMaster, rankingMaster, rankingOrderMaster, type Database } from "../../db";
 

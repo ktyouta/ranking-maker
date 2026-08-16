@@ -1,6 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { ISoftDeleteMyRankingRepository } from "../../../domain/my-ranking/repository";
-import { RankingId } from "../../../domain/shared/value-object/ranking-id";
+import { ISoftDeleteMyRankingRepository, RankingId } from "../../../domain";
 import { UserId } from "../../../domain/user";
 import { rankingMaster, rankingOrderMaster, type Database } from "../../db";
 

@@ -1,8 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { CreateSampleUsecase } from "../../../application/sample";
+import { CreateSampleUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { CreateSampleRepository } from "../../../infrastructure/sample";
+import { CreateSampleRepository } from "../../../infrastructure";
 import type { AppEnv } from "../../../types";
 import { formatZodErrors } from "../../../util";
 import { CreateSampleResponseDto } from "../dto";

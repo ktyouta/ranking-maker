@@ -1,11 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { setCookie } from "hono/cookie";
-import { LoginUsecase } from "../../../application/auth";
+import { LoginUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { RefreshToken } from "../../../domain/auth";
-import { UserLoginRepository } from "../../../infrastructure/auth";
-import { GetUserProfileRepository } from "../../../infrastructure/user";
+import { RefreshToken } from "../../../domain";
+import { GetUserProfileRepository, UserLoginRepository } from "../../../infrastructure";
 import type { AppEnv } from "../../../types";
 import { formatZodErrors } from "../../../util";
 import { UserLoginResponseDto } from "../dto";

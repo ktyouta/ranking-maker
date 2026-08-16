@@ -1,5 +1,5 @@
-import { RankingAggregate } from "../../shared";
-import { RankingId } from "../../shared/value-object/ranking-id";
+import { RankingAggregate } from "../aggregate";
+import { RankingId } from "../value-object";
 import { UserId } from "../../user";
 
 

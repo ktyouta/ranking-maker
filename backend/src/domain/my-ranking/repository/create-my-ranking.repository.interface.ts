@@ -1,4 +1,4 @@
-import { RankingAggregate } from "../../shared/aggregate/ranking-aggregate";
+import { RankingAggregate } from "../aggregate";
 
 /**
  * ランキング作成リポジトリインターフェース

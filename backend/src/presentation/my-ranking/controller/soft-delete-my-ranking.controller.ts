@@ -1,10 +1,9 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { SoftDeleteMyRankingUsecase } from "../../../application/my-ranking";
+import { SoftDeleteMyRankingUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { RankingId } from "../../../domain/shared/value-object/ranking-id";
-import { UserId } from "../../../domain/user";
-import { SoftDeleteMyRankingRepository } from "../../../infrastructure/my-ranking";
+import { RankingId, UserId } from "../../../domain";
+import { SoftDeleteMyRankingRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import { RankingIdParamSchema } from "../../../schema/ranking-id-param.schema";
 import type { AppEnv } from "../../../types";

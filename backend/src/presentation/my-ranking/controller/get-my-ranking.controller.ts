@@ -1,10 +1,9 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { GetMyRankingUsecase } from "../../../application/my-ranking";
+import { GetMyRankingUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { RankingId } from "../../../domain/shared/value-object/ranking-id";
-import { UserId } from "../../../domain/user";
-import { GetMyRankingRepository } from "../../../infrastructure/my-ranking";
+import { RankingId, UserId } from "../../../domain";
+import { GetMyRankingRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import { RankingIdParamSchema } from "../../../schema/ranking-id-param.schema";
 import type { AppEnv } from "../../../types";

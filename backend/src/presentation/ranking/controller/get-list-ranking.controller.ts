@@ -1,7 +1,7 @@
 import { Hono } from "hono";
-import { GetListRankingUsecase } from "../../../application/ranking";
+import { GetListRankingUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { GetListRankingRepository } from "../../../infrastructure/ranking";
+import { GetListRankingRepository } from "../../../infrastructure";
 import type { AppEnv } from "../../../types";
 
 /**

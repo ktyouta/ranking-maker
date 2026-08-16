@@ -1,8 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { DeleteSampleUsecase } from "../../../application/sample";
+import { DeleteSampleUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { DeleteSampleRepository } from "../../../infrastructure/sample";
+import { DeleteSampleRepository } from "../../../infrastructure";
 import type { AppEnv } from "../../../types";
 import { formatZodErrors } from "../../../util";
 import { DeleteSampleParamSchema } from "../schema";

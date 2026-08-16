@@ -1,4 +1,4 @@
-import { RankingId } from "../../shared/value-object/ranking-id";
+import { RankingId } from "../value-object";
 import { UserId } from "../../user";
 
 

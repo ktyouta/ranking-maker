@@ -1,7 +1,7 @@
 import { Hono } from "hono";
-import { GetListSampleUsecase } from "../../../application/sample";
+import { GetListSampleUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { GetListSampleRepository } from "../../../infrastructure/sample";
+import { GetListSampleRepository } from "../../../infrastructure";
 import type { AppEnv } from "../../../types";
 import { GetListSampleResponseDto } from "../dto";
 

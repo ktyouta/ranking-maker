@@ -1,8 +1,8 @@
 import { Hono } from "hono";
-import { GetListMyRankingUsecase } from "../../../application/my-ranking";
+import { GetListMyRankingUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { UserId } from "../../../domain/user";
-import { GetListMyRankingRepository } from "../../../infrastructure/my-ranking";
+import { UserId } from "../../../domain";
+import { GetListMyRankingRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import type { AppEnv } from "../../../types";
 

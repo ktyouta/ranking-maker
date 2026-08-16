@@ -1,10 +1,9 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { CreateMyRankingUsecase } from "../../../application/my-ranking/usecase/create-my-ranking.usecase";
+import { CreateMyRankingUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
 import { RankingTitleUniquenessDomainService, UserId } from "../../../domain";
-import { RankingTitleUniquenessRepository } from "../../../infrastructure/my-ranking";
-import { CreateMyRankingRepository } from "../../../infrastructure/my-ranking/repository/create-my-ranking.repository";
+import { CreateMyRankingRepository, RankingTitleUniquenessRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import type { AppEnv } from "../../../types";
 import { formatZodErrors } from "../../../util";

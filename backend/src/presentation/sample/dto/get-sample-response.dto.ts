@@ -1,4 +1,4 @@
-import type { GetSampleEntity } from "../../../domain/sample";
+import type { GetSampleEntity } from "../../../domain";
 
 /**
  * サンプルレスポンスの型

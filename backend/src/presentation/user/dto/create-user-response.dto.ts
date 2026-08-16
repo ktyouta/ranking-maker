@@ -1,4 +1,4 @@
-import type { UserEntity } from "../../../domain/user";
+import type { UserEntity } from "../../../domain";
 
 export type CreateUserResponseType = {
   accessToken: string;

@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { deleteCookie } from "hono/cookie";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { RefreshToken } from "../../../domain/auth";
+import { RefreshToken } from "../../../domain";
 import type { AppEnv } from "../../../types";
 
 const userLogout = new Hono<AppEnv>().post(

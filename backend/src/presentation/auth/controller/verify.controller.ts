@@ -1,9 +1,9 @@
 import { Hono } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
-import { VerifyUsecase } from "../../../application/auth";
+import { VerifyUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { Cookie, RefreshToken } from "../../../domain/auth";
-import { GetUserProfileRepository } from "../../../infrastructure/user";
+import { Cookie, RefreshToken } from "../../../domain";
+import { GetUserProfileRepository } from "../../../infrastructure";
 import type { AppEnv } from "../../../types";
 
 
