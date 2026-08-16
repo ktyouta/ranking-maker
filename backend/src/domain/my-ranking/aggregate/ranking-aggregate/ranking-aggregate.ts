@@ -16,6 +16,10 @@ type RankingAggregateParams = {
   rankingOrderEntityList: RankingOrderEntity[];
 };
 
+type RankingAggregateReconstructParams = RankingAggregateParams & {
+  isDeleted: boolean;
+};
+
 /**
  * ランキング集約
  */
@@ -26,7 +30,8 @@ export class RankingAggregate {
     private readonly _publicStatus: PublicStatus,
     private readonly _memo: RankingMemo,
     private readonly _userId: UserId,
-    private readonly _rankingOrderEntityList: RankingOrderEntity[]
+    private readonly _rankingOrderEntityList: RankingOrderEntity[],
+    private _deleteFlg: boolean,
   ) { }
 
   /**
@@ -53,6 +58,7 @@ export class RankingAggregate {
         params.memo,
         params.userId,
         params.rankingOrderEntityList,
+        false,
       ),
     );
   }
@@ -64,7 +70,7 @@ export class RankingAggregate {
    * @param params 集約の構成要素
    * @returns 再構築した集約
    */
-  static reconstruct(params: RankingAggregateParams): RankingAggregate {
+  static reconstruct(params: RankingAggregateReconstructParams): RankingAggregate {
     return new RankingAggregate(
       params.rankingId,
       params.rankingTitle,
@@ -72,6 +78,7 @@ export class RankingAggregate {
       params.memo,
       params.userId,
       params.rankingOrderEntityList,
+      params.isDeleted,
     );
   }
 
@@ -97,6 +104,10 @@ export class RankingAggregate {
 
   get rankingOrderEntityList() {
     return [...this._rankingOrderEntityList];
+  }
+
+  get deleteFlg() {
+    return this._deleteFlg;
   }
 
   /**
@@ -137,5 +148,15 @@ export class RankingAggregate {
     }
 
     return [...duplicated];
+  }
+
+  /**
+   * ランキング復元
+   */
+  restore() {
+    if (!this._deleteFlg) {
+      throw new Error(`削除されていないランキングです。`);
+    }
+    this._deleteFlg = false;
   }
 }
