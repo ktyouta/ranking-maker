@@ -30,15 +30,16 @@ export class CreateMyRankingRepository implements ICreateMyRankingRepository {
    */
   async createRanking(rankingAggregate: RankingAggregate) {
     const now = new Date().toISOString();
-    const rankingOrderEntityList = rankingAggregate.rankingOrderEntityList;
+    const rankingSnapshot = rankingAggregate.toSnapshot();
+    const rankingOrderEntityList = rankingSnapshot.rankingOrderEntityList;
 
     await this.db.batch([
       this.db.insert(rankingMaster).values({
-        id: rankingAggregate.id,
-        userId: rankingAggregate.userId,
-        title: rankingAggregate.title,
-        publicStatus: rankingAggregate.publicStatus,
-        memo: rankingAggregate.memo,
+        id: rankingSnapshot.id,
+        userId: rankingSnapshot.userId,
+        title: rankingSnapshot.title,
+        publicStatus: rankingSnapshot.publicStatus,
+        memo: rankingSnapshot.memo,
         deleteFlg: false,
         createdAt: now,
         updatedAt: now,
@@ -46,7 +47,7 @@ export class CreateMyRankingRepository implements ICreateMyRankingRepository {
       ...rankingOrderEntityList.map((e) =>
         this.db.insert(rankingOrderMaster).values({
           id: e.id,
-          rankingId: rankingAggregate.id,
+          rankingId: rankingSnapshot.id,
           order: e.order,
           itemName: e.itemName,
           itemMemo: e.memo,

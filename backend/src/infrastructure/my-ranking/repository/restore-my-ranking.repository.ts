@@ -64,22 +64,23 @@ export class RestoreMyRankingRepository implements IRestoreMyRankingRepository {
    */
   async restoreRanking(rankingAggregate: RankingAggregate): Promise<void> {
     const now = new Date().toISOString();
+    const rankingSnapshot = rankingAggregate.toSnapshot();
 
     await this.db.batch([
       this.db
         .update(rankingMaster)
         .set({
-          deleteFlg: rankingAggregate.deleteFlg,
+          deleteFlg: rankingSnapshot.deleteFlg,
           updatedAt: now,
         })
-        .where(and(eq(rankingMaster.deleteFlg, true), eq(rankingMaster.userId, rankingAggregate.userId), eq(rankingMaster.id, rankingAggregate.id))),
+        .where(and(eq(rankingMaster.deleteFlg, true), eq(rankingMaster.userId, rankingSnapshot.userId), eq(rankingMaster.id, rankingSnapshot.id))),
       this.db
         .update(rankingOrderMaster)
         .set({
-          deleteFlg: rankingAggregate.deleteFlg,
+          deleteFlg: rankingSnapshot.deleteFlg,
           updatedAt: now,
         })
-        .where(and(eq(rankingOrderMaster.deleteFlg, true), eq(rankingOrderMaster.rankingId, rankingAggregate.id))),
+        .where(and(eq(rankingOrderMaster.deleteFlg, true), eq(rankingOrderMaster.rankingId, rankingSnapshot.id))),
     ]);
   }
 }

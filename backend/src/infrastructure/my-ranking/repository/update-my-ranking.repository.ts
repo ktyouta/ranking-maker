@@ -30,26 +30,27 @@ export class UpdateMyRankingRepository implements IUpdateMyRankingRepository {
    */
   async updateRanking(rankingAggregate: RankingAggregate): Promise<void> {
     const now = new Date().toISOString();
-    const rankingOrderEntityList = rankingAggregate.rankingOrderEntityList;
+    const rankingSnapshot = rankingAggregate.toSnapshot();
+    const rankingOrderEntityList = rankingSnapshot.rankingOrderEntityList;
 
     await this.db.batch([
       // 既存の項目は物理削除して総入れ替えする（項目行はソフト削除しない運用のため deleteFlg=false のみ対象）
       this.db
         .delete(rankingOrderMaster)
-        .where(and(eq(rankingOrderMaster.deleteFlg, false), eq(rankingOrderMaster.rankingId, rankingAggregate.id))),
+        .where(and(eq(rankingOrderMaster.deleteFlg, false), eq(rankingOrderMaster.rankingId, rankingSnapshot.id))),
       this.db
         .update(rankingMaster)
         .set({
-          title: rankingAggregate.title,
-          memo: rankingAggregate.memo,
-          publicStatus: rankingAggregate.publicStatus,
+          title: rankingSnapshot.title,
+          memo: rankingSnapshot.memo,
+          publicStatus: rankingSnapshot.publicStatus,
           updatedAt: now
         })
-        .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.userId, rankingAggregate.userId), eq(rankingMaster.id, rankingAggregate.id))),
+        .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.userId, rankingSnapshot.userId), eq(rankingMaster.id, rankingSnapshot.id))),
       ...rankingOrderEntityList.map((e) =>
         this.db.insert(rankingOrderMaster).values({
           id: e.id,
-          rankingId: rankingAggregate.id,
+          rankingId: rankingSnapshot.id,
           order: e.order,
           itemName: e.itemName,
           itemMemo: e.memo,

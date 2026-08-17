@@ -20,6 +20,21 @@ type RankingAggregateReconstructParams = RankingAggregateParams & {
   isDeleted: boolean;
 };
 
+type RankingSnapshot = {
+  id: string;
+  title: string;
+  memo: string | null;
+  publicStatus: number;
+  userId: string;
+  rankingOrderEntityList: {
+    id: string;
+    itemName: string;
+    memo: string | null;
+    order: number;
+  }[];
+  deleteFlg: boolean;
+};
+
 /**
  * ランキング集約
  */
@@ -158,5 +173,28 @@ export class RankingAggregate {
       throw new Error(`削除されていないランキングです。`);
     }
     this._deleteFlg = false;
+  }
+
+  /**
+   * スナップショット作成
+   * @returns 
+   */
+  toSnapshot(): RankingSnapshot {
+    return {
+      id: this._rankingId.value,
+      title: this._rankingTitle.value,
+      memo: this._memo.value,
+      publicStatus: this._publicStatus.value,
+      userId: this._userId.value,
+      rankingOrderEntityList: this._rankingOrderEntityList.map((e) => {
+        return {
+          id: e.id,
+          itemName: e.itemName,
+          memo: e.memo,
+          order: e.order,
+        }
+      }),
+      deleteFlg: this._deleteFlg,
+    };
   }
 }
