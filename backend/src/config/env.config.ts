@@ -5,6 +5,9 @@ export type EnvBindings = {
     // D1データベース
     DB: D1Database;
 
+    // Workers AI
+    AI: Ai;
+
     // JWT認証キー
     ACCESS_TOKEN_JWT_KEY: string;
     ACCESS_TOKEN_EXPIRES: string;

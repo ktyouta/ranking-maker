@@ -1,12 +1,13 @@
 import { err, ok, Result } from "neverthrow";
-import { ICreateMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
+import { ContentModerationDomainService, ContentModerationViolation, ICreateMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
 import { UserId } from "../../../domain/user";
 import { CreateMyRankingSchemaType } from "../../../presentation/my-ranking/schema";
 import { Violation } from "../../../util";
 
 export type CreateMyRankingError =
   | { type: "DUPLICATE_TITLE" }
-  | { type: "VALIDATION"; violations: Violation[] };
+  | { type: "VALIDATION"; violations: Violation[] }
+  | { type: "INAPPROPRIATE_CONTENT"; violations: ContentModerationViolation[] };
 
 type PropsType = {
   userId: UserId;
@@ -19,6 +20,7 @@ type PropsType = {
 export class CreateMyRankingUsecase {
   constructor(private readonly repository: ICreateMyRankingRepository,
     private readonly uniquenessService: RankingTitleUniquenessDomainService,
+    private readonly contentModerationService: ContentModerationDomainService,
   ) { }
 
   /**
@@ -56,6 +58,13 @@ export class CreateMyRankingUsecase {
     }
 
     const rankingAggrigate = aggregateResult.value;
+
+    // 不適切内容チェック
+    const moderationViolations = await this.contentModerationService.moderate(rankingAggrigate);
+    if (moderationViolations.length > 0) {
+      return err({ type: "INAPPROPRIATE_CONTENT", violations: moderationViolations });
+    }
+
     // ランキング作成
     await this.repository.createRanking(rankingAggrigate);
 

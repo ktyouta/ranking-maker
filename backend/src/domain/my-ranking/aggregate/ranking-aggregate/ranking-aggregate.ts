@@ -20,6 +20,14 @@ type RankingAggregateReconstructParams = RankingAggregateParams & {
   isDeleted: boolean;
 };
 
+/**
+ * 不適切内容チェックの判定対象
+ */
+export type ContentModerationTarget = {
+  field: string;
+  value: string;
+};
+
 type RankingSnapshot = {
   id: string;
   title: string;
@@ -176,8 +184,31 @@ export class RankingAggregate {
   }
 
   /**
+   * 不適切内容チェックの判定対象一覧を作成する
+   * @returns ユーザーが自由入力するフィールドの一覧
+   */
+  toModerationTargets(): ContentModerationTarget[] {
+    const targets: ContentModerationTarget[] = [
+      { field: "タイトル", value: this._rankingTitle.value },
+    ];
+
+    if (this._memo.value) {
+      targets.push({ field: "メモ", value: this._memo.value });
+    }
+
+    this._rankingOrderEntityList.forEach((item, index) => {
+      targets.push({ field: `項目名（${index + 1}件目）`, value: item.itemName });
+      if (item.memo) {
+        targets.push({ field: `メモ（${index + 1}件目）`, value: item.memo });
+      }
+    });
+
+    return targets;
+  }
+
+  /**
    * スナップショット作成
-   * @returns 
+   * @returns
    */
   toSnapshot(): RankingSnapshot {
     return {

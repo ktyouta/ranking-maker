@@ -2,8 +2,8 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { CreateMyRankingUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { RankingTitleUniquenessDomainService, UserId } from "../../../domain";
-import { CreateMyRankingRepository, RankingTitleUniquenessRepository } from "../../../infrastructure";
+import { ContentModerationDomainService, RankingTitleUniquenessDomainService, UserId } from "../../../domain";
+import { ContentModerationRepository, CreateMyRankingRepository, RankingTitleUniquenessRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import type { AppEnv } from "../../../types";
 import { formatZodErrors } from "../../../util";
@@ -29,7 +29,8 @@ const createMyRanking = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING,
     const userId = UserId.of(user.userId.value);
     const body = c.req.valid("json");
     const uniquenessService = new RankingTitleUniquenessDomainService(new RankingTitleUniquenessRepository(db));
-    const service = new CreateMyRankingUsecase(new CreateMyRankingRepository(db), uniquenessService);
+    const contentModerationService = new ContentModerationDomainService(new ContentModerationRepository(c.env.AI));
+    const service = new CreateMyRankingUsecase(new CreateMyRankingRepository(db), uniquenessService, contentModerationService);
 
     const result = await service.execute({ userId, body });
 
@@ -46,6 +47,8 @@ const createMyRanking = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING,
             return c.json({ message: "入力エラー", data: error.violations }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
           case "DUPLICATE_TITLE":
             return c.json({ message: "同名のランキングが既に存在します。" }, HTTP_STATUS.CONFLICT);
+          case "INAPPROPRIATE_CONTENT":
+            return c.json({ message: "不適切な内容が含まれています。", data: error.violations }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
           default: {
             const _: never = error;
             return c.json({ message: "サーバーエラー" }, HTTP_STATUS.INTERNAL_SERVER_ERROR);

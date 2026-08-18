@@ -2,8 +2,8 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { UpdateMyRankingUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { RankingId, RankingTitleUniquenessDomainService, UserId } from "../../../domain";
-import { RankingTitleUniquenessRepository, UpdateMyRankingRepository } from "../../../infrastructure";
+import { ContentModerationDomainService, RankingId, RankingTitleUniquenessDomainService, UserId } from "../../../domain";
+import { ContentModerationRepository, RankingTitleUniquenessRepository, UpdateMyRankingRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import { RankingIdParamSchema } from "../../../schema";
 import type { AppEnv } from "../../../types";
@@ -36,7 +36,8 @@ const updateMyRanking = new Hono<AppEnv>().patch(API_ENDPOINT.MY_RANKING,
     const rankingId = RankingId.of(c.req.valid("param").rankingId);
     const body = c.req.valid("json");
     const uniquenessService = new RankingTitleUniquenessDomainService(new RankingTitleUniquenessRepository(db));
-    const service = new UpdateMyRankingUsecase(new UpdateMyRankingRepository(db), uniquenessService);
+    const contentModerationService = new ContentModerationDomainService(new ContentModerationRepository(c.env.AI));
+    const service = new UpdateMyRankingUsecase(new UpdateMyRankingRepository(db), uniquenessService, contentModerationService);
 
     const result = await service.execute({ userId, rankingId, body });
 
@@ -55,6 +56,8 @@ const updateMyRanking = new Hono<AppEnv>().patch(API_ENDPOINT.MY_RANKING,
             return c.json({ message: "更新対象のランキングが存在しません。" }, HTTP_STATUS.NOT_FOUND);
           case "DUPLICATE_TITLE":
             return c.json({ message: "同名のランキングが既に存在します。" }, HTTP_STATUS.CONFLICT);
+          case "INAPPROPRIATE_CONTENT":
+            return c.json({ message: "不適切な内容が含まれています。", data: error.violations }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
           default: {
             const _: never = error;
             return c.json({ message: "サーバーエラー" }, HTTP_STATUS.INTERNAL_SERVER_ERROR);

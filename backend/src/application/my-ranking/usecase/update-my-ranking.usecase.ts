@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { ItemMemo, ItemName, IUpdateMyRankingRepository, Order, PublicStatus, RankingAggregate, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
+import { ContentModerationDomainService, ContentModerationViolation, ItemMemo, ItemName, IUpdateMyRankingRepository, Order, PublicStatus, RankingAggregate, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
 import { UserId } from "../../../domain/user";
 import { UpdateMyRankingSchemaType } from "../../../presentation/my-ranking/schema";
 import { Violation } from "../../../util";
@@ -7,7 +7,8 @@ import { Violation } from "../../../util";
 export type UpdateMyRankingError =
   | { type: "DUPLICATE_TITLE" }
   | { type: "NOT_FOUND" }
-  | { type: "VALIDATION"; violations: Violation[] };
+  | { type: "VALIDATION"; violations: Violation[] }
+  | { type: "INAPPROPRIATE_CONTENT"; violations: ContentModerationViolation[] };
 
 type PropsType = {
   userId: UserId;
@@ -21,6 +22,7 @@ type PropsType = {
 export class UpdateMyRankingUsecase {
   constructor(private readonly repository: IUpdateMyRankingRepository,
     private readonly uniquenessService: RankingTitleUniquenessDomainService,
+    private readonly contentModerationService: ContentModerationDomainService,
   ) { }
 
   /**
@@ -63,6 +65,13 @@ export class UpdateMyRankingUsecase {
     }
 
     const rankingAggrigate = aggregateResult.value;
+
+    // 不適切内容チェック
+    const moderationViolations = await this.contentModerationService.moderate(rankingAggrigate);
+    if (moderationViolations.length > 0) {
+      return err({ type: "INAPPROPRIATE_CONTENT", violations: moderationViolations });
+    }
+
     // ランキング更新
     await this.repository.updateRanking(rankingAggrigate);
 

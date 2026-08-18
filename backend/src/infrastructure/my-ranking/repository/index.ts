@@ -1,3 +1,4 @@
+export * from "./content-moderation.repository";
 export * from "./create-my-ranking.repository";
 export * from "./get-list-my-ranking.repository";
 export * from "./get-my-ranking.repository";
