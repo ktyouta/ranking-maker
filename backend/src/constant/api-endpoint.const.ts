@@ -15,6 +15,8 @@ export const API_ENDPOINT = {
   MY_RANKING: "/api/v1/my-ranking",
   MY_RANKING_ID: "/api/v1/my-ranking/:rankingId",
   MY_RANKING_TRASH_ID_RESTORE: "/api/v1/my-ranking/trash/:rankingId/restore",
+  MY_RANKING_TRASH: "/api/v1/my-ranking/trash",
+  MY_RANKING_TRASH_ID: "/api/v1/my-ranking/trash/:rankingId",
 } as const;
 
 export type ApiEndpointType = (typeof API_ENDPOINT)[keyof typeof API_ENDPOINT];
