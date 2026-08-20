@@ -5,6 +5,24 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        base: "#F2FAF9",
+        surface: "#FFFFFF",
+        accent: {
+          DEFAULT: "#0F9E93",
+          hover: "#0B7A72",
+        },
+        ink: {
+          DEFAULT: "#12302E",
+          sub: "#4B6C69",
+        },
+        line: "#D9EEEB",
+        rank: {
+          gold: "#B4881A",
+          silver: "#7C8B92",
+          bronze: "#A2653A",
+        },
+      },
       keyframes: {
         "fade-in": {
           "0%": { opacity: "0" },

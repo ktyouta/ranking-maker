@@ -3,14 +3,6 @@ export const paths = {
         path: '/',
         getHref: () => paths.home.path,
     },
-    sample: {
-        path: '/sample',
-        getHref: () => paths.sample.path,
-    },
-    mypage: {
-        path: '/mypage',
-        getHref: () => paths.mypage.path,
-    },
     login: {
         path: '/login',
         getHref: (redirectTo?: string) => `${paths.login.path}${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ``}`,

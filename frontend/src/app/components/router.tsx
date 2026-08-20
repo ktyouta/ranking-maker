@@ -1,32 +1,45 @@
+import { NotFound } from '@/components';
 import { paths } from '@/config/paths';
+import { HomeContainer } from '@/features/home/components/home/home-container';
 import { LoginContainer } from '@/features/login/components/login-container';
 import { SignupContainer } from '@/features/signup/components/signup-container';
 import { UpdatePasswordContainer } from '@/features/updatepassword/components/update-password-container';
 import { UpdateUserContainer } from '@/features/updateuser/components/update-user-container';
-import { useEffect, lazy } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigationType, useRoutes } from 'react-router-dom';
+import { DashboardContainer } from './dashboard-container';
 import { GuestRoute } from './guest-route';
 import { ProtectedRoute } from './protected-route';
-
-// lazy import（コード分割）
-const HomeContainer = lazy(() => import('@/features/home/components/home/home-container').then(m => ({ default: m.HomeContainer })));
-const SampleContainer = lazy(() => import('@/features/sample/components/sample/sample-container').then(m => ({ default: m.SampleContainer })));
-const MyPage = lazy(() => import('@/features/mypage/components/mypage/mypage').then(m => ({ default: m.MyPage })));
-const NotFound = lazy(() => import('@/components/pages/notfound/not-found').then(m => ({ default: m.NotFound })));
 
 
 const routerList = [
     {
-        path: paths.home.path,
-        element: (
-            <HomeContainer />
-        )
-    },
-    {
-        path: paths.sample.path,
-        element: (
-            <SampleContainer />
-        )
+        element: <DashboardContainer />,
+        children: [
+            {
+                path: paths.home.path,
+                element: (
+                    <HomeContainer />
+                )
+            },
+            {
+                element: <ProtectedRoute />,
+                children: [
+                    {
+                        path: paths.updateUser.path,
+                        element: (
+                            <UpdateUserContainer />
+                        )
+                    },
+                    {
+                        path: paths.updatePassword.path,
+                        element: (
+                            <UpdatePasswordContainer />
+                        )
+                    }
+                ]
+            }
+        ]
     },
     {
         element: <GuestRoute />,
@@ -41,29 +54,6 @@ const routerList = [
                 path: paths.signup.path,
                 element: (
                     <SignupContainer />
-                )
-            }
-        ]
-    },
-    {
-        element: <ProtectedRoute />,
-        children: [
-            {
-                path: paths.updateUser.path,
-                element: (
-                    <UpdateUserContainer />
-                )
-            },
-            {
-                path: paths.updatePassword.path,
-                element: (
-                    <UpdatePasswordContainer />
-                )
-            },
-            {
-                path: paths.mypage.path,
-                element: (
-                    <MyPage />
                 )
             }
         ]
