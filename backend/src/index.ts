@@ -4,6 +4,8 @@ import { health } from "./presentation/health";
 import { user } from "./presentation/user";
 import { sample } from "./presentation/sample";
 import { userLogin, userLogout, userPassword, refresh, verify } from "./presentation/auth";
+import { ranking } from "./presentation/ranking";
+import { myRanking } from "./presentation/my-ranking";
 import {
   accessLogMiddleware,
   createDbClientMiddleware,
@@ -54,7 +56,9 @@ const routes = app
   .route("/", refresh)
   .route("/", verify)
   .route("/", userLogout)
-  .route("/", userPassword);
+  .route("/", userPassword)
+  .route("/", ranking)
+  .route("/", myRanking);
 
 // RPC用の型エクスポート
 export type AppType = typeof routes;

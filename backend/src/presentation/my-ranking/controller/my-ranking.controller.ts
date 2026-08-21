@@ -10,7 +10,7 @@ import { softDeleteMyRanking } from "./soft-delete-my-ranking.controller";
 import { updateMyRanking } from "./update-my-ranking.controller";
 
 // ルーティング（チェーンで型情報を保持）
-const ranking = new Hono<AppEnv>()
+const myRanking = new Hono<AppEnv>()
     .route("/", getListMyRanking)
     .route("/", getMyRanking)
     .route("/", createMyRanking)
@@ -20,4 +20,4 @@ const ranking = new Hono<AppEnv>()
     .route("/", permanentDeleteMyRanking)
     .route("/", restoreMyRanking);
 
-export { ranking };
+export { myRanking };

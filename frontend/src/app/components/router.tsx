@@ -1,6 +1,6 @@
 import { NotFound } from '@/components';
 import { paths } from '@/config/paths';
-import { HomeContainer } from '@/features/home/components/home/home-container';
+import { HomeContainer } from '@/features/home/components/home-container';
 import { LoginContainer } from '@/features/login/components/login-container';
 import { SignupContainer } from '@/features/signup/components/signup-container';
 import { UpdatePasswordContainer } from '@/features/updatepassword/components/update-password-container';
