@@ -2,6 +2,7 @@ import { NotFound } from '@/components';
 import { paths } from '@/config/paths';
 import { HomeContainer } from '@/features/home/components/home-container';
 import { LoginContainer } from '@/features/login/components/login-container';
+import { MyRankingContainer } from '@/features/my-ranking/components/my-ranking-container';
 import { SignupContainer } from '@/features/signup/components/signup-container';
 import { UpdatePasswordContainer } from '@/features/updatepassword/components/update-password-container';
 import { UpdateUserContainer } from '@/features/updateuser/components/update-user-container';
@@ -25,6 +26,12 @@ const routerList = [
             {
                 element: <ProtectedRoute />,
                 children: [
+                    {
+                        path: paths.myRanking.path,
+                        element: (
+                            <MyRankingContainer />
+                        )
+                    },
                     {
                         path: paths.updateUser.path,
                         element: (

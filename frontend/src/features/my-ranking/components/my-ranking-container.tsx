@@ -1,18 +1,18 @@
 import { Spinner } from '@/components';
 import { Suspense } from 'react';
-import { useRankingList } from "../hooks/use-ranking-list";
-import { Home } from "./home";
+import { useMyRankingList } from "../hooks/use-my-ranking-list";
+import { MyRanking } from './my-ranking';
 
-function HomeContent() {
-    const props = useRankingList();
+function MyRankingContent() {
+    const props = useMyRankingList();
     return (
-        <Home
+        <MyRanking
             {...props}
         />
     );
 }
 
-export const HomeContainer = () => {
+export const MyRankingContainer = () => {
     return (
         <Suspense
             fallback={
@@ -21,7 +21,7 @@ export const HomeContainer = () => {
                 </div>
             }
         >
-            <HomeContent />
+            <MyRankingContent />
         </Suspense>
     );
 };

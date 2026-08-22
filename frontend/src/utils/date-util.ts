@@ -4,10 +4,8 @@ type DateFormat = 'yyyy-MM-dd HH:mm:ss' | 'yyyy/MM/dd' | 'HH:mm:ss' | 'dd-MM-yyy
  * 現在日時を取得
  */
 export function getNowDatetime(format: DateFormat) {
-
     return getFormatDatetime(new Date(), format);
 }
-
 
 /**
  * 日付をフォーマット変換する
@@ -27,7 +25,6 @@ export function getFormatDatetime(date: Date, format: DateFormat): string {
     let retDate = "";
 
     if (format === 'yyyyMMdd') {
-
         retDate = `${year}${month}${day}`;
     }
     else {
@@ -43,13 +40,22 @@ export function getFormatDatetime(date: Date, format: DateFormat): string {
     return retDate;
 }
 
-
 /**
  * 現在日付(yyyyMMdd)を取得する
  * @param format 
  * @returns 
  */
 export function getNowDateYYYYMMDD() {
-
     return getFormatDatetime(new Date(), 'yyyyMMdd');
+}
+
+/**
+ * 日付を YYYY/MM/DD 形式に整形する
+ */
+export function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}/${month}/${day}`;
 }

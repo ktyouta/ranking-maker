@@ -3,6 +3,10 @@ export const paths = {
         path: '/',
         getHref: () => paths.home.path,
     },
+    myRanking: {
+        path: '/my-ranking',
+        getHref: () => paths.myRanking.path,
+    },
     login: {
         path: '/login',
         getHref: (redirectTo?: string) => `${paths.login.path}${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ``}`,
