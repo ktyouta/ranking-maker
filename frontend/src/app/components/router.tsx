@@ -1,5 +1,6 @@
 import { NotFound } from '@/components';
 import { paths } from '@/config/paths';
+import { CreateRankingContainer } from '@/features/create-ranking/components/create-ranking-container';
 import { HomeContainer } from '@/features/home/components/home-container';
 import { LoginContainer } from '@/features/login/components/login-container';
 import { MyRankingContainer } from '@/features/my-ranking/components/my-ranking-container';
@@ -30,6 +31,12 @@ const routerList = [
                         path: paths.myRanking.path,
                         element: (
                             <MyRankingContainer />
+                        )
+                    },
+                    {
+                        path: paths.rankingCreate.path,
+                        element: (
+                            <CreateRankingContainer />
                         )
                     },
                     {

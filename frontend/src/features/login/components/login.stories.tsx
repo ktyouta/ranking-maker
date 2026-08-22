@@ -34,6 +34,9 @@ export const Default: Story = {
                     alert("アカウント作成リンクが押されました");
                 }}
                 handleKeyPress={() => {}}
+                back={() => {
+                    alert("戻るボタンが押されました");
+                }}
             />
         );
     },

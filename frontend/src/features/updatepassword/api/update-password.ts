@@ -2,7 +2,7 @@ import { rpc } from '@/lib/rpc-client';
 import { useMutation } from '@tanstack/react-query';
 import type { InferRequestType, InferResponseType } from 'hono/client';
 
-const endpoint = rpc.api.v1['frontuser-password'][':userId'].$patch;
+const endpoint = rpc.api.v1['user-password'][':userId'].$patch;
 
 type SuccessResponseType = InferResponseType<typeof endpoint, 200>;
 type RequestType = InferRequestType<typeof endpoint>;

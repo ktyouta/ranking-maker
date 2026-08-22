@@ -6,7 +6,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        base: "#F2FAF9",
+        // Tailwind のデフォルト fontSize スケールに "base" キーが存在するため、
+        // colors.base にすると `.text-base` の意味が「文字サイズ 1rem」から
+        // 「文字色 #F2FAF9」に上書きされてしまう（同名セレクタでの衝突）。
+        // それを避けるため canvas という別名にしている。
+        canvas: "#F2FAF9",
         surface: "#FFFFFF",
         accent: {
           DEFAULT: "#0F9E93",

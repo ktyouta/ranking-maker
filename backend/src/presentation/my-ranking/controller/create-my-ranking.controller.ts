@@ -6,7 +6,7 @@ import { ContentModerationDomainService, RankingTitleUniquenessDomainService, Us
 import { ContentModerationRepository, CreateMyRankingRepository, RankingTitleUniquenessRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import type { AppEnv } from "../../../types";
-import { formatZodErrors } from "../../../util";
+import { formatZodErrors, toValidationErrors } from "../../../util";
 import { CreateMyRankingResponseDto } from "../dto";
 import { CreateMyRankingSchema } from "../schema";
 
@@ -44,11 +44,11 @@ const createMyRanking = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING,
       (error) => {
         switch (error.type) {
           case "VALIDATION":
-            return c.json({ message: "入力エラー", data: error.violations }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
+            return c.json({ message: "入力エラー", data: toValidationErrors(error.violations) }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
           case "DUPLICATE_TITLE":
             return c.json({ message: "同名のランキングが既に存在します。" }, HTTP_STATUS.CONFLICT);
           case "INAPPROPRIATE_CONTENT":
-            return c.json({ message: "不適切な内容が含まれています。", data: error.violations }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
+            return c.json({ message: "不適切な内容が含まれています。", data: toValidationErrors(error.violations) }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
           default: {
             const _: never = error;
             return c.json({ message: "サーバーエラー" }, HTTP_STATUS.INTERNAL_SERVER_ERROR);

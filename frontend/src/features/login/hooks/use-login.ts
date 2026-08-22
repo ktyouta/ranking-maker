@@ -20,7 +20,7 @@ export function useLogin() {
     // ログインユーザー情報
     const loginUser = LoginUserContext.useCtx();
     // ルーティング用
-    const { appNavigate } = useAppNavigation();
+    const { appNavigate, appGoBack } = useAppNavigation();
     // リダイレクト先
     const [searchParams] = useSearchParams();
     const redirectTo = searchParams.get('redirectTo') || paths.home.path;
@@ -71,6 +71,13 @@ export function useLogin() {
     }
 
     /**
+     * 戻るボタン押下
+     */
+    function back() {
+        appGoBack(paths.home.path);
+    }
+
+    /**
      * エンターキー押下時イベント
      */
     function handleKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -89,5 +96,6 @@ export function useLogin() {
         redirectTo,
         navigateSignup,
         handleKeyPress,
+        back,
     }
 }

@@ -1,6 +1,6 @@
 import { Badge } from '@/components';
+import { PUBLIC_STATUS } from '@/constants/public-status';
 import { IoTrophyOutline } from 'react-icons/io5';
-import { PUBLIC_STATUS } from '../constants/public-status';
 
 type RankingListItem = {
     id: string;

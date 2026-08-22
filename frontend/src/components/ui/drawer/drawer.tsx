@@ -94,7 +94,7 @@ export function Drawer({
             {/* Drawer Content */}
             <div
                 className={cn(
-                    "fixed z-10 bg-base shadow-xl p-6",
+                    "fixed z-10 bg-canvas shadow-xl p-6",
                     sideClasses[side],
                     roundedClasses[side],
                     widthClassName

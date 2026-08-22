@@ -1,11 +1,12 @@
 export const paths = {
     home: {
         path: '/',
-        getHref: () => paths.home.path,
     },
     myRanking: {
         path: '/my-ranking',
-        getHref: () => paths.myRanking.path,
+    },
+    rankingCreate: {
+        path: '/ranking-create',
     },
     login: {
         path: '/login',

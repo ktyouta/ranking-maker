@@ -92,14 +92,14 @@ export function UpdatePassword(props: PropsType) {
                     <div className="flex flex-col sm:flex-row gap-3 mt-4">
                         <button
                             type="button"
-                            className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors"
+                            className="flex-1 bg-[#E9EAED] hover:bg-[#DFE1E5] text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors"
                             onClick={back}
                         >
                             戻る
                         </button>
                         <button
                             type="button"
-                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                            className="flex-1 bg-accent hover:bg-accent-hover text-white font-medium py-3 px-4 rounded-lg transition-colors"
                             onClick={handleConfirm}
                         >
                             変更
