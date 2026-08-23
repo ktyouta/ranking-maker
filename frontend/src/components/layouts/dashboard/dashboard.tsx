@@ -100,7 +100,7 @@ export function Dashboard(props: PropsType) {
             <div className="flex min-w-0 flex-1 flex-col">
 
                 {/* ヘッダー */}
-                <header className="sticky top-0 z-20 flex h-14 sm:h-16 w-full items-center border-b border-line bg-surface px-3 text-ink sm:shadow-sm pl-6 pr-4 sm:pr-[50px]">
+                <header className="flex h-14 sm:h-16 w-full items-center border-b border-line bg-surface px-3 text-ink sm:shadow-sm pl-6 pr-4 sm:pr-[50px]">
                     <button
                         type="button"
                         onClick={() => setIsSidebarOpen(true)}
