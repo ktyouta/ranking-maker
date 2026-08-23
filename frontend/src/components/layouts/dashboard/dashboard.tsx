@@ -1,10 +1,9 @@
 import { LoginUserType } from '@/app/api/verify';
 import { Footer } from '@/components';
-import { Drawer } from '@/components/ui/drawer/drawer';
 import { paths } from '@/config/paths';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { HiBars3, HiOutlineArrowLeftOnRectangle, HiOutlineArrowRightOnRectangle, HiOutlinePlusCircle, HiOutlineUser, HiOutlineUserCircle } from 'react-icons/hi2';
+import { HiBars3, HiOutlineArrowLeftOnRectangle, HiOutlineArrowRightOnRectangle, HiOutlineHome, HiOutlineListBullet, HiOutlinePlusCircle, HiOutlineUserCircle } from 'react-icons/hi2';
 import { IoTriangle } from "react-icons/io5";
 import { Link, NavLink } from 'react-router-dom';
 
@@ -19,144 +18,165 @@ type PropsType = {
     logout(): void;
 };
 
+// サイドバーを常時展開表示する最小幅（Tailwind の lg ブレークポイント）
+const SIDEBAR_ALWAYS_OPEN_MIN_WIDTH_PX = 1024;
+
+const navItems = [
+    { to: paths.home.path, label: 'ホーム', icon: <HiOutlineHome className="h-5 w-5 shrink-0" /> },
+    { to: paths.myRanking.path, label: 'マイランキング', icon: <HiOutlineListBullet className="h-5 w-5 shrink-0" /> },
+    { to: paths.rankingCreate.path, label: 'ランキング作成', icon: <HiOutlinePlusCircle className="h-5 w-5 shrink-0" /> },
+];
+
 export function Dashboard(props: PropsType) {
-    // ドロワー開閉フラグ
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    // サイドバー展開フラグ。true=展開(w-64) / false=折りたたみ
+    // lg未満: 展開時のみオーバーレイ表示。折りたたみ時は非表示(w-0)。ヘッダーのハンバーガーで開く。
+    // lg以上: flex レイアウト内で幅のみ変化。折りたたみ時はアイコン表示(w-20)。
+    const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= SIDEBAR_ALWAYS_OPEN_MIN_WIDTH_PX);
     // ユーザーメニュー表示フラグ
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
     return (
-        <div className="flex min-h-screen w-full flex-col bg-canvas">
+        <div className="flex min-h-screen w-full bg-canvas">
 
-            {/* ヘッダー */}
-            <header className="sticky top-0 z-30 flex h-16 w-full items-center gap-3 bg-accent px-3 text-white shadow-sm">
+            {/* オーバーレイ背景（lg未満・サイドバー展開時のみ表示） */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
+            {/* サイドバー */}
+            <nav
+                className={`flex flex-col overflow-hidden bg-accent shadow-md transition-all duration-300 fixed inset-y-0 left-0 z-40 lg:relative lg:inset-auto lg:z-auto ${isSidebarOpen ? 'w-64' : 'w-0 lg:w-20'}`}
+            >
+                {/* 開閉ボタン */}
                 <button
                     type="button"
-                    onClick={() => setIsDrawerOpen(true)}
-                    className="p-2"
-                    aria-label="メニューを開く"
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    className={`flex h-16 shrink-0 items-center text-white/80 hover:text-white ${isSidebarOpen ? 'justify-end px-6' : 'justify-center'} mb-[45px]`}
+                    aria-label={isSidebarOpen ? 'サイドバーを閉じる' : 'サイドバーを開く'}
                 >
                     <HiBars3 className="h-6 w-6" />
                 </button>
-                <h1 className="text-[18px] sm:text-[24px] font-bold flex-1 tracking-wide cursor-pointer"
-                    onClick={props.moveHome}
-                >
-                    Ranking Maker
-                </h1>
-                {
-                    props.loginUser &&
-                    // ユーザーアイコン
-                    <div className='flex items-center relative'
-                        onClick={() => { setIsUserMenuOpen(true) }}
-                    >
-                        <span className='mr-[10px] text-base sm:text-[18px] cursor-pointer'>
-                            {props.loginUser.name}
-                        </span>
-                        <HiOutlineUserCircle className="size-8 cursor-pointer mr-[12px]" />
-                        <IoTriangle className={`size-4 cursor-pointer ${isUserMenuOpen ? 'rotate-0' : 'rotate-180'}`} />
-                        {/* ユーザーメニュー */}
-                        {
-                            isUserMenuOpen &&
-                            <div className='w-64 absolute top-12 right-0 text-sm rounded-lg bg-white border border-gray-200 shadow-lg z-20 py-2'>
-                                <button className='block w-full text-left px-5 py-3 text-gray-700 hover:bg-gray-100 transition-colors'
-                                    onClick={props.moveUserInfoUpdate}
-                                >
-                                    ユーザー情報更新
-                                </button>
-                                <button className='block w-full text-left px-5 py-3 text-gray-700 hover:bg-gray-100 transition-colors'
-                                    onClick={props.movePasswordUpdate}
-                                >
-                                    パスワード更新
-                                </button>
-                                <div className='border-t border-gray-200 my-2' />
-                                <button className='block w-full text-left px-5 py-3 text-gray-700 hover:bg-gray-100 transition-colors'
-                                    onClick={props.logout}
-                                >
-                                    ログアウト
-                                </button>
-                            </div>
-                        }
-                    </div>
-                }
-                {/* ログインボタン（未ログイン時）。ホバー前提だとタップ操作で押せる場所だと伝わらないため、常時うっすら背景を付ける */}
-                {
-                    !props.loginUser &&
-                    <Link
-                        to={props.loginHref}
-                        className='flex items-center gap-[7px] rounded-full bg-white/[0.16] px-4 py-2 text-base font-bold text-white hover:bg-white/25'
-                    >
-                        <HiOutlineArrowLeftOnRectangle className="size-[18px]" />
-                        ログイン
-                    </Link>
-                }
-            </header>
 
-            {/* ナビゲーションドロワー */}
-            <Drawer
-                isOpen={isDrawerOpen}
-                onClose={() => setIsDrawerOpen(false)}
-                side="left"
-                widthClassName="w-64 max-w-xs"
-                title="メニュー"
-            >
-                <nav className="-mx-6 flex flex-col">
-                    <NavLink
-                        to={paths.home.path}
-                        onClick={() => setIsDrawerOpen(false)}
-                        className={({ isActive }) =>
-                            `flex items-center px-6 py-4 text-sm font-medium transition-colors whitespace-nowrap ${isActive
-                                ? 'text-accent shadow-[inset_3px_0px_0px_#0F9E93]'
-                                : 'text-ink hover:bg-canvas hover:text-accent'
-                            }`
-                        }
-                    >
-                        <HiOutlineUser className="mr-3 h-5 w-5 shrink-0" />
-                        <span>ホーム</span>
-                    </NavLink>
-                    <NavLink
-                        to={paths.myRanking.path}
-                        onClick={() => setIsDrawerOpen(false)}
-                        className={({ isActive }) =>
-                            `flex items-center px-6 py-4 text-sm font-medium transition-colors whitespace-nowrap ${isActive
-                                ? 'text-accent shadow-[inset_3px_0px_0px_#0F9E93]'
-                                : 'text-ink hover:bg-canvas hover:text-accent'
-                            }`
-                        }
-                    >
-                        <HiOutlineUser className="mr-3 h-5 w-5 shrink-0" />
-                        <span>マイランキング</span>
-                    </NavLink>
-                    <NavLink
-                        to={paths.rankingCreate.path}
-                        onClick={() => setIsDrawerOpen(false)}
-                        className={({ isActive }) =>
-                            `flex items-center px-6 py-4 text-sm font-medium transition-colors whitespace-nowrap ${isActive
-                                ? 'text-accent shadow-[inset_3px_0px_0px_#0F9E93]'
-                                : 'text-ink hover:bg-canvas hover:text-accent'
-                            }`
-                        }
-                    >
-                        <HiOutlinePlusCircle className="mr-3 h-5 w-5 shrink-0" />
-                        <span>ランキング作成</span>
-                    </NavLink>
+                {/* メニューリスト */}
+                <div className="flex-1 overflow-y-auto pb-3">
+                    {
+                        navItems.map((item) => (
+                            <NavLink
+                                key={item.to}
+                                to={item.to}
+                                onClick={() => { if (window.innerWidth < SIDEBAR_ALWAYS_OPEN_MIN_WIDTH_PX) setIsSidebarOpen(false); }}
+                                className={({ isActive }) =>
+                                    `flex items-center px-6 py-4 text-base font-medium transition-colors whitespace-nowrap ${isSidebarOpen ? '' : 'justify-center'
+                                    } ${isActive
+                                        ? 'bg-white/20 text-white shadow-[inset_3px_0px_0px_#FFFFFF]'
+                                        : 'text-white/80 hover:bg-white/10 hover:text-white'
+                                    }`
+                                }
+                            >
+                                <span className={isSidebarOpen ? 'mr-3' : ''}>{item.icon}</span>
+                                <span className={isSidebarOpen ? 'block' : 'hidden'}>{item.label}</span>
+                            </NavLink>
+                        ))
+                    }
                     <button
                         type="button"
                         onClick={props.logout}
                         disabled={props.isLoggingOut}
-                        className="flex items-center px-6 py-4 text-left text-sm font-medium text-ink transition-colors hover:bg-canvas hover:text-accent disabled:opacity-50"
+                        className={`flex w-full items-center px-6 py-4 text-left text-base font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-50 whitespace-nowrap ${isSidebarOpen ? '' : 'justify-center'
+                            }`}
                     >
-                        <HiOutlineArrowRightOnRectangle className="mr-3 h-5 w-5 shrink-0" />
-                        <span>ログアウト</span>
+                        <span className={isSidebarOpen ? 'mr-3' : ''}>
+                            <HiOutlineArrowRightOnRectangle className="h-5 w-5 shrink-0" />
+                        </span>
+                        <span className={isSidebarOpen ? 'block' : 'hidden'}>ログアウト</span>
                     </button>
-                </nav>
-            </Drawer>
+                </div>
+            </nav>
 
-            {/* メインコンテンツ */}
-            <main className="flex w-full flex-1 flex-col">
-                {props.children}
-            </main>
+            {/* メインエリア */}
+            <div className="flex min-w-0 flex-1 flex-col">
 
-            <Footer />
+                {/* ヘッダー */}
+                <header className="sticky top-0 z-20 flex h-14 sm:h-16 w-full items-center border-b border-line bg-surface px-3 text-ink sm:shadow-sm pl-6 pr-4 sm:pr-[50px]">
+                    <button
+                        type="button"
+                        onClick={() => setIsSidebarOpen(true)}
+                        className={`mr-3 text-ink-sub hover:text-ink lg:hidden ${isSidebarOpen ? 'hidden' : ''}`}
+                        aria-label="メニューを開く"
+                    >
+                        <HiBars3 className="h-6 w-6" />
+                    </button>
+                    <div className="flex-1">
+                        <span className="text-[18px] sm:text-[28px] font-bold text-accent cursor-pointer"
+                            onClick={props.moveHome}
+                        >
+                            Ranking Maker
+                        </span>
+                    </div>
+                    {
+                        props.loginUser &&
+                        // ユーザーアイコン
+                        <div className='flex items-center relative cursor-pointer'
+                            onClick={() => { setIsUserMenuOpen(true) }}
+                        >
+                            <span className='mr-[10px] text-base sm:text-[18px] cursor-pointer'>
+                                {props.loginUser.name}
+                            </span>
+                            <HiOutlineUserCircle className="size-8 cursor-pointer mr-[12px]" />
+                            <IoTriangle className={`size-4 cursor-pointer ${isUserMenuOpen ? 'rotate-0' : 'rotate-180'}`} />
+                            {/* ユーザーメニュー */}
+                            {
+                                isUserMenuOpen &&
+                                <div className='w-64 absolute top-12 right-0 text-sm rounded-lg bg-surface border border-line shadow-lg z-20 py-2'>
+                                    <button className='block w-full text-left px-5 py-3 text-ink hover:bg-canvas transition-colors'
+                                        onClick={props.moveUserInfoUpdate}
+                                    >
+                                        ユーザー情報更新
+                                    </button>
+                                    <button className='block w-full text-left px-5 py-3 text-ink hover:bg-canvas transition-colors'
+                                        onClick={props.movePasswordUpdate}
+                                    >
+                                        パスワード更新
+                                    </button>
+                                    <div className='border-t border-line my-2' />
+                                    <button className='block w-full text-left px-5 py-3 text-ink hover:bg-canvas transition-colors'
+                                        onClick={props.logout}
+                                    >
+                                        ログアウト
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    }
+                    {/* ログインボタン（未ログイン時） */}
+                    {
+                        !props.loginUser &&
+                        <Link
+                            to={props.loginHref}
+                            className='flex items-center gap-[7px] rounded-full bg-accent px-4 py-2 text-base font-bold text-white hover:bg-accent-hover'
+                        >
+                            <HiOutlineArrowLeftOnRectangle className="size-[18px]" />
+                            ログイン
+                        </Link>
+                    }
+                    {
+                        isUserMenuOpen &&
+                        <div className='fixed inset-0 z-10'
+                            onClick={() => { setIsUserMenuOpen(false) }}
+                        />
+                    }
+                </header>
+
+                {/* メインコンテンツ */}
+                <main className="flex w-full flex-1 flex-col">
+                    {props.children}
+                </main>
+
+                <Footer />
+            </div>
         </div>
     );
 }
