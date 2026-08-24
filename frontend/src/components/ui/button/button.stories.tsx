@@ -8,7 +8,7 @@ const meta: Meta<PropsType> = {
     argTypes: {
         colorType: {
             control: "select",
-            options: ["red", "blue", "green"],
+            options: ["red", "blue", "green", "accent"],
         },
         sizeType: {
             control: "select",
@@ -42,6 +42,14 @@ export const Green: Story = {
         colorType: "green",
         sizeType: "medium",
         children: "緑ボタン",
+    },
+};
+
+export const Accent: Story = {
+    args: {
+        colorType: "accent",
+        sizeType: "medium",
+        children: "アクセントボタン",
     },
 };
 

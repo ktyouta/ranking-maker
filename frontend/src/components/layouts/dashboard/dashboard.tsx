@@ -1,31 +1,30 @@
 import { LoginUserType } from '@/app/api/verify';
-import { Footer } from '@/components';
-import { paths } from '@/config/paths';
+import { Button, Footer } from '@/components';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { HiBars3, HiOutlineArrowLeftOnRectangle, HiOutlineArrowRightOnRectangle, HiOutlineHome, HiOutlineListBullet, HiOutlinePlusCircle, HiOutlineUserCircle } from 'react-icons/hi2';
+import { HiBars3, HiOutlineArrowLeftOnRectangle, HiOutlineArrowRightOnRectangle, HiOutlineUserCircle } from 'react-icons/hi2';
 import { IoTriangle } from "react-icons/io5";
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 type PropsType = {
     children: ReactNode;
     isLoggingOut: boolean;
     moveHome: () => void;
     loginUser: LoginUserType | null;
-    loginHref: string;
+    moveLogin: () => void;
     moveUserInfoUpdate(): void;
     movePasswordUpdate(): void;
     logout(): void;
+    navItems: {
+        to: string;
+        label: string;
+        icon: ReactNode;
+    }[];
 };
 
 // サイドバーを常時展開表示する最小幅（Tailwind の lg ブレークポイント）
 const SIDEBAR_ALWAYS_OPEN_MIN_WIDTH_PX = 1024;
 
-const navItems = [
-    { to: paths.home.path, label: 'ホーム', icon: <HiOutlineHome className="h-5 w-5 shrink-0" /> },
-    { to: paths.myRanking.path, label: 'マイランキング', icon: <HiOutlineListBullet className="h-5 w-5 shrink-0" /> },
-    { to: paths.rankingCreate.path, label: 'ランキング作成', icon: <HiOutlinePlusCircle className="h-5 w-5 shrink-0" /> },
-];
 
 export function Dashboard(props: PropsType) {
     // サイドバー展開フラグ。true=展開(w-64) / false=折りたたみ
@@ -63,7 +62,7 @@ export function Dashboard(props: PropsType) {
                 {/* メニューリスト */}
                 <div className="flex-1 overflow-y-auto pb-3">
                     {
-                        navItems.map((item) => (
+                        props.navItems.map((item) => (
                             <NavLink
                                 key={item.to}
                                 to={item.to}
@@ -71,7 +70,7 @@ export function Dashboard(props: PropsType) {
                                 className={({ isActive }) =>
                                     `flex items-center px-6 py-4 text-base font-medium transition-colors whitespace-nowrap ${isSidebarOpen ? '' : 'justify-center'
                                     } ${isActive
-                                        ? 'bg-white/20 text-white shadow-[inset_3px_0px_0px_#FFFFFF]'
+                                        ? 'bg-white/20 text-white shadow-[inset_3px_0px_0px_#FFFFFF] hover:text-white'
                                         : 'text-white/80 hover:bg-white/10 hover:text-white'
                                     }`
                                 }
@@ -81,18 +80,21 @@ export function Dashboard(props: PropsType) {
                             </NavLink>
                         ))
                     }
-                    <button
-                        type="button"
-                        onClick={props.logout}
-                        disabled={props.isLoggingOut}
-                        className={`flex w-full items-center px-6 py-4 text-left text-base font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-50 whitespace-nowrap ${isSidebarOpen ? '' : 'justify-center'
-                            }`}
-                    >
-                        <span className={isSidebarOpen ? 'mr-3' : ''}>
-                            <HiOutlineArrowRightOnRectangle className="h-5 w-5 shrink-0" />
-                        </span>
-                        <span className={isSidebarOpen ? 'block' : 'hidden'}>ログアウト</span>
-                    </button>
+                    {
+                        !!props.loginUser &&
+                        <button
+                            type="button"
+                            onClick={props.logout}
+                            disabled={props.isLoggingOut}
+                            className={`flex w-full items-center px-6 py-4 text-left text-base font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-50 whitespace-nowrap ${isSidebarOpen ? '' : 'justify-center'
+                                }`}
+                        >
+                            <span className={isSidebarOpen ? 'mr-3' : ''}>
+                                <HiOutlineArrowRightOnRectangle className="h-5 w-5 shrink-0" />
+                            </span>
+                            <span className={isSidebarOpen ? 'block' : 'hidden'}>ログアウト</span>
+                        </button>
+                    }
                 </div>
             </nav>
 
@@ -154,13 +156,15 @@ export function Dashboard(props: PropsType) {
                     {/* ログインボタン（未ログイン時） */}
                     {
                         !props.loginUser &&
-                        <Link
-                            to={props.loginHref}
-                            className='flex items-center gap-[7px] rounded-full bg-accent px-4 py-2 text-base font-bold text-white hover:bg-accent-hover'
+                        <Button
+                            colorType="accent"
+                            sizeType="medium"
+                            onClick={props.moveLogin}
+                            className="flex items-center gap-[7px] rounded-full py-2 text-base font-bold"
                         >
                             <HiOutlineArrowLeftOnRectangle className="size-[18px]" />
                             ログイン
-                        </Link>
+                        </Button>
                     }
                     {
                         isUserMenuOpen &&
