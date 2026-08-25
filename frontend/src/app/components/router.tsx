@@ -38,22 +38,22 @@ const routerList = [
                         element: (
                             <CreateRankingContainer />
                         )
-                    },
-                    {
-                        path: paths.updateUser.path,
-                        element: (
-                            <UpdateUserContainer />
-                        )
-                    },
-                    {
-                        path: paths.updatePassword.path,
-                        element: (
-                            <UpdatePasswordContainer />
-                        )
                     }
                 ]
             }
         ]
+    },
+    {
+        path: paths.updateUser.path,
+        element: (
+            <UpdateUserContainer />
+        )
+    },
+    {
+        path: paths.updatePassword.path,
+        element: (
+            <UpdatePasswordContainer />
+        )
     },
     {
         element: <GuestRoute />,

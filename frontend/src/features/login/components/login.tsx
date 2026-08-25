@@ -32,7 +32,7 @@ export function Login(props: PropsType) {
     } = props;
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-8">
+        <div className="min-h-screen bg-canvas flex items-center justify-center px-4 py-8">
             {isLoading && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10">
                     <Spinner size={40} />
@@ -90,7 +90,7 @@ export function Login(props: PropsType) {
                     <div className="flex flex-col sm:flex-row gap-3 mt-4">
                         <button
                             type="button"
-                            className="flex-1 bg-[#E9EAED] hover:bg-[#DFE1E5] text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors"
+                            className="flex-1 border-2 border-accent/30 bg-surface hover:bg-canvas text-ink-sub font-medium py-3 px-4 rounded-lg transition-colors"
                             onClick={back}
                         >
                             戻る
