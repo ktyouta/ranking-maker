@@ -87,7 +87,7 @@ export function CreateRanking(props: PropsType) {
                         タイトル
                     </label>
                     <Textbox
-                        className="h-auto w-full rounded-none border-0 border-b-2 border-accent/40 bg-transparent px-1 py-2 text-xl font-bold text-ink focus:border-accent focus:ring-0 sm:text-2xl"
+                        className="h-auto w-full rounded-none border-0 border-b-2 border-accent/50 bg-transparent px-1 py-2 text-xl font-bold text-ink focus:border-accent focus:ring-0 sm:text-2xl"
                         placeholder="例: 好きなラーメン屋ランキング"
                         registration={register('title')}
                     />
@@ -99,7 +99,7 @@ export function CreateRanking(props: PropsType) {
                     <label className="mb-3 block text-lg font-semibold text-ink">
                         公開する
                     </label>
-                    <div className="flex items-center justify-between rounded-xl border-2 border-accent/40 bg-surface px-4 py-4 shadow-sm">
+                    <div className="flex items-center justify-between rounded-xl border-2 border-accent/50 bg-surface px-4 py-4 shadow-sm">
                         <p className="text-base text-ink-sub">
                             他のユーザーの一覧に表示されます
                         </p>
@@ -128,7 +128,7 @@ export function CreateRanking(props: PropsType) {
                         メモ（任意）
                     </label>
                     <Textarea
-                        className="w-full rounded-lg border-2 border-accent/40 bg-surface px-3 py-2 text-base text-ink shadow-sm focus:border-accent focus:ring-0"
+                        className="w-full rounded-lg border-2 border-accent/50 bg-surface px-3 py-2 text-base text-ink shadow-sm focus:border-accent focus:ring-0"
                         placeholder="このランキングについてのメモ"
                         registration={register('memo')}
                     />

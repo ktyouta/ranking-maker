@@ -59,7 +59,7 @@ export function ItemRow(props: PropsType) {
         <div
             ref={setNodeRef}
             style={style}
-            className="group animate-fade-in rounded-xl border-2 border-accent/20 bg-surface p-5 shadow-sm"
+            className="group animate-fade-in rounded-xl border-2 border-accent/30 bg-surface p-5 shadow-sm"
         >
             <div className="flex items-start gap-3">
                 <div className="flex-1">
@@ -73,7 +73,7 @@ export function ItemRow(props: PropsType) {
                         >
                             <HiOutlineBars3 className="h-5 w-5" />
                         </button>
-                        <span className={`mt-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-base font-bold shadow-sm ${rankBadgeClass}`}>
+                        <span className={`mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-base font-bold shadow-sm ${rankBadgeClass}`}>
                             {index + 1}
                         </span>
                         <div className="flex-1">
