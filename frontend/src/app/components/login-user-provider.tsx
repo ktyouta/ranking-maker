@@ -23,10 +23,10 @@ export function LoginUserProvider(props: PropsType) {
     const navigate = useNavigate();
 
     /**
-     * ログイン画面に遷移
+     * ホーム画面に遷移
      */
-    function moveLogin() {
-        navigate(paths.login.getHref(window.location.pathname));
+    function moveHome() {
+        navigate(paths.home.path);
     }
 
     /**
@@ -40,7 +40,7 @@ export function LoginUserProvider(props: PropsType) {
     useEffect(() => {
         registerResetLogin({
             resetUser,
-            moveLogin,
+            moveHome,
         });
     }, []);
 

@@ -62,27 +62,31 @@ export function ItemRow(props: PropsType) {
             className="group animate-fade-in rounded-xl border-2 border-accent/20 bg-surface p-5 shadow-sm"
         >
             <div className="flex items-start gap-3">
-                <button
-                    type="button"
-                    className="mt-2 cursor-grab touch-none text-ink-sub opacity-40 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
-                    aria-label="ドラッグして並び替え"
-                    {...attributes}
-                    {...listeners}
-                >
-                    <HiOutlineBars3 className="h-5 w-5" />
-                </button>
-                <span className={`mt-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-base font-bold shadow-sm ${rankBadgeClass}`}>
-                    {index + 1}
-                </span>
                 <div className="flex-1">
-                    <Textbox
-                        className="h-auto w-full rounded-none border-0 border-b-2 border-line bg-transparent px-1 py-1.5 text-lg font-semibold text-ink focus:border-accent focus:ring-0"
-                        placeholder="項目名"
-                        registration={register(`items.${index}.itemName`)}
-                    />
-                    {errors.items?.[index]?.itemName?.message && (
-                        <p className="mt-2 text-base text-red-500">{errors.items[index]?.itemName?.message}</p>
-                    )}
+                    <div className="flex items-start gap-3">
+                        <button
+                            type="button"
+                            className="mt-2 cursor-grab touch-none text-ink-sub opacity-40 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+                            aria-label="ドラッグして並び替え"
+                            {...attributes}
+                            {...listeners}
+                        >
+                            <HiOutlineBars3 className="h-5 w-5" />
+                        </button>
+                        <span className={`mt-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-base font-bold shadow-sm ${rankBadgeClass}`}>
+                            {index + 1}
+                        </span>
+                        <div className="flex-1">
+                            <Textbox
+                                className="h-auto w-full rounded-none border-0 border-b-2 border-line bg-transparent px-1 py-1.5 text-lg font-semibold text-ink focus:border-accent focus:ring-0"
+                                placeholder="項目名"
+                                registration={register(`items.${index}.itemName`)}
+                            />
+                            {errors.items?.[index]?.itemName?.message && (
+                                <p className="mt-2 text-base text-red-500">{errors.items[index]?.itemName?.message}</p>
+                            )}
+                        </div>
+                    </div>
                     <Textarea
                         className="mt-3 w-full rounded-lg border border-line bg-canvas/60 px-3 py-2 text-base text-ink-sub focus:border-accent focus:bg-canvas focus:ring-0"
                         placeholder="メモ（任意）"

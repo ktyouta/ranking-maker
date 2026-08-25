@@ -102,7 +102,7 @@ export function Dashboard(props: PropsType) {
             <div className="flex min-w-0 flex-1 flex-col">
 
                 {/* ヘッダー */}
-                <header className="flex h-14 sm:h-16 w-full items-center border-b border-line bg-surface px-3 text-ink sm:shadow-sm pl-6 pr-4 sm:pr-[50px]">
+                <header className="flex h-14 sm:h-[70px] w-full items-center border-b border-line bg-surface px-3 text-ink sm:shadow-sm pl-4 sm:pl-6 pr-4 sm:pr-[50px]">
                     <button
                         type="button"
                         onClick={() => setIsSidebarOpen(true)}
@@ -124,10 +124,10 @@ export function Dashboard(props: PropsType) {
                         <div className='flex items-center relative cursor-pointer'
                             onClick={() => { setIsUserMenuOpen(true) }}
                         >
-                            <span className='mr-[10px] text-base sm:text-[18px] cursor-pointer'>
+                            <span className='mr-[5px] text-base sm:text-[18px] cursor-pointer sm:mr-[10px]'>
                                 {props.loginUser.name}
                             </span>
-                            <HiOutlineUserCircle className="size-8 cursor-pointer mr-[12px]" />
+                            <HiOutlineUserCircle className="size-8 cursor-pointer mr-[5px] sm:mr-[12px]" />
                             <IoTriangle className={`size-4 cursor-pointer ${isUserMenuOpen ? 'rotate-0' : 'rotate-180'}`} />
                             {/* ユーザーメニュー */}
                             {
