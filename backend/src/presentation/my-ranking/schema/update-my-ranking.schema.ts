@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ItemMemo, ItemName, PUBLIC_STATUS_VALUES, RankingMemo, RankingTitle } from "../../../domain";
+import { ItemMemo, ItemName, PublicStatus, RankingMemo, RankingTitle } from "../../../domain";
 
 /**
  * ランキング更新リクエストスキーマ
@@ -11,11 +11,11 @@ export const UpdateMyRankingSchema = z.object({
     .string()
     .min(1, "タイトルは必須です")
     .max(RankingTitle.MAX_LENGTH, `タイトルは${RankingTitle.MAX_LENGTH}文字以内で入力してください`),
-  // 許容値は PublicStatus 値オブジェクト（PUBLIC_STATUS_VALUES）を単一権威とする
+  // 許容値は PublicStatus 値オブジェクト（PublicStatus.VALUES）を単一権威とする
   publicStatus: z
     .number()
     .int("公開ステータスが不正です")
-    .refine((value) => PUBLIC_STATUS_VALUES.includes(value), "公開ステータスが不正です"),
+    .refine((value) => PublicStatus.VALUES.includes(value), "公開ステータスが不正です"),
   memo: z
     .string()
     .max(RankingMemo.MAX_LENGTH, `メモは${RankingMemo.MAX_LENGTH}文字以内で入力してください`)

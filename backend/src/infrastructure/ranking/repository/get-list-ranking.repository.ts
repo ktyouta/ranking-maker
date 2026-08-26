@@ -1,4 +1,5 @@
 import { and, eq } from "drizzle-orm";
+import { PublicStatus } from "../../../domain";
 import type { IGetListRankingRepository, RankingListType } from "../../../domain/ranking";
 import type { Database } from "../../db";
 import { rankingMaster, userMaster } from "../../db";
@@ -23,6 +24,6 @@ export class GetListRankingRepository implements IGetListRankingRepository {
       })
       .from(rankingMaster)
       .innerJoin(userMaster, eq(userMaster.id, rankingMaster.userId))
-      .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.publicStatus, 1)));
+      .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.publicStatus, PublicStatus.PUBLIC)));
   }
 }
