@@ -2,15 +2,19 @@ import { z } from "zod";
 import { ContentModerationTarget, IContentModerationRepository } from "../../../domain";
 
 // AIモデル
-// 3.1-8b-instruct-fp8 は response_format: json_schema 非対応で実行時エラーになるため使用不可。
-// Cloudflare公式のJSON Mode対応モデル一覧（https://developers.cloudflare.com/workers-ai/json-mode/）
-// のうち、この環境の @cloudflare/workers-types に型定義がある小型モデルを採用している。
-const MODEL = "@cf/meta/llama-3-8b-instruct";
+// @cf/meta/llama-3-8b-instruct は 2026-05-30 に廃止された。
+// response_format: json_schema はモデルにより対応状況・出力形式（文字列/オブジェクト）が揺れて
+// 実行時エラーの原因になったため、json_schemaに依存しない構成に変更している。
+// 同じCloudflare Workers AI構成で稼働実績のある実装を参考に、
+// プロンプトでJSON出力を指示し文字列から手動抽出する方式にした。
+const MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8";
 
 const SYSTEM_PROMPT = "あなたは入力内容の不適切判定を行うモデレーターです。"
   + "入力は「番号: テキスト」の形式で1行ずつ渡されます。"
   + "暴力的な表現、性的な表現、差別的な表現、誹謗中傷、個人情報の記載など、不適切な内容を含む行の番号のみを inappropriateIndexes に返してください。"
-  + "問題がなければ空配列を返してください。";
+  + "問題がなければ空配列を返してください。"
+  + "必ず次のJSON形式のみで出力してください（前置き・説明・コードブロック不要）: "
+  + '{"inappropriateIndexes":[番号, ...]}';
 
 const ModerationResponseSchema = z.object({
   inappropriateIndexes: z.array(z.number()),
@@ -38,27 +42,23 @@ export class ContentModerationRepository implements IContentModerationRepository
           content: entriesText,
         },
       ],
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          type: "object",
-          properties: {
-            inappropriateIndexes: { type: "array", items: { type: "number" } },
-          },
-          required: ["inappropriateIndexes"],
-        },
-      },
     });
 
-    if (!output.response) {
+    const raw = (output.response ?? "").trim();
+    const jsonStart = raw.indexOf("{");
+    const jsonEnd = raw.lastIndexOf("}");
+    if (jsonStart === -1 || jsonEnd === -1) {
       return [];
     }
 
-    const parsed = ModerationResponseSchema.safeParse(JSON.parse(output.response));
-    if (!parsed.success) {
+    try {
+      const parsed = ModerationResponseSchema.safeParse(JSON.parse(raw.slice(jsonStart, jsonEnd + 1)));
+      if (!parsed.success) {
+        return [];
+      }
+      return parsed.data.inappropriateIndexes;
+    } catch {
       return [];
     }
-
-    return parsed.data.inappropriateIndexes;
   }
 }

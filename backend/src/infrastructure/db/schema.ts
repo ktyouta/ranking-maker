@@ -83,7 +83,7 @@ export const rankingOrderMaster = sqliteTable("ranking_order_master", {
   id: text("id").primaryKey(), // ULID
   rankingId: text("ranking_id").notNull().references(() => rankingMaster.id, { onDelete: "cascade" }),
   order: integer("order").notNull(),
-  itemName: text("item_name").notNull(),
+  itemName: text("item_name"),
   itemMemo: text("item_memo"),
   deleteFlg: integer("delete_flg", { mode: "boolean" }).notNull().default(false),
   createdAt: text("created_at").notNull(),

@@ -1,4 +1,4 @@
-import { Spinner, Textbox } from "@/components";
+import { LoadingOverlay, Textbox } from "@/components";
 import { BaseSyntheticEvent } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 
@@ -32,11 +32,7 @@ export function UpdatePassword(props: PropsType) {
 
     return (
         <div className="min-h-screen bg-canvas flex items-center justify-center px-4 py-8">
-            {isLoading && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10">
-                    <Spinner size={40} />
-                </div>
-            )}
+            {isLoading && <LoadingOverlay />}
             <div className="w-full max-w-lg bg-white rounded-xl shadow-lg p-8 sm:p-10">
                 <h1 className="text-2xl font-bold text-gray-800 text-center mb-8">
                     パスワード変更

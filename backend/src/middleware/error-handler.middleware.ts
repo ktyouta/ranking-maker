@@ -22,7 +22,7 @@ export const errorHandler: ErrorHandler<AppEnv> = (err, c) => {
 
   return c.json(
     {
-      message: "Internal Server Error",
+      message: "予期しないエラーが発生しました。",
     },
     HTTP_STATUS.INTERNAL_SERVER_ERROR,
   );

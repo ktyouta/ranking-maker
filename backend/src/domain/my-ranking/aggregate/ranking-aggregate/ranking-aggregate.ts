@@ -36,7 +36,7 @@ type RankingSnapshot = {
   userId: string;
   rankingOrderEntityList: {
     id: string;
-    itemName: string;
+    itemName: string | null;
     memo: string | null;
     order: number;
   }[];
@@ -162,7 +162,7 @@ export class RankingAggregate {
     const duplicated = new Set<V>();
 
     for (const value of values) {
-      if (seen.has(value)) {
+      if (!!value && seen.has(value)) {
         duplicated.add(value);
       }
       else {
@@ -197,7 +197,9 @@ export class RankingAggregate {
     }
 
     this._rankingOrderEntityList.forEach((item, index) => {
-      targets.push({ field: `項目名（${index + 1}件目）`, value: item.itemName });
+      if (item.itemName) {
+        targets.push({ field: `項目名（${index + 1}件目）`, value: item.itemName });
+      }
       if (item.memo) {
         targets.push({ field: `メモ（${index + 1}件目）`, value: item.memo });
       }

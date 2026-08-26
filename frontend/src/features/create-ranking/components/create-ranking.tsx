@@ -1,4 +1,4 @@
-import { Spinner, Textarea, Textbox } from '@/components';
+import { LoadingOverlay, Textarea, Textbox } from '@/components';
 import { closestCenter, DndContext, DragEndEvent, SensorDescriptor, SensorOptions } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { BaseSyntheticEvent } from 'react';
@@ -48,11 +48,7 @@ export function CreateRanking(props: PropsType) {
 
     return (
         <div className="mx-auto w-full max-w-[max(48rem,60vw)] flex-1 px-4 pb-10 pt-8 sm:px-6 sm:pt-10 lg:px-8">
-            {isLoading && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10">
-                    <Spinner size={40} />
-                </div>
-            )}
+            {isLoading && <LoadingOverlay />}
             <div className="flex items-center gap-3">
                 <IoTrophyOutline className="size-8 shrink-0 text-rank-gold sm:size-9" />
                 <div>

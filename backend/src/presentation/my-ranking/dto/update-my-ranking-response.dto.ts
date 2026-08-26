@@ -7,7 +7,7 @@ export type UpdateMyRankingResponseType = {
   memo: string | null;
   items: {
     id: string;
-    itemName: string;
+    itemName: string | null;
     order: number;
     memo: string | null;
   }[];

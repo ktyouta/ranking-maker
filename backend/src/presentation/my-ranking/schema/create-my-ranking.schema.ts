@@ -25,7 +25,6 @@ export const CreateMyRankingSchema = z.object({
       z.object({
         itemName: z
           .string()
-          .min(1, "項目名は必須です")
           .max(ItemName.MAX_LENGTH, `項目名は${ItemName.MAX_LENGTH}文字以内で入力してください`),
         order: z
           .number()
@@ -37,7 +36,6 @@ export const CreateMyRankingSchema = z.object({
           .default(""),
       })
     )
-    .min(1, "ランキング項目を1件以上入力してください"),
 });
 
 export type CreateMyRankingSchemaType = z.infer<typeof CreateMyRankingSchema>;

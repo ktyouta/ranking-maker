@@ -15,15 +15,16 @@ export const CreateRankingRequestSchema = z.object({
     items: z.array(
         z.object({
             itemName: z.string()
-                .nonempty("項目名を入力してください")
                 .max(ITEM_NAME_MAX_LENGTH, `項目名は${ITEM_NAME_MAX_LENGTH}文字以内で入力してください`),
             memo: z.string()
                 .max(ITEM_MEMO_MAX_LENGTH, `メモは${ITEM_MEMO_MAX_LENGTH}文字以内で入力してください`),
         })
-    ).min(1, "ランキング項目を1件以上入力してください")
-        .refine((items) => new Set(items.map((item) => item.itemName)).size === items.length, {
-            message: "項目名が重複しています",
-        }),
+    ).refine((items) => {
+        const filteredItems = items.filter((e) => !!e.itemName);
+        return new Set(filteredItems.map((item) => item.itemName)).size === filteredItems.length;
+    }, {
+        message: "項目名が重複しています",
+    }),
 });
 
 export type CreateRankingRequestType = z.infer<typeof CreateRankingRequestSchema>;
