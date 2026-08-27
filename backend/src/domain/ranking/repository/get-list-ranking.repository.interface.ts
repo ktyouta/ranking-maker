@@ -4,6 +4,7 @@ export type RankingListType = {
   publicStatus: number;
   userName: string;
   createdAt: string;
+  itemCount: number;
 };
 
 /**

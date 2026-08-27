@@ -15,10 +15,10 @@ export const useMyRankingList = () => {
         return rankingListQuery.data.data.map((ranking) => ({
             id: ranking.id,
             title: ranking.title,
-            userName: ranking.userName,
             createdAt: formatDate(ranking.createdAt),
             publicStatus: ranking.publicStatus,
             publicStatusName: ranking.publicStatusName,
+            itemCount: ranking.itemCount,
         }));
     }, [rankingListQuery.data]);
 

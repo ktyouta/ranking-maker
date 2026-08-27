@@ -1,10 +1,11 @@
-import { IoTrophyOutline } from 'react-icons/io5';
+import { IoCalendarOutline, IoListOutline, IoPersonOutline, IoTrophyOutline } from 'react-icons/io5';
 
 type RankingListItem = {
     id: string;
     title: string;
     userName: string;
     createdAt: string;
+    itemCount: number;
 };
 
 type PropsType = {
@@ -16,7 +17,7 @@ export const Home = (props: PropsType) => {
     const { rankingList } = props;
 
     return (
-        <div className="mx-auto w-full max-w-screen-xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-[2000px] flex-1 px-4 py-6 sm:px-6 lg:px-10">
             {rankingList.length === 0 && (
                 <div className="flex flex-col items-center gap-3 py-16 text-center">
                     <IoTrophyOutline className="size-16 text-accent" />
@@ -29,21 +30,36 @@ export const Home = (props: PropsType) => {
                 </div>
             )}
             {rankingList.length > 0 && (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+                <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                     {rankingList.map((ranking) => (
                         <div
                             key={ranking.id}
-                            className="rounded-lg bg-surface p-5 shadow-sm"
+                            className="flex flex-col overflow-hidden rounded-xl border border-line bg-surface shadow-sm"
                         >
-                            <h2 className="line-clamp-2 text-lg font-bold text-ink">
-                                {ranking.title}
-                            </h2>
-                            <p className="mt-3 text-base text-ink-sub">
-                                {ranking.userName}
-                            </p>
-                            <p className="mt-1 text-base text-ink-sub">
-                                {ranking.createdAt}
-                            </p>
+                            <div className="border-b border-line px-5 py-2.5">
+                                <span className="flex size-8 items-center justify-center rounded-full bg-accent text-white">
+                                    <IoTrophyOutline className="size-5" />
+                                </span>
+                            </div>
+                            <div className="px-6 py-4">
+                                <h2 className="line-clamp-2 flex min-h-[3.5rem] items-center text-lg font-bold text-ink">
+                                    {ranking.title}
+                                </h2>
+                                <p className="mt-2 flex items-center gap-1.5 text-base text-ink-sub">
+                                    <IoListOutline className="size-4" />
+                                    全 {ranking.itemCount} 項目
+                                </p>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2 border-t border-line px-5 py-2.5">
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-line px-3 py-1 text-base text-ink-sub">
+                                    <IoPersonOutline className="size-4" />
+                                    {ranking.userName}
+                                </span>
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-line px-3 py-1 text-base text-ink-sub">
+                                    <IoCalendarOutline className="size-4" />
+                                    作成日 {ranking.createdAt}
+                                </span>
+                            </div>
                         </div>
                     ))}
                 </div>

@@ -17,6 +17,7 @@ export const useRankingList = () => {
             title: ranking.title,
             userName: ranking.userName,
             createdAt: formatDate(ranking.createdAt),
+            itemCount: ranking.itemCount,
         }));
     }, [rankingListQuery.data]);
 

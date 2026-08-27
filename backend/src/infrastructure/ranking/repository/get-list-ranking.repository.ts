@@ -1,8 +1,8 @@
-import { and, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { PublicStatus } from "../../../domain";
 import type { IGetListRankingRepository, RankingListType } from "../../../domain/ranking";
 import type { Database } from "../../db";
-import { rankingMaster, userMaster } from "../../db";
+import { rankingMaster, rankingOrderMaster, userMaster } from "../../db";
 
 /**
  * ランキング一覧取得リポジトリ実装
@@ -21,9 +21,12 @@ export class GetListRankingRepository implements IGetListRankingRepository {
         publicStatus: rankingMaster.publicStatus,
         userName: userMaster.name,
         createdAt: rankingMaster.createdAt,
+        itemCount: count(rankingOrderMaster.id),
       })
       .from(rankingMaster)
       .innerJoin(userMaster, eq(userMaster.id, rankingMaster.userId))
-      .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.publicStatus, PublicStatus.PUBLIC)));
+      .leftJoin(rankingOrderMaster, and(eq(rankingOrderMaster.rankingId, rankingMaster.id), eq(rankingOrderMaster.deleteFlg, false)))
+      .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.publicStatus, PublicStatus.PUBLIC)))
+      .groupBy(rankingMaster.id, userMaster.name);
   }
 }
