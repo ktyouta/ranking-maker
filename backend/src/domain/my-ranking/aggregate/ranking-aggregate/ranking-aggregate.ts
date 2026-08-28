@@ -2,7 +2,8 @@ import { err, ok, Result } from "neverthrow";
 import { Violation } from "../../../../util/violation";
 import { UserId } from "../../../user";
 import { RankingOrderEntity } from "../../entity";
-import { PublicStatus, RankingId, RankingMemo, RankingTitle } from "../../value-object";
+import { PublicStatus, RankingMemo, RankingTitle } from "../../value-object";
+import { RankingId } from "../../../shared";
 
 /**
  * ランキング集約の生成・再構築に渡すパラメータ

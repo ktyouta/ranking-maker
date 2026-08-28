@@ -1,9 +1,9 @@
-import { IGetMyRankingRepository, RankingId, RankingOrderType, RankingType } from "../../../domain";
+import { IGetMyRankingRepository, RankingId, MyRankingOrderType, MyRankingType } from "../../../domain";
 import { UserId } from "../../../domain/user";
 
 type ReturnType = {
-  ranking: RankingType;
-  rankingOrder: RankingOrderType[];
+  ranking: MyRankingType;
+  rankingOrder: MyRankingOrderType[];
 }
 
 /**

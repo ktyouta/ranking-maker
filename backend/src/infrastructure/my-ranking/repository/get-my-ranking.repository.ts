@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { IGetMyRankingRepository, RankingId, RankingOrderType, RankingType } from "../../../domain";
+import { IGetMyRankingRepository, RankingId, MyRankingOrderType, MyRankingType } from "../../../domain";
 import { UserId } from "../../../domain/user";
 import { publicStatusMaster, rankingMaster, rankingOrderMaster, type Database } from "../../db";
 
@@ -12,7 +12,7 @@ export class GetMyRankingRepository implements IGetMyRankingRepository {
   /**
    * ランキングマスタ取得
    */
-  async findRanking(userId: UserId, rankingId: RankingId): Promise<RankingType | null> {
+  async findRanking(userId: UserId, rankingId: RankingId): Promise<MyRankingType | null> {
     const result = await this.db
       .select({
         id: rankingMaster.id,
@@ -37,7 +37,7 @@ export class GetMyRankingRepository implements IGetMyRankingRepository {
    * ランキングオーダー取得
    * @param rankingId 
    */
-  async findRankingOrder(rankingId: RankingId): Promise<RankingOrderType[]> {
+  async findRankingOrder(rankingId: RankingId): Promise<MyRankingOrderType[]> {
     return await this.db
       .select({
         id: rankingOrderMaster.id,
