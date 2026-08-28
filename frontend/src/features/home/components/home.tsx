@@ -30,7 +30,7 @@ export const Home = (props: PropsType) => {
                 </div>
             )}
             {rankingList.length > 0 && (
-                <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 sm:gap-6 2xl:grid-cols-3">
                     {rankingList.map((ranking) => (
                         <div
                             key={ranking.id}
