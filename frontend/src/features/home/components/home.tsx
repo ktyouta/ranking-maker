@@ -17,7 +17,7 @@ export const Home = (props: PropsType) => {
     const { rankingList } = props;
 
     return (
-        <div className="mx-auto w-full max-w-[2000px] flex-1 px-4 py-6 sm:px-6 lg:px-10">
+        <div className="w-full flex-1 px-3 py-5 sm:py-12 sm:px-6 lg:px-20">
             {rankingList.length === 0 && (
                 <div className="flex flex-col items-center gap-3 py-16 text-center">
                     <IoTrophyOutline className="size-16 text-accent" />
@@ -34,10 +34,10 @@ export const Home = (props: PropsType) => {
                     {rankingList.map((ranking) => (
                         <div
                             key={ranking.id}
-                            className="flex flex-col overflow-hidden rounded-xl border border-line bg-surface shadow-sm"
+                            className="flex flex-col overflow-hidden rounded-xl border border-accent/30 bg-surface shadow-sm hover:-translate-y-0.5 hover:shadow-sm"
                         >
-                            <div className="border-b border-line px-5 py-2.5">
-                                <span className="flex size-8 items-center justify-center rounded-full bg-accent text-white">
+                            <div className="border-b border-line bg-gradient-to-r from-accent/10 to-transparent px-5 py-2.5">
+                                <span className="flex size-9 items-center justify-center rounded-full bg-accent text-white shadow-sm">
                                     <IoTrophyOutline className="size-5" />
                                 </span>
                             </div>
@@ -45,7 +45,7 @@ export const Home = (props: PropsType) => {
                                 <h2 className="line-clamp-2 flex min-h-[3.5rem] items-center text-lg font-bold text-ink">
                                     {ranking.title}
                                 </h2>
-                                <p className="mt-2 flex items-center gap-1.5 text-base text-ink-sub">
+                                <p className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-accent/15 px-3 py-1 text-base font-semibold text-accent">
                                     <IoListOutline className="size-4" />
                                     全 {ranking.itemCount} 項目
                                 </p>
