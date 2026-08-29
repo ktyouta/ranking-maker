@@ -4,6 +4,7 @@ import { RankingId } from "../../shared";
 export type MyRankingType = {
   id: string;
   title: string;
+  memo: string | null;
   createdAt: string;
   updatedAt: string;
   publicStatus: number;

@@ -10,11 +10,12 @@ type RankingListItem = {
 
 type PropsType = {
     rankingList: RankingListItem[];
+    onSelectRanking: (id: string) => void;
 };
 
 export const MyRanking = (props: PropsType) => {
 
-    const { rankingList } = props;
+    const { rankingList, onSelectRanking } = props;
 
     return (
         <div className="w-full flex-1 px-3 py-5 sm:py-12 sm:px-6 lg:px-20">
@@ -31,9 +32,11 @@ export const MyRanking = (props: PropsType) => {
                     {rankingList.map((ranking) => (
                         <RankingCard
                             key={ranking.id}
+                            id={ranking.id}
                             title={ranking.title}
                             createdAt={ranking.createdAt}
                             itemCount={ranking.itemCount}
+                            onSelect={onSelectRanking}
                         />
                     ))}
                 </div>

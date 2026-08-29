@@ -1,9 +1,11 @@
 import { IoCalendarOutline, IoListOutline, IoTrophyOutline } from 'react-icons/io5';
 
 type PropsType = {
+    id: string;
     title: string;
     createdAt: string;
     itemCount: number;
+    onSelect: (id: string) => void;
 };
 
 /**
@@ -11,10 +13,13 @@ type PropsType = {
  */
 export const RankingCard = (props: PropsType) => {
 
-    const { title, createdAt, itemCount } = props;
+    const { id, title, createdAt, itemCount, onSelect } = props;
 
     return (
-        <div className="flex flex-col overflow-hidden rounded-xl border border-accent/30 bg-surface shadow-sm hover:-translate-y-0.5 hover:shadow-sm">
+        <div
+            onClick={() => onSelect(id)}
+            className="flex cursor-pointer flex-col overflow-hidden rounded-xl border border-accent/30 bg-surface shadow-sm hover:-translate-y-0.5 hover:shadow-sm"
+        >
             <div className="flex items-center justify-between border-b border-line bg-gradient-to-r from-accent/10 to-transparent px-5 py-2.5">
                 <span className="flex size-9 items-center justify-center rounded-full bg-accent text-white shadow-sm">
                     <IoTrophyOutline className="size-5" />

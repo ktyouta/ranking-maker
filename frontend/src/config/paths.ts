@@ -7,6 +7,11 @@ export const paths = {
         path: '/my-ranking',
         isProtected: true,
     },
+    rankingDetail: {
+        path: '/my-ranking/:rankingId',
+        isProtected: true,
+        getHref: (rankingId: string) => `/my-ranking/${rankingId}`,
+    },
     rankingCreate: {
         path: '/ranking-create',
         isProtected: true,

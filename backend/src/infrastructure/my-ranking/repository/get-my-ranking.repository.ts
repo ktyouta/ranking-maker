@@ -17,6 +17,7 @@ export class GetMyRankingRepository implements IGetMyRankingRepository {
       .select({
         id: rankingMaster.id,
         title: rankingMaster.title,
+        memo: rankingMaster.memo,
         createdAt: rankingMaster.createdAt,
         updatedAt: rankingMaster.updatedAt,
         publicStatus: rankingMaster.publicStatus,

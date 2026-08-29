@@ -3,13 +3,14 @@ import { env } from "cloudflare:test";
 import { ulid } from "ulid";
 import { describe, expect, it } from "vitest";
 import { RankingId } from "../../../../src/domain/shared";
+import { UserId } from "../../../../src/domain/user";
 import * as schema from "../../../../src/infrastructure/db/schema";
 import { publicStatusMaster, rankingMaster, rankingOrderMaster, userMaster } from "../../../../src/infrastructure/db/schema";
 import { GetMyRankingRepository } from "../../../../src/infrastructure/my-ranking/repository/get-my-ranking.repository";
 
-describe("GetMyRankingRepository.findRankingOrder", () => {
+describe("GetMyRankingRepository", () => {
 
-    it("order昇順で並び替えられ、各項目のorder値が返る", async () => {
+    it("findRankingOrder: order昇順で並び替えられ、各項目のorder値が返る", async () => {
         const db = drizzle(env.DB, { schema });
         const now = new Date().toISOString();
 
@@ -49,5 +50,41 @@ describe("GetMyRankingRepository.findRankingOrder", () => {
 
         expect(result.map((e) => e.order)).toEqual([1, 2, 3]);
         expect(result.map((e) => e.itemName)).toEqual(["first", "second", "third"]);
+    });
+
+    it("findRanking: memoが返る", async () => {
+        const db = drizzle(env.DB, { schema });
+        const now = new Date().toISOString();
+
+        const userId = ulid();
+        const publicStatusId = 1;
+        const rankingId = ulid();
+
+        await db.insert(userMaster).values({
+            id: userId,
+            name: `test-user-${userId}`,
+            createdAt: now,
+            updatedAt: now,
+        });
+        await db.insert(publicStatusMaster).values({
+            id: publicStatusId,
+            name: `test-status-${publicStatusId}`,
+            createdAt: now,
+            updatedAt: now,
+        }).onConflictDoNothing();
+        await db.insert(rankingMaster).values({
+            id: rankingId,
+            userId,
+            title: `test-ranking-${rankingId}`,
+            memo: "test-memo",
+            publicStatus: publicStatusId,
+            createdAt: now,
+            updatedAt: now,
+        });
+
+        const repository = new GetMyRankingRepository(db);
+        const result = await repository.findRanking(UserId.of(userId), RankingId.of(rankingId));
+
+        expect(result?.memo).toBe("test-memo");
     });
 });

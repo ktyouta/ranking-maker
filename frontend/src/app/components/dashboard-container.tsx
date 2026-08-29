@@ -51,7 +51,7 @@ export function DashboardContainer() {
      * ホーム画面遷移
      */
     function moveHome() {
-        appNavigate(paths.home.path);
+        appNavigate(paths.myRanking.path);
     }
 
     /**

@@ -1,5 +1,13 @@
 # ランキング詳細画面（ranking-detail）実装計画
 
+## 実装状況
+
+バックエンド（#1〜#3）・フロントエンド（#4〜#18）すべて実装完了。実装中に判明した差分:
+- `MyRankingType` に `memo` フィールドが存在しない追加の抜けが見つかり、`order` と同様に対応した（`get-my-ranking.repository.interface.ts` / `get-my-ranking.repository.ts` / リポジトリテスト）
+- タスク#5（`ranking-detail/api/query-key.ts` 新規作成）は行わず、既存の `my-ranking/api/query-key.ts`（`myRankingKeys.detail`/`lists`）を再利用する設計に変更した
+- タスク#8・#10（`use-ranking-detail.ts` と `use-update-ranking.ts` の分離）は統合し、`create-ranking` の `use-create-ranking.ts` に倣って1つの統括hook（`use-ranking-detail.ts`）にまとめた
+- 編集モードのコンポーネントは `ranking-detail-view.tsx` / `ranking-detail-edit.tsx` に分割し、`ranking-detail.tsx` が `mode` で出し分ける構成にした（当初案の1ファイルから変更）
+
 ## 前提
 
 - 対象は「自分のランキング」を閲覧・編集する画面。バックエンドは `my-ranking` ドメインの既存APIを使う（`ranking` ドメインの `GET /api/v1/ranking/:rankingId` は公開ランキング閲覧用の別APIであり今回は使わない）
