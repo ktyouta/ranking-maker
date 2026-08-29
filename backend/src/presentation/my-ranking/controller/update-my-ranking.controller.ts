@@ -14,7 +14,7 @@ import { UpdateMyRankingSchema } from "../schema";
 /**
  * ランキング更新
  */
-const updateMyRanking = new Hono<AppEnv>().patch(API_ENDPOINT.MY_RANKING,
+const updateMyRanking = new Hono<AppEnv>().patch(API_ENDPOINT.MY_RANKING_ID,
   authMiddleware,
   zValidator("param", RankingIdParamSchema, (result, c) => {
     if (!result.success) {

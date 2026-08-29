@@ -43,9 +43,11 @@ export class GetMyRankingRepository implements IGetMyRankingRepository {
         id: rankingOrderMaster.id,
         itemName: rankingOrderMaster.itemName,
         itemMemo: rankingOrderMaster.itemMemo,
+        order: rankingOrderMaster.order,
         createdAt: rankingOrderMaster.createdAt,
       })
       .from(rankingOrderMaster)
-      .where(and(eq(rankingOrderMaster.deleteFlg, false), eq(rankingOrderMaster.rankingId, rankingId.value)));
+      .where(and(eq(rankingOrderMaster.deleteFlg, false), eq(rankingOrderMaster.rankingId, rankingId.value)))
+      .orderBy(rankingOrderMaster.order);
   }
 }

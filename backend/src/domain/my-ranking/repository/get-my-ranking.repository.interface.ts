@@ -14,6 +14,7 @@ export type MyRankingOrderType = {
   id: string;
   itemName: string | null;
   itemMemo: string | null;
+  order: number;
   createdAt: string;
 };
 
