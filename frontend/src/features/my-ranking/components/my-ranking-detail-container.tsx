@@ -1,18 +1,18 @@
 import { Spinner } from '@/components';
 import { Suspense } from 'react';
-import { useRankingDetail } from '../hooks/use-ranking-detail';
-import { RankingDetail } from './ranking-detail';
+import { useMyRankingDetail } from '../hooks/use-my-ranking-detail';
+import { MyRankingDetail } from './my-ranking-detail';
 
-function RankingDetailContent() {
-    const props = useRankingDetail();
+function MyRankingDetailContent() {
+    const props = useMyRankingDetail();
     return (
-        <RankingDetail
+        <MyRankingDetail
             {...props}
         />
     );
 }
 
-export const RankingDetailContainer = () => {
+export const MyRankingDetailContainer = () => {
     return (
         <Suspense
             fallback={
@@ -21,7 +21,7 @@ export const RankingDetailContainer = () => {
                 </div>
             }
         >
-            <RankingDetailContent />
+            <MyRankingDetailContent />
         </Suspense>
     );
 };

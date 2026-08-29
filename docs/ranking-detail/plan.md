@@ -7,6 +7,8 @@
 - タスク#5（`ranking-detail/api/query-key.ts` 新規作成）は行わず、既存の `my-ranking/api/query-key.ts`（`myRankingKeys.detail`/`lists`）を再利用する設計に変更した
 - タスク#8・#10（`use-ranking-detail.ts` と `use-update-ranking.ts` の分離）は統合し、`create-ranking` の `use-create-ranking.ts` に倣って1つの統括hook（`use-ranking-detail.ts`）にまとめた
 - 編集モードのコンポーネントは `ranking-detail-view.tsx` / `ranking-detail-edit.tsx` に分割し、`ranking-detail.tsx` が `mode` で出し分ける構成にした（当初案の1ファイルから変更）
+- 配置は独立した `features/ranking-detail/` ではなく `features/my-ranking/` 配下（`components/` `hooks/` `api/` `types/` にフラットに合流）へ変更した。サイドメニューに独立したナビ項目を持たず、マイランキング画面のカードからのみ遷移する画面のため、参考にした `todo-react-hono-rpc` の `todo-detail` が `features/todo/` 配下にある構造に合わせた
+- 上記の配置変更に伴い、公開ランキング閲覧用の `ranking` ドメイン（将来別画面になりうる）と区別するため、ファイル名・エクスポート名も `ranking-detail*` / `RankingDetail*` / `useRanking*` から `my-ranking-detail*` / `MyRankingDetail*` / `useMyRanking*` にリネームした（バックエンドの `my-ranking` ドメイン側の命名 `get-my-ranking` / `update-my-ranking` / `UpdateMyRankingSchema` 等と揃えた）
 
 ## 前提
 

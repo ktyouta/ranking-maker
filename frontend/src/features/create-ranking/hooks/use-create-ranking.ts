@@ -47,7 +47,8 @@ export function useCreateRanking() {
     const handleConfirm = handleSubmit((data) => {
         postMutation.mutate({
             title: data.title,
-            publicStatus: data.isPublic ? PUBLIC_STATUS.PUBLIC : PUBLIC_STATUS.PRIVATE,
+            // 公開設定UIは現状外しているため、常に非公開で送る
+            publicStatus: PUBLIC_STATUS.PRIVATE,
             memo: data.memo,
             items: data.items.map((item, index) => ({
                 itemName: item.itemName,

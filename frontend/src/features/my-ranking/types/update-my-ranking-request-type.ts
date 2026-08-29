@@ -5,7 +5,7 @@ const RANKING_MEMO_MAX_LENGTH = 1000;
 const ITEM_NAME_MAX_LENGTH = 100;
 const ITEM_MEMO_MAX_LENGTH = 1000;
 
-export const UpdateRankingRequestSchema = z.object({
+export const UpdateMyRankingRequestSchema = z.object({
     title: z.string()
         .nonempty("タイトルを入力してください")
         .max(RANKING_TITLE_MAX_LENGTH, `タイトルは${RANKING_TITLE_MAX_LENGTH}文字以内で入力してください`),
@@ -27,4 +27,4 @@ export const UpdateRankingRequestSchema = z.object({
     }),
 });
 
-export type UpdateRankingRequestType = z.infer<typeof UpdateRankingRequestSchema>;
+export type UpdateMyRankingRequestType = z.infer<typeof UpdateMyRankingRequestSchema>;

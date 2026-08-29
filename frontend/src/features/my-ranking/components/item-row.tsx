@@ -3,15 +3,15 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { FieldArrayWithId, FieldErrors, UseFormRegister } from 'react-hook-form';
 import { HiOutlineBars3, HiOutlineChevronDown, HiOutlineChevronUp, HiOutlineTrash } from 'react-icons/hi2';
-import { UpdateRankingRequestType } from '../types/update-ranking-request-type';
+import { UpdateMyRankingRequestType } from '../types/update-my-ranking-request-type';
 
-export type ItemFieldType = FieldArrayWithId<UpdateRankingRequestType, 'items', 'id'>;
+export type ItemFieldType = FieldArrayWithId<UpdateMyRankingRequestType, 'items', 'id'>;
 
 type PropsType = {
     item: ItemFieldType;
     index: number;
-    register: UseFormRegister<UpdateRankingRequestType>;
-    errors: FieldErrors<UpdateRankingRequestType>;
+    register: UseFormRegister<UpdateMyRankingRequestType>;
+    errors: FieldErrors<UpdateMyRankingRequestType>;
     canRemove: boolean;
     isFirst: boolean;
     isLast: boolean;

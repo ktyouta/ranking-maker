@@ -91,6 +91,7 @@ export function CreateRanking(props: PropsType) {
                         <p className="mt-2 text-base text-red-500">{errors.title.message}</p>
                     )}
                 </div>
+                {/* 公開設定は現状UIから外している（ユーザーが自分専用で使う想定のため）
                 <div>
                     <label className="mb-3 block text-lg font-semibold text-ink">
                         公開する
@@ -119,6 +120,7 @@ export function CreateRanking(props: PropsType) {
                         />
                     </div>
                 </div>
+                */}
                 <div>
                     <label className="mb-3 block text-lg font-semibold text-ink">
                         メモ（任意）

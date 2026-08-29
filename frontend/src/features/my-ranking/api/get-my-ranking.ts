@@ -7,7 +7,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
  * RPC クライアントを使用した型安全なAPI呼び出し（Suspense対応）
  * @param rankingId ランキングID
  */
-export function useRanking(rankingId: string) {
+export function useMyRanking(rankingId: string) {
   return useSuspenseQuery({
     queryKey: myRankingKeys.detail(rankingId),
     queryFn: async () => {

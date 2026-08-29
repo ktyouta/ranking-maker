@@ -5,16 +5,16 @@ import { BaseSyntheticEvent } from 'react';
 import { Control, Controller, FieldErrors, UseFormRegister } from 'react-hook-form';
 import { HiOutlineExclamationTriangle } from 'react-icons/hi2';
 import { IoTrophyOutline } from 'react-icons/io5';
-import { UpdateRankingRequestType } from '../types/update-ranking-request-type';
+import { UpdateMyRankingRequestType } from '../types/update-my-ranking-request-type';
 import { ItemFieldType, ItemRow } from './item-row';
 
 type PropsType = {
     title: string;
     errMessage: string;
     violations: { field: string; message: string }[];
-    register: UseFormRegister<UpdateRankingRequestType>;
-    control: Control<UpdateRankingRequestType>;
-    errors: FieldErrors<UpdateRankingRequestType>;
+    register: UseFormRegister<UpdateMyRankingRequestType>;
+    control: Control<UpdateMyRankingRequestType>;
+    errors: FieldErrors<UpdateMyRankingRequestType>;
     items: ItemFieldType[];
     sensors: SensorDescriptor<SensorOptions>[];
     addItem: () => void;
@@ -30,7 +30,7 @@ type PropsType = {
 /**
  * ランキング詳細の編集モードフォーム
  */
-export function RankingDetailEdit(props: PropsType) {
+export function MyRankingDetailEdit(props: PropsType) {
 
     const {
         title,
@@ -93,6 +93,7 @@ export function RankingDetailEdit(props: PropsType) {
                         <p className="mt-2 text-base text-red-500">{errors.title.message}</p>
                     )}
                 </div>
+                {/* 公開設定は現状UIから外している（ユーザーが自分専用で使う想定のため）
                 <div>
                     <label className="mb-3 block text-lg font-semibold text-ink">
                         公開する
@@ -121,6 +122,7 @@ export function RankingDetailEdit(props: PropsType) {
                         />
                     </div>
                 </div>
+                */}
                 <div>
                     <label className="mb-3 block text-lg font-semibold text-ink">
                         メモ（任意）

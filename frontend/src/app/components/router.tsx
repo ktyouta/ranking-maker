@@ -3,7 +3,7 @@ import { paths } from '@/config/paths';
 import { CreateRankingContainer } from '@/features/create-ranking/components/create-ranking-container';
 import { LoginContainer } from '@/features/login/components/login-container';
 import { MyRankingContainer } from '@/features/my-ranking/components/my-ranking-container';
-import { RankingDetailContainer } from '@/features/ranking-detail/components/ranking-detail-container';
+import { MyRankingDetailContainer } from '@/features/my-ranking/components/my-ranking-detail-container';
 import { SignupContainer } from '@/features/signup/components/signup-container';
 import { UpdatePasswordContainer } from '@/features/updatepassword/components/update-password-container';
 import { UpdateUserContainer } from '@/features/updateuser/components/update-user-container';
@@ -43,7 +43,7 @@ const routerList = [
                     {
                         path: paths.rankingDetail.path,
                         element: (
-                            <RankingDetailContainer />
+                            <MyRankingDetailContainer />
                         )
                     }
                 ]

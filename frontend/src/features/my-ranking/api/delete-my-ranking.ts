@@ -13,7 +13,7 @@ type PropsType = {
  * ランキング削除API呼び出し hook
  * @param props.rankingId 削除対象のランキングID
  */
-export function useDeleteRankingMutation(props: PropsType) {
+export function useDeleteMyRankingMutation(props: PropsType) {
     return useMutation({
         mutationFn: async () => {
             const res = await endpoint({ param: { rankingId: props.rankingId } });

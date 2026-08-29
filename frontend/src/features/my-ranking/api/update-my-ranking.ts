@@ -15,7 +15,7 @@ export type ViolationType = {
 /**
  * バリデーションエラー・不適切内容エラーの `data` を保持する専用エラー型
  */
-class UpdateRankingError extends Error {
+class UpdateMyRankingError extends Error {
     readonly violations?: ViolationType[];
 
     constructor(message: string, violations?: ViolationType[]) {
@@ -30,25 +30,25 @@ type PropsType = {
     onError: (message: string, violations?: ViolationType[]) => void;
 };
 
-export function useUpdateRankingMutation(props: PropsType) {
+export function useUpdateMyRankingMutation(props: PropsType) {
     return useMutation({
         mutationFn: async (data: RequestType) => {
             const res = await endpoint({ param: { rankingId: props.rankingId }, json: data });
             // `!res.ok` 経由の narrowing だと Hono の型推論で `data` が欠落するため、422 のみ `res.status` の literal narrowing で個別に扱う
             if (res.status === 422) {
                 const error = await res.json();
-                throw new UpdateRankingError(error.message, error.data);
+                throw new UpdateMyRankingError(error.message, error.data);
             }
             if (!res.ok) {
                 const error = await res.json();
-                throw new UpdateRankingError(error.message);
+                throw new UpdateMyRankingError(error.message);
             }
             return res.json();
         },
         onSuccess: (data) => {
             props.onSuccess(data);
         },
-        onError: (error: UpdateRankingError) => {
+        onError: (error: UpdateMyRankingError) => {
             props.onError(error.message, error.violations);
         },
     });

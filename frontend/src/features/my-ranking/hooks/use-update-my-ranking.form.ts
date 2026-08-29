@@ -1,11 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
-import { UpdateRankingRequestSchema, UpdateRankingRequestType } from "../types/update-ranking-request-type";
+import { UpdateMyRankingRequestSchema, UpdateMyRankingRequestType } from "../types/update-my-ranking-request-type";
 
-export function useUpdateRankingForm(defaultValues: UpdateRankingRequestType) {
+export function useUpdateMyRankingForm(defaultValues: UpdateMyRankingRequestType) {
 
-    const form = useForm<UpdateRankingRequestType>({
-        resolver: zodResolver(UpdateRankingRequestSchema),
+    const form = useForm<UpdateMyRankingRequestType>({
+        resolver: zodResolver(UpdateMyRankingRequestSchema),
         defaultValues,
         mode: "onSubmit",
         reValidateMode: "onSubmit",

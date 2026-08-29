@@ -8,16 +8,16 @@ import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDeleteRankingMutation } from '../api/delete-ranking';
-import { useRanking } from '../api/get-ranking';
-import { useUpdateRankingMutation, ViolationType } from '../api/update-ranking';
-import { useUpdateRankingForm } from './use-update-ranking.form';
+import { useDeleteMyRankingMutation } from '../api/delete-my-ranking';
+import { useMyRanking } from '../api/get-my-ranking';
+import { useUpdateMyRankingMutation, ViolationType } from '../api/update-my-ranking';
+import { useUpdateMyRankingForm } from './use-update-my-ranking.form';
 
 const MIN_ITEM_COUNT = 1;
 
 type Mode = 'view' | 'edit';
 
-export function useRankingDetail() {
+export function useMyRankingDetail() {
 
     const { rankingId } = useParams();
     if (!rankingId) {
@@ -37,7 +37,7 @@ export function useRankingDetail() {
     const deleteDialog = useSwitch();
 
     // ランキング取得（Suspense対応のため取得中は呼び出し元で中断される）
-    const rankingQuery = useRanking(rankingId);
+    const rankingQuery = useMyRanking(rankingId);
     // ランキング本体と項目一覧
     const { ranking, rankingOrder } = rankingQuery.data.data;
 
@@ -58,7 +58,7 @@ export function useRankingDetail() {
     }), [ranking, sortedItems]);
 
     // フォーム
-    const { register, handleSubmit, control, reset, formState: { errors }, itemFieldArray } = useUpdateRankingForm(defaultValues);
+    const { register, handleSubmit, control, reset, formState: { errors }, itemFieldArray } = useUpdateMyRankingForm(defaultValues);
     // ポインター操作とキーボード操作の両方でドラッグ&ドロップを可能にする
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -66,7 +66,7 @@ export function useRankingDetail() {
     );
 
     // 更新リクエスト
-    const updateMutation = useUpdateRankingMutation({
+    const updateMutation = useUpdateMyRankingMutation({
         rankingId,
         // 正常終了後の処理
         onSuccess: () => {
@@ -82,7 +82,7 @@ export function useRankingDetail() {
     });
 
     // 削除リクエスト
-    const deleteMutation = useDeleteRankingMutation({
+    const deleteMutation = useDeleteMyRankingMutation({
         rankingId,
         // 正常終了後の処理
         onSuccess: () => {
@@ -149,7 +149,8 @@ export function useRankingDetail() {
     const handleSave = handleSubmit((data) => {
         updateMutation.mutate({
             title: data.title,
-            publicStatus: data.isPublic ? PUBLIC_STATUS.PUBLIC : PUBLIC_STATUS.PRIVATE,
+            // 公開設定UIは現状外しているため、常に非公開で送る
+            publicStatus: PUBLIC_STATUS.PRIVATE,
             memo: data.memo,
             items: data.items.map((item, index) => ({
                 itemName: item.itemName,
