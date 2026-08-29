@@ -1,5 +1,5 @@
-import { NotFound } from "@/components";
-import { Outlet } from "react-router-dom";
+import { paths } from "@/config/paths";
+import { Navigate, Outlet } from "react-router-dom";
 import { LoginUserContext } from "./login-user-provider";
 
 
@@ -10,7 +10,10 @@ export function ProtectedRoute() {
 
     if (!loginUser) {
         return (
-            <NotFound />
+            <Navigate
+                to={paths.login.path}
+                replace
+            />
         );
     }
 

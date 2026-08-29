@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useMyRankings } from "../api/get-my-rankings";
 
 /**
- * ホーム画面（みんなの公開ランキング一覧）用の状態を組み立てる
+ * マイランキング一覧画面用の状態を組み立てる
  */
 export const useMyRankingList = () => {
 
@@ -16,8 +16,6 @@ export const useMyRankingList = () => {
             id: ranking.id,
             title: ranking.title,
             createdAt: formatDate(ranking.createdAt),
-            publicStatus: ranking.publicStatus,
-            publicStatusName: ranking.publicStatusName,
             itemCount: ranking.itemCount,
         }));
     }, [rankingListQuery.data]);

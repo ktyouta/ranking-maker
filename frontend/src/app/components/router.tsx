@@ -1,14 +1,13 @@
 import { NotFound } from '@/components';
 import { paths } from '@/config/paths';
 import { CreateRankingContainer } from '@/features/create-ranking/components/create-ranking-container';
-import { HomeContainer } from '@/features/home/components/home-container';
 import { LoginContainer } from '@/features/login/components/login-container';
 import { MyRankingContainer } from '@/features/my-ranking/components/my-ranking-container';
 import { SignupContainer } from '@/features/signup/components/signup-container';
 import { UpdatePasswordContainer } from '@/features/updatepassword/components/update-password-container';
 import { UpdateUserContainer } from '@/features/updateuser/components/update-user-container';
 import { useEffect } from 'react';
-import { useLocation, useNavigationType, useRoutes } from 'react-router-dom';
+import { Navigate, useLocation, useNavigationType, useRoutes } from 'react-router-dom';
 import { DashboardContainer } from './dashboard-container';
 import { GuestRoute } from './guest-route';
 import { ProtectedRoute } from './protected-route';
@@ -16,16 +15,17 @@ import { ProtectedRoute } from './protected-route';
 
 const routerList = [
     {
-        element: <DashboardContainer />,
+        path: paths.home.path,
+        element: (
+            // マイランキング画面をホームとして使う
+            <Navigate to={paths.myRanking.path} replace />
+        )
+    },
+    {
+        element: <ProtectedRoute />,
         children: [
             {
-                path: paths.home.path,
-                element: (
-                    <HomeContainer />
-                )
-            },
-            {
-                element: <ProtectedRoute />,
+                element: <DashboardContainer />,
                 children: [
                     {
                         path: paths.myRanking.path,
@@ -40,20 +40,20 @@ const routerList = [
                         )
                     }
                 ]
-            }
+            },
+            {
+                path: paths.updateUser.path,
+                element: (
+                    <UpdateUserContainer />
+                )
+            },
+            {
+                path: paths.updatePassword.path,
+                element: (
+                    <UpdatePasswordContainer />
+                )
+            },
         ]
-    },
-    {
-        path: paths.updateUser.path,
-        element: (
-            <UpdateUserContainer />
-        )
-    },
-    {
-        path: paths.updatePassword.path,
-        element: (
-            <UpdatePasswordContainer />
-        )
     },
     {
         element: <GuestRoute />,
