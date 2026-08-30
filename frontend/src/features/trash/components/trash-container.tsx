@@ -1,23 +1,23 @@
 import { Loading } from '@/components';
 import { Suspense } from 'react';
-import { useRankingList } from "../hooks/use-ranking-list";
-import { Home } from "./home";
+import { useTrashListScreen } from '../hooks/use-trash-list';
+import { Trash } from './trash';
 
-function HomeContent() {
-    const props = useRankingList();
+function TrashContent() {
+    const props = useTrashListScreen();
     return (
-        <Home
+        <Trash
             {...props}
         />
     );
 }
 
-export const HomeContainer = () => {
+export const TrashContainer = () => {
     return (
         <Suspense
             fallback={<Loading className="h-auto w-full flex-1 py-16" />}
         >
-            <HomeContent />
+            <TrashContent />
         </Suspense>
     );
 };

@@ -2,7 +2,7 @@ import { LoadingOverlay, Textarea, Textbox } from '@/components';
 import { closestCenter, DndContext, DragEndEvent, SensorDescriptor, SensorOptions } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { BaseSyntheticEvent } from 'react';
-import { Control, Controller, FieldErrors, UseFormRegister } from 'react-hook-form';
+import { Control, FieldErrors, UseFormRegister } from 'react-hook-form';
 import { HiOutlineExclamationTriangle } from 'react-icons/hi2';
 import { IoTrophyOutline } from 'react-icons/io5';
 import { UpdateMyRankingRequestType } from '../types/update-my-ranking-request-type';

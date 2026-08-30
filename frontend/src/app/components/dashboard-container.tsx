@@ -3,7 +3,7 @@ import { Dashboard } from '@/components/layouts/dashboard/dashboard';
 import { paths } from '@/config/paths';
 import { useAppNavigation } from '@/hooks/use-app-navigation';
 import { resetLogin } from '@/stores/access-token-store';
-import { HiOutlineListBullet, HiOutlinePlusCircle } from 'react-icons/hi2';
+import { HiOutlineListBullet, HiOutlinePlusCircle, HiOutlineTrash } from 'react-icons/hi2';
 import { Outlet } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { LoginUserContext } from './login-user-provider';
@@ -12,6 +12,7 @@ const navItems = [
     // { to: paths.home.path, label: 'ホーム', icon: <HiOutlineHome className="h-5 w-5 shrink-0" />, isProtected: paths.home.isProtected },
     { to: paths.myRanking.path, label: 'ホーム', icon: <HiOutlineListBullet className="h-5 w-5 shrink-0" />, isProtected: paths.myRanking.isProtected },
     { to: paths.rankingCreate.path, label: 'ランキング作成', icon: <HiOutlinePlusCircle className="h-5 w-5 shrink-0" />, isProtected: paths.rankingCreate.isProtected },
+    { to: paths.trash.path, label: 'ゴミ箱', icon: <HiOutlineTrash className="h-5 w-5 shrink-0" />, isProtected: paths.trash.isProtected },
 ];
 
 export function DashboardContainer() {

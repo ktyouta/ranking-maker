@@ -3,7 +3,7 @@ import { PUBLIC_STATUS } from '@/constants/public-status';
 import { myRankingKeys } from '@/features/my-ranking/api/query-key';
 import { useSwitch } from '@/hooks/use-switch';
 import { formatDate } from '@/utils/date-util';
-import { KeyboardSensor, PointerSensor, type DragEndEvent, useSensor, useSensors } from '@dnd-kit/core';
+import { KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
@@ -250,7 +250,7 @@ export function useMyRankingDetail() {
             handleDragEnd,
             onSave: handleSave,
             onCancel: cancelEdit,
-            isLoading: updateMutation.isPending,
+            isLoading: updateMutation.isPending || deleteMutation.isPending,
         },
     };
 }

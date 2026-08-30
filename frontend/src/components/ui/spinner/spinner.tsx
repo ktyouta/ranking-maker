@@ -7,7 +7,7 @@ export function Spinner({ size = 32 }: PropsType) {
     return (
         <div className="inline-flex items-center justify-center">
             <svg
-                className="animate-spin text-blue-500"
+                className="animate-spin text-accent"
                 width={size}
                 height={size}
                 viewBox="0 0 24 24"

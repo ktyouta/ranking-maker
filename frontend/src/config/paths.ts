@@ -16,6 +16,15 @@ export const paths = {
         path: '/ranking-create',
         isProtected: true,
     },
+    trash: {
+        path: '/trash',
+        isProtected: true,
+    },
+    trashDetail: {
+        path: '/trash/:rankingId',
+        isProtected: true,
+        getHref: (rankingId: string) => `/trash/${rankingId}`,
+    },
     login: {
         path: '/login',
         getHref: (redirectTo?: string) => `${paths.login.path}${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ``}`,

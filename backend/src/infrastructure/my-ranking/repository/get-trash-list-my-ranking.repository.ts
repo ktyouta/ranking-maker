@@ -20,6 +20,8 @@ export class GetTrashListMyRankingRepository implements IGetTrashListMyRankingRe
         title: rankingMaster.title,
         userName: userMaster.name,
         createdAt: rankingMaster.createdAt,
+        // 論理削除時に更新される updatedAt を削除日時として転用する
+        updatedAt: rankingMaster.updatedAt,
         publicStatus: rankingMaster.publicStatus,
         publicStatusName: publicStatusMaster.name,
         // ランキング削除時、紐づく項目も deleteFlg=true にカスケードされるため、生存行と逆に deleteFlg=true の項目を数える

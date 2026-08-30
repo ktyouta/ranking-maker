@@ -1,5 +1,5 @@
 import { paths } from '@/config/paths';
-import { Spinner } from '@/components';
+import { Loading } from '@/components';
 import { Suspense, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMyRankingList } from "../hooks/use-my-ranking-list";
@@ -28,11 +28,7 @@ function MyRankingContent() {
 export const MyRankingContainer = () => {
     return (
         <Suspense
-            fallback={
-                <div className="flex flex-1 items-center justify-center py-16">
-                    <Spinner />
-                </div>
-            }
+            fallback={<Loading className="h-auto w-full flex-1 py-16" />}
         >
             <MyRankingContent />
         </Suspense>

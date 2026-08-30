@@ -5,6 +5,8 @@ import { LoginContainer } from '@/features/login/components/login-container';
 import { MyRankingContainer } from '@/features/my-ranking/components/my-ranking-container';
 import { MyRankingDetailContainer } from '@/features/my-ranking/components/my-ranking-detail-container';
 import { SignupContainer } from '@/features/signup/components/signup-container';
+import { TrashContainer } from '@/features/trash/components/trash-container';
+import { TrashDetailContainer } from '@/features/trash/components/trash-detail-container';
 import { UpdatePasswordContainer } from '@/features/updatepassword/components/update-password-container';
 import { UpdateUserContainer } from '@/features/updateuser/components/update-user-container';
 import { useEffect } from 'react';
@@ -44,6 +46,18 @@ const routerList = [
                         path: paths.rankingDetail.path,
                         element: (
                             <MyRankingDetailContainer />
+                        )
+                    },
+                    {
+                        path: paths.trash.path,
+                        element: (
+                            <TrashContainer />
+                        )
+                    },
+                    {
+                        path: paths.trashDetail.path,
+                        element: (
+                            <TrashDetailContainer />
                         )
                     }
                 ]
