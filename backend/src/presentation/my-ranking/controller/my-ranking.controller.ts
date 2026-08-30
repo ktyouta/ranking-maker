@@ -4,6 +4,7 @@ import { createMyRanking } from "./create-my-ranking.controller";
 import { getListMyRanking } from "./get-list-my-ranking.controller";
 import { getMyRanking } from "./get-my-ranking.controller";
 import { getTrashListMyRanking } from "./get-trash-list-my-ranking.controller";
+import { getTrashMyRanking } from "./get-trash-my-ranking.controller";
 import { permanentDeleteMyRanking } from "./permanent-delete-my-ranking.controller";
 import { restoreMyRanking } from "./restore-my-ranking.controller";
 import { softDeleteMyRanking } from "./soft-delete-my-ranking.controller";
@@ -17,6 +18,7 @@ const myRanking = new Hono<AppEnv>()
     .route("/", softDeleteMyRanking)
     .route("/", updateMyRanking)
     .route("/", getTrashListMyRanking)
+    .route("/", getTrashMyRanking)
     .route("/", permanentDeleteMyRanking)
     .route("/", restoreMyRanking);
 

@@ -7,6 +7,7 @@ export type TrashMyRankingListType = {
   createdAt: string;
   publicStatus: number;
   publicStatusName: string;
+  itemCount: number;
 };
 
 /**

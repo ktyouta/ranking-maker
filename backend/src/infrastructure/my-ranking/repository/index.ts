@@ -3,6 +3,7 @@ export * from "./create-my-ranking.repository";
 export * from "./get-list-my-ranking.repository";
 export * from "./get-my-ranking.repository";
 export * from "./get-trash-list-my-ranking.repository";
+export * from "./get-trash-my-ranking.repository";
 export * from "./permanent-delete-my-ranking.repository";
 export * from "./ranking-title-uniqueness.repository";
 export * from "./restore-my-ranking.repository";
