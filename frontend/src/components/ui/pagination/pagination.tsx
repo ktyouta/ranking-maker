@@ -31,17 +31,17 @@ export function Pagination({ currentPage, totalPages, onPageChange }: PropsType)
     const pages = getPageNumbers(currentPage, totalPages);
 
     return (
-        <div className="flex items-center justify-center gap-1 py-2">
+        <div className="flex items-center justify-center gap-1.5 py-2">
             <button
                 type="button"
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 aria-label="前のページ"
                 className={cn(
-                    "flex items-center justify-center w-9 h-9 rounded",
+                    "flex items-center justify-center w-9 h-9 rounded-full",
                     currentPage === 1
-                        ? "text-gray-300 cursor-not-allowed"
-                        : "text-gray-600 hover:bg-gray-100"
+                        ? "text-ink-sub/40 cursor-not-allowed"
+                        : "text-accent hover:bg-accent/10"
                 )}
             >
                 <HiChevronLeft className="size-5" />
@@ -50,7 +50,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: PropsType)
                 page === '...' ? (
                     <span
                         key={`ellipsis-${i}`}
-                        className="w-9 h-9 flex items-center justify-center text-gray-400 text-sm select-none"
+                        className="w-9 h-9 flex items-center justify-center text-ink-sub text-sm select-none"
                     >
                         ...
                     </span>
@@ -62,10 +62,10 @@ export function Pagination({ currentPage, totalPages, onPageChange }: PropsType)
                         aria-label={`${page}ページ`}
                         aria-current={currentPage === page ? "page" : undefined}
                         className={cn(
-                            "w-9 h-9 rounded text-sm",
+                            "w-9 h-9 rounded-full text-sm",
                             currentPage === page
-                                ? "bg-cyan-500 text-white font-medium"
-                                : "text-gray-600 hover:bg-gray-100"
+                                ? "bg-accent text-white font-bold shadow-md"
+                                : "text-ink-sub hover:bg-accent/10"
                         )}
                     >
                         {page}
@@ -78,10 +78,10 @@ export function Pagination({ currentPage, totalPages, onPageChange }: PropsType)
                 disabled={currentPage === totalPages}
                 aria-label="次のページ"
                 className={cn(
-                    "flex items-center justify-center w-9 h-9 rounded",
+                    "flex items-center justify-center w-9 h-9 rounded-full",
                     currentPage === totalPages
-                        ? "text-gray-300 cursor-not-allowed"
-                        : "text-gray-600 hover:bg-gray-100"
+                        ? "text-ink-sub/40 cursor-not-allowed"
+                        : "text-accent hover:bg-accent/10"
                 )}
             >
                 <HiChevronRight className="size-5" />

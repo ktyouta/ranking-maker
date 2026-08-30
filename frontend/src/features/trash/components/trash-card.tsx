@@ -5,7 +5,7 @@ type PropsType = {
     id: string;
     title: string;
     itemCount: number;
-    deletedAt: string;
+    createdAt: string;
     onSelect: (id: string) => void;
 };
 
@@ -14,7 +14,7 @@ type PropsType = {
  */
 export const TrashCard = (props: PropsType) => {
 
-    const { id, title, itemCount, deletedAt, onSelect } = props;
+    const { id, title, itemCount, createdAt, onSelect } = props;
 
     return (
         <div
@@ -32,7 +32,7 @@ export const TrashCard = (props: PropsType) => {
                     </span>
                     <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-accent bg-surface px-2 py-1 text-[12px] font-semibold text-accent sm:gap-1.5 sm:border-2 sm:px-3 sm:text-base">
                         <IoCalendarOutline className="size-3.5 sm:size-4" />
-                        削除日 {deletedAt}
+                        作成日 {createdAt}
                     </span>
                 </div>
             </div>

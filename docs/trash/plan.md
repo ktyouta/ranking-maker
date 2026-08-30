@@ -59,3 +59,47 @@
 ---
 合計: 28 タスク（バックエンド 12 / フロントエンド 16）
 推奨着手順: #1 → #2 → #3, #4 → #5 → #6 → #7 → #8 → #9 → #10 → #11 → #12 → #13 → #14 → #15, #16, #17, #18 → #19, #20 → #21 → #22 → #24 → #23, #25 → #26, #27 → #28
+
+---
+
+## 追加機能: ゴミ箱一覧のページャー・フィルター
+
+### 前提
+
+- 一覧取得エンドポイント `GET /api/v1/my-ranking/trash`（実装済み）に、ページング（30件固定）とフィルター（タイトル・登録日・削除日）を追加する。詳細取得・復元・完全削除の各エンドポイントは対象外
+- 参考実装: `C:\RPC\todo-react-hono-rpc\backend\src\api\todo`（`GetTodoListRepository` の `findAll`/`count` 分離、`LIMIT` static、`buildConditions` private抽出パターン）
+- フィルター対象カラム: `rankingMaster.title`（`like` 部分一致）、`rankingMaster.createdAt`（登録日、`gte`/`lte`）、`rankingMaster.updatedAt`（削除日。論理削除時に更新される値を削除日時として転用する既存仕様をそのまま利用。専用カラム追加は不要）
+- 既存の絞り込み条件（`deleteFlg=true`, `userId`一致）は維持したままAND条件として追加する
+- レスポンス形状は `{ list, total, totalPages }`（`GetTodoListRepository` と同型）に変更する
+- フロントの状態管理は既存の `frontend/src/hooks/use-transition-search-params.ts`（`useSearchParams` ラッパー、`frontend/src/features/login/hooks/use-login.ts` が使用例）でURLクエリパラメータに同期する。`frontend/src/hooks/use-query-params.ts` は初回マウント時のみ値を読む未使用の別ユーティリティのため今回は使わない
+- フィルターUIは常時表示の折りたたみパネル方式とする（`todo-trash-search-bar.tsx` の構造を参考にするが、配色・角丸はRanking Makerのポップトーン `#0F9E93` 系に合わせて再設計する。テーブル表示は採用せず既存のカードグリッドを維持する）
+- `frontend/src/components/ui/pagination/pagination.tsx` は現状どの画面からも未使用のため、配色（cyan→accent teal）を直接修正してよい（他画面への影響なし）
+- `trash-card.tsx` / `trash.tsx` / `use-trash-list.ts` には本機能とは別件の未コミット変更（カード表示日付を「削除日」→「作成日」に変更）が既にある。これは維持し、その上に本機能の変更を積み重ねる
+- RPCの型はバックエンドをsource of truthとし、フロントでAPI用の型を新規定義しない。`as` によるアサーションは行わない
+
+### バックエンド タスク
+
+| # | タスク | ファイル | 前提 |
+|---|--------|----------|------|
+| 29 | Repository interface を findAll/count 分離形に変更（クエリ型追加） | `backend/src/domain/my-ranking/repository/get-trash-list-my-ranking.repository.interface.ts` | ― |
+| 30 | クエリスキーマ定義（Zod: title, createdAtFrom/To, updatedAtFrom/To, page） | `backend/src/presentation/my-ranking/schema/get-trash-list-my-ranking.schema.ts` | ― |
+| 31 | Repository実装更新（`LIMIT=30` static、`buildConditions` private抽出、`findAll`+`count`実装） | `backend/src/infrastructure/my-ranking/repository/get-trash-list-my-ranking.repository.ts` | #29, #30 |
+| 32 | Usecase更新（`{ list, total, totalPages }` を返す） | `backend/src/application/my-ranking/usecase/get-trash-list-my-ranking.usecase.ts` | #31 |
+| 33 | Controller更新（`zValidator("query", ...)` 追加、totalPages計算） | `backend/src/presentation/my-ranking/controller/get-trash-list-my-ranking.controller.ts` | #30, #32 |
+| 34 | `npx tsc --noEmit` で型エラー確認 | ― | #29〜#33 |
+
+### フロントエンド タスク
+
+| # | タスク | ファイル | 前提 |
+|---|--------|----------|------|
+| 35 | クエリキー定数定義（title/createdAtFrom/createdAtTo/updatedAtFrom/updatedAtTo/page） | `frontend/src/features/trash/constants/trash-query-params.ts` | ― |
+| 36 | `Pagination` コンポーネント配色修正（cyan→accent teal、丸み調整） | `frontend/src/components/ui/pagination/pagination.tsx` | バックエンド#34 |
+| 37 | 一覧取得API更新（クエリパラメータ対応 `$get({query})`、queryKeyにクエリ含める） | `frontend/src/features/trash/api/get-trash-list.ts`, `frontend/src/features/trash/api/query-key.ts` | バックエンド#34 |
+| 38 | `TrashSearchBar` コンポーネント新規作成（タイトル検索＋詳細フィルター開閉＋登録日/削除日DatePicker range＋バッジ＋クリア/検索） | `frontend/src/features/trash/components/trash-search-bar.tsx` | #35 |
+| 39 | 一覧用hook拡張（`useTransitionSearchParams`によるURL同期、検索条件state、ページstate、clickSearch/clearSearchCondition/changePageハンドラ） | `frontend/src/features/trash/hooks/use-trash-list.ts` | #35, #37 |
+| 40 | `Trash` コンポーネント更新（検索バー常設、カードグリッド下にページャー表示） | `frontend/src/features/trash/components/trash.tsx` | #36, #38, #39 |
+| 41 | `npx tsc --noEmit` で型エラー確認 | ― | #35〜#40 |
+
+---
+合計: 13 タスク（バックエンド 6 / フロントエンド 7）
+推奨着手順: #29 → #30 → #31 → #32 → #33 → #34 → #35 → #36, #37 → #38, #39 → #40 → #41

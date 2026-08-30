@@ -2,7 +2,7 @@ import { LoginUserType } from '@/app/api/verify';
 import { Button, Footer } from '@/components';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { HiBars3, HiOutlineArrowLeftOnRectangle, HiOutlineArrowRightOnRectangle, HiOutlineUserCircle } from 'react-icons/hi2';
+import { HiBars3, HiOutlineArrowLeftOnRectangle, HiOutlineUserCircle } from 'react-icons/hi2';
 import { IoTriangle } from "react-icons/io5";
 import { NavLink } from 'react-router-dom';
 
@@ -79,21 +79,6 @@ export function Dashboard(props: PropsType) {
                                 <span className={isSidebarOpen ? 'block' : 'hidden'}>{item.label}</span>
                             </NavLink>
                         ))
-                    }
-                    {
-                        !!props.loginUser &&
-                        <button
-                            type="button"
-                            onClick={props.logout}
-                            disabled={props.isLoggingOut}
-                            className={`flex w-full items-center px-6 py-4 text-left text-base font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-50 whitespace-nowrap ${isSidebarOpen ? '' : 'justify-center'
-                                }`}
-                        >
-                            <span className={isSidebarOpen ? 'mr-3' : ''}>
-                                <HiOutlineArrowRightOnRectangle className="h-5 w-5 shrink-0" />
-                            </span>
-                            <span className={isSidebarOpen ? 'block' : 'hidden'}>ログアウト</span>
-                        </button>
                     }
                 </div>
             </nav>

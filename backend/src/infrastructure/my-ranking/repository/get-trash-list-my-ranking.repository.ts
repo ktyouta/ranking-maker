@@ -1,5 +1,5 @@
-import { and, count, eq } from "drizzle-orm";
-import { IGetTrashListMyRankingRepository, TrashMyRankingListType } from "../../../domain";
+import { and, count, desc, eq, gte, like, lte } from "drizzle-orm";
+import { IGetTrashListMyRankingRepository, TrashMyRankingListType, TrashMyRankingQueryType } from "../../../domain";
 import { UserId } from "../../../domain/user";
 import type { Database } from "../../db";
 import { publicStatusMaster, rankingMaster, rankingOrderMaster, userMaster } from "../../db";
@@ -8,12 +8,19 @@ import { publicStatusMaster, rankingMaster, rankingOrderMaster, userMaster } fro
  * ゴミ箱のランキング一覧取得リポジトリ実装
  */
 export class GetTrashListMyRankingRepository implements IGetTrashListMyRankingRepository {
+
+  // 1ページあたりの最大取得件数
+  static readonly LIMIT = 30;
+
   constructor(private readonly db: Database) { }
 
   /**
-   * 全件取得（論理削除されているもの）
+   * 削除済み一覧取得（論理削除されているもの、ページング・絞り込み対応）
    */
-  async findAll(userId: UserId): Promise<TrashMyRankingListType[]> {
+  async findAll(userId: UserId, query: TrashMyRankingQueryType): Promise<TrashMyRankingListType[]> {
+
+    const conditions = this.buildConditions(userId, query);
+
     return await this.db
       .select({
         id: rankingMaster.id,
@@ -31,7 +38,37 @@ export class GetTrashListMyRankingRepository implements IGetTrashListMyRankingRe
       .innerJoin(userMaster, eq(userMaster.id, rankingMaster.userId))
       .innerJoin(publicStatusMaster, eq(publicStatusMaster.id, rankingMaster.publicStatus))
       .leftJoin(rankingOrderMaster, and(eq(rankingOrderMaster.rankingId, rankingMaster.id), eq(rankingOrderMaster.deleteFlg, true)))
-      .where(and(eq(rankingMaster.deleteFlg, true), eq(rankingMaster.userId, userId.value)))
-      .groupBy(rankingMaster.id, userMaster.name, publicStatusMaster.name);
+      .where(and(...conditions))
+      .groupBy(rankingMaster.id, userMaster.name, publicStatusMaster.name)
+      .orderBy(desc(rankingMaster.updatedAt))
+      .limit(GetTrashListMyRankingRepository.LIMIT)
+      .offset((query.page - 1) * GetTrashListMyRankingRepository.LIMIT);
+  }
+
+  /**
+   * 削除済み件数取得
+   */
+  async count(userId: UserId, query: TrashMyRankingQueryType): Promise<number> {
+
+    const conditions = this.buildConditions(userId, query);
+
+    const [{ total }] = await this.db
+      .select({ total: count(rankingMaster.id) })
+      .from(rankingMaster)
+      .where(and(...conditions));
+
+    return total;
+  }
+
+  private buildConditions(userId: UserId, query: TrashMyRankingQueryType) {
+    return [
+      eq(rankingMaster.deleteFlg, true),
+      eq(rankingMaster.userId, userId.value),
+      ...(query.title ? [like(rankingMaster.title, `%${query.title}%`)] : []),
+      ...(query.createdAtFrom ? [gte(rankingMaster.createdAt, query.createdAtFrom)] : []),
+      ...(query.createdAtTo ? [lte(rankingMaster.createdAt, query.createdAtTo)] : []),
+      ...(query.updatedAtFrom ? [gte(rankingMaster.updatedAt, query.updatedAtFrom)] : []),
+      ...(query.updatedAtTo ? [lte(rankingMaster.updatedAt, query.updatedAtTo)] : []),
+    ];
   }
 }
