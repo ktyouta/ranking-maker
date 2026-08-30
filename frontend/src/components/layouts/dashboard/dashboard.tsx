@@ -127,8 +127,8 @@ export function Dashboard(props: PropsType) {
                             <span className='mr-[5px] text-base sm:text-[18px] cursor-pointer sm:mr-[10px]'>
                                 {props.loginUser.name}
                             </span>
-                            <HiOutlineUserCircle className="size-8 cursor-pointer mr-[5px] sm:mr-[12px]" />
-                            <IoTriangle className={`size-4 cursor-pointer ${isUserMenuOpen ? 'rotate-0' : 'rotate-180'}`} />
+                            <HiOutlineUserCircle className="size-7 sm:size-8 cursor-pointer mr-[5px] sm:mr-[12px]" />
+                            <IoTriangle className={`size-3 sm:size-4 cursor-pointer ${isUserMenuOpen ? 'rotate-0' : 'rotate-180'}`} />
                             {/* ユーザーメニュー */}
                             {
                                 isUserMenuOpen &&

@@ -1,15 +1,15 @@
+import { cn } from '@/utils/cn';
+
 type PropsType = {
-    size?: number;
+    className?: string;
 };
 
-export function Spinner({ size = 32 }: PropsType) {
+export function Spinner({ className }: PropsType) {
 
     return (
         <div className="inline-flex items-center justify-center">
             <svg
-                className="animate-spin text-accent"
-                width={size}
-                height={size}
+                className={cn("size-8 animate-spin text-accent", className)}
                 viewBox="0 0 24 24"
                 fill="none"
             >

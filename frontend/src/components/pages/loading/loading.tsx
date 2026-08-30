@@ -8,7 +8,7 @@ type PropsType = {
 export function Loading(props: PropsType) {
     return (
         <div className={cn("flex w-screen h-screen items-center justify-center", props.className)}>
-            <Spinner size={48} />
+            <Spinner className="size-8 sm:size-12" />
         </div>
     );
 }
