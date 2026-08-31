@@ -182,7 +182,7 @@ export function CreateRanking(props: PropsType) {
                     </button>
                     <button
                         type="button"
-                        className="rounded-full bg-accent px-8 py-3 text-base font-medium text-white hover:bg-accent-hover"
+                        className="rounded-full bg-accent-surface px-8 py-3 text-base font-medium text-white hover:bg-accent-surface-hover"
                         onClick={handleConfirm}
                     >
                         作成する

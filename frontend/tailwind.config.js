@@ -8,24 +8,44 @@ export default {
       colors: {
         // Tailwind のデフォルト fontSize スケールに "base" キーが存在するため、
         // colors.base にすると `.text-base` の意味が「文字サイズ 1rem」から
-        // 「文字色 #F2FAF9」に上書きされてしまう（同名セレクタでの衝突）。
+        // 「文字色」に上書きされてしまう（同名セレクタでの衝突）。
         // それを避けるため canvas という別名にしている。
-        canvas: "#F2FAF9",
-        surface: "#FFFFFF",
+        //
+        // 各値は固定hexではなくCSS変数（--xxx-rgb、index.css で [data-theme="..."] ごとに定義）
+        // を参照する。テーマ切り替えは <html data-theme="..."> を付け替えるだけで、
+        // ビルドし直さずに反映される（rgb(var(--x) / <alpha-value>) にすることで
+        // bg-accent/50 のような透過度指定にも対応する）。
+        canvas: "rgb(var(--canvas-rgb) / <alpha-value>)",
+        surface: "rgb(var(--surface-rgb) / <alpha-value>)",
         accent: {
-          DEFAULT: "#0F9E93",
-          hover: "#0B7A72",
+          DEFAULT: "rgb(var(--accent-rgb) / <alpha-value>)",
+          hover: "rgb(var(--accent-hover-rgb) / <alpha-value>)",
+          // ボタン・バッジ等の単色塗りつぶし専用（index.css 参照）
+          surface: "rgb(var(--accent-surface-rgb) / <alpha-value>)",
+          "surface-hover": "rgb(var(--accent-surface-hover-rgb) / <alpha-value>)",
         },
         ink: {
-          DEFAULT: "#12302E",
-          sub: "#4B6C69",
+          DEFAULT: "rgb(var(--ink-rgb) / <alpha-value>)",
+          sub: "rgb(var(--ink-sub-rgb) / <alpha-value>)",
         },
-        line: "#D9EEEB",
+        line: "rgb(var(--line-rgb) / <alpha-value>)",
+        // ヘッダーロゴ専用。ライト3テーマはaccentと同値、ダークのみ白にする
+        brand: "rgb(var(--brand-rgb) / <alpha-value>)",
+        // 金・銀・銅は順位演出の視認性を優先し、テーマに関わらず固定色にする
+        // （docs/shared.md 禁止事項: 順位カラーとアクセントカラーを混色・近似させない）
         rank: {
           gold: "#B4881A",
           silver: "#7C8B92",
           bronze: "#A2653A",
         },
+      },
+      borderColor: {
+        // 色指定のない `border` / `border-b` 等（Tailwindの既定では固定のgray-200相当）を
+        // line トークンに揃える。ダークモード時に固定グレーの罫線が浮くのを防ぐ。
+        DEFAULT: "rgb(var(--line-rgb) / <alpha-value>)",
+      },
+      ringColor: {
+        DEFAULT: "rgb(var(--accent-rgb) / <alpha-value>)",
       },
       keyframes: {
         "fade-in": {

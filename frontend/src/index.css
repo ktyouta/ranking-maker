@@ -2,14 +2,96 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * テーマカラー定義（docs/shared.md 参照）。
+ * <html data-theme="..."> の値に応じて --xxx-rgb を切り替えることで、
+ * tailwind.config.js の accent/canvas/ink/line トークンが一括で追従する。
+ * bare :root は JS 読み込み前の初期表示用（teal と同値）。ThemeProvider は
+ * 常に明示的に data-theme="teal" 等を設定する（未設定状態には依存しない）。
+ */
+/*
+ * --accent-surface-rgb / --accent-surface-hover-rgb: ボタン・バッジ・サイドバー等
+ * 「単色で塗りつぶす」用途専用。ライトテーマでは accent と同値（見た目は変わらない）。
+ * ダークテーマだけ大幅に暗く沈めた値にする。逆に --accent-rgb 自体はテキスト・細い
+ * ボーダー・低opacityの薄い塗り用で、ダークでも視認性重視でやや明るいままにする
+ * （参考: 塗りつぶし色を全面的に暗くし、文字色だけ明るく保つ配色）。
+ */
+:root {
+  --canvas-rgb: 242 250 249;
+  --surface-rgb: 255 255 255;
+  --accent-rgb: 15 158 147;
+  --accent-hover-rgb: 11 122 114;
+  --accent-surface-rgb: 15 158 147;
+  --accent-surface-hover-rgb: 11 122 114;
+  --brand-rgb: 15 158 147;
+  --ink-rgb: 18 48 46;
+  --ink-sub-rgb: 75 108 105;
+  --line-rgb: 217 238 235;
+}
+
+:root[data-theme="teal"] {
+  --canvas-rgb: 242 250 249;
+  --surface-rgb: 255 255 255;
+  --accent-rgb: 15 158 147;
+  --accent-hover-rgb: 11 122 114;
+  --accent-surface-rgb: 15 158 147;
+  --accent-surface-hover-rgb: 11 122 114;
+  --brand-rgb: 15 158 147;
+  --ink-rgb: 18 48 46;
+  --ink-sub-rgb: 75 108 105;
+  --line-rgb: 217 238 235;
+}
+
+:root[data-theme="lavender"] {
+  --canvas-rgb: 245 243 255;
+  --surface-rgb: 255 255 255;
+  --accent-rgb: 124 111 224;
+  --accent-hover-rgb: 103 89 204;
+  --accent-surface-rgb: 124 111 224;
+  --accent-surface-hover-rgb: 103 89 204;
+  --brand-rgb: 124 111 224;
+  --ink-rgb: 36 31 61;
+  --ink-sub-rgb: 95 90 130;
+  --line-rgb: 230 225 255;
+}
+
+:root[data-theme="peach"] {
+  --canvas-rgb: 255 244 239;
+  --surface-rgb: 255 255 255;
+  --accent-rgb: 232 102 61;
+  --accent-hover-rgb: 201 79 42;
+  --accent-surface-rgb: 232 102 61;
+  --accent-surface-hover-rgb: 201 79 42;
+  --brand-rgb: 232 102 61;
+  --ink-rgb: 51 36 29;
+  --ink-sub-rgb: 138 106 92;
+  --line-rgb: 243 219 203;
+}
+
+:root[data-theme="dark"] {
+  /* 参考実装(別リポジトリ todo-react-hono-rpc)のダークモードをそのまま踏襲: 背景は
+     ニュートラルなgray-900/800、アクセントのみcyan-400(文字)/cyan-900(塗り)。
+     brand-rgb（ヘッダーロゴ）だけは例外的に白にする（ユーザー指定）。 */
+  --canvas-rgb: 17 24 39;
+  --surface-rgb: 31 41 55;
+  --accent-rgb: 34 211 238;
+  --accent-hover-rgb: 103 232 249;
+  --accent-surface-rgb: 22 78 99;
+  --accent-surface-hover-rgb: 21 94 117;
+  --brand-rgb: 255 255 255;
+  --ink-rgb: 243 244 246;
+  --ink-sub-rgb: 156 163 175;
+  --line-rgb: 55 65 81;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light;
-  color: #12302E;
-  background-color: #F2FAF9;
+  color: rgb(var(--ink-rgb));
+  background-color: rgb(var(--canvas-rgb));
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -17,13 +99,17 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
 a {
   font-weight: 500;
-  color: #0F9E93;
+  color: rgb(var(--accent-rgb));
   text-decoration: inherit;
 }
 a:hover {
-  color: #0B7A72;
+  color: rgb(var(--accent-hover-rgb));
 }
 
 body {
@@ -31,7 +117,7 @@ body {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
-  background-color: #F2FAF9;
+  background-color: rgb(var(--canvas-rgb));
 }
 
 h1 {

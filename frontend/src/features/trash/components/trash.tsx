@@ -55,7 +55,7 @@ export const Trash = (props: PropsType) => {
             />
             {trashList.length === 0 && (
                 <div className="flex flex-col items-center gap-3 py-16 text-center">
-                    <IoTrashBinOutline className="size-16 text-accent" />
+                    <IoTrashBinOutline className="size-16 text-accent-surface" />
                     <p className="text-xl font-bold text-ink">
                         ゴミ箱は空です
                     </p>

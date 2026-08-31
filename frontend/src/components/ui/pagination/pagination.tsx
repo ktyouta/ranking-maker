@@ -64,7 +64,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: PropsType)
                         className={cn(
                             "w-9 h-9 rounded-full text-sm",
                             currentPage === page
-                                ? "bg-accent text-white font-bold shadow-md"
+                                ? "bg-accent-surface text-white font-bold shadow-md"
                                 : "text-ink-sub hover:bg-accent/10"
                         )}
                     >

@@ -55,7 +55,7 @@ export const MyRanking = (props: PropsType) => {
             />
             {rankingList.length === 0 && (
                 <div className="flex flex-col items-center gap-3 py-16 text-center">
-                    <IoTrophyOutline className="size-16 text-accent" />
+                    <IoTrophyOutline className="size-16 text-accent-surface" />
                     <p className="text-xl font-bold text-ink">
                         まだランキングがありません
                     </p>

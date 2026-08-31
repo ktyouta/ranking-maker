@@ -105,7 +105,7 @@ export function Drawer({
                 <button
                     type="button"
                     onClick={onClose}
-                    className="absolute right-4 top-4 p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+                    className="absolute right-4 top-4 p-1 text-ink-sub hover:text-ink rounded-full hover:bg-surface"
                     aria-label="閉じる"
                 >
                     <svg
@@ -129,7 +129,7 @@ export function Drawer({
                         {title && (
                             <h2
                                 id="drawer-title"
-                                className="text-lg font-semibold text-gray-900"
+                                className="text-lg font-semibold text-ink"
                             >
                                 {title}
                             </h2>
@@ -137,7 +137,7 @@ export function Drawer({
                         {description && (
                             <p
                                 id="drawer-description"
-                                className="mt-1 text-sm text-gray-500"
+                                className="mt-1 text-sm text-ink-sub"
                             >
                                 {description}
                             </p>

@@ -81,24 +81,24 @@ export function Dialog({
             {/* Dialog Content */}
             <div
                 className={cn(
-                    "relative z-10 w-full mx-4 bg-white rounded-lg shadow-xl",
+                    "relative z-10 w-full mx-4 bg-surface rounded-lg shadow-xl",
                     sizeClasses[size]
                 )}
                 onClick={handleContentClick}
             >
                 {/* Header */}
                 {title && (
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-line">
                         <h2
                             id="dialog-title"
-                            className="text-lg font-semibold text-gray-900"
+                            className="text-lg font-semibold text-ink"
                         >
                             {title}
                         </h2>
                         <button
                             type="button"
                             onClick={onClose}
-                            className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+                            className="p-1 text-ink-sub hover:text-ink rounded-full hover:bg-canvas"
                             aria-label="閉じる"
                         >
                             <svg

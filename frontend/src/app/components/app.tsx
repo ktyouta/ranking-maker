@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import { AppErrorBoundary } from './app-error-boundary';
 import { LoginUserProvider } from './login-user-provider';
 import { AppRouter } from './router';
+import { ThemeProvider } from './theme-provider';
 import { VerifyApp } from './verify-app';
 
 //React-Query用
@@ -23,39 +24,41 @@ const queryClient = new QueryClient({
 export function App() {
 
   return (
-    <BrowserRouter>
-      <ErrorBoundary
-        FallbackComponent={Errors}
-      >
-        <AppErrorBoundary>
-          <Suspense
-            fallback={<Loading />}
-          >
-            <QueryClientProvider
-              client={queryClient}
+    <ThemeProvider>
+      <BrowserRouter>
+        <ErrorBoundary
+          FallbackComponent={Errors}
+        >
+          <AppErrorBoundary>
+            <Suspense
+              fallback={<Loading />}
             >
-              <ToastContainer
-                position="top-center"
-                autoClose={3000}
-              />
-              <VerifyApp>
-                {({ user }) => (
-                  <LoginUserProvider
-                    loginUser={user}
-                  >
-                    <AppRouter />
-                  </LoginUserProvider>
-                )}
-              </VerifyApp>
-              {/* React-query devtool */}
-              <ReactQueryDevtools
-                initialIsOpen={false}
-                buttonPosition='bottom-left'
-              />
-            </QueryClientProvider>
-          </Suspense>
-        </AppErrorBoundary>
-      </ErrorBoundary>
-    </BrowserRouter>
+              <QueryClientProvider
+                client={queryClient}
+              >
+                <ToastContainer
+                  position="top-center"
+                  autoClose={3000}
+                />
+                <VerifyApp>
+                  {({ user }) => (
+                    <LoginUserProvider
+                      loginUser={user}
+                    >
+                      <AppRouter />
+                    </LoginUserProvider>
+                  )}
+                </VerifyApp>
+                {/* React-query devtool */}
+                <ReactQueryDevtools
+                  initialIsOpen={false}
+                  buttonPosition='bottom-left'
+                />
+              </QueryClientProvider>
+            </Suspense>
+          </AppErrorBoundary>
+        </ErrorBoundary>
+      </BrowserRouter>
+    </ThemeProvider>
   )
 }

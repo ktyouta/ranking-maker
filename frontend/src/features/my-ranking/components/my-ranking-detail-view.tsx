@@ -59,7 +59,7 @@ export function MyRankingDetailView(props: PropsType) {
                 </button>
                 <button
                     type="button"
-                    className="shrink-0 rounded-full bg-accent px-5 py-2 text-base font-medium text-white hover:bg-accent-hover sm:px-8 sm:py-3"
+                    className="shrink-0 rounded-full bg-accent-surface px-5 py-2 text-base font-medium text-white hover:bg-accent-surface-hover sm:px-8 sm:py-3"
                     onClick={onStartEdit}
                 >
                     編集する

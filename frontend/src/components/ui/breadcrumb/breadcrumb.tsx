@@ -19,7 +19,7 @@ export function Breadcrumb({ items }: PropsType) {
             : items;
 
     return (
-        <div className="flex flex-wrap items-center gap-1 text-sm text-gray-500">
+        <div className="flex flex-wrap items-center gap-1 text-sm text-ink-sub">
             {displayItems.map((item, index) => (
                 <div key={index} className="flex items-center gap-1 min-w-0">
                     {index > 0 && <HiChevronRight className="size-3 shrink-0" />}
@@ -29,7 +29,7 @@ export function Breadcrumb({ items }: PropsType) {
                         <button
                             type="button"
                             onClick={() => navigate(item.href)}
-                            className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 max-w-[8rem] truncate"
+                            className="flex items-center gap-1 text-sm text-ink-sub hover:text-ink max-w-[8rem] truncate"
                         >
                             {item.label}
                         </button>

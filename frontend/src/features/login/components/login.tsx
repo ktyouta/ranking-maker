@@ -34,8 +34,8 @@ export function Login(props: PropsType) {
     return (
         <div className="min-h-screen bg-canvas flex items-center justify-center px-4 py-8">
             {isLoading && <LoadingOverlay />}
-            <div className="w-full max-w-lg bg-white rounded-xl shadow-lg p-8 sm:p-10">
-                <h1 className="text-2xl font-bold text-gray-800 text-center mb-8">
+            <div className="w-full max-w-lg bg-surface rounded-xl shadow-lg p-8 sm:p-10">
+                <h1 className="text-2xl font-bold text-ink text-center mb-8">
                     ログイン
                 </h1>
                 {errMessage && (
@@ -46,11 +46,11 @@ export function Login(props: PropsType) {
                 <div className="flex flex-col gap-6">
                     {/* ユーザー名 */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-ink mb-2">
                             ユーザー名
                         </label>
                         <Textbox
-                            className={`w-full h-12 px-4 rounded-lg border-gray-300 ${errors.name ? 'border-red-500 focus:ring-red-500' : ''}`}
+                            className={`w-full h-12 px-4 rounded-lg ${errors.name ? 'border-red-500 focus:ring-red-500' : ''}`}
                             autoComplete="off"
                             registration={register("name")}
                             onKeyDown={handleKeyPress}
@@ -61,11 +61,11 @@ export function Login(props: PropsType) {
                     </div>
                     {/* パスワード */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-ink mb-2">
                             パスワード
                         </label>
                         <Textbox
-                            className={`w-full h-12 px-4 rounded-lg border-gray-300 ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
+                            className={`w-full h-12 px-4 rounded-lg ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
                             type="password"
                             autoComplete="off"
                             registration={register("password")}
@@ -77,7 +77,7 @@ export function Login(props: PropsType) {
                     </div>
                     <div>
                         <span
-                            className='text-blue-700 cursor-pointer'
+                            className='text-accent cursor-pointer'
                             onClick={navigateSignup}
                         >
                             アカウント作成はこちらから
@@ -93,7 +93,7 @@ export function Login(props: PropsType) {
                         </button>
                         <button
                             type="button"
-                            className="flex-1 bg-accent hover:bg-accent-hover text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                            className="flex-1 bg-accent-surface hover:bg-accent-surface-hover text-white font-medium py-3 px-4 rounded-lg transition-colors"
                             onClick={clickLogin}
                         >
                             ログイン

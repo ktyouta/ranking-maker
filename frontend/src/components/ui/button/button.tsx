@@ -14,7 +14,7 @@ const colorClasses: Record<Color, string> = {
     red: "bg-red-500 hover:bg-red-600",
     blue: "bg-blue-500 hover:bg-blue-600",
     green: "bg-green-500 hover:bg-green-600",
-    accent: "bg-accent hover:bg-accent-hover",
+    accent: "bg-accent-surface hover:bg-accent-surface-hover",
 };
 
 const sizeClasses: Record<Size, string> = {

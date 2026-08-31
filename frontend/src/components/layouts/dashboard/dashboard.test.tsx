@@ -19,6 +19,7 @@ describe('Dashboard', () => {
                     moveLogin={moveLogin}
                     moveUserInfoUpdate={vi.fn()}
                     movePasswordUpdate={vi.fn()}
+                    openThemeSettings={vi.fn()}
                     logout={vi.fn()}
                     navItems={[]}
                 >
@@ -44,6 +45,7 @@ describe('Dashboard', () => {
                     moveLogin={moveLogin}
                     moveUserInfoUpdate={vi.fn()}
                     movePasswordUpdate={vi.fn()}
+                    openThemeSettings={vi.fn()}
                     logout={vi.fn()}
                     navItems={[]}
                 >

@@ -48,7 +48,7 @@ const TableFooter = React.forwardRef<
   <tfoot
     ref={ref}
     className={cn(
-      'border-t bg-gray-50 font-medium [&>tr]:last:border-b-0',
+      'border-t bg-canvas font-medium [&>tr]:last:border-b-0',
       className,
     )}
     {...props}
@@ -63,7 +63,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      'border-b transition-colors hover:bg-gray-50 data-[state=selected]:bg-gray-100',
+      'border-b transition-colors hover:bg-canvas data-[state=selected]:bg-accent/10',
       className,
     )}
     {...props}
@@ -78,7 +78,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      'h-10 px-2 text-left align-middle font-medium text-gray-500 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
+      'h-10 px-2 text-left align-middle font-medium text-ink-sub [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
       className,
     )}
     {...props}
@@ -107,7 +107,7 @@ const TableCaption = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <caption
     ref={ref}
-    className={cn('mt-4 text-sm text-gray-500', className)}
+    className={cn('mt-4 text-sm text-ink-sub', className)}
     {...props}
   />
 ));
@@ -135,7 +135,7 @@ export function Table<Entry extends BaseEntity>({
 }: TableProps<Entry>) {
   if (!data?.length) {
     return (
-      <div className="flex h-80 flex-col items-center justify-center bg-white text-gray-500">
+      <div className="flex h-80 flex-col items-center justify-center bg-surface text-ink-sub">
         <HiOutlineArchiveBoxXMark className="size-16" />
         <h4>No Entries Found</h4>
       </div>

@@ -151,7 +151,7 @@ export function TrashDetail(props: PropsType) {
                             </div>
                             <button
                                 type="button"
-                                className="shrink-0 rounded-full bg-accent px-8 py-3 text-base font-medium text-white hover:bg-accent-hover"
+                                className="shrink-0 rounded-full bg-accent-surface px-8 py-3 text-base font-medium text-white hover:bg-accent-surface-hover"
                                 onClick={onClickRestore}
                             >
                                 復元する
@@ -198,7 +198,7 @@ export function TrashDetail(props: PropsType) {
                         </button>
                         <button
                             type="button"
-                            className="rounded-full bg-accent px-6 py-2 text-base font-medium text-white hover:bg-accent-hover"
+                            className="rounded-full bg-accent-surface px-6 py-2 text-base font-medium text-white hover:bg-accent-surface-hover"
                             onClick={onConfirmRestore}
                         >
                             復元する

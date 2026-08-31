@@ -15,8 +15,8 @@ export const Textbox = React.forwardRef<HTMLInputElement, Props>(
                 {...registration}
                 {...props}
                 className={cn(
-                    "h-9 border border-[#767676] rounded px-1.5 text-base",
-                    "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+                    "h-9 border rounded px-1.5 text-base bg-surface text-ink",
+                    "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
                     className
                 )}
             />

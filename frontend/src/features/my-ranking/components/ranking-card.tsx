@@ -22,7 +22,7 @@ export const RankingCard = (props: PropsType) => {
             className="flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-accent/35 bg-surface shadow-md hover:-translate-y-0.5 hover:shadow-lg sm:border-2 sm:border-accent/[40%]"
         >
             <div className="flex items-center justify-between gap-2 bg-accent/[12%] px-5 py-3 sm:py-5">
-                <span className="flex size-8 sm:size-10 shrink-0 items-center justify-center rounded-full bg-accent text-white shadow-md">
+                <span className="flex size-8 sm:size-10 shrink-0 items-center justify-center rounded-full bg-accent-surface text-white shadow-md">
                     <IoTrophyOutline className="size-4 sm:size-5" />
                 </span>
                 <div className="flex flex-nowrap items-center justify-end gap-1.5 sm:gap-2">
@@ -37,7 +37,7 @@ export const RankingCard = (props: PropsType) => {
                 </div>
             </div>
             <div className="border-t border-line py-2 pl-5 pr-6 sm:py-4">
-                <div className="border-l-4 border-accent pl-3">
+                <div className="border-l-4 border-accent-surface pl-3">
                     <h2 className="line-clamp-2 flex min-h-[3rem] sm:min-h-[3.5rem] items-center text-lg font-bold text-ink">
                         {title}
                     </h2>

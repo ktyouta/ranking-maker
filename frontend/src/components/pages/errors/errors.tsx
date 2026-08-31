@@ -23,7 +23,7 @@ export function Errors() {
                     </p>
                 </div>
             </div>
-            <div className="h-[13%] flex justify-center items-center gap-1 text-blue-500">
+            <div className="h-[13%] flex justify-center items-center gap-1 text-accent">
                 <MdHome className="text-2xl mr-1" />
                 <span
                     onClick={() => {

@@ -53,7 +53,7 @@ export const TrashSearchBar = (props: PropsType) => {
                         詳細フィルター
                         {isDetailOpen ? <IoChevronUp className="size-4" /> : <IoChevronDown className="size-4" />}
                         {activeCount > 0 && (
-                            <span className="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-accent text-[11px] font-bold text-white shadow-sm">
+                            <span className="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-accent-surface text-[11px] font-bold text-white shadow-sm">
                                 {activeCount}
                             </span>
                         )}

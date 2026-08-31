@@ -14,6 +14,7 @@ type PropsType = {
     moveLogin: () => void;
     moveUserInfoUpdate(): void;
     movePasswordUpdate(): void;
+    openThemeSettings(): void;
     logout(): void;
     navItems: {
         to: string;
@@ -47,7 +48,7 @@ export function Dashboard(props: PropsType) {
 
             {/* サイドバー */}
             <nav
-                className={`flex flex-col overflow-hidden bg-accent shadow-md transition-all duration-300 fixed inset-y-0 left-0 z-40 lg:relative lg:inset-auto lg:z-auto ${isSidebarOpen ? 'w-64' : 'w-0 lg:w-20'}`}
+                className={`flex flex-col overflow-hidden bg-accent-surface shadow-md transition-all duration-300 fixed inset-y-0 left-0 z-40 lg:relative lg:inset-auto lg:z-auto ${isSidebarOpen ? 'w-64' : 'w-0 lg:w-20'}`}
             >
                 {/* 開閉ボタン */}
                 <button
@@ -97,7 +98,7 @@ export function Dashboard(props: PropsType) {
                         <HiBars3 className="h-6 w-6" />
                     </button>
                     <div className="flex-1">
-                        <span className="text-[18px] sm:text-[28px] font-bold text-accent cursor-pointer"
+                        <span className="text-[18px] sm:text-[28px] font-bold text-brand cursor-pointer"
                             onClick={props.moveHome}
                         >
                             Ranking Maker
@@ -127,6 +128,15 @@ export function Dashboard(props: PropsType) {
                                         onClick={props.movePasswordUpdate}
                                     >
                                         パスワード更新
+                                    </button>
+                                    <button className='block w-full text-left px-5 py-3 text-ink hover:bg-canvas transition-colors'
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setIsUserMenuOpen(false);
+                                            props.openThemeSettings();
+                                        }}
+                                    >
+                                        テーマ設定
                                     </button>
                                     <div className='border-t border-line my-2' />
                                     <button className='block w-full text-left px-5 py-3 text-ink hover:bg-canvas transition-colors'

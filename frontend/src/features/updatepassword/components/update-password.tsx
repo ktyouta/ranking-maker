@@ -33,8 +33,8 @@ export function UpdatePassword(props: PropsType) {
     return (
         <div className="min-h-screen bg-canvas flex items-center justify-center px-4 py-8">
             {isLoading && <LoadingOverlay />}
-            <div className="w-full max-w-lg bg-white rounded-xl shadow-lg p-8 sm:p-10">
-                <h1 className="text-2xl font-bold text-gray-800 text-center mb-8">
+            <div className="w-full max-w-lg bg-surface rounded-xl shadow-lg p-8 sm:p-10">
+                <h1 className="text-2xl font-bold text-ink text-center mb-8">
                     パスワード変更
                 </h1>
                 {errMessage && (
@@ -44,11 +44,11 @@ export function UpdatePassword(props: PropsType) {
                 )}
                 <div className="flex flex-col gap-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-ink mb-2">
                             現在のパスワード
                         </label>
                         <Textbox
-                            className={`w-full h-12 px-4 rounded-lg border-gray-300 ${errors.nowPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
+                            className={`w-full h-12 px-4 rounded-lg ${errors.nowPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
                             type="password"
                             autoComplete="off"
                             registration={register("nowPassword")}
@@ -58,11 +58,11 @@ export function UpdatePassword(props: PropsType) {
                         )}
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-ink mb-2">
                             新しいパスワード
                         </label>
                         <Textbox
-                            className={`w-full h-12 px-4 rounded-lg border-gray-300 ${errors.newPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
+                            className={`w-full h-12 px-4 rounded-lg ${errors.newPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
                             type="password"
                             autoComplete="off"
                             registration={register("newPassword")}
@@ -72,11 +72,11 @@ export function UpdatePassword(props: PropsType) {
                         )}
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-ink mb-2">
                             確認用パスワード
                         </label>
                         <Textbox
-                            className={`w-full h-12 px-4 rounded-lg border-gray-300 ${errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
+                            className={`w-full h-12 px-4 rounded-lg ${errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
                             type="password"
                             autoComplete="off"
                             registration={register("confirmPassword")}
@@ -95,7 +95,7 @@ export function UpdatePassword(props: PropsType) {
                         </button>
                         <button
                             type="button"
-                            className="flex-1 bg-accent hover:bg-accent-hover text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                            className="flex-1 bg-accent-surface hover:bg-accent-surface-hover text-white font-medium py-3 px-4 rounded-lg transition-colors"
                             onClick={handleConfirm}
                         >
                             変更
