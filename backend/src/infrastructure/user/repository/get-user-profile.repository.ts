@@ -23,6 +23,6 @@ export class GetUserProfileRepository implements IGetUserProfileRepository {
     if (!row) {
       return undefined;
     }
-    return { id: row.id, name: row.name, birthday: row.birthday };
+    return { id: row.id, name: row.name, birthday: row.birthday, theme: row.theme };
   }
 }

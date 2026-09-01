@@ -35,6 +35,7 @@ export const authMiddleware: MiddlewareHandler<AppEnv> = async (c, next) => {
                 id: userInfo.id,
                 name: userInfo.name,
                 birthday: userInfo.birthday,
+                theme: userInfo.theme,
             },
         });
 

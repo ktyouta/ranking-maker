@@ -10,7 +10,7 @@ description: |
   以下の場合は使用しない：
   - フロントエンドのみの変更
   - 調査・説明・設計相談のみの場合
-version: 2.0.0
+version: 2.1.0
 ---
 
 # Backend Review Skill
@@ -81,6 +81,11 @@ version: 2.0.0
   - アンチパターン: スキーマ検証の違反を表す `Violation`（`field` は論理パス）を、AI/外部サービスによる判定結果にもそのまま流用する
   - 正しいパターン: 構造が同じでも概念が異なるなら、そのドメイン概念専用の型を別途定義する
 - `string` 型を使っているフィールドのうち、対応するドメイン型を新規作成すべきものが残っていないか
+- 新規作成したVOのクラス名が、同一 `domain/{機能}/value-object/` 配下の既存VOの命名プレフィックスと一貫しているか
+  - 実例: `domain/user/value-object/` 配下は `UserId`/`UserName`/`UserBirthday` のように全て `User` プレフィックスが付いている。ここに `Theme` のようなプレフィックスなしのVOを追加すると、フォルダ内での一貫性が崩れる（`UserTheme` とすべき）
+- VOに複数の生成意味（値検証によるインスタンス化 vs デフォルト値生成 等）がある場合、`private constructor` + 名前付き静的ファクトリメソッド（`of` / `default` 等）に分離しているか
+  - アンチパターン: `public constructor` のみを持つVOに対し、デフォルト値生成のために `new Theme(Theme.LAVENDER)` のような自己参照的な呼び出しをコール側に書かせている
+  - 正しいパターン: `UserId` の `static generate()`（新規生成）/ `static of()`（既存値から復元）のように、生成意味ごとに名前付きファクトリメソッドを分離する（例: `static of(value)` / `static default()`）
 
 ### Repository 単一操作（Infrastructure層）
 - Repositoryの1メソッドは、そのユースケースが要求するアトミックな書き込み単位に対応しているか（無関係な操作を便宜的に1メソッドにまとめていないか）

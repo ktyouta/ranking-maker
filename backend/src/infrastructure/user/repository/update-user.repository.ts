@@ -1,5 +1,5 @@
 import { and, eq, ne } from "drizzle-orm";
-import { UserEntity } from "../../../domain/user";
+import { UserEntity, UserTheme } from "../../../domain/user";
 import type { IUpdateUserRepository, UserBirthday, UserId, UserName } from "../../../domain/user";
 import type { Database } from "../../db";
 import { userLoginMaster, userMaster } from "../../db";
@@ -57,6 +57,6 @@ export class UpdateUserRepository implements IUpdateUserRepository {
     if (!updateResult[0]) {
       return undefined;
     }
-    return new UserEntity(userId, userName, userBirthday);
+    return new UserEntity(userId, userName, userBirthday, UserTheme.of(updateResult[0].theme));
   }
 }

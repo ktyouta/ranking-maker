@@ -6,6 +6,7 @@ export type CreateUserResponseType = {
     id: string;
     name: string;
     birthday: string;
+    theme: string;
   };
 };
 
@@ -19,6 +20,7 @@ export class CreateUserResponseDto {
         id: entity.userId,
         name: entity.userName,
         birthday: entity.userBirthday,
+        theme: entity.userTheme,
       },
     };
   }

@@ -6,6 +6,7 @@ export const API_ENDPOINT = {
   SAMPLE: "/api/v1/sample",
   USER: "/api/v1/user",
   USER_ID: "/api/v1/user/:userId",
+  USER_ID_THEME: "/api/v1/user/:userId/theme",
   USER_LOGIN: "/api/v1/user-login",
   REFRESH: "/api/v1/refresh",
   VERIFY: "/api/v1/verify",

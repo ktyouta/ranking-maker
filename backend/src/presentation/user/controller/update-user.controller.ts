@@ -46,7 +46,8 @@ const updateUser = new Hono<AppEnv>().patch(
         const responseDto = new UpdateUserResponseDto(
             result.entity.userId,
             result.entity.userName,
-            result.entity.userBirthday
+            result.entity.userBirthday,
+            result.entity.userTheme
         );
 
         setCookie(c, RefreshToken.COOKIE_KEY, result.refreshToken.value, RefreshToken.getCookieSetOption(config));

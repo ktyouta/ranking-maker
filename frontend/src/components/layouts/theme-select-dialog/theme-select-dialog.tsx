@@ -1,6 +1,6 @@
+import { ThemeType } from '@/app/components/theme-provider';
 import { Dialog } from '@/components';
 import { HiCheck } from 'react-icons/hi2';
-import { ThemeType } from './theme-provider';
 
 type PropsType = {
     isOpen: boolean;
@@ -17,7 +17,7 @@ const THEME_OPTIONS: { value: ThemeType; label: string; swatchClassName: string 
 ];
 
 /**
- * テーマ選択ダイアログ。選択と同時に即反映する（保存操作は不要）
+ * テーマ選択ダイアログ
  */
 export function ThemeSelectDialog(props: PropsType) {
 

@@ -17,7 +17,7 @@ type PropsType = {
 /**
  * ThemeType の値かどうかを判定する
  */
-function isThemeType(value: string | null): value is ThemeType {
+export function isThemeType(value: string | null): value is ThemeType {
     return value === 'teal' || value === 'lavender' || value === 'peach' || value === 'dark';
 }
 

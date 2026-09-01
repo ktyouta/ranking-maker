@@ -81,7 +81,32 @@
 
 ---
 
-## ケース5: 問題なし
+## ケース5: 違反あり（VO命名がフォルダ内で不整合／自己参照的な生成）
+
+### 状況
+- `domain/user/value-object/theme/theme.ts` に `Theme` という新規VOを作成した
+- 同じ `domain/user/value-object/` 配下には `UserId`/`UserName`/`UserBirthday` があり、全て `User` プレフィックスが付いている
+- デフォルト値生成のため呼び出し側で `new Theme(Theme.LAVENDER)` としている
+
+### 出力
+
+```
+## Backend Review 結果
+
+### 違反あり
+- **ファイル**: backend/src/domain/user/value-object/theme/theme.ts:1
+- **違反内容**: `domain/user/value-object/` 配下の既存VO（`UserId`/`UserName`/`UserBirthday`）は全て `User` プレフィックスが付いているが、`Theme` だけプレフィックスがなく命名が不整合
+- **修正方針**: `UserTheme` にリネームする（フォルダも `user-theme/user-theme.ts` に揃える）
+
+### 違反あり
+- **ファイル**: backend/src/application/user/usecase/create-user.usecase.ts:39
+- **違反内容**: `new Theme(Theme.LAVENDER)` という自己参照的な生成になっている。`Theme` は「値検証によるインスタンス化」と「デフォルト値生成」という2つの生成意味を持つが、`public constructor` のみで表現されている
+- **修正方針**: `UserId` の `static generate()`/`static of()` と同様に `private constructor` + `static of(value)` / `static default()` に分離する
+```
+
+---
+
+## ケース6: 問題なし
 
 ### 出力
 

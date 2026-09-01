@@ -30,6 +30,7 @@ export class CreateUserRepository implements ICreateUserRepository {
         id: user.userId,
         name: user.userName,
         birthday: user.userBirthday,
+        theme: user.userTheme,
         deleteFlg: false,
         createdAt: now,
         updatedAt: now,

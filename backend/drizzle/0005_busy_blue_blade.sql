@@ -1,0 +1,1 @@
+ALTER TABLE `user_master` ADD `theme` text DEFAULT 'lavender' NOT NULL;

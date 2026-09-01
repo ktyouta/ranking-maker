@@ -8,6 +8,7 @@ describe("UserLoginResponseDto", () => {
       id: "01ARZ3NDEKTSV4RRFFQ69G5FAV",
       name: "testuser",
       birthday: "19900101",
+      theme: "lavender",
     };
     const accessToken = "test-access-token";
 
@@ -17,6 +18,7 @@ describe("UserLoginResponseDto", () => {
     expect(dto.value.user.id).toBe("01ARZ3NDEKTSV4RRFFQ69G5FAV");
     expect(dto.value.user.name).toBe("testuser");
     expect(dto.value.user.birthday).toBe("19900101");
+    expect(dto.value.user.theme).toBe("lavender");
   });
 
   it("birthdayがnullでもDTOを生成できること", () => {
@@ -24,6 +26,7 @@ describe("UserLoginResponseDto", () => {
       id: "01BX5ZZKBKACTAV9WEVGEMMVRZ",
       name: "newuser",
       birthday: null,
+      theme: "teal",
     };
     const accessToken = "another-access-token";
 

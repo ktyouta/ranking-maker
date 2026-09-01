@@ -6,8 +6,8 @@
  * テーマカラー定義（docs/shared.md 参照）。
  * <html data-theme="..."> の値に応じて --xxx-rgb を切り替えることで、
  * tailwind.config.js の accent/canvas/ink/line トークンが一括で追従する。
- * bare :root は JS 読み込み前の初期表示用（teal と同値）。ThemeProvider は
- * 常に明示的に data-theme="teal" 等を設定する（未設定状態には依存しない）。
+ * bare :root は JS 読み込み前の初期表示用（lavender と同値）。ThemeProvider は
+ * 常に明示的に data-theme="lavender" 等を設定する（未設定状態には依存しない）。
  */
 /*
  * --accent-surface-rgb / --accent-surface-hover-rgb: ボタン・バッジ・サイドバー等
@@ -17,16 +17,16 @@
  * （参考: 塗りつぶし色を全面的に暗くし、文字色だけ明るく保つ配色）。
  */
 :root {
-  --canvas-rgb: 242 250 249;
+  --canvas-rgb: 245 243 255;
   --surface-rgb: 255 255 255;
-  --accent-rgb: 15 158 147;
-  --accent-hover-rgb: 11 122 114;
-  --accent-surface-rgb: 15 158 147;
-  --accent-surface-hover-rgb: 11 122 114;
-  --brand-rgb: 15 158 147;
-  --ink-rgb: 18 48 46;
-  --ink-sub-rgb: 75 108 105;
-  --line-rgb: 217 238 235;
+  --accent-rgb: 124 111 224;
+  --accent-hover-rgb: 103 89 204;
+  --accent-surface-rgb: 124 111 224;
+  --accent-surface-hover-rgb: 103 89 204;
+  --brand-rgb: 124 111 224;
+  --ink-rgb: 36 31 61;
+  --ink-sub-rgb: 95 90 130;
+  --line-rgb: 230 225 255;
 }
 
 :root[data-theme="teal"] {
@@ -69,9 +69,6 @@
 }
 
 :root[data-theme="dark"] {
-  /* 参考実装(別リポジトリ todo-react-hono-rpc)のダークモードをそのまま踏襲: 背景は
-     ニュートラルなgray-900/800、アクセントのみcyan-400(文字)/cyan-900(塗り)。
-     brand-rgb（ヘッダーロゴ）だけは例外的に白にする（ユーザー指定）。 */
   --canvas-rgb: 17 24 39;
   --surface-rgb: 31 41 55;
   --accent-rgb: 34 211 238;

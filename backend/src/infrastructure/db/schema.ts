@@ -24,6 +24,7 @@ export const userMaster = sqliteTable("user_master", {
   name: text("name").notNull().unique(),
   birthday: text("birthday"),
   lastLoginDate: text("last_login_date"),
+  theme: text("theme").notNull().default("lavender"),
   deleteFlg: integer("delete_flg", { mode: "boolean" }).notNull().default(false),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),

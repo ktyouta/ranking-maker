@@ -41,6 +41,7 @@ const verify = new Hono<AppEnv>().get(
                         id: result.userInfo.id,
                         name: result.userInfo.name,
                         birthday: result.userInfo.birthday,
+                        theme: result.userInfo.theme,
                     },
                 },
             }, 200);

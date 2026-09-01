@@ -1,6 +1,6 @@
 import type { EnvConfig } from "../../../config";
 import { AccessToken, Pepper, RefreshToken, UserLoginEntity, UserPassword, UserSalt } from "../../../domain/auth";
-import { UserBirthday, UserEntity, UserId, UserName } from "../../../domain/user";
+import { UserBirthday, UserEntity, UserId, UserName, UserTheme } from "../../../domain/user";
 import type { ICreateUserRepository } from "../../../domain/user";
 
 export type CreateUserResult = {
@@ -36,7 +36,7 @@ export class CreateUserUsecase {
 
     const userId = UserId.generate();
     const loginId = UserId.generate();
-    const userEntity = new UserEntity(userId, userName, userBirthday);
+    const userEntity = new UserEntity(userId, userName, userBirthday, UserTheme.default());
     const userLoginEntity = new UserLoginEntity(loginId, userId, userName, userPassword, salt);
 
     await this.repository.createUserWithLogin(userEntity, userLoginEntity);
