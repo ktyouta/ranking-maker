@@ -4,6 +4,7 @@ import { useAppNavigation } from '@/hooks/use-app-navigation';
 import { useCreateYearList } from '@/hooks/use-create-year-list';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 import { useUpdateUserMutation } from '../api/update-user';
 import { useUpdateUserForm } from './use-update-user.form';
 
@@ -29,7 +30,7 @@ export function useUpdateUser() {
     // 年リスト
     const yearCoomboList = useCreateYearList();
     // フォーム
-    const { register, handleSubmit, formState: { errors }, watch } = useUpdateUserForm();
+    const { register, handleSubmit, formState: { errors }, watch } = useUpdateUserForm(loginUser);
     // ルーティング用
     const { appGoBack } = useAppNavigation();
     // 更新リクエスト
@@ -37,6 +38,7 @@ export function useUpdateUser() {
         // 正常終了後の処理
         onSuccess: (res) => {
             setLoginUserInfo(res.data.user);
+            toast.success(res.message);
             navigate(paths.home.path);
         },
         // 失敗後の処理
@@ -59,7 +61,6 @@ export function useUpdateUser() {
 
         // 更新リクエスト呼び出し
         postMutation.mutate({
-            userId: String(loginUser.id),
             json: {
                 name: data.name,
                 birthday: formatBirthday(data.birthday),

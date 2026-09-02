@@ -6,27 +6,23 @@ import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
 import { RefreshToken } from "../../../domain";
 import { DeleteUserRepository } from "../../../infrastructure";
 import { authMiddleware, userOperationGuardMiddleware } from "../../../middleware";
-import { UserIdParamSchema } from "../../../schema";
 import type { AppEnv } from "../../../types";
-import { formatZodErrors } from "../../../util";
 
 const deleteUser = new Hono<AppEnv>().delete(
-    `${API_ENDPOINT.USER_ID}`,
+    API_ENDPOINT.USER,
     userOperationGuardMiddleware,
     authMiddleware,
-    zValidator("param", UserIdParamSchema, (result, c) => {
-        if (!result.success) {
-            return c.json({ message: "パラメータが不正です。", data: formatZodErrors(result.error) }, HTTP_STATUS.BAD_REQUEST);
-        }
-    }),
     async (c) => {
-        const { userId } = c.req.valid("param");
+        const user = c.get("user");
+        if (!user) {
+            return c.json({ message: "認証エラー" }, HTTP_STATUS.UNAUTHORIZED);
+        }
         const db = c.get('db');
         const config = c.get('envConfig');
         const repository = new DeleteUserRepository(db);
         const usecase = new DeleteUserUsecase(repository);
 
-        const deleted = await usecase.execute(userId);
+        const deleted = await usecase.execute(user.userId.value);
 
         if (!deleted) {
             return c.json({ message: "ユーザーが見つかりません。" }, HTTP_STATUS.NOT_FOUND);

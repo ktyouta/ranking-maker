@@ -41,7 +41,6 @@ export function useUpdatePassword() {
         }
 
         postMutation.mutate({
-            userId: String(loginUser.id),
             json: {
                 nowPassword: data.nowPassword,
                 newPassword: data.newPassword,

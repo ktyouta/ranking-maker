@@ -37,7 +37,6 @@ export function ThemeSelectDialogContainer(props: PropsType) {
 
         updateThemeMutation.mutate(
             {
-                userId: loginUser.id,
                 json: { theme: next },
             },
             {

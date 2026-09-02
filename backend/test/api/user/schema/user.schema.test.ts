@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { UserIdParamSchema } from "../../../../src/schema";
 import {
   CreateUserSchema,
   UpdateUserSchema,
@@ -131,23 +130,6 @@ describe("User Schema Validation", () => {
         birthday: "invalid",
       });
       expect(result.success).toBe(false);
-    });
-  });
-
-  describe("UserIdParamSchema", () => {
-    it("空でないユーザーID（ULID文字列）でバリデーションを通過すること", () => {
-      const result = UserIdParamSchema.safeParse({ userId: "01ARZ3NDEKTSV4RRFFQ69G5FAV" });
-      expect(result.success).toBe(true);
-    });
-
-    it("空文字の場合にエラーになること", () => {
-      const result = UserIdParamSchema.safeParse({ userId: "" });
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0].message).toBe(
-          "ユーザーIDを指定してください"
-        );
-      }
     });
   });
 });
