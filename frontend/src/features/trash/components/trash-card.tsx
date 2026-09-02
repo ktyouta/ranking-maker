@@ -19,7 +19,7 @@ export const TrashCard = (props: PropsType) => {
     return (
         <div
             onClick={() => onSelect(id)}
-            className="flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-accent/35 bg-surface shadow-md hover:-translate-y-0.5 hover:shadow-lg sm:border-2 sm:border-accent/[40%]"
+            className="flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-accent/35 bg-surface shadow-sm sm:shadow-md hover:-translate-y-0.5 hover:shadow-lg sm:border-2 sm:border-accent/[40%]"
         >
             <div className="flex items-center justify-between gap-2 bg-accent/[12%] px-5 py-3 sm:py-5">
                 <span className="flex size-8 sm:size-10 shrink-0 items-center justify-center rounded-full bg-accent-surface text-white shadow-md">

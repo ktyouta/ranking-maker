@@ -64,7 +64,7 @@ export const MyRanking = (props: PropsType) => {
             {rankingList.length > 0 && (
                 <>
                     <p className="mb-2 text-right text-[12px] sm:text-base font-medium text-accent">全 {total} 件</p>
-                    <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 sm:gap-6 2xl:grid-cols-3">
+                    <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-2 sm:gap-8 2xl:grid-cols-3">
                         {rankingList.map((ranking) => (
                             <RankingCard
                                 key={ranking.id}
