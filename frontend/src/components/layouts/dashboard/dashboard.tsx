@@ -49,6 +49,7 @@ export function Dashboard(props: PropsType) {
             {/* サイドバー */}
             <nav
                 className={`flex flex-col overflow-hidden bg-accent-surface shadow-md transition-all duration-300 fixed inset-y-0 left-0 z-40 lg:relative lg:inset-auto lg:z-auto ${isSidebarOpen ? 'w-64' : 'w-0 lg:w-20'}`}
+                style={{ paddingTop: 'max(env(safe-area-inset-top), 1.5rem)' }}
             >
                 {/* 開閉ボタン */}
                 <button
