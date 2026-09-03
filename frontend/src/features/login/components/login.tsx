@@ -15,7 +15,6 @@ type PropsType = {
     clickLogin: (e?: React.BaseSyntheticEvent<object, any, any> | undefined) => Promise<void>,
     navigateSignup(): void,
     handleKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void,
-    back(): void,
 }
 
 export function Login(props: PropsType) {
@@ -28,7 +27,6 @@ export function Login(props: PropsType) {
         clickLogin,
         navigateSignup,
         handleKeyPress,
-        back,
     } = props;
 
     return (
@@ -84,13 +82,6 @@ export function Login(props: PropsType) {
                         </span>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 mt-4">
-                        <button
-                            type="button"
-                            className="flex-1 border-2 border-accent/30 bg-surface hover:bg-canvas text-ink-sub font-medium py-3 px-4 rounded-lg transition-colors"
-                            onClick={back}
-                        >
-                            戻る
-                        </button>
                         <button
                             type="button"
                             className="flex-1 bg-accent-surface hover:bg-accent-surface-hover text-white font-medium py-3 px-4 rounded-lg transition-colors"
