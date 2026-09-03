@@ -162,13 +162,17 @@ npm run deploy:prod
 
 ### フロントエンド（Cloudflare Pages）
 
+`frontend/src/config/env.ts` が起動時に `VITE_APP_API_URL` を必須としており、未設定でビルドすると本番で画面が真っ白になる（`Invalid env provided` エラー）。ビルド時に環境変数として渡す（`.env` ファイルには書かない）。
+
+値は本番フロントエンドの URL 自身を指定する。`frontend/functions/api/[[path]].ts` が `/api/*` を同一オリジンで受けてバックエンドへプロキシする構成のため、バックエンドの URL を直接指定すると Cookie がクロスサイト扱いになり認証が壊れる。
+
 ```bash
 cd frontend
-npm run build
-# dist/ ディレクトリを Cloudflare Pages にデプロイ
+VITE_APP_API_URL=https://<Pages のデプロイ先URL> npm run build
+npx wrangler pages deploy dist
 ```
 
-Pages のデプロイは Cloudflare ダッシュボードから GitHub 連携、または `npx wrangler pages deploy dist` で実行する。
+デプロイは `npx wrangler pages deploy dist`（Pages プロジェクトを明示的に指定する）を使う。Cloudflare ダッシュボードの「Connect to Git」は現在デフォルトで Workers 用の設定（Deploy command が `wrangler deploy` になる）を作成することがあり、その場合 `functions/` 配下の Pages Functions が認識されない。ダッシュボードから連携する場合は、作成されるプロジェクトが Pages であることを確認すること。
 
 ## 主要スクリプト一覧
 

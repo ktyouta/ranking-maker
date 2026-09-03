@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "ranking-maker",
+  "name": "ranking-maker-backend",
   "main": "src/index.ts",
   "compatibility_date": "2025-12-31",
 
@@ -42,7 +42,7 @@
         {
           "binding": "DB",
           "database_name": "ranking-maker-db",
-          "database_id": "<your-d1-database-id>",
+          "database_id": "d80449f1-4878-4082-9750-65aab0e40188",
           "migrations_dir": "drizzle"
         }
       ],
@@ -52,7 +52,7 @@
       "vars": {
         "ACCESS_TOKEN_EXPIRES": "15m",
         "REFRESH_TOKEN_EXPIRES": "7d",
-        "CORS_ORIGIN": ["https://<your-frontend-domain>"],
+        "CORS_ORIGIN": ["https://ranking-maker.pages.dev"],
         "ALLOW_USER_OPERATION": "false",
         "ENV_PRODUCTION": "true"
       }
