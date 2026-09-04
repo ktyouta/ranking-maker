@@ -3,14 +3,13 @@ import { Hono } from "hono";
 import { UpdateUserThemeUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
 import { UpdateUserThemeRepository } from "../../../infrastructure";
-import { authMiddleware, userOperationGuardMiddleware } from "../../../middleware";
+import { authMiddleware } from "../../../middleware";
 import type { AppEnv } from "../../../types";
 import { formatZodErrors } from "../../../util";
 import { UpdateUserThemeSchema } from "../schema";
 
 const updateUserTheme = new Hono<AppEnv>().patch(
     API_ENDPOINT.USER_THEME,
-    userOperationGuardMiddleware,
     authMiddleware,
     zValidator("json", UpdateUserThemeSchema, (result, c) => {
         if (!result.success) {
