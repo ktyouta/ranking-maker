@@ -1,13 +1,15 @@
 import { rpc } from '@/lib/rpc-client';
 import { useMutation } from '@tanstack/react-query';
+import { InferResponseType } from 'hono/client';
 
 const endpoint = rpc.api.v1['my-ranking'][':rankingId'].$delete;
 
 type PropsType = {
     rankingId: string;
-    onSuccess: () => void;
+    onSuccess: (data: SuccessResponseType) => void;
     onError: (message: string) => void;
 };
+type SuccessResponseType = InferResponseType<typeof endpoint, 200>;
 
 /**
  * ランキング削除API呼び出し hook
@@ -23,8 +25,8 @@ export function useDeleteMyRankingMutation(props: PropsType) {
             }
             return res.json();
         },
-        onSuccess: () => {
-            props.onSuccess();
+        onSuccess: (data: SuccessResponseType) => {
+            props.onSuccess(data);
         },
         onError: (error: Error) => {
             props.onError(error.message);

@@ -8,6 +8,7 @@ import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useDeleteMyRankingMutation } from '../api/delete-my-ranking';
 import { useMyRanking } from '../api/get-my-ranking';
 import { useUpdateMyRankingMutation, ViolationType } from '../api/update-my-ranking';
@@ -69,9 +70,10 @@ export function useMyRankingDetail() {
     const updateMutation = useUpdateMyRankingMutation({
         rankingId,
         // 正常終了後の処理
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: myRankingKeys.detail(rankingId) });
             queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+            toast.success(data.message);
             setMode('view');
         },
         // 失敗後の処理
@@ -85,8 +87,9 @@ export function useMyRankingDetail() {
     const deleteMutation = useDeleteMyRankingMutation({
         rankingId,
         // 正常終了後の処理
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+            toast.success(data.message);
             navigate(paths.myRanking.path);
         },
         // 失敗後の処理

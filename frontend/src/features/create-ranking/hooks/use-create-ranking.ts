@@ -1,11 +1,12 @@
+import { paths } from '@/config/paths';
 import { PUBLIC_STATUS } from '@/constants/public-status';
 import { myRankingKeys } from '@/features/my-ranking/api/query-key';
-import { paths } from '@/config/paths';
-import { KeyboardSensor, PointerSensor, type DragEndEvent, useSensor, useSensors } from '@dnd-kit/core';
+import { KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useCreateRankingMutation, ViolationType } from '../api/create-ranking';
 import { useCreateRankingForm } from './use-create-ranking.form';
 
@@ -30,8 +31,9 @@ export function useCreateRanking() {
     // 作成リクエスト
     const postMutation = useCreateRankingMutation({
         // 正常終了後の処理
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+            toast.success(data.message);
             navigate(paths.myRanking.path);
         },
         // 失敗後の処理
