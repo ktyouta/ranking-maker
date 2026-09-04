@@ -1,4 +1,4 @@
-import { Dialog } from '@/components';
+import { Dialog, ScrollToTopButton } from '@/components';
 import { HiArrowLeft } from 'react-icons/hi2';
 import { IoCalendarOutline, IoTrophyOutline } from 'react-icons/io5';
 
@@ -182,6 +182,7 @@ export function MyRankingDetailView(props: PropsType) {
                     </div>
                 </div>
             </Dialog>
+            <ScrollToTopButton />
         </div>
     );
 }

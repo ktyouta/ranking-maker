@@ -1,4 +1,4 @@
-import { LoadingOverlay, Pagination } from '@/components';
+import { LoadingOverlay, Pagination, ScrollToTopButton } from '@/components';
 import { IoTrophyOutline } from 'react-icons/io5';
 import { MyRankingSearchFilter } from '../types/my-ranking-search-filter';
 import { MyRankingSearchBar } from './my-ranking-search-bar';
@@ -85,6 +85,7 @@ export const MyRanking = (props: PropsType) => {
                     )}
                 </>
             )}
+            <ScrollToTopButton />
         </div>
     )
 };

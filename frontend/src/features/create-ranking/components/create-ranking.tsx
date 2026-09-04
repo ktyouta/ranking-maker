@@ -1,4 +1,4 @@
-import { LoadingOverlay, Textarea, Textbox } from '@/components';
+import { LoadingOverlay, ScrollToTopButton, Textarea, Textbox } from '@/components';
 import { closestCenter, DndContext, DragEndEvent, SensorDescriptor, SensorOptions } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { BaseSyntheticEvent } from 'react';
@@ -189,6 +189,7 @@ export function CreateRanking(props: PropsType) {
                     </button>
                 </div>
             </div>
+            <ScrollToTopButton />
         </div>
     );
 }

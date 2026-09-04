@@ -1,4 +1,4 @@
-import { LoadingOverlay, Pagination } from '@/components';
+import { LoadingOverlay, Pagination, ScrollToTopButton } from '@/components';
 import { IoTrashBinOutline } from 'react-icons/io5';
 import { TrashSearchFilter } from '../types/trash-search-filter';
 import { TrashCard } from './trash-card';
@@ -85,6 +85,7 @@ export const Trash = (props: PropsType) => {
                     )}
                 </>
             )}
+            <ScrollToTopButton />
         </div>
     )
 };
