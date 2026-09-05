@@ -36,6 +36,8 @@ export function useMyRankingDetail() {
     const [violations, setViolations] = useState<ViolationType[]>([]);
     // 削除確認ダイアログの開閉
     const deleteDialog = useSwitch();
+    // メモダイアログの開閉
+    const memoDialog = useSwitch();
 
     // ランキング取得（Suspense対応のため取得中は呼び出し元で中断される）
     const rankingQuery = useMyRanking(rankingId);
@@ -147,6 +149,20 @@ export function useMyRankingDetail() {
     }, [deleteDialog, deleteMutation]);
 
     /**
+     * メモダイアログを開く
+     */
+    const clickMemo = useCallback(() => {
+        memoDialog.on();
+    }, [memoDialog]);
+
+    /**
+     * メモダイアログを閉じる
+     */
+    const closeMemo = useCallback(() => {
+        memoDialog.off();
+    }, [memoDialog]);
+
+    /**
      * ランキング更新実行
      */
     const handleSave = handleSubmit((data) => {
@@ -236,6 +252,9 @@ export function useMyRankingDetail() {
             onClickDelete: clickDelete,
             onCancelDelete: cancelDelete,
             onConfirmDelete: confirmDelete,
+            isMemoDialogOpen: memoDialog.flag,
+            onClickMemo: clickMemo,
+            onCloseMemo: closeMemo,
         },
         edit: {
             title: ranking.title,

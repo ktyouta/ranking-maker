@@ -32,6 +32,7 @@
   --danger-border-rgb: 254 202 202;
   --danger-fill-rgb: 239 68 68;
   --danger-fill-hover-rgb: 220 38 38;
+  --modal-header-rgb: 124 111 224;
 }
 
 :root[data-theme="teal"] {
@@ -50,6 +51,7 @@
   --danger-border-rgb: 254 202 202;
   --danger-fill-rgb: 239 68 68;
   --danger-fill-hover-rgb: 220 38 38;
+  --modal-header-rgb: 15 158 147;
 }
 
 :root[data-theme="lavender"] {
@@ -68,6 +70,7 @@
   --danger-border-rgb: 254 202 202;
   --danger-fill-rgb: 239 68 68;
   --danger-fill-hover-rgb: 220 38 38;
+  --modal-header-rgb: 124 111 224;
 }
 
 :root[data-theme="peach"] {
@@ -86,6 +89,7 @@
   --danger-border-rgb: 254 202 202;
   --danger-fill-rgb: 239 68 68;
   --danger-fill-hover-rgb: 220 38 38;
+  --modal-header-rgb: 232 102 61;
 }
 
 :root[data-theme="dark"] {
@@ -104,6 +108,8 @@
   --danger-border-rgb: 127 29 29;
   --danger-fill-rgb: 185 28 28;
   --danger-fill-hover-rgb: 220 38 38;
+  /* ダークではヘッダーを本体と同色にし、区切りを作らない（暗い面同士のベタ塗りが浮くのを避ける） */
+  --modal-header-rgb: 31 41 55;
 }
 
 :root {

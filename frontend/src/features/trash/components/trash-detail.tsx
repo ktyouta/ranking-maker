@@ -1,5 +1,5 @@
 import { Dialog, LoadingOverlay } from '@/components';
-import { HiArrowLeft, HiOutlineExclamationTriangle } from 'react-icons/hi2';
+import { HiArrowLeft, HiOutlineDocumentText, HiOutlineExclamationTriangle } from 'react-icons/hi2';
 import { IoCalendarOutline, IoTrophyOutline } from 'react-icons/io5';
 
 const TOP_RANK_COUNT = 3;
@@ -26,6 +26,9 @@ type PropsType = {
     onClickPermanentDelete: () => void;
     onCancelPermanentDelete: () => void;
     onConfirmPermanentDelete: () => void;
+    isMemoDialogOpen: boolean;
+    onClickMemo: () => void;
+    onCloseMemo: () => void;
     isLoading: boolean;
 };
 
@@ -49,6 +52,9 @@ export function TrashDetail(props: PropsType) {
         onClickPermanentDelete,
         onCancelPermanentDelete,
         onConfirmPermanentDelete,
+        isMemoDialogOpen,
+        onClickMemo,
+        onCloseMemo,
         isLoading,
     } = props;
 
@@ -73,27 +79,31 @@ export function TrashDetail(props: PropsType) {
                         <p>{errMessage}</p>
                     </div>
                 )}
-                <div className="flex items-center gap-3">
-                    <IoTrophyOutline className="size-8 shrink-0 text-rank-gold sm:size-9" />
-                    <div>
-                        <h1 className="text-2xl font-bold text-ink sm:text-3xl">
-                            {title}
-                        </h1>
-                        <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1 text-base text-ink-sub">
-                            <IoCalendarOutline className="size-4" />
-                            作成日 {createdAt}
-                        </span>
+                <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                        <IoTrophyOutline className="size-8 shrink-0 text-rank-gold sm:size-9" />
+                        <div>
+                            <h1 className="text-2xl font-bold text-ink sm:text-3xl">
+                                {title}
+                            </h1>
+                            <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1 text-base text-ink-sub">
+                                <IoCalendarOutline className="size-4" />
+                                作成日 {createdAt}
+                            </span>
+                        </div>
                     </div>
+                    {memo && (
+                        <button
+                            type="button"
+                            onClick={onClickMemo}
+                            className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                            aria-label="メモを見る"
+                        >
+                            <HiOutlineDocumentText className="size-6 sm:size-7" />
+                        </button>
+                    )}
                 </div>
-                <div className="mt-7 sm:mt-10 flex flex-1 flex-col gap-[1.8rem] md:gap-[2.8rem]">
-                    <div>
-                        <label className="mb-3 block text-lg font-semibold text-ink">
-                            メモ
-                        </label>
-                        <p className="min-h-[7rem] whitespace-pre-wrap break-words rounded-xl border-2 border-accent/50 bg-surface px-4 py-4 text-base text-ink shadow-sm">
-                            {memo || 'メモはありません'}
-                        </p>
-                    </div>
+                <div className="mt-9 sm:mt-12 flex flex-1 flex-col gap-[1.8rem] md:gap-[2.8rem]">
                     <div>
                         <label className="mb-3 block text-lg font-semibold text-ink">
                             ランキング項目
@@ -177,6 +187,17 @@ export function TrashDetail(props: PropsType) {
                     </div>
                 </div>
             </div>
+            <Dialog
+                isOpen={isMemoDialogOpen}
+                onClose={onCloseMemo}
+                title="メモ"
+                size="large"
+                headerVariant="accent"
+            >
+                <p className="min-h-[14rem] whitespace-pre-wrap break-words text-base text-ink">
+                    {memo}
+                </p>
+            </Dialog>
             <Dialog
                 isOpen={isRestoreDialogOpen}
                 onClose={onCancelRestore}

@@ -1,8 +1,9 @@
-import { type ReactNode, useEffect, useCallback } from "react";
-import { createPortal } from "react-dom";
 import { cn } from "@/utils/cn";
+import { type ReactNode, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 type Size = "small" | "medium" | "large";
+type HeaderVariant = "default" | "accent";
 
 type Props = {
     isOpen: boolean;
@@ -10,6 +11,7 @@ type Props = {
     children: ReactNode;
     title?: string;
     size?: Size;
+    headerVariant?: HeaderVariant;
     closeOnOverlayClick?: boolean;
     closeOnEscape?: boolean;
 };
@@ -26,6 +28,7 @@ export function Dialog({
     children,
     title,
     size = "medium",
+    headerVariant = "default",
     closeOnOverlayClick = true,
     closeOnEscape = true,
 }: Props) {
@@ -81,14 +84,19 @@ export function Dialog({
             {/* Dialog Content */}
             <div
                 className={cn(
-                    "relative z-10 w-full mx-4 bg-surface rounded-lg shadow-xl",
+                    "relative z-10 w-full mx-4 overflow-hidden bg-surface rounded-lg shadow-xl",
                     sizeClasses[size]
                 )}
                 onClick={handleContentClick}
             >
                 {/* Header */}
                 {title && (
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-line">
+                    <div
+                        className={cn(
+                            "flex items-center justify-between px-4 py-3 rounded-t-lg border-b border-ink/10",
+                            headerVariant === "accent" && "bg-modal-header/20"
+                        )}
+                    >
                         <h2
                             id="dialog-title"
                             className="text-lg font-semibold text-ink"

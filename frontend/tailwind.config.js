@@ -46,6 +46,9 @@ export default {
           fill: "rgb(var(--danger-fill-rgb) / <alpha-value>)",
           "fill-hover": "rgb(var(--danger-fill-hover-rgb) / <alpha-value>)",
         },
+        // Dialog のアクセント強調ヘッダー用。ライト3テーマはアクセントカラーの薄塗り、
+        // ダークは surface と同値にしてヘッダー・本体の区切りをなくす
+        "modal-header": "rgb(var(--modal-header-rgb) / <alpha-value>)",
       },
       borderColor: {
         // 色指定のない `border` / `border-b` 等（Tailwindの既定では固定のgray-200相当）を
