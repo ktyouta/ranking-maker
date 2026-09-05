@@ -30,6 +30,7 @@ export function ThemeSelectDialogContainer(props: PropsType) {
     const handleSelect = useCallback((next: ThemeType) => {
         const previousTheme = theme;
         setTheme(next);
+        props.onClose();
 
         if (!loginUser) {
             return;
@@ -50,9 +51,6 @@ export function ThemeSelectDialogContainer(props: PropsType) {
                         toast.error("テーマを更新できませんでした。");
                     }
                 },
-                onSettled: () => {
-                    props.onClose();
-                }
             }
         );
     }, [loginUser, setTheme, setLoginUserInfo, updateThemeMutation]);

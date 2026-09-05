@@ -157,9 +157,9 @@ export function TrashDetail(props: PropsType) {
                                 復元する
                             </button>
                         </div>
-                        <div className="flex flex-col gap-4 rounded-xl border-2 border-red-200 bg-red-50 p-5 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex flex-col gap-4 rounded-xl border-2 border-danger-border bg-danger-bg p-5 sm:flex-row sm:items-center sm:justify-between">
                             <div>
-                                <p className="text-base font-semibold text-red-600">
+                                <p className="text-base font-semibold text-danger">
                                     ランキングの完全削除
                                 </p>
                                 <p className="mt-1 text-base text-ink-sub">
@@ -168,7 +168,7 @@ export function TrashDetail(props: PropsType) {
                             </div>
                             <button
                                 type="button"
-                                className="shrink-0 rounded-full bg-red-500 px-8 py-3 text-base font-medium text-white hover:bg-red-600"
+                                className="shrink-0 rounded-full bg-danger-fill px-8 py-3 text-base font-medium text-white hover:bg-danger-fill-hover"
                                 onClick={onClickPermanentDelete}
                             >
                                 完全削除する
@@ -227,7 +227,7 @@ export function TrashDetail(props: PropsType) {
                         </button>
                         <button
                             type="button"
-                            className="rounded-full bg-red-500 px-6 py-2 text-base font-medium text-white hover:bg-red-600"
+                            className="rounded-full bg-danger-fill px-6 py-2 text-base font-medium text-white hover:bg-danger-fill-hover"
                             onClick={onConfirmPermanentDelete}
                         >
                             完全削除する
