@@ -120,10 +120,10 @@ export function MyRankingDetailView(props: PropsType) {
                                             {item.order}
                                         </span>
                                         <div className="min-w-0 flex-1">
-                                            <p className={`break-words font-semibold text-ink ${isTopRank ? 'text-lg sm:text-xl' : 'text-base'}`}>
+                                            <p className="break-words text-sm sm:text-[17px] font-semibold text-ink/90">
                                                 {item.itemName || <span className="text-ink-sub">項目未設定</span>}
                                             </p>
-                                            <p className="mt-3 whitespace-pre-wrap break-words border-t border-line pt-3 text-base text-ink-sub">
+                                            <p className="mt-3 whitespace-pre-wrap break-words border-t border-line pt-3 text-sm sm:text-[17px] text-ink-sub">
                                                 {item.itemMemo || 'メモはありません'}
                                             </p>
                                         </div>

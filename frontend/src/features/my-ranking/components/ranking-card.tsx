@@ -38,7 +38,7 @@ export const RankingCard = (props: PropsType) => {
             </div>
             <div className="border-t border-line py-2 pl-5 pr-6 sm:py-4">
                 <div className="border-l-4 border-accent-surface pl-3">
-                    <h2 className="line-clamp-2 flex min-h-[3rem] sm:min-h-[3.5rem] items-center text-lg font-bold text-ink">
+                    <h2 className="line-clamp-2 flex min-h-[3rem] sm:min-h-[3.5rem] items-center text-base sm:text-lg font-semibold text-ink/90">
                         {title}
                     </h2>
                     <p className="mt-1 sm:mt-2 flex items-center justify-end gap-1 text-sm font-medium text-accent hover:underline">
