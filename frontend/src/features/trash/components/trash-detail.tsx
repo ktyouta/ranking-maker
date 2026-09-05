@@ -92,16 +92,14 @@ export function TrashDetail(props: PropsType) {
                             </span>
                         </div>
                     </div>
-                    {memo && (
-                        <button
-                            type="button"
-                            onClick={onClickMemo}
-                            className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
-                            aria-label="メモを見る"
-                        >
-                            <HiOutlineDocumentText className="size-6 sm:size-7" />
-                        </button>
-                    )}
+                    <button
+                        type="button"
+                        onClick={onClickMemo}
+                        className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                        aria-label="メモを見る"
+                    >
+                        <HiOutlineDocumentText className="size-6 sm:size-7" />
+                    </button>
                 </div>
                 <div className="mt-9 sm:mt-12 flex flex-1 flex-col gap-[1.8rem] md:gap-[2.8rem]">
                     <div>
@@ -195,7 +193,7 @@ export function TrashDetail(props: PropsType) {
                 headerVariant="accent"
             >
                 <p className="min-h-[14rem] whitespace-pre-wrap break-words text-base text-ink">
-                    {memo}
+                    {memo || 'メモはありません'}
                 </p>
             </Dialog>
             <Dialog
