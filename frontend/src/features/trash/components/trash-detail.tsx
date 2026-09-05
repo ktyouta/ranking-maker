@@ -114,15 +114,15 @@ export function TrashDetail(props: PropsType) {
                                         ? 'border-rank-silver/60'
                                         : index === 2
                                             ? 'border-rank-bronze/60'
-                                            : 'border-accent/20';
+                                            : 'border-accent/60';
 
                                 return (
                                     <div
                                         key={item.id}
-                                        className={`flex items-start gap-3 rounded-2xl border bg-surface sm:gap-4 ${cardBorderClass} ${isTopRank ? 'p-4 shadow-lg sm:p-6' : 'p-3 shadow-sm'}`}
+                                        className={`flex items-start gap-3 rounded-2xl border bg-surface sm:gap-4 ${cardBorderClass} p-4 sm:p-6 shadow-sm`}
                                     >
                                         <span
-                                            className={`flex shrink-0 items-center justify-center rounded-full font-bold shadow-sm ${rankBadgeClass} ${isTopRank ? 'mt-1 size-10 text-lg sm:size-12 sm:text-xl' : 'size-7 text-sm'}`}
+                                            className={`flex shrink-0 items-center justify-center rounded-full font-bold shadow-sm ${rankBadgeClass} ${isTopRank ? 'mt-1 size-10 text-lg sm:size-12 sm:text-xl' : 'size-8 text-sm'}`}
                                         >
                                             {item.order}
                                         </span>
