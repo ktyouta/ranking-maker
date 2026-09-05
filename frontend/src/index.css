@@ -27,6 +27,11 @@
   --ink-rgb: 36 31 61;
   --ink-sub-rgb: 95 90 130;
   --line-rgb: 230 225 255;
+  --danger-rgb: 220 38 38;
+  --danger-bg-rgb: 254 242 242;
+  --danger-border-rgb: 254 202 202;
+  --danger-fill-rgb: 239 68 68;
+  --danger-fill-hover-rgb: 220 38 38;
 }
 
 :root[data-theme="teal"] {
@@ -40,6 +45,11 @@
   --ink-rgb: 18 48 46;
   --ink-sub-rgb: 75 108 105;
   --line-rgb: 217 238 235;
+  --danger-rgb: 220 38 38;
+  --danger-bg-rgb: 254 242 242;
+  --danger-border-rgb: 254 202 202;
+  --danger-fill-rgb: 239 68 68;
+  --danger-fill-hover-rgb: 220 38 38;
 }
 
 :root[data-theme="lavender"] {
@@ -53,6 +63,11 @@
   --ink-rgb: 36 31 61;
   --ink-sub-rgb: 95 90 130;
   --line-rgb: 230 225 255;
+  --danger-rgb: 220 38 38;
+  --danger-bg-rgb: 254 242 242;
+  --danger-border-rgb: 254 202 202;
+  --danger-fill-rgb: 239 68 68;
+  --danger-fill-hover-rgb: 220 38 38;
 }
 
 :root[data-theme="peach"] {
@@ -66,6 +81,11 @@
   --ink-rgb: 51 36 29;
   --ink-sub-rgb: 138 106 92;
   --line-rgb: 243 219 203;
+  --danger-rgb: 220 38 38;
+  --danger-bg-rgb: 254 242 242;
+  --danger-border-rgb: 254 202 202;
+  --danger-fill-rgb: 239 68 68;
+  --danger-fill-hover-rgb: 220 38 38;
 }
 
 :root[data-theme="dark"] {
@@ -79,6 +99,11 @@
   --ink-rgb: 243 244 246;
   --ink-sub-rgb: 156 163 175;
   --line-rgb: 55 65 81;
+  --danger-rgb: 248 113 113;
+  --danger-bg-rgb: 63 26 26;
+  --danger-border-rgb: 127 29 29;
+  --danger-fill-rgb: 185 28 28;
+  --danger-fill-hover-rgb: 220 38 38;
 }
 
 :root {

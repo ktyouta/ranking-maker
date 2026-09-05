@@ -38,6 +38,14 @@ export default {
           silver: "#7C8B92",
           bronze: "#A2653A",
         },
+        // 削除等の破壊的操作用。色相は赤で固定し、ライト3テーマ共通・ダークのみ沈めた値にする
+        danger: {
+          DEFAULT: "rgb(var(--danger-rgb) / <alpha-value>)",
+          bg: "rgb(var(--danger-bg-rgb) / <alpha-value>)",
+          border: "rgb(var(--danger-border-rgb) / <alpha-value>)",
+          fill: "rgb(var(--danger-fill-rgb) / <alpha-value>)",
+          "fill-hover": "rgb(var(--danger-fill-hover-rgb) / <alpha-value>)",
+        },
       },
       borderColor: {
         // 色指定のない `border` / `border-b` 等（Tailwindの既定では固定のgray-200相当）を

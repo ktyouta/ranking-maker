@@ -49,6 +49,9 @@ export function ThemeSelectDialogContainer(props: PropsType) {
                     else {
                         toast.error("テーマを更新できませんでした。");
                     }
+                },
+                onSettled: () => {
+                    props.onClose();
                 }
             }
         );

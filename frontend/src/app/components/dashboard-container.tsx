@@ -67,7 +67,7 @@ export function DashboardContainer() {
     }
 
     /**
-     * ログイン画面遷移。現在地をログイン後の戻り先として付与する
+     * ログイン画面遷移
      */
     function moveLogin() {
         appNavigate(paths.login.path);
