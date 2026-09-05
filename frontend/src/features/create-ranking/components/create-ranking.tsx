@@ -2,7 +2,7 @@ import { LoadingOverlay, ScrollToTopButton, Textarea, Textbox } from '@/componen
 import { closestCenter, DndContext, DragEndEvent, SensorDescriptor, SensorOptions } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { BaseSyntheticEvent } from 'react';
-import { Control, Controller, FieldErrors, UseFormRegister } from 'react-hook-form';
+import { Control, FieldErrors, UseFormRegister } from 'react-hook-form';
 import { HiOutlineExclamationTriangle } from 'react-icons/hi2';
 import { IoTrophyOutline } from 'react-icons/io5';
 import { CreateRankingRequestType } from '../types/create-ranking-request-type';
@@ -173,13 +173,6 @@ export function CreateRanking(props: PropsType) {
                     </button>
                 </div>
                 <div className="mt-2 flex flex-row gap-3 justify-end">
-                    <button
-                        type="button"
-                        className="rounded-full border-2 border-accent/30 bg-surface px-8 py-3 text-base font-medium text-ink-sub transition-colors hover:bg-canvas"
-                        onClick={back}
-                    >
-                        戻る
-                    </button>
                     <button
                         type="button"
                         className="rounded-full bg-accent-surface px-8 py-3 text-base font-medium text-white hover:bg-accent-surface-hover"
