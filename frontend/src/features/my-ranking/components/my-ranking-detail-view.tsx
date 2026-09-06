@@ -124,7 +124,6 @@ export function MyRankingDetailView(props: PropsType) {
                 onClose={onCloseMemo}
                 title="メモ"
                 size="large"
-                headerVariant="accent"
             >
                 <p className="min-h-[14rem] whitespace-pre-wrap break-words text-base text-ink">
                     {memo || 'メモはありません'}
@@ -135,7 +134,6 @@ export function MyRankingDetailView(props: PropsType) {
                 onClose={onCloseItemMemo}
                 title={selectedItemName || 'メモ'}
                 size="large"
-                headerVariant="accent"
             >
                 <p className="min-h-[14rem] whitespace-pre-wrap break-words text-base text-ink">
                     {selectedItemMemo || 'メモはありません'}

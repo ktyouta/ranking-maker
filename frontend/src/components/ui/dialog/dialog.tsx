@@ -3,7 +3,6 @@ import { type ReactNode, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 
 type Size = "small" | "medium" | "large";
-type HeaderVariant = "default" | "accent";
 
 type Props = {
     isOpen: boolean;
@@ -11,7 +10,6 @@ type Props = {
     children: ReactNode;
     title?: string;
     size?: Size;
-    headerVariant?: HeaderVariant;
     closeOnOverlayClick?: boolean;
     closeOnEscape?: boolean;
 };
@@ -28,7 +26,6 @@ export function Dialog({
     children,
     title,
     size = "medium",
-    headerVariant = "default",
     closeOnOverlayClick = true,
     closeOnEscape = true,
 }: Props) {
@@ -92,10 +89,7 @@ export function Dialog({
                 {/* Header */}
                 {title && (
                     <div
-                        className={cn(
-                            "flex items-center justify-between px-4 py-3 rounded-t-lg border-b border-ink/10",
-                            headerVariant === "accent" && "bg-modal-header/20"
-                        )}
+                        className="flex items-center justify-between px-4 py-3 rounded-t-lg border-b border-ink/10 bg-modal-header/20"
                     >
                         <h2
                             id="dialog-title"
