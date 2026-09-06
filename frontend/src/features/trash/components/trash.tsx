@@ -7,8 +7,6 @@ import { TrashSearchBar } from './trash-search-bar';
 type TrashListItem = {
     id: string;
     title: string;
-    itemCount: number;
-    createdAt: string;
 };
 
 type PropsType = {
@@ -70,8 +68,6 @@ export const Trash = (props: PropsType) => {
                                 key={ranking.id}
                                 id={ranking.id}
                                 title={ranking.title}
-                                itemCount={ranking.itemCount}
-                                createdAt={ranking.createdAt}
                                 onSelect={onSelectTrash}
                             />
                         ))}

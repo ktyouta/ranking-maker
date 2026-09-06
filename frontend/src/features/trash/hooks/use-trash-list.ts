@@ -2,7 +2,6 @@ import { paths } from "@/config/paths";
 import { useAppNavigation } from "@/hooks/use-app-navigation";
 import { useDelayedFlag } from "@/hooks/use-delayed-flag";
 import { useTransitionSearchParams } from "@/hooks/use-transition-search-params";
-import { formatDate } from "@/utils/date-util";
 import { useCallback, useMemo, useState } from "react";
 import { useTrashList } from "../api/get-trash-list";
 import { TRASH_QUERY_KEY } from "../constants/trash-query-params";
@@ -40,8 +39,6 @@ export function useTrashListScreen() {
         return trashListQuery.data.data.list.map((ranking) => ({
             id: ranking.id,
             title: ranking.title,
-            itemCount: ranking.itemCount,
-            createdAt: formatDate(ranking.createdAt),
         }));
     }, [trashListQuery.data]);
 

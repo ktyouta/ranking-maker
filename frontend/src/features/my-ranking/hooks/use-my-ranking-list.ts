@@ -1,6 +1,5 @@
 import { useDelayedFlag } from "@/hooks/use-delayed-flag";
 import { useTransitionSearchParams } from "@/hooks/use-transition-search-params";
-import { formatDate } from "@/utils/date-util";
 import { useMemo, useState } from "react";
 import { useMyRankings } from "../api/get-my-rankings";
 import { MY_RANKING_QUERY_KEY } from "../constants/my-ranking-query-params";
@@ -36,8 +35,6 @@ export const useMyRankingList = () => {
         return rankingListQuery.data.data.list.map((ranking) => ({
             id: ranking.id,
             title: ranking.title,
-            createdAt: formatDate(ranking.createdAt),
-            itemCount: ranking.itemCount,
         }));
     }, [rankingListQuery.data]);
 

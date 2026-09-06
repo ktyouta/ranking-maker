@@ -7,8 +7,6 @@ import { RankingCard } from './ranking-card';
 type RankingListItem = {
     id: string;
     title: string;
-    createdAt: string;
-    itemCount: number;
 };
 
 type PropsType = {
@@ -70,8 +68,6 @@ export const MyRanking = (props: PropsType) => {
                                 key={ranking.id}
                                 id={ranking.id}
                                 title={ranking.title}
-                                createdAt={ranking.createdAt}
-                                itemCount={ranking.itemCount}
                                 onSelect={onSelectRanking}
                             />
                         ))}

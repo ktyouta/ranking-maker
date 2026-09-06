@@ -12,8 +12,6 @@ describe('RankingCard', () => {
             <RankingCard
                 id="ranking-1"
                 title="好きなラーメン屋ランキング"
-                createdAt="2026/08/29"
-                itemCount={3}
                 onSelect={onSelect}
             />
         );
