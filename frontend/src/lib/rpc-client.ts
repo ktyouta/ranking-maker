@@ -4,6 +4,17 @@ import { env } from '@/config/env';
 import { getAccessToken, handleRefresh } from '@/lib/refresh-handler';
 
 /**
+ * 通信エラー発生時の疑似エラーレスポンスを生成する
+ * 各featureのエラーハンドリング（!res.ok → res.json() → message表示）をそのまま利用できるようにする
+ */
+function createConnectionErrorResponse(): Response {
+  return new Response(
+    JSON.stringify({ message: '通信エラーが発生しました。しばらくしてから再度お試しください。' }),
+    { status: 503, headers: { 'Content-Type': 'application/json' } },
+  );
+}
+
+/**
  * 401時にリフレッシュ・リトライを行うカスタムfetch
  */
 async function fetchWithRefresh(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
@@ -15,7 +26,13 @@ async function fetchWithRefresh(input: RequestInfo | URL, init?: RequestInit): P
     headers.set('Authorization', `Bearer ${accessToken}`);
   }
 
-  const response = await fetch(input, { ...init, headers });
+  let response: Response;
+  try {
+    response = await fetch(input, { ...init, headers });
+  } catch {
+    // 通信エラー（サーバーダウン・オフライン等）
+    return createConnectionErrorResponse();
+  }
 
   if (response.status !== 401) {
     return response;
@@ -27,7 +44,7 @@ async function fetchWithRefresh(input: RequestInfo | URL, init?: RequestInit): P
 
     headers.set('Authorization', `Bearer ${newAccessToken}`);
 
-    return fetch(input, { ...init, headers });
+    return await fetch(input, { ...init, headers });
   } catch {
     // リフレッシュ失敗時は元の401レスポンスを返す
     return response;
