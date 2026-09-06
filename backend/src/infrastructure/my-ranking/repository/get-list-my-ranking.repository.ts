@@ -37,7 +37,7 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
       .leftJoin(rankingOrderMaster, and(eq(rankingOrderMaster.rankingId, rankingMaster.id), eq(rankingOrderMaster.deleteFlg, false)))
       .where(and(...conditions))
       .groupBy(rankingMaster.id, userMaster.name, publicStatusMaster.name)
-      .orderBy(desc(rankingMaster.createdAt))
+      .orderBy(desc(rankingMaster.updatedAt))
       .limit(GetListMyRankingRepository.LIMIT)
       .offset((query.page - 1) * GetListMyRankingRepository.LIMIT);
   }
