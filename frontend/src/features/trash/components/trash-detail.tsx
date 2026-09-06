@@ -101,11 +101,8 @@ export function TrashDetail(props: PropsType) {
                         <HiOutlineDocumentText className="size-6 sm:size-7" />
                     </button>
                 </div>
-                <div className="mt-9 sm:mt-12 flex flex-1 flex-col gap-[1.8rem] md:gap-[2.8rem]">
+                <div className="mt-12 sm:mt-16 flex flex-1 flex-col gap-[1.8rem] md:gap-[2.8rem]">
                     <div>
-                        <label className="mb-3 block text-lg font-semibold text-ink">
-                            ランキング項目
-                        </label>
                         <div className="flex flex-col gap-6">
                             {items.map((item, index) => {
                                 const isTopRank = index < TOP_RANK_COUNT;
