@@ -31,6 +31,8 @@ export function useTrashDetailScreen() {
     const permanentDeleteDialog = useSwitch();
     // メモダイアログの開閉
     const memoDialog = useSwitch();
+    // 項目メモダイアログで表示中の項目（未選択時は null）
+    const [selectedItemMemo, setSelectedItemMemo] = useState<{ itemName: string; itemMemo: string } | null>(null);
 
     // ゴミ箱のランキング取得（Suspense対応のため取得中は呼び出し元で中断される）
     const trashQuery = useTrashDetail(rankingId);
@@ -137,6 +139,20 @@ export function useTrashDetailScreen() {
         memoDialog.off();
     }, [memoDialog]);
 
+    /**
+     * 項目メモダイアログを開く
+     */
+    const clickItemMemo = useCallback((item: { itemName: string; itemMemo: string }) => {
+        setSelectedItemMemo(item);
+    }, []);
+
+    /**
+     * 項目メモダイアログを閉じる
+     */
+    const closeItemMemo = useCallback(() => {
+        setSelectedItemMemo(null);
+    }, []);
+
     return {
         title: ranking.title,
         memo: ranking.memo ?? ``,
@@ -160,6 +176,11 @@ export function useTrashDetailScreen() {
         isMemoDialogOpen: memoDialog.flag,
         onClickMemo: clickMemo,
         onCloseMemo: closeMemo,
+        isItemMemoDialogOpen: selectedItemMemo !== null,
+        selectedItemName: selectedItemMemo?.itemName ?? ``,
+        selectedItemMemo: selectedItemMemo?.itemMemo ?? ``,
+        onClickItemMemo: clickItemMemo,
+        onCloseItemMemo: closeItemMemo,
         isLoading: restoreMutation.isPending || permanentDeleteMutation.isPending,
     };
 }

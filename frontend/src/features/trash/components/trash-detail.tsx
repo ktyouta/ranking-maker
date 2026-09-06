@@ -29,6 +29,11 @@ type PropsType = {
     isMemoDialogOpen: boolean;
     onClickMemo: () => void;
     onCloseMemo: () => void;
+    isItemMemoDialogOpen: boolean;
+    selectedItemName: string;
+    selectedItemMemo: string;
+    onClickItemMemo: (item: ItemType) => void;
+    onCloseItemMemo: () => void;
     isLoading: boolean;
 };
 
@@ -55,6 +60,11 @@ export function TrashDetail(props: PropsType) {
         isMemoDialogOpen,
         onClickMemo,
         onCloseMemo,
+        isItemMemoDialogOpen,
+        selectedItemName,
+        selectedItemMemo,
+        onClickItemMemo,
+        onCloseItemMemo,
         isLoading,
     } = props;
 
@@ -124,20 +134,25 @@ export function TrashDetail(props: PropsType) {
                                 return (
                                     <div
                                         key={item.id}
-                                        className={`flex items-start gap-3 rounded-2xl border bg-surface sm:gap-4 ${cardBorderClass} p-4 sm:p-6 shadow-sm`}
+                                        className={`flex items-center gap-3 rounded-2xl border bg-surface sm:gap-4 ${cardBorderClass} p-4 sm:p-6 shadow-sm`}
                                     >
                                         <span
                                             className={`flex shrink-0 items-center justify-center rounded-full font-bold shadow-sm ${rankBadgeClass} ${isTopRank ? 'mt-1 size-10 text-lg sm:size-12 sm:text-xl' : 'size-8 text-sm'}`}
                                         >
                                             {item.order}
                                         </span>
-                                        <div className="min-w-0 flex-1">
+                                        <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
                                             <p className={`break-words font-semibold text-ink ${isTopRank ? 'text-lg sm:text-xl' : 'text-base'}`}>
                                                 {item.itemName || <span className="text-ink-sub">項目未設定</span>}
                                             </p>
-                                            <p className="mt-3 whitespace-pre-wrap break-words border-t border-line pt-3 text-base text-ink-sub">
-                                                {item.itemMemo || 'メモはありません'}
-                                            </p>
+                                            <button
+                                                type="button"
+                                                onClick={() => onClickItemMemo(item)}
+                                                className="shrink-0 rounded-full bg-accent/15 p-2 text-accent hover:bg-accent/25"
+                                                aria-label={`${item.itemName || '項目'}のメモを見る`}
+                                            >
+                                                <HiOutlineDocumentText className="size-5 sm:size-6" />
+                                            </button>
                                         </div>
                                     </div>
                                 );
@@ -191,6 +206,17 @@ export function TrashDetail(props: PropsType) {
             >
                 <p className="min-h-[14rem] whitespace-pre-wrap break-words text-base text-ink">
                     {memo || 'メモはありません'}
+                </p>
+            </Dialog>
+            <Dialog
+                isOpen={isItemMemoDialogOpen}
+                onClose={onCloseItemMemo}
+                title={selectedItemName || 'メモ'}
+                size="large"
+                headerVariant="accent"
+            >
+                <p className="min-h-[14rem] whitespace-pre-wrap break-words text-base text-ink">
+                    {selectedItemMemo || 'メモはありません'}
                 </p>
             </Dialog>
             <Dialog
