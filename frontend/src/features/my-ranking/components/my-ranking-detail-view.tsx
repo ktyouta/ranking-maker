@@ -1,5 +1,5 @@
 import { Dialog, ScrollToTopButton } from '@/components';
-import { HiArrowLeft, HiOutlineDocumentText } from 'react-icons/hi2';
+import { HiArrowLeft, HiOutlineDocumentText, HiOutlineTrash } from 'react-icons/hi2';
 import { IoCalendarOutline, IoTrophyOutline } from 'react-icons/io5';
 import { ItemType, RankingItemCard } from './ranking-item-card';
 
@@ -87,46 +87,35 @@ export function MyRankingDetailView(props: PropsType) {
                             </span>
                         </div>
                     </div>
-                    <button
-                        type="button"
-                        onClick={onClickMemo}
-                        className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
-                        aria-label="メモを見る"
-                    >
-                        <HiOutlineDocumentText className="size-6 sm:size-7" />
-                    </button>
+                    <div className="flex shrink-0 items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={onClickMemo}
+                            className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                            aria-label="メモを見る"
+                        >
+                            <HiOutlineDocumentText className="size-6 sm:size-7" />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={onClickDelete}
+                            className="shrink-0 rounded-full bg-danger/15 p-2.5 text-danger hover:bg-danger/25"
+                            aria-label="ランキングを削除"
+                        >
+                            <HiOutlineTrash className="size-6 sm:size-7" />
+                        </button>
+                    </div>
                 </div>
                 <div className="mt-12 sm:mt-16 flex flex-1 flex-col gap-[1.8rem] md:gap-[2.8rem]">
-                    <div>
-                        <div className="flex flex-col gap-6">
-                            {items.map((item, index) => (
-                                <RankingItemCard
-                                    key={item.id}
-                                    item={item}
-                                    index={index}
-                                    onClickMemo={onClickItemMemo}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                    <div className="mt-auto border-t border-line pt-16 sm:pt-6">
-                        <div className="flex flex-col gap-4 rounded-xl border-2 border-danger-border bg-danger-bg p-5 sm:flex-row sm:items-center sm:justify-between">
-                            <div>
-                                <p className="text-base font-semibold text-danger">
-                                    ランキングの削除
-                                </p>
-                                <p className="mt-1 text-base text-ink-sub">
-                                    このランキングを削除します。ゴミ箱から元に戻せます。
-                                </p>
-                            </div>
-                            <button
-                                type="button"
-                                className="shrink-0 rounded-full bg-danger-fill px-8 py-3 text-base font-medium text-white hover:bg-danger-fill-hover"
-                                onClick={onClickDelete}
-                            >
-                                削除する
-                            </button>
-                        </div>
+                    <div className="flex flex-col gap-6">
+                        {items.map((item, index) => (
+                            <RankingItemCard
+                                key={item.id}
+                                item={item}
+                                index={index}
+                                onClickMemo={onClickItemMemo}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>
