@@ -83,6 +83,7 @@ export function useMyRankingDetail() {
         // 失敗後の処理
         onError: (message, errViolations) => {
             setErrMessage(message);
+            window.scrollTo({ top: 0, behavior: "smooth" });
             setViolations(errViolations ?? []);
         },
     });
@@ -193,6 +194,8 @@ export function useMyRankingDetail() {
                 order: index + 1,
             })),
         });
+    }, () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
     /**
