@@ -1,4 +1,4 @@
-import { Errors, Loading } from '@/components';
+import { Errors, InitialLoading } from '@/components';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Suspense } from 'react';
@@ -31,7 +31,7 @@ export function App() {
         >
           <AppErrorBoundary>
             <Suspense
-              fallback={<Loading />}
+              fallback={<InitialLoading />}
             >
               <QueryClientProvider
                 client={queryClient}
