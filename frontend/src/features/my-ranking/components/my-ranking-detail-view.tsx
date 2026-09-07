@@ -10,7 +10,7 @@ type PropsType = {
     isPublic: boolean;
     memo: string;
     items: ItemType[];
-    createdAt: string;
+    updatedAt: string;
     onStartEdit: () => void;
     onBack: () => void;
     isDeleteDialogOpen: boolean;
@@ -36,7 +36,7 @@ export function MyRankingDetailView(props: PropsType) {
         title,
         memo,
         items,
-        createdAt,
+        updatedAt,
         onStartEdit,
         onBack,
         isDeleteDialogOpen,
@@ -83,7 +83,7 @@ export function MyRankingDetailView(props: PropsType) {
                             </h1>
                             <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1 text-base text-ink-sub">
                                 <IoCalendarOutline className="size-4" />
-                                作成日 {createdAt}
+                                更新日 {updatedAt}
                             </span>
                         </div>
                     </div>

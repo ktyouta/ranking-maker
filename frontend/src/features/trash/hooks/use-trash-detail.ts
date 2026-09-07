@@ -162,7 +162,7 @@ export function useTrashDetailScreen() {
             itemName: item.itemName ?? ``,
             itemMemo: item.itemMemo ?? ``,
         })),
-        createdAt: formatDate(ranking.createdAt),
+        updatedAt: formatDate(ranking.updatedAt),
         errMessage,
         onBack: goBack,
         isRestoreDialogOpen: restoreDialog.flag,

@@ -264,7 +264,7 @@ export function useMyRankingDetail() {
                 itemName: item.itemName ?? ``,
                 itemMemo: item.itemMemo ?? ``,
             })),
-            createdAt: formatDate(ranking.createdAt),
+            updatedAt: formatDate(ranking.updatedAt),
             onStartEdit: startEdit,
             onBack: goBack,
             isDeleteDialogOpen: deleteDialog.flag,
