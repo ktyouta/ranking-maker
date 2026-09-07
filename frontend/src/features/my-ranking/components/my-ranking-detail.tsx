@@ -1,11 +1,10 @@
-import { ComponentProps } from 'react';
-import { MyRankingDetailEdit } from './my-ranking-detail-edit';
-import { MyRankingDetailView } from './my-ranking-detail-view';
+import { MyRankingDetailEditContainer } from './my-ranking-detail-edit-container';
+import { MyRankingDetailViewContainer } from './my-ranking-detail-view-container';
 
 type PropsType = {
     mode: 'view' | 'edit';
-    view: ComponentProps<typeof MyRankingDetailView>;
-    edit: ComponentProps<typeof MyRankingDetailEdit>;
+    onStartEdit: () => void;
+    onReturnToView: () => void;
 };
 
 /**
@@ -13,11 +12,20 @@ type PropsType = {
  */
 export function MyRankingDetail(props: PropsType) {
 
-    const { mode, view, edit } = props;
+    const { mode, onStartEdit, onReturnToView } = props;
 
     if (mode === 'edit') {
-        return <MyRankingDetailEdit {...edit} />;
+        return (
+            <MyRankingDetailEditContainer
+                onCancel={onReturnToView}
+                onSaveSuccess={onReturnToView}
+            />
+        );
     }
 
-    return <MyRankingDetailView {...view} />;
+    return (
+        <MyRankingDetailViewContainer
+            onStartEdit={onStartEdit}
+        />
+    );
 }

@@ -4,10 +4,12 @@ import { useMyRankingDetail } from '../hooks/use-my-ranking-detail';
 import { MyRankingDetail } from './my-ranking-detail';
 
 function MyRankingDetailContent() {
-    const props = useMyRankingDetail();
+    const { mode, startEdit, returnToView } = useMyRankingDetail();
     return (
         <MyRankingDetail
-            {...props}
+            mode={mode}
+            onStartEdit={startEdit}
+            onReturnToView={returnToView}
         />
     );
 }
