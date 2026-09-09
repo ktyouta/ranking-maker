@@ -71,7 +71,9 @@ export function TrashDetail(props: PropsType) {
                     className="flex items-center gap-1.5 text-base text-ink-sub hover:text-ink"
                 >
                     <HiArrowLeft className="size-4" />
-                    一覧に戻る
+                    <span className="text-[13px] sm:text-base">
+                        一覧に戻る
+                    </span>
                 </button>
             </div>
             <div className="mx-auto flex w-full max-w-[max(48rem,60vw)] flex-1 flex-col px-4 pb-8 pt-4 sm:px-6 lg:px-8">

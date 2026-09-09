@@ -63,7 +63,9 @@ export function MyRankingDetailView(props: PropsType) {
                     className="flex items-center gap-1.5 text-base text-ink-sub hover:text-ink"
                 >
                     <HiArrowLeft className="size-4" />
-                    一覧に戻る
+                    <span className="text-[13px] sm:text-base">
+                        一覧に戻る
+                    </span>
                 </button>
                 <button
                     type="button"

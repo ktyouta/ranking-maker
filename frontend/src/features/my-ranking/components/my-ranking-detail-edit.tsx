@@ -60,7 +60,9 @@ export function MyRankingDetailEdit(props: PropsType) {
                     className="flex items-center gap-1.5 text-base text-ink-sub hover:text-ink"
                 >
                     <HiArrowLeft className="size-4" />
-                    キャンセル
+                    <span className="text-[13px] sm:text-base">
+                        キャンセル
+                    </span>
                 </button>
             </div>
             <div className="mx-auto w-full max-w-[max(48rem,60vw)] flex-1 px-4 pb-10 pt-4 sm:px-6 sm:pt-6 lg:px-8">
