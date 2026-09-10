@@ -2,7 +2,7 @@ import { err, ok, Result } from "neverthrow";
 import { Violation } from "../../../../util/violation";
 import { UserId } from "../../../user";
 import { RankingOrderEntity } from "../../entity";
-import { PublicStatus, RankingMemo, RankingTitle } from "../../value-object";
+import { PublicStatus, RankingIcon, RankingMemo, RankingTitle } from "../../value-object";
 import { RankingId } from "../../../shared";
 
 /**
@@ -12,6 +12,7 @@ type RankingAggregateParams = {
   rankingId: RankingId;
   rankingTitle: RankingTitle;
   publicStatus: PublicStatus;
+  icon: RankingIcon;
   memo: RankingMemo;
   userId: UserId;
   rankingOrderEntityList: RankingOrderEntity[];
@@ -34,6 +35,7 @@ type RankingSnapshot = {
   title: string;
   memo: string | null;
   publicStatus: number;
+  icon: number;
   userId: string;
   rankingOrderEntityList: {
     id: string;
@@ -52,6 +54,7 @@ export class RankingAggregate {
   private constructor(private readonly _rankingId: RankingId,
     private readonly _rankingTitle: RankingTitle,
     private readonly _publicStatus: PublicStatus,
+    private readonly _icon: RankingIcon,
     private readonly _memo: RankingMemo,
     private readonly _userId: UserId,
     private readonly _rankingOrderEntityList: RankingOrderEntity[],
@@ -79,6 +82,7 @@ export class RankingAggregate {
         params.rankingId,
         params.rankingTitle,
         params.publicStatus,
+        params.icon,
         params.memo,
         params.userId,
         params.rankingOrderEntityList,
@@ -99,6 +103,7 @@ export class RankingAggregate {
       params.rankingId,
       params.rankingTitle,
       params.publicStatus,
+      params.icon,
       params.memo,
       params.userId,
       params.rankingOrderEntityList,
@@ -116,6 +121,10 @@ export class RankingAggregate {
 
   get publicStatus() {
     return this._publicStatus.value;
+  }
+
+  get icon() {
+    return this._icon.value;
   }
 
   get memo() {
@@ -219,6 +228,7 @@ export class RankingAggregate {
       title: this._rankingTitle.value,
       memo: this._memo.value,
       publicStatus: this._publicStatus.value,
+      icon: this._icon.value,
       userId: this._userId.value,
       rankingOrderEntityList: this._rankingOrderEntityList.map((e) => {
         return {

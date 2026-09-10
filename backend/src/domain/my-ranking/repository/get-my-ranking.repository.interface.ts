@@ -9,6 +9,7 @@ export type MyRankingType = {
   updatedAt: string;
   publicStatus: number;
   publicStatusName: string;
+  icon: number;
 };
 
 export type MyRankingOrderType = {

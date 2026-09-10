@@ -44,6 +44,7 @@ export class UpdateMyRankingRepository implements IUpdateMyRankingRepository {
           title: rankingSnapshot.title,
           memo: rankingSnapshot.memo,
           publicStatus: rankingSnapshot.publicStatus,
+          icon: rankingSnapshot.icon,
           updatedAt: now
         })
         .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.userId, rankingSnapshot.userId), eq(rankingMaster.id, rankingSnapshot.id))),

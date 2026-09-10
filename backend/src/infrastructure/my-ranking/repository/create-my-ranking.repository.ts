@@ -39,6 +39,7 @@ export class CreateMyRankingRepository implements ICreateMyRankingRepository {
         userId: rankingSnapshot.userId,
         title: rankingSnapshot.title,
         publicStatus: rankingSnapshot.publicStatus,
+        icon: rankingSnapshot.icon,
         memo: rankingSnapshot.memo,
         deleteFlg: false,
         createdAt: now,

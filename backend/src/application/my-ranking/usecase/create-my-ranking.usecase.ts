@@ -1,11 +1,12 @@
 import { err, ok, Result } from "neverthrow";
-import { ContentModerationDomainService, ContentModerationViolation, ICreateMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
+import { ContentModerationDomainService, ContentModerationViolation, ICreateMyRankingRepository, IconValidityDomainService, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
 import { UserId } from "../../../domain/user";
 import { CreateMyRankingSchemaType } from "../../../presentation/my-ranking/schema";
 import { Violation } from "../../../util";
 
 export type CreateMyRankingError =
   | { type: "DUPLICATE_TITLE" }
+  | { type: "INVALID_ICON" }
   | { type: "VALIDATION"; violations: Violation[] }
   | { type: "INAPPROPRIATE_CONTENT"; violations: ContentModerationViolation[] };
 
@@ -21,6 +22,7 @@ export class CreateMyRankingUsecase {
   constructor(private readonly repository: ICreateMyRankingRepository,
     private readonly uniquenessService: RankingTitleUniquenessDomainService,
     private readonly contentModerationService: ContentModerationDomainService,
+    private readonly iconValidityService: IconValidityDomainService,
   ) { }
 
   /**
@@ -35,11 +37,18 @@ export class CreateMyRankingUsecase {
       return err({ type: "DUPLICATE_TITLE" });
     }
 
+    // アイコンの実在・有効性チェック（icon_master が唯一の真実源のため、値オブジェクトではなくここで判定する）
+    const icon = new RankingIcon(body.icon);
+    if (!(await this.iconValidityService.isValid(icon))) {
+      return err({ type: "INVALID_ICON" });
+    }
+
     // ランキング集約
     const aggregateResult = RankingAggregate.create({
       rankingId,
       rankingTitle,
       publicStatus: new PublicStatus(body.publicStatus),
+      icon,
       memo: new RankingMemo(body.memo),
       userId,
       rankingOrderEntityList: body.items.map((e) => {

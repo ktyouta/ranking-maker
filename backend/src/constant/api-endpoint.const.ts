@@ -14,6 +14,7 @@ export const API_ENDPOINT = {
   RANKING: "/api/v1/ranking",
   RANKING_ID: "/api/v1/ranking/:rankingId",
   MY_RANKING: "/api/v1/my-ranking",
+  MY_RANKING_ICONS: "/api/v1/my-ranking/icons",
   MY_RANKING_ID: "/api/v1/my-ranking/:rankingId",
   MY_RANKING_TRASH_ID_RESTORE: "/api/v1/my-ranking/trash/:rankingId/restore",
   MY_RANKING_TRASH: "/api/v1/my-ranking/trash",

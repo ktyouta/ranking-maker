@@ -43,6 +43,20 @@
       "when": 1788263964526,
       "tag": "0005_busy_blue_blade",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1789048000702,
+      "tag": "0006_icon-master-seed",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1789048345388,
+      "tag": "0007_kind_mindworm",
+      "breakpoints": true
     }
   ]
 }

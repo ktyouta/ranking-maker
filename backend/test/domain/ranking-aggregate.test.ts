@@ -5,6 +5,7 @@ import {
   Order,
   PublicStatus,
   RankingAggregate,
+  RankingIcon,
   RankingId,
   RankingMemo,
   RankingOrderEntity,
@@ -18,6 +19,7 @@ function buildBaseParams() {
     rankingId: RankingId.generate(),
     rankingTitle: new RankingTitle("テストランキング"),
     publicStatus: new PublicStatus(1),
+    icon: new RankingIcon(1),
     memo: new RankingMemo(""),
     userId: UserId.generate(),
   };

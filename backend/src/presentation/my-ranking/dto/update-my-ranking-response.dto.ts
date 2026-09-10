@@ -4,6 +4,7 @@ export type UpdateMyRankingResponseType = {
   id: string;
   title: string;
   publicStatus: number;
+  icon: number;
   memo: string | null;
   items: {
     id: string;
@@ -25,6 +26,7 @@ export class UpdateMyRankingResponseDto {
       id: aggregate.id,
       title: aggregate.title,
       publicStatus: aggregate.publicStatus,
+      icon: aggregate.icon,
       memo: aggregate.memo,
       items: aggregate.rankingOrderEntityList.map((e) => ({
         id: e.id,

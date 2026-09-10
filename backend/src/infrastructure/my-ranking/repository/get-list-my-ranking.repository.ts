@@ -29,6 +29,7 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
         createdAt: rankingMaster.createdAt,
         publicStatus: rankingMaster.publicStatus,
         publicStatusName: publicStatusMaster.name,
+        icon: rankingMaster.icon,
         itemCount: count(rankingOrderMaster.id),
       })
       .from(rankingMaster)

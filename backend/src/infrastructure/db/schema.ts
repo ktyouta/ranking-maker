@@ -61,6 +61,7 @@ export const rankingMaster = sqliteTable("ranking_master", {
   userId: text("user_id").notNull().references(() => userMaster.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   publicStatus: integer("public_status").notNull().references(() => publicStatusMaster.id, { onDelete: "restrict" }),
+  icon: integer("icon").notNull().default(1).references(() => iconMaster.id, { onDelete: "restrict" }),
   memo: text("memo"),
   deleteFlg: integer("delete_flg", { mode: "boolean" }).notNull().default(false),
   createdAt: text("created_at").notNull(),
@@ -115,3 +116,17 @@ export const publicStatusMaster = sqliteTable("public_status_master", {
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
 });
+
+/**
+ * アイコンマスタ
+ */
+export const iconMaster = sqliteTable("icon_master", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  emoji: text("emoji").notNull(),
+  deleteFlg: integer("delete_flg", { mode: "boolean" }).notNull().default(false),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export type IconMaster = typeof iconMaster.$inferSelect;
+export type NewIconMaster = typeof iconMaster.$inferInsert;

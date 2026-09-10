@@ -2,8 +2,8 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { CreateMyRankingUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { ContentModerationDomainService, RankingTitleUniquenessDomainService, UserId } from "../../../domain";
-import { ContentModerationRepository, CreateMyRankingRepository, RankingTitleUniquenessRepository } from "../../../infrastructure";
+import { ContentModerationDomainService, IconValidityDomainService, RankingTitleUniquenessDomainService, UserId } from "../../../domain";
+import { ContentModerationRepository, CreateMyRankingRepository, IconValidityRepository, RankingTitleUniquenessRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import type { AppEnv } from "../../../types";
 import { formatZodErrors } from "../../../util";
@@ -30,7 +30,8 @@ const createMyRanking = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING,
     const body = c.req.valid("json");
     const uniquenessService = new RankingTitleUniquenessDomainService(new RankingTitleUniquenessRepository(db));
     const contentModerationService = new ContentModerationDomainService(new ContentModerationRepository(c.env.AI));
-    const service = new CreateMyRankingUsecase(new CreateMyRankingRepository(db), uniquenessService, contentModerationService);
+    const iconValidityService = new IconValidityDomainService(new IconValidityRepository(db));
+    const service = new CreateMyRankingUsecase(new CreateMyRankingRepository(db), uniquenessService, contentModerationService, iconValidityService);
 
     const result = await service.execute({ userId, body });
 
@@ -47,6 +48,8 @@ const createMyRanking = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING,
             return c.json({ message: "入力エラー", data: error.violations }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
           case "DUPLICATE_TITLE":
             return c.json({ message: "同名のランキングが既に存在します。" }, HTTP_STATUS.CONFLICT);
+          case "INVALID_ICON":
+            return c.json({ message: "指定されたアイコンは存在しません。" }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
           case "INAPPROPRIATE_CONTENT":
             return c.json({ message: "不適切な内容が含まれています。", data: error.violations }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
           default: {

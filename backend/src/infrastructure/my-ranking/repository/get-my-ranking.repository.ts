@@ -21,7 +21,8 @@ export class GetMyRankingRepository implements IGetMyRankingRepository {
         createdAt: rankingMaster.createdAt,
         updatedAt: rankingMaster.updatedAt,
         publicStatus: rankingMaster.publicStatus,
-        publicStatusName: publicStatusMaster.name
+        publicStatusName: publicStatusMaster.name,
+        icon: rankingMaster.icon,
       })
       .from(rankingMaster)
       .innerJoin(publicStatusMaster, eq(publicStatusMaster.id, rankingMaster.publicStatus))

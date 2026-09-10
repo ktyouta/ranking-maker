@@ -16,6 +16,11 @@ export const CreateMyRankingSchema = z.object({
     .number()
     .int("公開ステータスが不正です")
     .refine((value) => PublicStatus.VALUES.includes(value), "公開ステータスが不正です"),
+  // 実在確認・有効性確認はUsecase層（IconValidityDomainService）で行うため、ここでは構造チェックのみ
+  icon: z
+    .number()
+    .int("アイコンIDが不正です")
+    .min(1, "アイコンIDが不正です"),
   memo: z
     .string()
     .max(RankingMemo.MAX_LENGTH, `メモは${RankingMemo.MAX_LENGTH}文字以内で入力してください`)

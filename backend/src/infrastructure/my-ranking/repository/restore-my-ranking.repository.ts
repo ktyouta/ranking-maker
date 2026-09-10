@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { IRestoreMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle } from "../../../domain";
+import { IRestoreMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle } from "../../../domain";
 import { UserId } from "../../../domain/user";
 import { rankingMaster, rankingOrderMaster, type Database } from "../../db";
 
@@ -19,6 +19,7 @@ export class RestoreMyRankingRepository implements IRestoreMyRankingRepository {
         userId: rankingMaster.userId,
         title: rankingMaster.title,
         publicStatus: rankingMaster.publicStatus,
+        icon: rankingMaster.icon,
         memo: rankingMaster.memo,
         deleteFlg: rankingMaster.deleteFlg,
       })
@@ -44,6 +45,7 @@ export class RestoreMyRankingRepository implements IRestoreMyRankingRepository {
       rankingId: RankingId.of(ranking.id),
       rankingTitle: new RankingTitle(ranking.title),
       publicStatus: new PublicStatus(ranking.publicStatus),
+      icon: new RankingIcon(ranking.icon),
       memo: new RankingMemo(ranking.memo),
       userId: UserId.of(ranking.userId),
       rankingOrderEntityList: orderResult.map((e) =>
