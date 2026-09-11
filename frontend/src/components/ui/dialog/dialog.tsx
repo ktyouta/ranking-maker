@@ -10,6 +10,7 @@ type Props = {
     children: ReactNode;
     title?: string;
     size?: Size;
+    contentClassName?: string;
     closeOnOverlayClick?: boolean;
     closeOnEscape?: boolean;
 };
@@ -26,6 +27,7 @@ export function Dialog({
     children,
     title,
     size = "medium",
+    contentClassName,
     closeOnOverlayClick = true,
     closeOnEscape = true,
 }: Props) {
@@ -82,7 +84,8 @@ export function Dialog({
             <div
                 className={cn(
                     "relative z-10 w-full mx-4 overflow-hidden bg-surface rounded-lg shadow-xl",
-                    sizeClasses[size]
+                    sizeClasses[size],
+                    contentClassName
                 )}
                 onClick={handleContentClick}
             >

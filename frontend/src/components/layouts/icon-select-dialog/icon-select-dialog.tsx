@@ -27,6 +27,7 @@ export function IconSelectDialog(props: PropsType) {
             onClose={onClose}
             title="アイコンを選択"
             size="medium"
+            contentClassName="sm:max-w-3xl"
         >
             <div className="grid grid-cols-5 gap-2 sm:grid-cols-6">
                 {icons.map((icon) => {
