@@ -8,6 +8,8 @@ type RankingListItem = {
     id: string;
     title: string;
     icon: string;
+    itemCount: number;
+    updatedAt: string;
 };
 
 type PropsType = {
@@ -70,6 +72,8 @@ export const MyRanking = (props: PropsType) => {
                                 id={ranking.id}
                                 title={ranking.title}
                                 icon={ranking.icon}
+                                itemCount={ranking.itemCount}
+                                updatedAt={ranking.updatedAt}
                                 onSelect={onSelectRanking}
                             />
                         ))}

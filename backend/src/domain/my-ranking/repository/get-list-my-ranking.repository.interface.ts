@@ -5,6 +5,7 @@ export type MyRankingListType = {
   title: string;
   userName: string;
   createdAt: string;
+  updatedAt: string;
   publicStatus: number;
   publicStatusName: string;
   icon: number;

@@ -27,6 +27,7 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
         title: rankingMaster.title,
         userName: userMaster.name,
         createdAt: rankingMaster.createdAt,
+        updatedAt: rankingMaster.updatedAt,
         publicStatus: rankingMaster.publicStatus,
         publicStatusName: publicStatusMaster.name,
         icon: rankingMaster.icon,

@@ -3,6 +3,7 @@ import { paths } from "@/config/paths";
 import { useAppNavigation } from "@/hooks/use-app-navigation";
 import { useDelayedFlag } from "@/hooks/use-delayed-flag";
 import { useTransitionSearchParams } from "@/hooks/use-transition-search-params";
+import { formatDaysAgo } from "@/utils/date-util";
 import { useCallback, useMemo, useState } from "react";
 import { useTrashList } from "../api/get-trash-list";
 import { TRASH_QUERY_KEY } from "../constants/trash-query-params";
@@ -44,6 +45,8 @@ export function useTrashListScreen() {
             id: ranking.id,
             title: ranking.title,
             icon: icons.find((icon) => icon.id === ranking.icon)?.emoji ?? '',
+            itemCount: ranking.itemCount,
+            updatedAt: formatDaysAgo(ranking.updatedAt),
         }));
     }, [trashListQuery.data, icons]);
 

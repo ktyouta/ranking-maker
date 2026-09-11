@@ -1,9 +1,11 @@
-import { HiArrowRight } from 'react-icons/hi2';
+import { HiArrowRight, HiOutlineClock, HiOutlineListBullet } from 'react-icons/hi2';
 
 type PropsType = {
     id: string;
     title: string;
     icon: string;
+    itemCount: number;
+    updatedAt: string;
     onSelect: (id: string) => void;
 };
 
@@ -12,7 +14,7 @@ type PropsType = {
  */
 export const TrashCard = (props: PropsType) => {
 
-    const { id, title, icon, onSelect } = props;
+    const { id, title, icon, itemCount, updatedAt, onSelect } = props;
 
     return (
         <div
@@ -27,10 +29,22 @@ export const TrashCard = (props: PropsType) => {
                     <h2 className="line-clamp-2 flex min-h-[3rem] items-center text-base font-semibold text-ink/90 sm:min-h-[3.5rem] sm:text-lg">
                         {title}
                     </h2>
-                    <p className="flex items-center justify-end gap-1 text-sm font-medium text-accent hover:underline">
-                        詳細を見る
-                        <HiArrowRight className="size-3.5" />
-                    </p>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <span className="flex items-center gap-1 rounded-full border border-accent/30 px-3 py-0.5 text-xs font-medium text-accent sm:px-5 sm:py-1 sm:text-sm">
+                                <HiOutlineListBullet className="size-3 shrink-0 sm:size-3.5" />
+                                {itemCount}個
+                            </span>
+                            <span className="flex items-center gap-1 rounded-full border border-accent/30 px-3 py-0.5 text-xs font-medium text-accent sm:px-5 sm:py-1 sm:text-sm">
+                                <HiOutlineClock className="size-3 shrink-0 sm:size-3.5" />
+                                {updatedAt}
+                            </span>
+                        </div>
+                        <p className="flex items-center gap-1 text-xs font-medium text-accent hover:underline sm:text-sm">
+                            詳細を見る
+                            <HiArrowRight className="size-3 sm:size-3.5" />
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

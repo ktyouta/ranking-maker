@@ -59,3 +59,19 @@ export function formatDate(dateString: string): string {
     const day = date.getDate().toString().padStart(2, '0');
     return `${year}/${month}/${day}`;
 }
+
+/**
+ * 日付を「今日」「n日前」の相対表記に変換する
+ */
+export function formatDaysAgo(dateString: string): string {
+    const target = new Date(dateString);
+    const now = new Date();
+    const targetDate = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+    const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diffDays = Math.round((nowDate.getTime() - targetDate.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 0) {
+        return '今日';
+    }
+    return `${diffDays}日前`;
+}

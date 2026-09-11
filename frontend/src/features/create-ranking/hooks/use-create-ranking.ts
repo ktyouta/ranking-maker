@@ -24,7 +24,7 @@ export function useCreateRanking() {
     // フィールド単位に紐付かないエラー一覧（バリデーション・不適切内容検出）
     const [violations, setViolations] = useState<ViolationType[]>([]);
     // フォーム
-    const { register, handleSubmit, control, watch, setValue, formState: { errors }, itemFieldArray } = useCreateRankingForm();
+    const { register, handleSubmit, watch, setValue, formState: { errors }, itemFieldArray } = useCreateRankingForm();
     // アイコン候補一覧
     const iconsQuery = useIcons();
     const icons = iconsQuery.data.data;
@@ -127,13 +127,6 @@ export function useCreateRanking() {
     }, [itemFieldArray]);
 
     /**
-     * 戻るボタン押下
-     */
-    const back = useCallback(() => {
-        navigate(paths.myRanking.path);
-    }, [navigate]);
-
-    /**
      * アイコン選択ダイアログを開く
      */
     const openIconDialog = useCallback(() => {
@@ -159,7 +152,6 @@ export function useCreateRanking() {
         errMessage,
         violations,
         register,
-        control,
         errors,
         items: itemFieldArray.fields,
         sensors,
@@ -168,7 +160,6 @@ export function useCreateRanking() {
         moveItemUp,
         moveItemDown,
         handleDragEnd,
-        back,
         isLoading: postMutation.isPending,
         handleConfirm,
         icons,

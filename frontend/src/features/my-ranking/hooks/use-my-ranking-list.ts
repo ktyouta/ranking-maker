@@ -1,6 +1,7 @@
 import { useIcons } from "@/app/api/get-icons";
 import { useDelayedFlag } from "@/hooks/use-delayed-flag";
 import { useTransitionSearchParams } from "@/hooks/use-transition-search-params";
+import { formatDaysAgo } from "@/utils/date-util";
 import { useMemo, useState } from "react";
 import { useMyRankings } from "../api/get-my-rankings";
 import { MY_RANKING_QUERY_KEY } from "../constants/my-ranking-query-params";
@@ -40,6 +41,8 @@ export const useMyRankingList = () => {
             id: ranking.id,
             title: ranking.title,
             icon: icons.find((icon) => icon.id === ranking.icon)?.emoji ?? '',
+            itemCount: ranking.itemCount,
+            updatedAt: formatDaysAgo(ranking.updatedAt),
         }));
     }, [rankingListQuery.data, icons]);
 
