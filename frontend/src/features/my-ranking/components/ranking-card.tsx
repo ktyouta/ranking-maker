@@ -21,8 +21,8 @@ export const RankingCard = (props: PropsType) => {
             onClick={() => onSelect(id)}
             className="relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-accent/35 bg-surface shadow-sm sm:shadow-md hover:-translate-y-0.5 hover:shadow-lg sm:border-2 sm:border-accent/[40%]"
         >
-            <div className="relative z-10 flex items-stretch gap-4 px-5 py-5 sm:gap-6 sm:px-6 sm:py-6">
-                <div className="flex w-19 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-accent-surface/15 text-5xl sm:w-20 sm:text-6xl">
+            <div className="relative z-10 flex items-stretch gap-5 px-5 py-5 sm:gap-7 sm:px-6 sm:py-6">
+                <div className="flex w-[70px] shrink-0 items-center justify-center overflow-hidden rounded-lg bg-accent-surface/15 text-5xl sm:w-[90px] sm:text-6xl">
                     {icon}
                 </div>
                 <div className="flex flex-1 flex-col justify-between gap-1 sm:gap-2">
