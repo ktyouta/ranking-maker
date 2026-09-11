@@ -31,6 +31,7 @@ export class GetTrashListMyRankingRepository implements IGetTrashListMyRankingRe
         updatedAt: rankingMaster.updatedAt,
         publicStatus: rankingMaster.publicStatus,
         publicStatusName: publicStatusMaster.name,
+        icon: rankingMaster.icon,
         // ランキング削除時、紐づく項目も deleteFlg=true にカスケードされるため、生存行と逆に deleteFlg=true の項目を数える
         itemCount: count(rankingOrderMaster.id),
       })

@@ -1,3 +1,4 @@
+import { useIcons } from '@/app/api/get-icons';
 import { paths } from '@/config/paths';
 import { PUBLIC_STATUS } from '@/constants/public-status';
 import { myRankingKeys } from '@/features/my-ranking/api/query-key';
@@ -35,6 +36,9 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
     const rankingQuery = useMyRanking(rankingId);
     // ランキング本体と項目一覧
     const { ranking, rankingOrder } = rankingQuery.data.data;
+    // アイコン候補一覧（idからemojiを引くために使用）
+    const iconsQuery = useIcons();
+    const icons = iconsQuery.data.data;
 
     // 項目一覧を順位順に整形したもの
     const sortedItems = useMemo(() => {
@@ -112,6 +116,7 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
 
     return {
         title: ranking.title,
+        icon: icons.find((icon) => icon.id === ranking.icon)?.emoji ?? '',
         publicStatusLabel: ranking.publicStatusName,
         isPublic: ranking.publicStatus === PUBLIC_STATUS.PUBLIC,
         memo: ranking.memo ?? ``,

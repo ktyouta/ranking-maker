@@ -55,14 +55,14 @@
 
 | # | タスク | ファイル | 前提 | 状態 |
 |---|--------|----------|------|------|
-| 23 | Icons取得API呼び出し関数＋query-key追加（RPC, `InferResponseType`使用、共有配置） | `frontend/src/app/api/get-icons.ts` `frontend/src/app/api/query-key.ts` | バックエンド#22 | |
-| 24 | `IconSelectDialog`（Presentational、`{id, emoji}[]`をpropsで受け取る汎用ダイアログ、`ThemeSelectDialog`踏襲） | `frontend/src/components/layouts/icon-select-dialog/icon-select-dialog.tsx` | ― | |
-| 25 | create-ranking フォームへのアイコン選択組み込み（初期値id=1、取得hook接続、送信データに`icon`(id)追加） | `use-create-ranking.form.ts` `use-create-ranking.ts` `create-ranking.tsx` `create-ranking-container.tsx` `types/create-ranking-request-type.ts` | #23, #24 | |
-| 26 | my-ranking-detail-edit フォームへのアイコン選択組み込み（既存idの初期選択、送信データに`icon`(id)追加） | `use-update-my-ranking.form.ts` `use-my-ranking-detail-edit.ts` `my-ranking-detail-edit.tsx` `my-ranking-detail-edit-container.tsx` `types/update-my-ranking-request-type.ts` | #23, #24 | |
-| 27 | `RankingCard`にアイコン表示追加（idからemojiを解決して表示） | `frontend/src/features/my-ranking/components/ranking-card.tsx` | バックエンド#22 | |
-| 28 | `TrashCard`にも同様にアイコン表示追加（`RankingCard`の重複コンポーネントのため横展開） | `frontend/src/features/trash/components/trash-card.tsx` | #27 | |
-| 29 | `my-ranking-detail-view`のアイコン表示を固定`IoTrophyOutline`からランキング固有の値に置き換え | `frontend/src/features/my-ranking/components/my-ranking-detail-view.tsx` | バックエンド#22 | |
-| 30 | 既存テストへの影響確認 | 関連する`*.test.tsx` | #25〜#29 | |
+| 23 | Icons取得API呼び出し関数＋query-key追加（RPC, `InferResponseType`使用、共有配置） | `frontend/src/app/api/get-icons.ts` `frontend/src/app/api/query-key.ts` | バックエンド#22 | 完了 |
+| 24 | `IconSelectDialog`（Presentational、`{id, emoji}[]`をpropsで受け取る汎用ダイアログ、`ThemeSelectDialog`踏襲） | `frontend/src/components/layouts/icon-select-dialog/icon-select-dialog.tsx` | ― | 完了 |
+| 25 | create-ranking フォームへのアイコン選択組み込み（初期値id=1、取得hook接続、送信データに`icon`(id)追加） | `use-create-ranking.form.ts` `use-create-ranking.ts` `create-ranking.tsx` `create-ranking-container.tsx` `types/create-ranking-request-type.ts` | #23, #24 | 完了 |
+| 26 | my-ranking-detail-edit フォームへのアイコン選択組み込み（既存idの初期選択、送信データに`icon`(id)追加） | `use-update-my-ranking.form.ts` `use-my-ranking-detail-edit.ts` `my-ranking-detail-edit.tsx` `my-ranking-detail-edit-container.tsx` `types/update-my-ranking-request-type.ts` | #23, #24 | 完了 |
+| 27 | `RankingCard`にアイコン表示追加（idからemojiを解決して表示） | `frontend/src/features/my-ranking/components/ranking-card.tsx` | バックエンド#22 | 完了 |
+| 28 | `TrashCard`にも同様にアイコン表示追加（`RankingCard`の重複コンポーネントのため横展開。ゴミ箱一覧取得のバックエンド型に`icon`が不足していたため追加修正した） | `frontend/src/features/trash/components/trash-card.tsx` `trash.tsx` `use-trash-list.ts` `backend/.../get-trash-list-my-ranking.repository.{interface.ts,ts}` | #27 | 完了 |
+| 29 | `my-ranking-detail-view`のアイコン表示を固定`IoTrophyOutline`からランキング固有の値に置き換え | `frontend/src/features/my-ranking/components/my-ranking-detail-view.tsx` | バックエンド#22 | 完了 |
+| 30 | 既存テストへの影響確認 | 関連する`*.test.tsx` | #25〜#29 | 完了 |
 
 ---
 合計: 32 タスク（バックエンド 24 / フロントエンド 8）
@@ -82,4 +82,14 @@
 
 ## 実施結果
 
-（実装完了後にここへ記録する）
+- #1〜#30: 計画通り実装完了
+- タスク#4（テスト）は「backendにVO・usecaseテストが1件も無い」ことが判明したため対象外にした（当初案は撤回、上記補足参照）
+- タスク#28実施時に、ゴミ箱一覧取得（`get-trash-list-my-ranking`）のバックエンド型`TrashMyRankingListType`に`icon`フィールドが不足していることが判明し、追加で修正した（当初のバックエンドタスク分解での見落とし）
+- `INVALID_ICON`エラーのレスポンス形状を、同一エンドポイントの他の422エラー（`VALIDATION`, `INAPPROPRIATE_CONTENT`）と揃え`data: [{field, message}]`形式にした。当初`message`のみの形状にしていたところ、同じ422ステータスに対する型のユニオンでフロント側`error.data`アクセスが型エラーになったため修正（結果的に既存の`violations`表示UIをそのまま流用できる形になった）
+- `icon`のAPI表現は「絵文字そのもの」ではなく`icon_master.id`（整数）に確定（設計フェーズの終盤で再検討・ユーザー確認済み）
+- `RankingIcon`VOは整数idをラップし、構造チェック（正の整数か）のみ行う。マスタ実在確認は`IconValidityDomainService`がusecase層から呼び出す
+- `npx tsc --noEmit`：backend/frontendともにエラー0件（frontendの`login.stories.tsx`の1件は本機能と無関係の既存エラーであることを確認済み、対象外）
+- 既存テスト：backend 35ファイル/134件、frontend 10ファイル/61件（`ranking-card.test.tsx`はicon prop追加に伴い修正）、全てパス
+- `trash-detail.tsx`（ゴミ箱詳細画面）へのアイコン表示が当初のタスク分解・実装から漏れていた（`my-ranking-detail-view.tsx`と同様の画面だが対象外にしてしまっていた）。ユーザー指摘により`use-trash-detail.ts`/`trash-detail.tsx`に追加対応した
+- **重大インシデント**：マイグレーション0007（`ranking_master`のテーブル再作成）で`DROP TABLE`実行時に`ranking_order_master.ranking_id`の`ON DELETE CASCADE`が発火し、ローカル開発DBの項目データが全て消失した。原因は参考にした`0002_far_silver_samurai.sql`の`PRAGMA foreign_keys=OFF/ON`によるカスケード防止を見落としたこと。検証時も親テーブル単体でしかテストしておらず、子テーブルを含む構成での検証不足があった。0007を修正し、子テーブルを含めた構成で再検証済み。本番（`db:migrate:prod`）は未実行だったため実害なし。ローカルDBの失われたデータはユーザーの指示により復元・リセットともに行わず、現状のまま維持している
+- backend-review, db-naming-review, resource-authz-review, frontend-review, architecture-review, comments-review, rpc-review：いずれも問題なし（frontend-reviewで検出した2件の軽微な指摘—派生変数のコメント欠落、`useCallback`ラップ漏れ—は修正済み）

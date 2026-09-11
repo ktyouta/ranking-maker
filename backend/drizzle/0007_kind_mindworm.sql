@@ -3,6 +3,10 @@
 -- SQLiteは「REFERENCES列にNOT NULLのDEFAULT値を同時指定するADD COLUMN」を許可しないため、
 -- 0002_far_silver_samurai.sql と同じ「テーブル再作成方式」で icon 列（NOT NULL + FK）を追加する。
 -- 既存行は icon = 1（🏆、0006で投入済み）でバックフィルする。
+-- foreign_keys を OFF にしないと、DROP TABLE ranking_master が ranking_order_master.ranking_id の
+-- ON DELETE CASCADE を発火させ、紐づく項目データを全て消してしまう（0002と同じ理由でOFF/ONを挟む）。
+PRAGMA foreign_keys=OFF;
+--> statement-breakpoint
 CREATE TABLE `__new_ranking_master` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
@@ -26,3 +30,5 @@ DROP TABLE `ranking_master`;
 ALTER TABLE `__new_ranking_master` RENAME TO `ranking_master`;
 --> statement-breakpoint
 CREATE UNIQUE INDEX `ux_ranking_master_user_title` ON `ranking_master` (`user_id`,`title`) WHERE "ranking_master"."delete_flg" = false;
+--> statement-breakpoint
+PRAGMA foreign_keys=ON;

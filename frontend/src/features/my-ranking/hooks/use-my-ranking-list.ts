@@ -1,3 +1,4 @@
+import { useIcons } from "@/app/api/get-icons";
 import { useDelayedFlag } from "@/hooks/use-delayed-flag";
 import { useTransitionSearchParams } from "@/hooks/use-transition-search-params";
 import { useMemo, useState } from "react";
@@ -27,6 +28,9 @@ export const useMyRankingList = () => {
     const currentPage = pageParam && !Number.isNaN(Number(pageParam)) ? Number(pageParam) : 1;
     // ランキング一覧取得（Suspense対応のため取得中は呼び出し元で中断される）
     const rankingListQuery = useMyRankings({ searchParams });
+    // アイコン候補一覧（idからemojiを引くために使用）
+    const iconsQuery = useIcons();
+    const icons = iconsQuery.data.data;
     // オーバーレイ表示フラグ
     const isShowOverlay = useDelayedFlag(isPending, 250);
 
@@ -35,8 +39,9 @@ export const useMyRankingList = () => {
         return rankingListQuery.data.data.list.map((ranking) => ({
             id: ranking.id,
             title: ranking.title,
+            icon: icons.find((icon) => icon.id === ranking.icon)?.emoji ?? '',
         }));
-    }, [rankingListQuery.data]);
+    }, [rankingListQuery.data, icons]);
 
     /**
      * 検索条件クリア

@@ -1,5 +1,7 @@
+import { useIcons } from '@/app/api/get-icons';
 import { PUBLIC_STATUS } from '@/constants/public-status';
 import { myRankingKeys } from '@/features/my-ranking/api/query-key';
+import { useSwitch } from '@/hooks/use-switch';
 import { KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
@@ -44,6 +46,7 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
     const defaultValues = useMemo(() => ({
         title: ranking.title,
         isPublic: ranking.publicStatus === PUBLIC_STATUS.PUBLIC,
+        icon: ranking.icon,
         memo: ranking.memo ?? ``,
         items: sortedItems.map((item) => ({
             itemName: item.itemName ?? ``,
@@ -52,7 +55,14 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
     }), [ranking, sortedItems]);
 
     // フォーム
-    const { register, handleSubmit, control, reset, formState: { errors }, itemFieldArray } = useUpdateMyRankingForm(defaultValues);
+    const { register, handleSubmit, control, reset, watch, setValue, formState: { errors }, itemFieldArray } = useUpdateMyRankingForm(defaultValues);
+    // アイコン候補一覧
+    const iconsQuery = useIcons();
+    const icons = iconsQuery.data.data;
+    // アイコン選択ダイアログの開閉
+    const iconDialog = useSwitch();
+    // 選択中のアイコンID
+    const selectedIconId = watch('icon');
     // ポインター操作とキーボード操作の両方でドラッグ&ドロップを可能にする
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -95,6 +105,7 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
             title: data.title,
             // 公開設定UIは現状外しているため、常に非公開で送る
             publicStatus: PUBLIC_STATUS.PRIVATE,
+            icon: data.icon,
             memo: data.memo,
             items: data.items.map((item, index) => ({
                 itemName: item.itemName,
@@ -159,6 +170,28 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
         itemFieldArray.move(oldIndex, newIndex);
     }, [itemFieldArray]);
 
+    /**
+     * アイコン選択ダイアログを開く
+     */
+    const openIconDialog = useCallback(() => {
+        iconDialog.on();
+    }, [iconDialog]);
+
+    /**
+     * アイコン選択ダイアログを閉じる
+     */
+    const closeIconDialog = useCallback(() => {
+        iconDialog.off();
+    }, [iconDialog]);
+
+    /**
+     * アイコン選択
+     */
+    const selectIcon = useCallback((iconId: number) => {
+        setValue('icon', iconId);
+        iconDialog.off();
+    }, [setValue, iconDialog]);
+
     return {
         title: ranking.title,
         errMessage,
@@ -176,5 +209,11 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
         onSave: handleSave,
         onCancel: cancelEdit,
         isLoading: updateMutation.isPending,
+        icons,
+        selectedIconId,
+        isIconDialogOpen: iconDialog.flag,
+        openIconDialog,
+        closeIconDialog,
+        selectIcon,
     };
 }

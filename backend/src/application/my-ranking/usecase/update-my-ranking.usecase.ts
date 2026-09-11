@@ -1,7 +1,6 @@
 import { err, ok, Result } from "neverthrow";
 import { ContentModerationDomainService, ContentModerationViolation, ItemMemo, ItemName, IUpdateMyRankingRepository, IconValidityDomainService, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
 import { UserId } from "../../../domain/user";
-import { UpdateMyRankingSchemaType } from "../../../presentation/my-ranking/schema";
 import { Violation } from "../../../util";
 
 export type UpdateMyRankingError =
@@ -11,10 +10,18 @@ export type UpdateMyRankingError =
   | { type: "VALIDATION"; violations: Violation[] }
   | { type: "INAPPROPRIATE_CONTENT"; violations: ContentModerationViolation[] };
 
+type UpdateMyRankingBody = {
+  title: string;
+  publicStatus: number;
+  icon: number;
+  memo: string;
+  items: { itemName: string; order: number; memo: string }[];
+};
+
 type PropsType = {
   userId: UserId;
   rankingId: RankingId;
-  body: UpdateMyRankingSchemaType;
+  body: UpdateMyRankingBody;
 }
 
 /**

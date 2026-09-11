@@ -1,6 +1,8 @@
+import { useIcons } from '@/app/api/get-icons';
 import { paths } from '@/config/paths';
 import { PUBLIC_STATUS } from '@/constants/public-status';
 import { myRankingKeys } from '@/features/my-ranking/api/query-key';
+import { useSwitch } from '@/hooks/use-switch';
 import { KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
@@ -22,7 +24,14 @@ export function useCreateRanking() {
     // フィールド単位に紐付かないエラー一覧（バリデーション・不適切内容検出）
     const [violations, setViolations] = useState<ViolationType[]>([]);
     // フォーム
-    const { register, handleSubmit, control, formState: { errors }, itemFieldArray } = useCreateRankingForm();
+    const { register, handleSubmit, control, watch, setValue, formState: { errors }, itemFieldArray } = useCreateRankingForm();
+    // アイコン候補一覧
+    const iconsQuery = useIcons();
+    const icons = iconsQuery.data.data;
+    // アイコン選択ダイアログの開閉
+    const iconDialog = useSwitch();
+    // 選択中のアイコンID
+    const selectedIconId = watch('icon');
     // ポインター操作とキーボード操作の両方でドラッグ&ドロップを可能にする
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -52,6 +61,7 @@ export function useCreateRanking() {
             title: data.title,
             // 公開設定UIは現状外しているため、常に非公開で送る
             publicStatus: PUBLIC_STATUS.PRIVATE,
+            icon: data.icon,
             memo: data.memo,
             items: data.items.map((item, index) => ({
                 itemName: item.itemName,
@@ -123,6 +133,28 @@ export function useCreateRanking() {
         navigate(paths.myRanking.path);
     }, [navigate]);
 
+    /**
+     * アイコン選択ダイアログを開く
+     */
+    const openIconDialog = useCallback(() => {
+        iconDialog.on();
+    }, [iconDialog]);
+
+    /**
+     * アイコン選択ダイアログを閉じる
+     */
+    const closeIconDialog = useCallback(() => {
+        iconDialog.off();
+    }, [iconDialog]);
+
+    /**
+     * アイコン選択
+     */
+    const selectIcon = useCallback((iconId: number) => {
+        setValue('icon', iconId);
+        iconDialog.off();
+    }, [setValue, iconDialog]);
+
     return {
         errMessage,
         violations,
@@ -139,5 +171,11 @@ export function useCreateRanking() {
         back,
         isLoading: postMutation.isPending,
         handleConfirm,
+        icons,
+        selectedIconId,
+        isIconDialogOpen: iconDialog.flag,
+        openIconDialog,
+        closeIconDialog,
+        selectIcon,
     };
 }

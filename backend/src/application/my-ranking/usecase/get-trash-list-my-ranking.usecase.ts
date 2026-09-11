@@ -1,6 +1,5 @@
 import { IGetTrashListMyRankingRepository, TrashMyRankingListType, TrashMyRankingQueryType } from "../../../domain";
 import { UserId } from "../../../domain/user";
-import { GetTrashListMyRankingQuerySchemaType } from "../../../presentation/my-ranking/schema";
 
 export type TrashMyRankingListResult = {
   list: TrashMyRankingListType[];
@@ -16,18 +15,10 @@ export class GetTrashListMyRankingUsecase {
   /**
    * 削除済み一覧取得（ページング・絞り込み対応）
    */
-  async execute(userId: UserId, query: GetTrashListMyRankingQuerySchemaType): Promise<TrashMyRankingListResult> {
-    const trashQuery: TrashMyRankingQueryType = {
-      title: query.title,
-      createdAtFrom: query.createdAtFrom,
-      createdAtTo: query.createdAtTo,
-      updatedAtFrom: query.updatedAtFrom,
-      updatedAtTo: query.updatedAtTo,
-      page: query.page,
-    };
+  async execute(userId: UserId, query: TrashMyRankingQueryType): Promise<TrashMyRankingListResult> {
     const [list, total] = await Promise.all([
-      this.repository.findAll(userId, trashQuery),
-      this.repository.count(userId, trashQuery),
+      this.repository.findAll(userId, query),
+      this.repository.count(userId, query),
     ]);
     return { list, total };
   }

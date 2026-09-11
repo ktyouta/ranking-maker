@@ -58,7 +58,7 @@ const updateMyRanking = new Hono<AppEnv>().patch(API_ENDPOINT.MY_RANKING_ID,
           case "DUPLICATE_TITLE":
             return c.json({ message: "同名のランキングが既に存在します。" }, HTTP_STATUS.CONFLICT);
           case "INVALID_ICON":
-            return c.json({ message: "指定されたアイコンは存在しません。" }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
+            return c.json({ message: "入力エラー", data: [{ field: "icon", message: "指定されたアイコンは存在しません。" }] }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
           case "INAPPROPRIATE_CONTENT":
             return c.json({ message: "不適切な内容が含まれています。", data: error.violations }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
           default: {

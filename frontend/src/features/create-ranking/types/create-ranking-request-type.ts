@@ -10,6 +10,7 @@ export const CreateRankingRequestSchema = z.object({
         .nonempty("タイトルを入力してください")
         .max(RANKING_TITLE_MAX_LENGTH, `タイトルは${RANKING_TITLE_MAX_LENGTH}文字以内で入力してください`),
     isPublic: z.boolean(),
+    icon: z.number().int().min(1, "アイコンを選択してください"),
     memo: z.string()
         .max(RANKING_MEMO_MAX_LENGTH, `メモは${RANKING_MEMO_MAX_LENGTH}文字以内で入力してください`),
     items: z.array(

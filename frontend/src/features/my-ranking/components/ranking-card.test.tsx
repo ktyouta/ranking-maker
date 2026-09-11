@@ -12,6 +12,7 @@ describe('RankingCard', () => {
             <RankingCard
                 id="ranking-1"
                 title="好きなラーメン屋ランキング"
+                icon="🏆"
                 onSelect={onSelect}
             />
         );

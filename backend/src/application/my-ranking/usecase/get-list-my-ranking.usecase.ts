@@ -1,6 +1,5 @@
 import { IGetListMyRankingRepository, MyRankingListType, MyRankingQueryType } from "../../../domain";
 import { UserId } from "../../../domain/user";
-import { GetListMyRankingQuerySchemaType } from "../../../presentation/my-ranking/schema";
 
 export type MyRankingListResult = {
   list: MyRankingListType[];
@@ -16,18 +15,10 @@ export class GetListMyRankingUsecase {
   /**
    * 一覧取得（ページング・絞り込み対応）
    */
-  async execute(userId: UserId, query: GetListMyRankingQuerySchemaType): Promise<MyRankingListResult> {
-    const myRankingQuery: MyRankingQueryType = {
-      title: query.title,
-      createdAtFrom: query.createdAtFrom,
-      createdAtTo: query.createdAtTo,
-      updatedAtFrom: query.updatedAtFrom,
-      updatedAtTo: query.updatedAtTo,
-      page: query.page,
-    };
+  async execute(userId: UserId, query: MyRankingQueryType): Promise<MyRankingListResult> {
     const [list, total] = await Promise.all([
-      this.repository.findAll(userId, myRankingQuery),
-      this.repository.count(userId, myRankingQuery),
+      this.repository.findAll(userId, query),
+      this.repository.count(userId, query),
     ]);
     return { list, total };
   }

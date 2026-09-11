@@ -1,3 +1,4 @@
+import { useIcons } from '@/app/api/get-icons';
 import { paths } from '@/config/paths';
 import { myRankingKeys } from '@/features/my-ranking/api/query-key';
 import { useAppNavigation } from '@/hooks/use-app-navigation';
@@ -37,6 +38,9 @@ export function useTrashDetailScreen() {
     // ゴミ箱のランキング取得（Suspense対応のため取得中は呼び出し元で中断される）
     const trashQuery = useTrashDetail(rankingId);
     const { ranking, rankingOrder } = trashQuery.data.data;
+    // アイコン候補一覧（idからemojiを引くために使用）
+    const iconsQuery = useIcons();
+    const icons = iconsQuery.data.data;
 
     // 項目一覧を順位順に整形したもの
     const sortedItems = useMemo(() => {
@@ -155,6 +159,7 @@ export function useTrashDetailScreen() {
 
     return {
         title: ranking.title,
+        icon: icons.find((icon) => icon.id === ranking.icon)?.emoji ?? '',
         memo: ranking.memo ?? ``,
         items: sortedItems.map((item) => ({
             id: item.id,

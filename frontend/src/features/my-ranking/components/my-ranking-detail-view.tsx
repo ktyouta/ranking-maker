@@ -1,10 +1,11 @@
 import { Dialog, ScrollToTopButton } from '@/components';
 import { HiArrowLeft, HiOutlineDocumentText, HiOutlineTrash } from 'react-icons/hi2';
-import { IoCalendarOutline, IoTrophyOutline } from 'react-icons/io5';
+import { IoCalendarOutline } from 'react-icons/io5';
 import { ItemType, RankingItemCard } from './ranking-item-card';
 
 type PropsType = {
     title: string;
+    icon: string;
     // 現状は非表示だが、他ユーザーとの共有機能を見据えてデータは引き続き渡す
     publicStatusLabel: string;
     isPublic: boolean;
@@ -34,6 +35,7 @@ export function MyRankingDetailView(props: PropsType) {
 
     const {
         title,
+        icon,
         memo,
         items,
         updatedAt,
@@ -77,8 +79,10 @@ export function MyRankingDetailView(props: PropsType) {
             </div>
             <div className="mx-auto flex w-full max-w-[max(48rem,60vw)] flex-1 flex-col px-4 pb-8 pt-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                        <IoTrophyOutline className="size-8 shrink-0 text-rank-gold sm:size-9" />
+                    <div className="flex items-center gap-3 sm:gap-5">
+                        <span className="flex shrink-0 items-center justify-center text-3xl sm:text-5xl">
+                            {icon}
+                        </span>
                         <div>
                             <h1 className="text-2xl font-bold text-ink sm:text-3xl">
                                 {title}

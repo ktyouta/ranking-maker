@@ -1,10 +1,11 @@
+import { IconType } from '@/app/api/get-icons';
 import { LoadingOverlay, ScrollToTopButton, Textarea, Textbox } from '@/components';
+import { IconSelectDialog } from '@/components/layouts/icon-select-dialog/icon-select-dialog';
 import { closestCenter, DndContext, DragEndEvent, SensorDescriptor, SensorOptions } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { BaseSyntheticEvent } from 'react';
 import { Control, FieldErrors, UseFormRegister } from 'react-hook-form';
 import { HiArrowLeft, HiOutlineExclamationTriangle } from 'react-icons/hi2';
-import { IoTrophyOutline } from 'react-icons/io5';
 import { UpdateMyRankingRequestType } from '../types/update-my-ranking-request-type';
 import { ItemFieldType, ItemRow } from './item-row';
 
@@ -25,6 +26,12 @@ type PropsType = {
     onCancel: () => void;
     isLoading: boolean;
     onSave: (e?: BaseSyntheticEvent) => Promise<void>;
+    icons: IconType[];
+    selectedIconId: number;
+    isIconDialogOpen: boolean;
+    openIconDialog: () => void;
+    closeIconDialog: () => void;
+    selectIcon: (iconId: number) => void;
 };
 
 /**
@@ -49,7 +56,16 @@ export function MyRankingDetailEdit(props: PropsType) {
         onCancel,
         isLoading,
         onSave,
+        icons,
+        selectedIconId,
+        isIconDialogOpen,
+        openIconDialog,
+        closeIconDialog,
+        selectIcon,
     } = props;
+
+    // 選択中のアイコンの絵文字
+    const selectedIconEmoji = icons.find((icon) => icon.id === selectedIconId)?.emoji;
 
     return (
         <div className="flex flex-1 flex-col">
@@ -65,10 +81,17 @@ export function MyRankingDetailEdit(props: PropsType) {
                     </span>
                 </button>
             </div>
-            <div className="mx-auto w-full max-w-[max(48rem,60vw)] flex-1 px-4 pb-10 pt-4 sm:px-6 sm:pt-6 lg:px-8">
+            <div className="mx-auto w-full max-w-[max(48rem,60vw)] flex flex-col flex-1 px-4 pb-10 pt-4 sm:px-6 sm:pt-6 lg:px-8">
                 {isLoading && <LoadingOverlay />}
                 <div className="flex items-center gap-3">
-                    <IoTrophyOutline className="size-8 shrink-0 text-rank-gold sm:size-9" />
+                    <button
+                        type="button"
+                        onClick={openIconDialog}
+                        className="flex size-14 shrink-0 items-center justify-center rounded-lg border-2 border-accent/50 bg-surface text-3xl shadow-sm hover:bg-canvas sm:size-16 sm:text-4xl"
+                        aria-label="アイコンを選択"
+                    >
+                        {selectedIconEmoji}
+                    </button>
                     <div>
                         <h1 className="text-2xl font-bold text-ink sm:text-3xl">
                             {title} を編集
@@ -92,7 +115,7 @@ export function MyRankingDetailEdit(props: PropsType) {
                         </div>
                     </div>
                 )}
-                <div className="mt-10 flex flex-col gap-[1.8rem] md:gap-[2.8rem]">
+                <div className="mt-10 flex flex-col flex-1 gap-[1.8rem] md:gap-[2.8rem]">
                     <div>
                         <label className="mb-3 block text-lg font-semibold text-ink">
                             タイトル
@@ -149,7 +172,7 @@ export function MyRankingDetailEdit(props: PropsType) {
                             <p className="mt-2 text-base text-red-500">{errors.memo.message}</p>
                         )}
                     </div>
-                    <div>
+                    <div className='flex flex-col flex-1'>
                         <label className="mb-3 block text-lg font-semibold text-ink">
                             ランキング項目
                         </label>
@@ -206,6 +229,13 @@ export function MyRankingDetailEdit(props: PropsType) {
                 </div>
             </div>
             <ScrollToTopButton />
+            <IconSelectDialog
+                isOpen={isIconDialogOpen}
+                onClose={closeIconDialog}
+                icons={icons}
+                selectedIconId={selectedIconId}
+                onSelect={selectIcon}
+            />
         </div>
     );
 }

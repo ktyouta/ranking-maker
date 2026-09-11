@@ -1,10 +1,11 @@
 import { Dialog, LoadingOverlay } from '@/components';
 import { HiArrowLeft, HiOutlineDocumentText, HiOutlineExclamationTriangle } from 'react-icons/hi2';
-import { IoCalendarOutline, IoTrophyOutline } from 'react-icons/io5';
+import { IoCalendarOutline } from 'react-icons/io5';
 import { ItemType, TrashItemCard } from './trash-item-card';
 
 type PropsType = {
     title: string;
+    icon: string;
     memo: string;
     items: ItemType[];
     updatedAt: string;
@@ -36,6 +37,7 @@ export function TrashDetail(props: PropsType) {
 
     const {
         title,
+        icon,
         memo,
         items,
         updatedAt,
@@ -85,7 +87,9 @@ export function TrashDetail(props: PropsType) {
                 )}
                 <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                        <IoTrophyOutline className="size-8 shrink-0 text-rank-gold sm:size-9" />
+                        <span className="flex size-8 shrink-0 items-center justify-center text-3xl sm:size-9 sm:text-4xl">
+                            {icon}
+                        </span>
                         <div>
                             <h1 className="text-2xl font-bold text-ink sm:text-3xl">
                                 {title}

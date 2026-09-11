@@ -1,3 +1,4 @@
+import { useIcons } from "@/app/api/get-icons";
 import { paths } from "@/config/paths";
 import { useAppNavigation } from "@/hooks/use-app-navigation";
 import { useDelayedFlag } from "@/hooks/use-delayed-flag";
@@ -31,6 +32,9 @@ export function useTrashListScreen() {
     const currentPage = pageParam && !Number.isNaN(Number(pageParam)) ? Number(pageParam) : 1;
     // ゴミ箱一覧取得
     const trashListQuery = useTrashList({ searchParams });
+    // アイコン候補一覧（idからemojiを引くために使用）
+    const iconsQuery = useIcons();
+    const icons = iconsQuery.data.data;
     // オーバーレイ表示フラグ
     const isShowOverlay = useDelayedFlag(isPending, 250);
 
@@ -39,8 +43,9 @@ export function useTrashListScreen() {
         return trashListQuery.data.data.list.map((ranking) => ({
             id: ranking.id,
             title: ranking.title,
+            icon: icons.find((icon) => icon.id === ranking.icon)?.emoji ?? '',
         }));
-    }, [trashListQuery.data]);
+    }, [trashListQuery.data, icons]);
 
     /**
      * ゴミ箱詳細画面へ遷移

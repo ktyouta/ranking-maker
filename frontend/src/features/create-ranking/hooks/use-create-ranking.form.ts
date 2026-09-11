@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DEFAULT_ICON_ID } from "@/constants/icon";
 import { useFieldArray, useForm } from "react-hook-form";
 import { CreateRankingRequestSchema, CreateRankingRequestType } from "../types/create-ranking-request-type";
 
@@ -11,6 +12,7 @@ export function useCreateRankingForm() {
         defaultValues: {
             title: ``,
             isPublic: false,
+            icon: DEFAULT_ICON_ID,
             memo: ``,
             items: Array.from({ length: INITIAL_ITEM_COUNT }, () => ({ itemName: ``, memo: `` })),
         },
