@@ -71,10 +71,10 @@ export function CreateRanking(props: PropsType) {
                     {selectedIconEmoji}
                 </button>
                 <div>
-                    <h1 className="text-2xl font-bold text-ink sm:text-3xl">
+                    <h1 className="text-xl font-bold text-ink sm:text-3xl">
                         ランキングを作成
                     </h1>
-                    <p className="mt-1 text-base text-ink-sub sm:text-lg">
+                    <p className="mt-1 text-sm text-ink-sub sm:text-lg">
                         あなたの「好き」を並べて、ランキングを作ろう
                     </p>
                 </div>

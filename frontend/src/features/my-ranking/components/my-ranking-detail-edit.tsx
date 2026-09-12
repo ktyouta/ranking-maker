@@ -96,7 +96,7 @@ export function MyRankingDetailEdit(props: PropsType) {
                         {selectedIconEmoji}
                     </button>
                     <div>
-                        <h1 className="text-2xl font-bold text-ink sm:text-3xl">
+                        <h1 className="text-xl font-bold text-ink sm:text-3xl">
                             {title} を編集
                         </h1>
                     </div>
