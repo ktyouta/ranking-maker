@@ -75,7 +75,9 @@ export function MyRankingDetailEdit(props: PropsType) {
                     onClick={onCancel}
                     className="flex items-center gap-1.5 text-accent hover:text-accent-hover sm:text-ink-sub sm:hover:text-ink"
                 >
-                    <HiOutlineChevronLeft strokeWidth={2.5} className="size-6 sm:hidden" />
+                    <span className="flex size-9 items-center justify-center rounded-full bg-accent/15 sm:hidden">
+                        <HiOutlineChevronLeft strokeWidth={2.5} className="size-5" />
+                    </span>
                     <HiArrowLeft className="hidden size-4 sm:block" />
                     <span className="hidden text-[13px] sm:inline sm:text-base">
                         キャンセル

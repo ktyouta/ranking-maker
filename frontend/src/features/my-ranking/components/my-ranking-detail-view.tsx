@@ -69,7 +69,9 @@ export function MyRankingDetailView(props: PropsType) {
                     onClick={onBack}
                     className="flex items-center gap-1.5 text-accent hover:text-accent-hover sm:text-ink-sub sm:hover:text-ink"
                 >
-                    <HiOutlineChevronLeft strokeWidth={2.5} className="size-6 sm:hidden" />
+                    <span className="flex size-9 items-center justify-center rounded-full bg-accent/15 sm:hidden">
+                        <HiOutlineChevronLeft strokeWidth={2.5} className="size-5" />
+                    </span>
                     <HiArrowLeft className="hidden size-4 sm:block" />
                     <span className="hidden text-[13px] sm:inline sm:text-base">
                         一覧に戻る
@@ -83,7 +85,7 @@ export function MyRankingDetailView(props: PropsType) {
                     編集
                 </button>
             </div>
-            <div className="mx-auto flex w-full max-w-[max(48rem,60vw)] flex-1 flex-col px-4 pb-8 pt-4 sm:px-6 lg:px-8">
+            <div className="mx-auto flex w-full max-w-[max(48rem,60vw)] flex-1 flex-col px-4 pb-8 pt-3 sm:pt-4 sm:px-6 lg:px-8">
                 {errMessage && (
                     <div className="mb-4 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-base text-red-600">
                         <HiOutlineExclamationTriangle className="mt-0.5 h-5 w-5 shrink-0" />
