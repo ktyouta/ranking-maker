@@ -1,5 +1,5 @@
-import { Dialog, ScrollToTopButton } from '@/components';
-import { HiArrowLeft, HiOutlineDocumentText, HiOutlineTrash } from 'react-icons/hi2';
+import { Dialog, LoadingOverlay, ScrollToTopButton } from '@/components';
+import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineDocumentText, HiOutlineExclamationTriangle, HiOutlineTrash } from 'react-icons/hi2';
 import { IoCalendarOutline } from 'react-icons/io5';
 import { ItemType, RankingItemCard } from './ranking-item-card';
 
@@ -12,6 +12,8 @@ type PropsType = {
     memo: string;
     items: ItemType[];
     updatedAt: string;
+    errMessage: string;
+    isLoading: boolean;
     onStartEdit: () => void;
     onBack: () => void;
     isDeleteDialogOpen: boolean;
@@ -39,6 +41,8 @@ export function MyRankingDetailView(props: PropsType) {
         memo,
         items,
         updatedAt,
+        errMessage,
+        isLoading,
         onStartEdit,
         onBack,
         isDeleteDialogOpen,
@@ -57,15 +61,17 @@ export function MyRankingDetailView(props: PropsType) {
 
     return (
         <div className="flex flex-1 flex-col">
-            {/* 一覧に戻る・編集する（ヘッダーのアプリタイトルと同じ左位置に揃え、常に画面上部の左右に固定する） */}
+            {isLoading && <LoadingOverlay />}
+            {/* 一覧に戻る・編集（ヘッダーのアプリタイトルと同じ左位置に揃え、常に画面上部の左右に固定する） */}
             <div className="flex w-full items-center justify-between px-4 pt-4 sm:px-6 sm:pt-6 lg:px-8">
                 <button
                     type="button"
                     onClick={onBack}
-                    className="flex items-center gap-1.5 text-base text-ink-sub hover:text-ink"
+                    className="flex items-center gap-1.5 text-accent hover:text-accent-hover sm:text-ink-sub sm:hover:text-ink"
                 >
-                    <HiArrowLeft className="size-4" />
-                    <span className="text-[13px] sm:text-base">
+                    <HiOutlineChevronLeft strokeWidth={2.5} className="size-6 sm:hidden" />
+                    <HiArrowLeft className="hidden size-4 sm:block" />
+                    <span className="hidden text-[13px] sm:inline sm:text-base">
                         一覧に戻る
                     </span>
                 </button>
@@ -74,20 +80,26 @@ export function MyRankingDetailView(props: PropsType) {
                     className="shrink-0 rounded-full bg-accent-surface px-5 py-2 text-base font-medium text-white hover:bg-accent-surface-hover sm:px-8 sm:py-3"
                     onClick={onStartEdit}
                 >
-                    編集する
+                    編集
                 </button>
             </div>
             <div className="mx-auto flex w-full max-w-[max(48rem,60vw)] flex-1 flex-col px-4 pb-8 pt-4 sm:px-6 lg:px-8">
+                {errMessage && (
+                    <div className="mb-4 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-base text-red-600">
+                        <HiOutlineExclamationTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+                        <p>{errMessage}</p>
+                    </div>
+                )}
                 <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 sm:gap-5">
                         <span className="flex shrink-0 items-center justify-center text-3xl sm:text-5xl">
                             {icon}
                         </span>
                         <div>
-                            <h1 className="text-2xl font-bold text-ink sm:text-3xl">
+                            <h1 className="text-xl font-bold text-ink sm:text-3xl">
                                 {title}
                             </h1>
-                            <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1 text-base text-ink-sub">
+                            <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1 text-xs sm:text-base text-ink-sub">
                                 <IoCalendarOutline className="size-4" />
                                 更新日 {updatedAt}
                             </span>
@@ -169,7 +181,7 @@ export function MyRankingDetailView(props: PropsType) {
                             className="rounded-full bg-danger-fill px-6 py-2 text-base font-medium text-white hover:bg-danger-fill-hover"
                             onClick={onConfirmDelete}
                         >
-                            削除する
+                            削除
                         </button>
                     </div>
                 </div>

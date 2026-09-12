@@ -25,6 +25,8 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
     // ルーティング用
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    // エラーメッセージ
+    const [errMessage, setErrMessage] = useState(``);
     // 削除確認ダイアログの開閉
     const deleteDialog = useSwitch();
     // メモダイアログの開閉
@@ -54,7 +56,9 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
             toast.success(data.message);
             navigate(paths.myRanking.path);
         },
-        onError: () => { },
+        onError: (message) => {
+            setErrMessage(message);
+        },
     });
 
     /**
@@ -68,6 +72,7 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
      * 削除確認ダイアログを開く
      */
     const clickDelete = useCallback(() => {
+        setErrMessage(``);
         deleteDialog.on();
     }, [deleteDialog]);
 
@@ -127,6 +132,8 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
             itemMemo: item.itemMemo ?? ``,
         })),
         updatedAt: formatDate(ranking.updatedAt),
+        errMessage,
+        isLoading: deleteMutation.isPending,
         onStartEdit,
         onBack: goBack,
         isDeleteDialogOpen: deleteDialog.flag,

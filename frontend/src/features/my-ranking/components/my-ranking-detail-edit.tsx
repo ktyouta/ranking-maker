@@ -5,7 +5,7 @@ import { closestCenter, DndContext, DragEndEvent, SensorDescriptor, SensorOption
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { BaseSyntheticEvent } from 'react';
 import { Control, FieldErrors, UseFormRegister } from 'react-hook-form';
-import { HiArrowLeft, HiOutlineExclamationTriangle } from 'react-icons/hi2';
+import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineExclamationTriangle } from 'react-icons/hi2';
 import { UpdateMyRankingRequestType } from '../types/update-my-ranking-request-type';
 import { ItemFieldType, ItemRow } from './item-row';
 
@@ -73,10 +73,11 @@ export function MyRankingDetailEdit(props: PropsType) {
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="flex items-center gap-1.5 text-base text-ink-sub hover:text-ink"
+                    className="flex items-center gap-1.5 text-accent hover:text-accent-hover sm:text-ink-sub sm:hover:text-ink"
                 >
-                    <HiArrowLeft className="size-4" />
-                    <span className="text-[13px] sm:text-base">
+                    <HiOutlineChevronLeft strokeWidth={2.5} className="size-6 sm:hidden" />
+                    <HiArrowLeft className="hidden size-4 sm:block" />
+                    <span className="hidden text-[13px] sm:inline sm:text-base">
                         キャンセル
                     </span>
                 </button>
@@ -132,7 +133,7 @@ export function MyRankingDetailEdit(props: PropsType) {
                     {/* 公開設定は現状UIから外している（ユーザーが自分専用で使う想定のため）
                     <div>
                         <label className="mb-3 block text-lg font-semibold text-ink">
-                            公開する
+                            公開
                         </label>
                         <div className="flex items-center justify-between rounded-xl border-2 border-accent/50 bg-surface px-4 py-4 shadow-sm">
                             <p className="text-base text-ink-sub">
@@ -146,7 +147,7 @@ export function MyRankingDetailEdit(props: PropsType) {
                                         type="button"
                                         role="switch"
                                         aria-checked={field.value}
-                                        aria-label="公開する"
+                                        aria-label="公開"
                                         onClick={() => field.onChange(!field.value)}
                                         className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${field.value ? 'bg-accent' : 'bg-line'}`}
                                     >
@@ -223,7 +224,7 @@ export function MyRankingDetailEdit(props: PropsType) {
                             className="rounded-full bg-accent-surface px-8 py-3 text-base font-medium text-white hover:bg-accent-surface-hover"
                             onClick={onSave}
                         >
-                            保存する
+                            保存
                         </button>
                     </div>
                 </div>

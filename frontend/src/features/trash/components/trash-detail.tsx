@@ -1,5 +1,5 @@
 import { Dialog, LoadingOverlay } from '@/components';
-import { HiArrowLeft, HiOutlineDocumentText, HiOutlineExclamationTriangle } from 'react-icons/hi2';
+import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineDocumentText, HiOutlineExclamationTriangle } from 'react-icons/hi2';
 import { IoCalendarOutline } from 'react-icons/io5';
 import { ItemType, TrashItemCard } from './trash-item-card';
 
@@ -70,10 +70,11 @@ export function TrashDetail(props: PropsType) {
                 <button
                     type="button"
                     onClick={onBack}
-                    className="flex items-center gap-1.5 text-base text-ink-sub hover:text-ink"
+                    className="flex items-center gap-1.5 text-accent hover:text-accent-hover sm:text-ink-sub sm:hover:text-ink"
                 >
-                    <HiArrowLeft className="size-4" />
-                    <span className="text-[13px] sm:text-base">
+                    <HiOutlineChevronLeft strokeWidth={2.5} className="size-6 sm:hidden" />
+                    <HiArrowLeft className="hidden size-4 sm:block" />
+                    <span className="hidden text-[13px] sm:inline sm:text-base">
                         一覧に戻る
                     </span>
                 </button>
@@ -86,15 +87,15 @@ export function TrashDetail(props: PropsType) {
                     </div>
                 )}
                 <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                        <span className="flex size-8 shrink-0 items-center justify-center text-3xl sm:size-9 sm:text-4xl">
+                    <div className="flex items-center gap-3 sm:gap-5">
+                        <span className="flex shrink-0 items-center justify-center text-3xl sm:text-5xl">
                             {icon}
                         </span>
                         <div>
-                            <h1 className="text-2xl font-bold text-ink sm:text-3xl">
+                            <h1 className="text-xl font-bold text-ink sm:text-3xl">
                                 {title}
                             </h1>
-                            <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1 text-base text-ink-sub">
+                            <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1 text-xs sm:text-base text-ink-sub">
                                 <IoCalendarOutline className="size-4" />
                                 更新日 {updatedAt}
                             </span>
@@ -137,7 +138,7 @@ export function TrashDetail(props: PropsType) {
                                 className="shrink-0 rounded-full bg-accent-surface px-8 py-3 text-base font-medium text-white hover:bg-accent-surface-hover"
                                 onClick={onClickRestore}
                             >
-                                復元する
+                                復元
                             </button>
                         </div>
                         <div className="flex flex-col gap-4 rounded-xl border-2 border-danger-border bg-danger-bg p-5 sm:flex-row sm:items-center sm:justify-between">
@@ -154,7 +155,7 @@ export function TrashDetail(props: PropsType) {
                                 className="shrink-0 rounded-full bg-danger-fill px-8 py-3 text-base font-medium text-white hover:bg-danger-fill-hover"
                                 onClick={onClickPermanentDelete}
                             >
-                                完全削除する
+                                完全削除
                             </button>
                         </div>
                     </div>
@@ -204,7 +205,7 @@ export function TrashDetail(props: PropsType) {
                             className="rounded-full bg-accent-surface px-6 py-2 text-base font-medium text-white hover:bg-accent-surface-hover"
                             onClick={onConfirmRestore}
                         >
-                            復元する
+                            復元
                         </button>
                     </div>
                 </div>
@@ -233,7 +234,7 @@ export function TrashDetail(props: PropsType) {
                             className="rounded-full bg-danger-fill px-6 py-2 text-base font-medium text-white hover:bg-danger-fill-hover"
                             onClick={onConfirmPermanentDelete}
                         >
-                            完全削除する
+                            完全削除
                         </button>
                     </div>
                 </div>

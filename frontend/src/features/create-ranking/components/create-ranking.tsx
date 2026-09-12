@@ -113,7 +113,7 @@ export function CreateRanking(props: PropsType) {
                 {/* 公開設定は現状UIから外している（ユーザーが自分専用で使う想定のため）
                 <div>
                     <label className="mb-3 block text-lg font-semibold text-ink">
-                        公開する
+                        公開
                     </label>
                     <div className="flex items-center justify-between rounded-xl border-2 border-accent/50 bg-surface px-4 py-4 shadow-sm">
                         <p className="text-base text-ink-sub">
@@ -127,7 +127,7 @@ export function CreateRanking(props: PropsType) {
                                     type="button"
                                     role="switch"
                                     aria-checked={field.value}
-                                    aria-label="公開する"
+                                    aria-label="公開"
                                     onClick={() => field.onChange(!field.value)}
                                     className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${field.value ? 'bg-accent' : 'bg-line'}`}
                                 >
@@ -197,7 +197,7 @@ export function CreateRanking(props: PropsType) {
                         className="rounded-full bg-accent-surface px-8 py-3 text-base font-medium text-white hover:bg-accent-surface-hover"
                         onClick={handleConfirm}
                     >
-                        作成する
+                        作成
                     </button>
                 </div>
             </div>
