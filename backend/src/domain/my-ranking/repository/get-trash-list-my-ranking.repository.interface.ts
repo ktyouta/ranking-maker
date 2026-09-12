@@ -16,7 +16,7 @@ export type TrashMyRankingListType = {
  * ゴミ箱のランキング一覧取得条件（updatedAtFrom/updatedAtTo は削除日時に転用した updatedAt の範囲を表す）
  */
 export type TrashMyRankingQueryType = {
-  title?: string;
+  keyword?: string;
   createdAtFrom?: string;
   createdAtTo?: string;
   updatedAtFrom?: string;

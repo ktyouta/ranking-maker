@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gte, like, lte } from "drizzle-orm";
+import { and, count, desc, eq, exists, gte, like, lte, or } from "drizzle-orm";
 import { IGetTrashListMyRankingRepository, TrashMyRankingListType, TrashMyRankingQueryType } from "../../../domain";
 import { UserId } from "../../../domain/user";
 import type { Database } from "../../db";
@@ -65,7 +65,27 @@ export class GetTrashListMyRankingRepository implements IGetTrashListMyRankingRe
     return [
       eq(rankingMaster.deleteFlg, true),
       eq(rankingMaster.userId, userId.value),
-      ...(query.title ? [like(rankingMaster.title, `%${query.title}%`)] : []),
+      ...(query.keyword
+        ? [
+          or(
+            like(rankingMaster.title, `%${query.keyword}%`),
+            exists(
+              this.db
+                .select({ id: rankingOrderMaster.id })
+                .from(rankingOrderMaster)
+                .where(and(
+                  eq(rankingOrderMaster.rankingId, rankingMaster.id),
+                  // ゴミ箱側は論理削除カスケードにより項目も deleteFlg=true になっているため、生存行(false)と逆の条件になる
+                  eq(rankingOrderMaster.deleteFlg, true),
+                  or(
+                    like(rankingOrderMaster.itemName, `%${query.keyword}%`),
+                    like(rankingOrderMaster.itemMemo, `%${query.keyword}%`),
+                  ),
+                )),
+            ),
+          ),
+        ]
+        : []),
       ...(query.createdAtFrom ? [gte(rankingMaster.createdAt, query.createdAtFrom)] : []),
       ...(query.createdAtTo ? [lte(rankingMaster.createdAt, query.createdAtTo)] : []),
       ...(query.updatedAtFrom ? [gte(rankingMaster.updatedAt, query.updatedAtFrom)] : []),

@@ -1,5 +1,5 @@
 export type TrashSearchFilter = {
-    title: string;
+    keyword: string;
     createdAtFrom: string | null;
     createdAtTo: string | null;
     updatedAtFrom: string | null;
@@ -7,7 +7,7 @@ export type TrashSearchFilter = {
 };
 
 export const initialTrashSearchFilter: TrashSearchFilter = {
-    title: '',
+    keyword: '',
     createdAtFrom: null,
     createdAtTo: null,
     updatedAtFrom: null,

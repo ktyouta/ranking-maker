@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gte, like, lte } from "drizzle-orm";
+import { and, count, desc, eq, exists, gte, like, lte, or } from "drizzle-orm";
 import { IGetListMyRankingRepository, MyRankingListType, MyRankingQueryType } from "../../../domain";
 import { UserId } from "../../../domain/user";
 import type { Database } from "../../db";
@@ -63,7 +63,26 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
     return [
       eq(rankingMaster.deleteFlg, false),
       eq(rankingMaster.userId, userId.value),
-      ...(query.title ? [like(rankingMaster.title, `%${query.title}%`)] : []),
+      ...(query.keyword
+        ? [
+          or(
+            like(rankingMaster.title, `%${query.keyword}%`),
+            exists(
+              this.db
+                .select({ id: rankingOrderMaster.id })
+                .from(rankingOrderMaster)
+                .where(and(
+                  eq(rankingOrderMaster.rankingId, rankingMaster.id),
+                  eq(rankingOrderMaster.deleteFlg, false),
+                  or(
+                    like(rankingOrderMaster.itemName, `%${query.keyword}%`),
+                    like(rankingOrderMaster.itemMemo, `%${query.keyword}%`),
+                  ),
+                )),
+            ),
+          ),
+        ]
+        : []),
       ...(query.createdAtFrom ? [gte(rankingMaster.createdAt, query.createdAtFrom)] : []),
       ...(query.createdAtTo ? [lte(rankingMaster.createdAt, query.createdAtTo)] : []),
       ...(query.updatedAtFrom ? [gte(rankingMaster.updatedAt, query.updatedAtFrom)] : []),

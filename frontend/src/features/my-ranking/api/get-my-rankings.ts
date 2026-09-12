@@ -22,7 +22,7 @@ export function useMyRankings({ searchParams }: PropsType) {
     queryFn: async () => {
       const res = await endpoint({
         query: {
-          title: searchParams.get(MY_RANKING_QUERY_KEY.TITLE) || undefined,
+          keyword: searchParams.get(MY_RANKING_QUERY_KEY.KEYWORD) || undefined,
           createdAtFrom: searchParams.get(MY_RANKING_QUERY_KEY.CREATED_AT_FROM) || undefined,
           createdAtTo: searchParams.get(MY_RANKING_QUERY_KEY.CREATED_AT_TO) || undefined,
           updatedAtFrom: searchParams.get(MY_RANKING_QUERY_KEY.UPDATED_AT_FROM) || undefined,

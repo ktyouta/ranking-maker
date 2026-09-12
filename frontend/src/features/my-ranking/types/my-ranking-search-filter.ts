@@ -1,5 +1,5 @@
 export type MyRankingSearchFilter = {
-    title: string;
+    keyword: string;
     createdAtFrom: string | null;
     createdAtTo: string | null;
     updatedAtFrom: string | null;
@@ -7,7 +7,7 @@ export type MyRankingSearchFilter = {
 };
 
 export const initialMyRankingSearchFilter: MyRankingSearchFilter = {
-    title: '',
+    keyword: '',
     createdAtFrom: null,
     createdAtTo: null,
     updatedAtFrom: null,

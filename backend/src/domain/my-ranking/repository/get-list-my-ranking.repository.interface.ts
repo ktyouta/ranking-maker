@@ -16,7 +16,7 @@ export type MyRankingListType = {
  * ランキング一覧取得条件
  */
 export type MyRankingQueryType = {
-  title?: string;
+  keyword?: string;
   createdAtFrom?: string;
   createdAtTo?: string;
   updatedAtFrom?: string;

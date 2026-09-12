@@ -22,7 +22,7 @@ export function useTrashList({ searchParams }: PropsType) {
     queryFn: async () => {
       const res = await endpoint({
         query: {
-          title: searchParams.get(TRASH_QUERY_KEY.TITLE) || undefined,
+          keyword: searchParams.get(TRASH_QUERY_KEY.KEYWORD) || undefined,
           createdAtFrom: searchParams.get(TRASH_QUERY_KEY.CREATED_AT_FROM) || undefined,
           createdAtTo: searchParams.get(TRASH_QUERY_KEY.CREATED_AT_TO) || undefined,
           updatedAtFrom: searchParams.get(TRASH_QUERY_KEY.UPDATED_AT_FROM) || undefined,

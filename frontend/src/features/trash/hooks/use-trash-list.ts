@@ -20,7 +20,7 @@ export function useTrashListScreen() {
     const [searchParams, setSearchParams, isPending] = useTransitionSearchParams();
     // 初期検索条件
     const initSearchCondition: TrashSearchFilter = {
-        title: searchParams.get(TRASH_QUERY_KEY.TITLE) ?? '',
+        keyword: searchParams.get(TRASH_QUERY_KEY.KEYWORD) ?? '',
         createdAtFrom: searchParams.get(TRASH_QUERY_KEY.CREATED_AT_FROM),
         createdAtTo: searchParams.get(TRASH_QUERY_KEY.CREATED_AT_TO),
         updatedAtFrom: searchParams.get(TRASH_QUERY_KEY.UPDATED_AT_FROM),
@@ -70,8 +70,8 @@ export function useTrashListScreen() {
      */
     function clickSearch() {
         const params: Record<string, string> = {};
-        if (searchCondition.title) {
-            params[TRASH_QUERY_KEY.TITLE] = searchCondition.title;
+        if (searchCondition.keyword) {
+            params[TRASH_QUERY_KEY.KEYWORD] = searchCondition.keyword;
         }
         if (searchCondition.createdAtFrom) {
             params[TRASH_QUERY_KEY.CREATED_AT_FROM] = searchCondition.createdAtFrom;

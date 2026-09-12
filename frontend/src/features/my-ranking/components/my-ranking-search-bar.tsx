@@ -14,7 +14,7 @@ type PropsType = {
 const DATE_PICKER_CLASS = 'border-2 border-accent/70 rounded-full focus:ring-accent';
 
 /**
- * ランキング一覧の検索バー（タイトル検索＋登録日・更新日の詳細フィルター）
+ * ランキング一覧の検索バー（キーワード検索＋登録日・更新日の詳細フィルター）
  */
 export const MyRankingSearchBar = (props: PropsType) => {
 
@@ -27,7 +27,7 @@ export const MyRankingSearchBar = (props: PropsType) => {
         searchCondition.createdAtFrom !== null || searchCondition.createdAtTo !== null,
         searchCondition.updatedAtFrom !== null || searchCondition.updatedAtTo !== null,
     ].filter(Boolean).length;
-    const isEmpty = searchCondition.title === '' && activeCount === 0;
+    const isEmpty = searchCondition.keyword === '' && activeCount === 0;
 
     return (
         <div className="mb-3 pb-4 sm:mb-6">
@@ -35,10 +35,10 @@ export const MyRankingSearchBar = (props: PropsType) => {
                 <div className="relative flex-1">
                     <IoSearchOutline className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-ink-sub" />
                     <Textbox
-                        value={searchCondition.title}
-                        onChange={(e) => onChange({ ...searchCondition, title: e.target.value })}
+                        value={searchCondition.keyword}
+                        onChange={(e) => onChange({ ...searchCondition, keyword: e.target.value })}
                         onKeyDown={handleKeyPress}
-                        placeholder="タイトルで検索"
+                        placeholder="キーワードで検索"
                         className="h-10 w-full rounded-full border-2 border-accent/70 pl-9 focus:ring-accent sm:h-12"
                     />
                 </div>

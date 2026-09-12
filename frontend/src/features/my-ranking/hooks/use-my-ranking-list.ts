@@ -16,7 +16,7 @@ export const useMyRankingList = () => {
     const [searchParams, setSearchParams, isPending] = useTransitionSearchParams();
     // 初期検索条件
     const initSearchCondition: MyRankingSearchFilter = {
-        title: searchParams.get(MY_RANKING_QUERY_KEY.TITLE) ?? '',
+        keyword: searchParams.get(MY_RANKING_QUERY_KEY.KEYWORD) ?? '',
         createdAtFrom: searchParams.get(MY_RANKING_QUERY_KEY.CREATED_AT_FROM),
         createdAtTo: searchParams.get(MY_RANKING_QUERY_KEY.CREATED_AT_TO),
         updatedAtFrom: searchParams.get(MY_RANKING_QUERY_KEY.UPDATED_AT_FROM),
@@ -59,8 +59,8 @@ export const useMyRankingList = () => {
      */
     function clickSearch() {
         const params: Record<string, string> = {};
-        if (searchCondition.title) {
-            params[MY_RANKING_QUERY_KEY.TITLE] = searchCondition.title;
+        if (searchCondition.keyword) {
+            params[MY_RANKING_QUERY_KEY.KEYWORD] = searchCondition.keyword;
         }
         if (searchCondition.createdAtFrom) {
             params[MY_RANKING_QUERY_KEY.CREATED_AT_FROM] = searchCondition.createdAtFrom;

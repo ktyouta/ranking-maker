@@ -4,7 +4,7 @@ import { z } from "zod";
  * ランキング一覧取得クエリパラメータスキーマ
  */
 export const GetListMyRankingQuerySchema = z.object({
-  title: z.string().optional(),
+  keyword: z.string().optional(),
   createdAtFrom: z.string().optional(),
   createdAtTo: z.string().optional(),
   updatedAtFrom: z.string().optional(),
