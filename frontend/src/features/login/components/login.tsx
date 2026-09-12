@@ -33,8 +33,8 @@ export function Login(props: PropsType) {
         <div className="min-h-screen bg-canvas flex items-center justify-center px-4 py-8">
             {isLoading && <LoadingOverlay />}
             <div className="w-full max-w-lg bg-surface rounded-xl shadow-lg p-8 sm:p-10">
-                <h1 className="text-2xl font-bold text-ink text-center mb-8">
-                    ログイン
+                <h1 className="text-2xl sm:text-[28px] font-bold text-brand text-center mb-8">
+                    Ranking Maker
                 </h1>
                 {errMessage && (
                     <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg p-4 mb-6">

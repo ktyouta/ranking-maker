@@ -56,7 +56,7 @@ export function UpdateUser(props: PropsType) {
         <div className="min-h-screen bg-canvas flex items-center justify-center px-4 py-8">
             {isLoading && <LoadingOverlay />}
             <div className="w-full max-w-lg bg-surface rounded-xl shadow-lg p-8 sm:p-10">
-                <h1 className="text-2xl font-bold text-ink text-center mb-8">
+                <h1 className="text-2xl font-bold text-brand text-center mb-8">
                     ユーザー情報更新
                 </h1>
                 {errMessage && (
