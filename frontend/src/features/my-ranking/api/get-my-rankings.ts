@@ -6,7 +6,8 @@ import { myRankingKeys } from './query-key';
 
 const endpoint = rpc.api.v1['my-ranking'].$get;
 
-export type MyRankingListReturnType = InferResponseType<typeof endpoint, 200>['data'];
+export type MyRankingListQueryDataType = InferResponseType<typeof endpoint, 200>;
+export type MyRankingListReturnType = MyRankingListQueryDataType['data'];
 
 type PropsType = {
   searchParams: URLSearchParams;

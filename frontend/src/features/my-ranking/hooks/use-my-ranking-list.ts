@@ -5,10 +5,10 @@ import { formatDaysAgo } from "@/utils/date-util";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { useToggleMyRankingFavoriteMutation } from "../api/toggle-my-ranking-favorite";
-import { useMyRankings } from "../api/get-my-rankings";
-import { MY_RANKING_QUERY_KEY } from "../constants/my-ranking-query-params";
+import { MyRankingListQueryDataType, useMyRankings } from "../api/get-my-rankings";
 import { myRankingKeys } from "../api/query-key";
+import { useToggleMyRankingFavoriteMutation } from "../api/toggle-my-ranking-favorite";
+import { MY_RANKING_QUERY_KEY } from "../constants/my-ranking-query-params";
 import { initialMyRankingSearchFilter, MyRankingSearchFilter } from "../types/my-ranking-search-filter";
 
 /**
@@ -55,10 +55,39 @@ export const useMyRankingList = () => {
 
     // お気に入り登録・解除
     const toggleFavoriteMutation = useToggleMyRankingFavoriteMutation({
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+        // APIコール前の楽観的更新
+        onMutate: async ({ rankingId, isFavorite }) => {
+
+            await queryClient.cancelQueries({ queryKey: myRankingKeys.lists() });
+
+            const previousData = queryClient.getQueriesData<MyRankingListQueryDataType>({
+                queryKey: myRankingKeys.lists(),
+            });
+
+            queryClient.setQueriesData<MyRankingListQueryDataType>(
+                { queryKey: myRankingKeys.lists() },
+                (prev) => {
+                    if (!prev) {
+                        return prev;
+                    }
+                    return {
+                        ...prev,
+                        data: {
+                            ...prev.data,
+                            list: prev.data.list.map((ranking) => {
+                                return ranking.id === rankingId ? { ...ranking, isFavorite } : ranking
+                            }),
+                        },
+                    };
+                }
+            );
+            return { previousData };
         },
-        onError: (message) => {
+        onError: (context, message) => {
+            // 失敗時はキャッシュから復元
+            context?.previousData.forEach(([queryKey, data]) => {
+                queryClient.setQueryData(queryKey, data);
+            });
             toast.error(message);
         },
     });

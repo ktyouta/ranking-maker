@@ -21,7 +21,7 @@ export const RankingCard = (props: PropsType) => {
     return (
         <div
             onClick={() => onSelect(id)}
-            className="relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-accent/35 bg-surface shadow-sm sm:shadow-md hover:-translate-y-0.5 hover:shadow-lg sm:border-2 sm:border-accent/[40%]"
+            className="relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-accent/35 bg-surface shadow-sm sm:shadow-md sm:hover:-translate-y-0.5 sm:hover:shadow-lg sm:border-2 sm:border-accent/[40%]"
         >
             <button
                 type="button"
@@ -56,7 +56,7 @@ export const RankingCard = (props: PropsType) => {
                                 {updatedAt}
                             </span>
                         </div>
-                        <p className="flex items-center gap-1 text-xs font-medium text-accent hover:underline sm:text-sm">
+                        <p className="flex items-center gap-1 text-xs font-medium text-accent sm:hover:underline sm:text-sm">
                             詳細を見る
                             <HiArrowRight className="size-3 sm:size-3.5" />
                         </p>

@@ -1,24 +1,22 @@
 import { rpc } from '@/lib/rpc-client';
 import { useMutation } from '@tanstack/react-query';
-import { InferResponseType } from 'hono/client';
 
 const endpoint = rpc.api.v1['my-ranking'][':rankingId'].favorite.$put;
 
-type PropsType = {
-    onSuccess: (data: SuccessResponseType) => void;
-    onError: (message: string) => void;
-};
 type VariablesType = {
     rankingId: string;
     isFavorite: boolean;
 };
-type SuccessResponseType = InferResponseType<typeof endpoint, 200>;
+type PropsType<T> = {
+    onMutate: (variables: VariablesType) => Promise<T>;
+    onError: (context: T | undefined, message: string) => void;
+};
 
 /**
  * お気に入り登録・解除API呼び出し hook
  * 一覧上の複数カードから呼ばれるため、対象の rankingId は呼び出し時（mutate時）に指定する
  */
-export function useToggleMyRankingFavoriteMutation(props: PropsType) {
+export function useToggleMyRankingFavoriteMutation<T>(props: PropsType<T>) {
     return useMutation({
         mutationFn: async ({ rankingId, isFavorite }: VariablesType) => {
             const res = await endpoint({ param: { rankingId }, json: { isFavorite } });
@@ -28,11 +26,9 @@ export function useToggleMyRankingFavoriteMutation(props: PropsType) {
             }
             return res.json();
         },
-        onSuccess: (data: SuccessResponseType) => {
-            props.onSuccess(data);
-        },
-        onError: (error: Error) => {
-            props.onError(error.message);
+        onMutate: props.onMutate,
+        onError: (err, _variables, context) => {
+            props.onError(context, err.message);
         },
     });
 }

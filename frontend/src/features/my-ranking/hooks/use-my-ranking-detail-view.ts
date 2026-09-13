@@ -9,7 +9,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useDeleteMyRankingMutation } from '../api/delete-my-ranking';
-import { useMyRanking } from '../api/get-my-ranking';
+import { MyRankingDetailQueryDataType, useMyRanking } from '../api/get-my-ranking';
+import { MyRankingListQueryDataType } from '../api/get-my-rankings';
 import { useToggleMyRankingFavoriteMutation } from '../api/toggle-my-ranking-favorite';
 
 type PropsType = {
@@ -64,11 +65,58 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
 
     // お気に入り登録・解除
     const toggleFavoriteMutation = useToggleMyRankingFavoriteMutation({
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: myRankingKeys.detail(rankingId) });
-            queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+        // APIコール前の楽観的更新
+        onMutate: async ({ isFavorite }) => {
+
+            await queryClient.cancelQueries({ queryKey: myRankingKeys.detail(rankingId) });
+            await queryClient.cancelQueries({ queryKey: myRankingKeys.lists() });
+
+            const previousDetail = queryClient.getQueryData<MyRankingDetailQueryDataType>(myRankingKeys.detail(rankingId));
+            const previousLists = queryClient.getQueriesData<MyRankingListQueryDataType>({
+                queryKey: myRankingKeys.lists(),
+            });
+
+            queryClient.setQueryData<MyRankingDetailQueryDataType>(myRankingKeys.detail(rankingId), (prev) => {
+                if (!prev) {
+                    return prev;
+                }
+                return {
+                    ...prev,
+                    data: {
+                        ...prev.data,
+                        ranking: { ...prev.data.ranking, isFavorite },
+                    },
+                };
+            });
+
+            queryClient.setQueriesData<MyRankingListQueryDataType>(
+                { queryKey: myRankingKeys.lists() },
+                (prev) => {
+                    if (!prev) {
+                        return prev;
+                    }
+                    return {
+                        ...prev,
+                        data: {
+                            ...prev.data,
+                            list: prev.data.list.map((ranking) => {
+                                return ranking.id === rankingId ? { ...ranking, isFavorite } : ranking
+                            }),
+                        },
+                    };
+                }
+            );
+
+            return { previousDetail, previousLists };
         },
-        onError: (message) => {
+        onError: (context, message) => {
+            // 失敗時はキャッシュから復元
+            if (context?.previousDetail) {
+                queryClient.setQueryData(myRankingKeys.detail(rankingId), context.previousDetail);
+            }
+            context?.previousLists.forEach(([queryKey, data]) => {
+                queryClient.setQueryData(queryKey, data);
+            });
             toast.error(message);
         },
     });
