@@ -1,6 +1,6 @@
-import { Button, Checkbox, DatePicker, Textbox } from '@/components';
+import { Button, DatePicker, Textbox } from '@/components';
 import { useState } from 'react';
-import { IoChevronDown, IoChevronUp, IoOptionsOutline, IoSearchOutline } from 'react-icons/io5';
+import { IoChevronDown, IoChevronUp, IoOptionsOutline, IoSearchOutline, IoStar, IoStarOutline } from 'react-icons/io5';
 import { MyRankingSearchFilter } from '../types/my-ranking-search-filter';
 
 type PropsType = {
@@ -116,13 +116,24 @@ export const MyRankingSearchBar = (props: PropsType) => {
                             />
                         </div>
                     </div>
-                    <label className="flex w-fit items-center gap-2 text-[12px] sm:text-base font-semibold text-accent">
-                        <Checkbox
-                            checked={searchCondition.favoriteOnly}
-                            onChange={(checked) => onChange({ ...searchCondition, favoriteOnly: checked })}
-                        />
-                        お気に入りのみ表示
-                    </label>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <span className="w-20 shrink-0 text-[12px] sm:text-base font-semibold text-accent">お気に入り</span>
+                        <div className="flex flex-1 items-center gap-2">
+                            <Button
+                                colorType="accent"
+                                sizeType="large"
+                                onClick={() => onChange({ ...searchCondition, favoriteOnly: !searchCondition.favoriteOnly })}
+                                aria-pressed={searchCondition.favoriteOnly}
+                                aria-label="お気に入りのみ表示"
+                                className={`flex w-fit items-center gap-1.5 rounded-full border-2 text-base px-4 py-2 ${searchCondition.favoriteOnly ?
+                                    `border-amber-400/60 bg-amber-400/15 text-amber-500 hover:bg-amber-400/25` :
+                                    `border-accent/70 bg-white text-gray-400 hover:bg-canvas`}`}
+                            >
+                                {searchCondition.favoriteOnly ? <IoStar className="size-4" /> : <IoStarOutline className="size-4" />}
+                                のみ表示
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
