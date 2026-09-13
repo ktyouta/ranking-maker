@@ -2,9 +2,13 @@ import { useIcons } from "@/app/api/get-icons";
 import { useDelayedFlag } from "@/hooks/use-delayed-flag";
 import { useTransitionSearchParams } from "@/hooks/use-transition-search-params";
 import { formatDaysAgo } from "@/utils/date-util";
-import { useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useMemo, useState } from "react";
+import { toast } from "react-toastify";
+import { useToggleMyRankingFavoriteMutation } from "../api/toggle-my-ranking-favorite";
 import { useMyRankings } from "../api/get-my-rankings";
 import { MY_RANKING_QUERY_KEY } from "../constants/my-ranking-query-params";
+import { myRankingKeys } from "../api/query-key";
 import { initialMyRankingSearchFilter, MyRankingSearchFilter } from "../types/my-ranking-search-filter";
 
 /**
@@ -21,6 +25,7 @@ export const useMyRankingList = () => {
         createdAtTo: searchParams.get(MY_RANKING_QUERY_KEY.CREATED_AT_TO),
         updatedAtFrom: searchParams.get(MY_RANKING_QUERY_KEY.UPDATED_AT_FROM),
         updatedAtTo: searchParams.get(MY_RANKING_QUERY_KEY.UPDATED_AT_TO),
+        favoriteOnly: searchParams.get(MY_RANKING_QUERY_KEY.FAVORITE_ONLY) === 'true',
     };
     // 検索条件（フォーム入力中の値）
     const [searchCondition, setSearchCondition] = useState<MyRankingSearchFilter>(initSearchCondition);
@@ -34,6 +39,7 @@ export const useMyRankingList = () => {
     const icons = iconsQuery.data.data;
     // オーバーレイ表示フラグ
     const isShowOverlay = useDelayedFlag(isPending, 250);
+    const queryClient = useQueryClient();
 
     // 画面表示用に整形したランキング一覧
     const rankingList = useMemo(() => {
@@ -43,8 +49,26 @@ export const useMyRankingList = () => {
             icon: icons.find((icon) => icon.id === ranking.icon)?.emoji ?? '',
             itemCount: ranking.itemCount,
             updatedAt: formatDaysAgo(ranking.updatedAt),
+            isFavorite: ranking.isFavorite,
         }));
     }, [rankingListQuery.data, icons]);
+
+    // お気に入り登録・解除
+    const toggleFavoriteMutation = useToggleMyRankingFavoriteMutation({
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+        },
+        onError: (message) => {
+            toast.error(message);
+        },
+    });
+
+    /**
+     * お気に入りボタン押下イベント
+     */
+    const toggleFavorite = useCallback((id: string, isFavorite: boolean) => {
+        toggleFavoriteMutation.mutate({ rankingId: id, isFavorite: !isFavorite });
+    }, [toggleFavoriteMutation]);
 
     /**
      * 検索条件クリア
@@ -73,6 +97,9 @@ export const useMyRankingList = () => {
         }
         if (searchCondition.updatedAtTo) {
             params[MY_RANKING_QUERY_KEY.UPDATED_AT_TO] = searchCondition.updatedAtTo;
+        }
+        if (searchCondition.favoriteOnly) {
+            params[MY_RANKING_QUERY_KEY.FAVORITE_ONLY] = 'true';
         }
         setSearchParams(params);
     }
@@ -111,5 +138,6 @@ export const useMyRankingList = () => {
         handleKeyPress,
         changePage,
         isShowOverlay,
+        onToggleFavorite: toggleFavorite,
     };
 }

@@ -1,4 +1,4 @@
-import { Button, DatePicker, Textbox } from '@/components';
+import { Button, Checkbox, DatePicker, Textbox } from '@/components';
 import { useState } from 'react';
 import { IoChevronDown, IoChevronUp, IoOptionsOutline, IoSearchOutline } from 'react-icons/io5';
 import { MyRankingSearchFilter } from '../types/my-ranking-search-filter';
@@ -26,6 +26,7 @@ export const MyRankingSearchBar = (props: PropsType) => {
     const activeCount = [
         searchCondition.createdAtFrom !== null || searchCondition.createdAtTo !== null,
         searchCondition.updatedAtFrom !== null || searchCondition.updatedAtTo !== null,
+        searchCondition.favoriteOnly,
     ].filter(Boolean).length;
     const isEmpty = searchCondition.keyword === '' && activeCount === 0;
 
@@ -115,6 +116,13 @@ export const MyRankingSearchBar = (props: PropsType) => {
                             />
                         </div>
                     </div>
+                    <label className="flex w-fit items-center gap-2 text-[12px] sm:text-base font-semibold text-accent">
+                        <Checkbox
+                            checked={searchCondition.favoriteOnly}
+                            onChange={(checked) => onChange({ ...searchCondition, favoriteOnly: checked })}
+                        />
+                        お気に入りのみ表示
+                    </label>
                 </div>
             )}
         </div>

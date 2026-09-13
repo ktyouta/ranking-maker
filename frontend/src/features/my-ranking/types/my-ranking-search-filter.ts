@@ -4,6 +4,7 @@ export type MyRankingSearchFilter = {
     createdAtTo: string | null;
     updatedAtFrom: string | null;
     updatedAtTo: string | null;
+    favoriteOnly: boolean;
 };
 
 export const initialMyRankingSearchFilter: MyRankingSearchFilter = {
@@ -12,4 +13,5 @@ export const initialMyRankingSearchFilter: MyRankingSearchFilter = {
     createdAtTo: null,
     updatedAtFrom: null,
     updatedAtTo: null,
+    favoriteOnly: false,
 };

@@ -7,6 +7,8 @@ const baseProps = {
     icon: '🍜',
     publicStatusLabel: '',
     isPublic: false,
+    isFavorite: false,
+    onToggleFavorite: vi.fn(),
     memo: '',
     items: [],
     updatedAt: '2026-01-01',

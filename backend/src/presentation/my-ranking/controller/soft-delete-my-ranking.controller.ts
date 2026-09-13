@@ -32,11 +32,23 @@ const softDeleteMyRanking = new Hono<AppEnv>().delete(API_ENDPOINT.MY_RANKING_ID
 
     const result = await usecase.execute(userId, rankingId);
 
-    if (result.isErr()) {
-      return c.json({ message: "ランキングが存在しません" }, HTTP_STATUS.NOT_FOUND);
-    }
-
-    return c.json({ message: "ランキングを削除しました。" }, HTTP_STATUS.OK);
+    return result.match(
+      // 成功
+      () => c.json({ message: "ランキングを削除しました。" }, HTTP_STATUS.OK),
+      // 失敗
+      (error) => {
+        switch (error.type) {
+          case "NOT_FOUND":
+            return c.json({ message: "ランキングが存在しません" }, HTTP_STATUS.NOT_FOUND);
+          case "IS_FAVORITE":
+            return c.json({ message: "お気に入り登録済みのため削除できません" }, HTTP_STATUS.CONFLICT);
+          default: {
+            const _: never = error;
+            return c.json({ message: "サーバーエラー" }, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+          }
+        }
+      },
+    );
   });
 
 export { softDeleteMyRanking };

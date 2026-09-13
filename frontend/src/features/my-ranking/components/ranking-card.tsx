@@ -1,4 +1,5 @@
 import { HiArrowRight, HiOutlineClock, HiOutlineListBullet } from 'react-icons/hi2';
+import { IoStar, IoStarOutline } from 'react-icons/io5';
 
 type PropsType = {
     id: string;
@@ -6,7 +7,9 @@ type PropsType = {
     icon: string;
     itemCount: number;
     updatedAt: string;
+    isFavorite: boolean;
     onSelect: (id: string) => void;
+    onToggleFavorite: (id: string, isFavorite: boolean) => void;
 };
 
 /**
@@ -14,13 +17,24 @@ type PropsType = {
  */
 export const RankingCard = (props: PropsType) => {
 
-    const { id, title, icon, itemCount, updatedAt, onSelect } = props;
+    const { id, title, icon, itemCount, updatedAt, isFavorite, onSelect, onToggleFavorite } = props;
 
     return (
         <div
             onClick={() => onSelect(id)}
             className="relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-accent/35 bg-surface shadow-sm sm:shadow-md hover:-translate-y-0.5 hover:shadow-lg sm:border-2 sm:border-accent/[40%]"
         >
+            <button
+                type="button"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleFavorite(id, isFavorite);
+                }}
+                aria-label={isFavorite ? 'お気に入りから外す' : 'お気に入りに登録する'}
+                className="absolute right-3 top-3 z-20 flex size-9 items-center justify-center rounded-full bg-surface/90 text-amber-400 shadow-sm hover:bg-surface"
+            >
+                {isFavorite ? <IoStar className="size-5" /> : <IoStarOutline className="size-5" />}
+            </button>
             <div className="relative z-10 flex items-stretch gap-5 px-5 py-5 sm:gap-7 sm:px-6 sm:py-6">
                 <div className="flex w-[70px] shrink-0 items-center justify-center overflow-hidden rounded-lg bg-accent-surface/15 text-5xl sm:w-[90px] sm:text-6xl">
                     {icon}

@@ -3,7 +3,8 @@ import { ISoftDeleteMyRankingRepository, RankingId } from "../../../domain";
 import { UserId } from "../../../domain/user";
 
 export type SoftDeleteMyRankingError =
-  | { type: "NOT_FOUND" };
+  | { type: "NOT_FOUND" }
+  | { type: "IS_FAVORITE" };
 
 /**
  * ランキング削除ユースケース
@@ -22,12 +23,17 @@ export class SoftDeleteMyRankingUsecase {
     // 対象ランキングの存在・所有確認（生存行のみ）
     const ranking = await this.repository.findRanking(userId, rankingId);
 
-    if (ranking.length === 0) {
+    if (!ranking) {
       return err({ type: "NOT_FOUND" });
     }
 
+    // お気に入り登録済み
+    if (ranking.isFavorite()) {
+      return err({ type: "IS_FAVORITE" });
+    }
+
     // ランキング本体と項目を論理削除
-    await this.repository.deleteRanking(rankingId);
+    await this.repository.deleteRanking(ranking);
 
     return ok(undefined);
   }

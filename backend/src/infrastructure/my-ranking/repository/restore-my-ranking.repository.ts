@@ -22,6 +22,7 @@ export class RestoreMyRankingRepository implements IRestoreMyRankingRepository {
         icon: rankingMaster.icon,
         memo: rankingMaster.memo,
         deleteFlg: rankingMaster.deleteFlg,
+        isFavorite: rankingMaster.isFavorite,
       })
       .from(rankingMaster)
       .where(and(eq(rankingMaster.deleteFlg, true), eq(rankingMaster.userId, userId.value), eq(rankingMaster.id, rankingId.value)));
@@ -57,6 +58,7 @@ export class RestoreMyRankingRepository implements IRestoreMyRankingRepository {
         )
       ),
       isDeleted: ranking.deleteFlg,
+      isFavorite: ranking.isFavorite,
     });
   }
 

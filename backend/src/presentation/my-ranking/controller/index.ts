@@ -1,4 +1,5 @@
 export * from "./create-my-ranking.controller";
+export * from "./favorite-my-ranking.controller";
 export * from "./my-ranking.controller";
 export * from "./get-icons.controller";
 export * from "./get-list-my-ranking.controller";

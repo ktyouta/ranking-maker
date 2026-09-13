@@ -10,6 +10,7 @@ export type MyRankingListType = {
   publicStatusName: string;
   icon: number;
   itemCount: number;
+  isFavorite: boolean;
 };
 
 /**
@@ -21,6 +22,7 @@ export type MyRankingQueryType = {
   createdAtTo?: string;
   updatedAtFrom?: string;
   updatedAtTo?: string;
+  favoriteOnly?: boolean;
   page: number;
 };
 

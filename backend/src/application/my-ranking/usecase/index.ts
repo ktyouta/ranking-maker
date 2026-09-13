@@ -7,4 +7,5 @@ export * from "./get-trash-my-ranking.usecase";
 export * from "./permanent-delete-my-ranking.usecase";
 export * from "./restore-my-ranking.usecase";
 export * from "./soft-delete-my-ranking.usecase";
+export * from "./update-favorite-my-ranking.usecase";
 export * from "./update-my-ranking.usecase";

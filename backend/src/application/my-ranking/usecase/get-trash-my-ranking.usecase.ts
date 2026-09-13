@@ -1,9 +1,9 @@
-import { IGetTrashMyRankingRepository, RankingId, MyRankingOrderType, MyRankingType } from "../../../domain";
+import { IGetTrashMyRankingRepository, RankingId, TrashMyRankingOrderType, TrashMyRankingType } from "../../../domain";
 import { UserId } from "../../../domain/user";
 
 type ReturnType = {
-  ranking: MyRankingType;
-  rankingOrder: MyRankingOrderType[];
+  ranking: TrashMyRankingType;
+  rankingOrder: TrashMyRankingOrderType[];
 }
 
 /**

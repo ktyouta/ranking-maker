@@ -23,6 +23,7 @@ export class GetMyRankingRepository implements IGetMyRankingRepository {
         publicStatus: rankingMaster.publicStatus,
         publicStatusName: publicStatusMaster.name,
         icon: rankingMaster.icon,
+        isFavorite: rankingMaster.isFavorite,
       })
       .from(rankingMaster)
       .innerJoin(publicStatusMaster, eq(publicStatusMaster.id, rankingMaster.publicStatus))

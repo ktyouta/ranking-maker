@@ -9,6 +9,7 @@ export const GetListMyRankingQuerySchema = z.object({
   createdAtTo: z.string().optional(),
   updatedAtFrom: z.string().optional(),
   updatedAtTo: z.string().optional(),
+  favoriteOnly: z.string().optional().transform((v) => v === "true"),
   page: z.preprocess(
     (v) => (v === "" ? undefined : v),
     z.coerce.number().int().positive().default(1)

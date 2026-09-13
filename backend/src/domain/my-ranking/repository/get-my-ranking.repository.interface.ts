@@ -10,6 +10,7 @@ export type MyRankingType = {
   publicStatus: number;
   publicStatusName: string;
   icon: number;
+  isFavorite: boolean;
 };
 
 export type MyRankingOrderType = {

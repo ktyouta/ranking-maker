@@ -32,6 +32,7 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
         publicStatusName: publicStatusMaster.name,
         icon: rankingMaster.icon,
         itemCount: count(rankingOrderMaster.id),
+        isFavorite: rankingMaster.isFavorite,
       })
       .from(rankingMaster)
       .innerJoin(userMaster, eq(userMaster.id, rankingMaster.userId))
@@ -87,6 +88,7 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
       ...(query.createdAtTo ? [lte(rankingMaster.createdAt, query.createdAtTo)] : []),
       ...(query.updatedAtFrom ? [gte(rankingMaster.updatedAt, query.updatedAtFrom)] : []),
       ...(query.updatedAtTo ? [lte(rankingMaster.updatedAt, query.updatedAtTo)] : []),
+      ...(query.favoriteOnly ? [eq(rankingMaster.isFavorite, true)] : []),
     ];
   }
 }

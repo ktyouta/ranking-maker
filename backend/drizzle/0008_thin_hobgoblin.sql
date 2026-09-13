@@ -1,0 +1,1 @@
+ALTER TABLE `ranking_master` ADD `is_favorite` integer DEFAULT false NOT NULL;

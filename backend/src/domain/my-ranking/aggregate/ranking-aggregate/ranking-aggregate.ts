@@ -1,9 +1,9 @@
 import { err, ok, Result } from "neverthrow";
 import { Violation } from "../../../../util/violation";
+import { RankingId } from "../../../shared";
 import { UserId } from "../../../user";
 import { RankingOrderEntity } from "../../entity";
 import { PublicStatus, RankingIcon, RankingMemo, RankingTitle } from "../../value-object";
-import { RankingId } from "../../../shared";
 
 /**
  * ランキング集約の生成・再構築に渡すパラメータ
@@ -20,6 +20,7 @@ type RankingAggregateParams = {
 
 type RankingAggregateReconstructParams = RankingAggregateParams & {
   isDeleted: boolean;
+  isFavorite: boolean;
 };
 
 /**
@@ -44,6 +45,7 @@ type RankingSnapshot = {
     order: number;
   }[];
   deleteFlg: boolean;
+  isFavorite: boolean;
 };
 
 /**
@@ -59,6 +61,7 @@ export class RankingAggregate {
     private readonly _userId: UserId,
     private readonly _rankingOrderEntityList: RankingOrderEntity[],
     private _deleteFlg: boolean,
+    private _isFavorite: boolean,
   ) { }
 
   /**
@@ -87,6 +90,7 @@ export class RankingAggregate {
         params.userId,
         params.rankingOrderEntityList,
         false,
+        false,
       ),
     );
   }
@@ -108,6 +112,7 @@ export class RankingAggregate {
       params.userId,
       params.rankingOrderEntityList,
       params.isDeleted,
+      params.isFavorite,
     );
   }
 
@@ -239,6 +244,15 @@ export class RankingAggregate {
         }
       }),
       deleteFlg: this._deleteFlg,
+      isFavorite: this._isFavorite,
     };
+  }
+
+  /**
+   * ランキングのお気に入り判定
+   * @returns 
+   */
+  isFavorite() {
+    return this._isFavorite;
   }
 }

@@ -57,6 +57,13 @@
       "when": 1789048345388,
       "tag": "0007_kind_mindworm",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1789264004876,
+      "tag": "0008_thin_hobgoblin",
+      "breakpoints": true
     }
   ]
 }

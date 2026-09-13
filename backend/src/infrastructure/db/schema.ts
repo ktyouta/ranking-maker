@@ -63,6 +63,7 @@ export const rankingMaster = sqliteTable("ranking_master", {
   publicStatus: integer("public_status").notNull().references(() => publicStatusMaster.id, { onDelete: "restrict" }),
   icon: integer("icon").notNull().default(1).references(() => iconMaster.id, { onDelete: "restrict" }),
   memo: text("memo"),
+  isFavorite: integer("is_favorite", { mode: "boolean" }).notNull().default(false),
   deleteFlg: integer("delete_flg", { mode: "boolean" }).notNull().default(false),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),

@@ -10,6 +10,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useDeleteMyRankingMutation } from '../api/delete-my-ranking';
 import { useMyRanking } from '../api/get-my-ranking';
+import { useToggleMyRankingFavoriteMutation } from '../api/toggle-my-ranking-favorite';
 
 type PropsType = {
     onStartEdit: () => void;
@@ -60,6 +61,24 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
             setErrMessage(message);
         },
     });
+
+    // お気に入り登録・解除
+    const toggleFavoriteMutation = useToggleMyRankingFavoriteMutation({
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: myRankingKeys.detail(rankingId) });
+            queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+        },
+        onError: (message) => {
+            toast.error(message);
+        },
+    });
+
+    /**
+     * お気に入りボタン押下イベント
+     */
+    const toggleFavorite = useCallback(() => {
+        toggleFavoriteMutation.mutate({ rankingId, isFavorite: !ranking.isFavorite });
+    }, [toggleFavoriteMutation, rankingId, ranking.isFavorite]);
 
     /**
      * 一覧画面へ戻る
@@ -124,6 +143,8 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
         icon: icons.find((icon) => icon.id === ranking.icon)?.emoji ?? '',
         publicStatusLabel: ranking.publicStatusName,
         isPublic: ranking.publicStatus === PUBLIC_STATUS.PUBLIC,
+        isFavorite: ranking.isFavorite,
+        onToggleFavorite: toggleFavorite,
         memo: ranking.memo ?? ``,
         items: sortedItems.map((item) => ({
             id: item.id,

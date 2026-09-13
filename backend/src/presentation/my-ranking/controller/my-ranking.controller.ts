@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import type { AppEnv } from "../../../types";
 import { createMyRanking } from "./create-my-ranking.controller";
+import { favoriteMyRanking } from "./favorite-my-ranking.controller";
 import { getIcons } from "./get-icons.controller";
 import { getListMyRanking } from "./get-list-my-ranking.controller";
 import { getMyRanking } from "./get-my-ranking.controller";
@@ -24,6 +25,7 @@ const myRanking = new Hono<AppEnv>()
     .route("/", getIcons)
     .route("/", getMyRanking)
     .route("/", softDeleteMyRanking)
-    .route("/", updateMyRanking);
+    .route("/", updateMyRanking)
+    .route("/", favoriteMyRanking);
 
 export { myRanking };

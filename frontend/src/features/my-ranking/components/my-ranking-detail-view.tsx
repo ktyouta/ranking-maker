@@ -1,6 +1,6 @@
 import { Dialog, LoadingOverlay, ScrollToTopButton } from '@/components';
 import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineDocumentText, HiOutlineExclamationTriangle, HiOutlineTrash } from 'react-icons/hi2';
-import { IoCalendarOutline } from 'react-icons/io5';
+import { IoCalendarOutline, IoStar, IoStarOutline } from 'react-icons/io5';
 import { ItemType, RankingItemCard } from './ranking-item-card';
 
 type PropsType = {
@@ -9,6 +9,8 @@ type PropsType = {
     // 現状は非表示だが、他ユーザーとの共有機能を見据えてデータは引き続き渡す
     publicStatusLabel: string;
     isPublic: boolean;
+    isFavorite: boolean;
+    onToggleFavorite: () => void;
     memo: string;
     items: ItemType[];
     updatedAt: string;
@@ -38,6 +40,8 @@ export function MyRankingDetailView(props: PropsType) {
     const {
         title,
         icon,
+        isFavorite,
+        onToggleFavorite,
         memo,
         items,
         updatedAt,
@@ -108,6 +112,14 @@ export function MyRankingDetailView(props: PropsType) {
                         </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={onToggleFavorite}
+                            className="shrink-0 rounded-full bg-amber-400/15 p-2.5 text-amber-400 hover:bg-amber-400/25"
+                            aria-label={isFavorite ? 'お気に入りから外す' : 'お気に入りに登録する'}
+                        >
+                            {isFavorite ? <IoStar className="size-6 sm:size-7" /> : <IoStarOutline className="size-6 sm:size-7" />}
+                        </button>
                         <button
                             type="button"
                             onClick={onClickMemo}

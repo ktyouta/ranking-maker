@@ -10,6 +10,7 @@ type RankingListItem = {
     icon: string;
     itemCount: number;
     updatedAt: string;
+    isFavorite: boolean;
 };
 
 type PropsType = {
@@ -18,6 +19,7 @@ type PropsType = {
     totalPages: number;
     currentPage: number;
     onSelectRanking: (id: string) => void;
+    onToggleFavorite: (id: string, isFavorite: boolean) => void;
     searchCondition: MyRankingSearchFilter;
     setSearchCondition: (condition: MyRankingSearchFilter) => void;
     clearSearchCondition: () => void;
@@ -35,6 +37,7 @@ export const MyRanking = (props: PropsType) => {
         totalPages,
         currentPage,
         onSelectRanking,
+        onToggleFavorite,
         searchCondition,
         setSearchCondition,
         clearSearchCondition,
@@ -74,7 +77,9 @@ export const MyRanking = (props: PropsType) => {
                                 icon={ranking.icon}
                                 itemCount={ranking.itemCount}
                                 updatedAt={ranking.updatedAt}
+                                isFavorite={ranking.isFavorite}
                                 onSelect={onSelectRanking}
+                                onToggleFavorite={onToggleFavorite}
                             />
                         ))}
                     </div>
