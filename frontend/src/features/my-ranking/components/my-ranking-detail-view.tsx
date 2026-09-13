@@ -96,16 +96,62 @@ export function MyRankingDetailView(props: PropsType) {
                         <p>{errMessage}</p>
                     </div>
                 )}
-                <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 sm:gap-5">
-                        <span className="flex shrink-0 items-center justify-center text-3xl sm:text-5xl">
+                {/* sm未満/sm以上でDOM構造が異なる二重定義。片方を直す際はもう片方も直すこと */}
+                <div className="flex flex-col gap-3 sm:hidden">
+                    <div className="flex items-center gap-3">
+                        <span className="flex shrink-0 items-center justify-center text-3xl">
+                            {icon}
+                        </span>
+                        <h1 className="text-xl font-bold text-ink">
+                            {title}
+                        </h1>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1.5 text-xs text-ink-sub">
+                            <IoCalendarOutline className="size-4" />
+                            更新日 {updatedAt}
+                        </span>
+                        <div className="flex shrink-0 items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={onToggleFavorite}
+                                className={isFavorite
+                                    ? "shrink-0 rounded-full bg-amber-400/15 p-2.5 text-amber-400 hover:bg-amber-400/25"
+                                    : "shrink-0 rounded-full bg-gray-400/15 p-2.5 text-gray-400 hover:bg-gray-400/25"
+                                }
+                                aria-label={isFavorite ? 'お気に入りから外す' : 'お気に入りに登録する'}
+                            >
+                                {isFavorite ? <IoStar className="size-6" /> : <IoStarOutline className="size-6" />}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={onClickMemo}
+                                className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                                aria-label="メモを見る"
+                            >
+                                <HiOutlineDocumentText className="size-6" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={onClickDelete}
+                                className="shrink-0 rounded-full bg-danger/15 p-2.5 text-danger hover:bg-danger/25"
+                                aria-label="ランキングを削除"
+                            >
+                                <HiOutlineTrash className="size-6" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div className="hidden items-center justify-between gap-3 sm:flex">
+                    <div className="flex items-center gap-5">
+                        <span className="flex shrink-0 items-center justify-center text-5xl">
                             {icon}
                         </span>
                         <div>
-                            <h1 className="text-xl font-bold text-ink sm:text-3xl">
+                            <h1 className="text-3xl font-bold text-ink">
                                 {title}
                             </h1>
-                            <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1 text-xs sm:text-base text-ink-sub">
+                            <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1.5 text-base text-ink-sub">
                                 <IoCalendarOutline className="size-4" />
                                 更新日 {updatedAt}
                             </span>
@@ -115,10 +161,13 @@ export function MyRankingDetailView(props: PropsType) {
                         <button
                             type="button"
                             onClick={onToggleFavorite}
-                            className="shrink-0 rounded-full bg-amber-400/15 p-2.5 text-amber-400 hover:bg-amber-400/25"
+                            className={isFavorite
+                                ? "shrink-0 rounded-full bg-amber-400/15 p-2.5 text-amber-400 hover:bg-amber-400/25"
+                                : "shrink-0 rounded-full bg-gray-400/15 p-2.5 text-gray-400 hover:bg-gray-400/25"
+                            }
                             aria-label={isFavorite ? 'お気に入りから外す' : 'お気に入りに登録する'}
                         >
-                            {isFavorite ? <IoStar className="size-6 sm:size-7" /> : <IoStarOutline className="size-6 sm:size-7" />}
+                            {isFavorite ? <IoStar className="size-7" /> : <IoStarOutline className="size-7" />}
                         </button>
                         <button
                             type="button"
@@ -126,7 +175,7 @@ export function MyRankingDetailView(props: PropsType) {
                             className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
                             aria-label="メモを見る"
                         >
-                            <HiOutlineDocumentText className="size-6 sm:size-7" />
+                            <HiOutlineDocumentText className="size-7" />
                         </button>
                         <button
                             type="button"
@@ -134,7 +183,7 @@ export function MyRankingDetailView(props: PropsType) {
                             className="shrink-0 rounded-full bg-danger/15 p-2.5 text-danger hover:bg-danger/25"
                             aria-label="ランキングを削除"
                         >
-                            <HiOutlineTrash className="size-6 sm:size-7" />
+                            <HiOutlineTrash className="size-7" />
                         </button>
                     </div>
                 </div>
