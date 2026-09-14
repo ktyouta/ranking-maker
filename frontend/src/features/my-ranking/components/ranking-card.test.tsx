@@ -49,4 +49,22 @@ describe('RankingCard', () => {
         expect(onToggleFavorite).toHaveBeenCalledWith('ranking-1', false);
         expect(onSelect).not.toHaveBeenCalled();
     });
+
+    test('カード内部の z-index がページ全体のスタッキング順に漏れ出さないよう、カード自身が独立したスタッキングコンテキストを持つ', () => {
+
+        const { container } = render(
+            <RankingCard
+                id="ranking-1"
+                title="好きなラーメン屋ランキング"
+                icon="🏆"
+                itemCount={5}
+                updatedAt="3日前"
+                isFavorite={false}
+                onSelect={vi.fn()}
+                onToggleFavorite={vi.fn()}
+            />
+        );
+
+        expect(container.querySelector('.isolate')).toBeInTheDocument();
+    });
 });

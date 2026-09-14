@@ -58,3 +58,34 @@ Claude がカテゴリ機能のバックエンド実装を完了した直後に�
 
 漏れなし。水平展開は完了しています。
 ```
+
+---
+
+## 入力例③（原因調査で判明した「導入時点から不要だった値」の横展開）
+
+Claude がバグ修正で `frontend/src/features/my-ranking/components/ranking-card.tsx` の
+不要な `relative z-10` を削除。原因調査で、この値は `88374d4`（Simplify ranking and trash list cards）
+というコミットで導入時点から機能的に不要なまま付与されていたことが判明している。
+
+---
+
+## 期待される出力（漏れあり）
+
+```
+## 水平展開漏れチェック結果
+
+### 変更済みファイル（git diff より）
+- `frontend/src/features/my-ranking/components/ranking-card.tsx`
+
+### 導入コミットの確認
+- `relative z-10` の導入コミット: `88374d4`（Simplify ranking and trash list cards）
+- `git show 88374d4 --stat` で同時に変更された他ファイルを確認
+
+### 漏れあり
+
+#### フロントエンド
+- `frontend/src/features/trash/components/trash-card.tsx` — 同じ `88374d4` で同時に `relative z-10` が付与されており、trash-card には absolute 配置の子要素が存在しないため同様に不要
+
+---
+漏れ: 1 ファイル
+```

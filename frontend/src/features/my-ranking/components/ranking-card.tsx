@@ -21,7 +21,7 @@ export const RankingCard = (props: PropsType) => {
     return (
         <div
             onClick={() => onSelect(id)}
-            className="relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-accent/35 bg-surface shadow-sm sm:shadow-md sm:hover:-translate-y-0.5 sm:hover:shadow-lg sm:border-2 sm:border-accent/[40%]"
+            className="relative isolate flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-accent/35 bg-surface shadow-sm sm:shadow-md sm:hover:-translate-y-0.5 sm:hover:shadow-lg sm:border-2 sm:border-accent/[40%]"
         >
             <button
                 type="button"
@@ -30,14 +30,14 @@ export const RankingCard = (props: PropsType) => {
                     onToggleFavorite(id, isFavorite);
                 }}
                 aria-label={isFavorite ? 'お気に入りから外す' : 'お気に入りに登録する'}
-                className="absolute right-3 sm:right-4 top-2 sm:top-3 z-20 flex size-9 items-center justify-center"
+                className="absolute right-3 sm:right-4 top-2 sm:top-3 flex size-9 items-center justify-center"
             >
                 {isFavorite
                     ? <HiStar className="size-5 sm:size-7 text-amber-400" />
                     : <HiOutlineStar className="size-5 sm:size-7 text-gray-400" />
                 }
             </button>
-            <div className="relative z-10 flex items-stretch gap-5 px-5 py-5 sm:gap-7 sm:px-6 sm:py-6">
+            <div className="flex items-stretch gap-5 px-5 py-5 sm:gap-7 sm:px-6 sm:py-6">
                 <div className="flex w-[70px] shrink-0 items-center justify-center overflow-hidden rounded-lg bg-accent-surface/15 text-5xl sm:w-[90px] sm:text-6xl">
                     {icon}
                 </div>
