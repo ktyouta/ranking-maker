@@ -9,5 +9,5 @@ export function formatExportFilenameTimestamp(date: Date): string {
   const hours = pad(date.getHours());
   const minutes = pad(date.getMinutes());
   const seconds = pad(date.getSeconds());
-  return `${year}${month}${day}_${hours}${minutes}${seconds}`;
+  return `${year}${month}${day}${hours}${minutes}${seconds}`;
 }

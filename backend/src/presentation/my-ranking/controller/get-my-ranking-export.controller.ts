@@ -39,7 +39,7 @@ const getMyRankingExport = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING_EXPOR
     }
 
     const csv = new GetMyRankingExportResponseDto(rankings).value;
-    const filename = `ranking_export_${formatExportFilenameTimestamp(new Date())}.csv`;
+    const filename = `ranking_${formatExportFilenameTimestamp(new Date())}.csv`;
 
     return c.text(csv, HTTP_STATUS.OK, {
       "Content-Type": "text/csv; charset=utf-8",

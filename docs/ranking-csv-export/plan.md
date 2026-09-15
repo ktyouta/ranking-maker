@@ -61,12 +61,12 @@
 
 | # | タスク | ファイル | 前提 |
 |---|--------|----------|------|
-| 19 | 汎用ダウンロードユーティリティ（Blob生成＋aタグdownload。受け取るテキストは既にCSV整形済みのため、引数はそのままの文字列） | `frontend/src/utils/download-text-file.ts` | ― |
+| 19 | ダウンロードユーティリティ（HTTPレスポンス由来のBlobをそのままaタグdownload。`.text()`はUTF-8 BOMを除去してしまうため文字列変換を経由しない） | `frontend/src/utils/download-blob-file.ts` | ― |
 | 20 | エクスポートAPI呼び出し（POST、rpc経由の1回呼び出し。レスポンスの`Content-Type`ヘッダーで分岐: `application/json`ならメッセージを返す、`text/csv`なら`.text()`でCSV文字列を返す） | `frontend/src/features/my-ranking/api/export-my-ranking-csv.ts` | バックエンド#18 |
 | 21 | 選択モード管理hook（`isSelectionMode`, `selectedIds`, `toggleSelectionMode`, `toggleSelect`, `selectAllOnPage`, `clearSelection`。ページ遷移時にリセットしない） | `frontend/src/features/my-ranking/hooks/use-my-ranking-selection.ts` | ― |
 | 22 | CSV出力実行hook（`useMutation`で#20呼び出し→JSONメッセージが返った場合はtoastのみで終了→CSV文字列が返った場合は#19ダウンロード、実行中フラグ・エラーtoast） | `frontend/src/features/my-ranking/hooks/use-export-my-ranking-csv.ts` | #19, #20 |
 | 23 | `RankingCard` 選択モード対応（選択モード時は左上にチェックボックス表示、カード全体クリックで選択トグル。右上お気に入りボタンは位置・機能とも現状維持。`ranking-card.test.tsx`にテストケース追加） | `frontend/src/features/my-ranking/components/ranking-card.tsx`, `frontend/src/features/my-ranking/components/ranking-card.test.tsx` | ― |
-| 24 | `BulkActionBar` コンポーネント新規（「一括」ボタン／選択モード中は件数表示・全選択（現在ページのみ）・キャンセル・CSV出力ボタン） | `frontend/src/features/my-ranking/components/bulk-action-bar.tsx` | ― |
+| 24 | `BulkActionBar` コンポーネント新規（選択モード中のみ件数表示・全選択（現在ページのみ）・キャンセル・CSV出力ボタンを表示。非選択時は`null`。選択モードの入口ボタン「一括選択」は`MyRankingSearchBar`側の検索ボタン右横に配置し、CSV出力機能のみのためPC（`lg:`＝1024px以上。`sm:`だとタブレットも含まれてしまうため）でのみ表示・モバイル/タブレットでは非表示とする） | `frontend/src/features/my-ranking/components/bulk-action-bar.tsx`, `frontend/src/features/my-ranking/components/my-ranking-search-bar.tsx` | ― |
 | 25 | `use-my-ranking-list.ts` に#21, #22を組み込み | `frontend/src/features/my-ranking/hooks/use-my-ranking-list.ts` | #21, #22 |
 | 26 | `MyRanking` に`BulkActionBar`設置、`RankingCard`へ選択モード関連props配線 | `frontend/src/features/my-ranking/components/my-ranking.tsx` | #23, #24, #25 |
 | 27 | `MyRankingContainer` props配線確認 | `frontend/src/features/my-ranking/components/my-ranking-container.tsx` | #26 |

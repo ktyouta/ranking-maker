@@ -1,6 +1,7 @@
 import { LoadingOverlay, Pagination, ScrollToTopButton } from '@/components';
 import { IoTrophyOutline } from 'react-icons/io5';
 import { MyRankingSearchFilter } from '../types/my-ranking-search-filter';
+import { BulkActionBar } from './bulk-action-bar';
 import { MyRankingSearchBar } from './my-ranking-search-bar';
 import { RankingCard } from './ranking-card';
 
@@ -27,6 +28,15 @@ type PropsType = {
     handleKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
     changePage: (page: number) => void;
     isShowOverlay: boolean;
+    isSelectionMode: boolean;
+    selectedIdSet: Set<string>;
+    selectedCount: number;
+    onToggleSelectionMode: () => void;
+    onToggleSelect: (id: string) => void;
+    isAllSelectedOnPage: boolean;
+    onToggleSelectAllOnPage: () => void;
+    onExportCsv: () => void;
+    isExporting: boolean;
 };
 
 export const MyRanking = (props: PropsType) => {
@@ -45,6 +55,15 @@ export const MyRanking = (props: PropsType) => {
         handleKeyPress,
         changePage,
         isShowOverlay,
+        isSelectionMode,
+        selectedIdSet,
+        selectedCount,
+        onToggleSelectionMode,
+        onToggleSelect,
+        isAllSelectedOnPage,
+        onToggleSelectAllOnPage,
+        onExportCsv,
+        isExporting,
     } = props;
 
     return (
@@ -56,6 +75,17 @@ export const MyRanking = (props: PropsType) => {
                 onSearch={clickSearch}
                 onClear={clearSearchCondition}
                 handleKeyPress={handleKeyPress}
+                isSelectionMode={isSelectionMode}
+                onToggleSelectionMode={onToggleSelectionMode}
+            />
+            <BulkActionBar
+                isSelectionMode={isSelectionMode}
+                selectedCount={selectedCount}
+                isExporting={isExporting}
+                onToggleSelectionMode={onToggleSelectionMode}
+                isAllSelectedOnPage={isAllSelectedOnPage}
+                onToggleSelectAllOnPage={onToggleSelectAllOnPage}
+                onExportCsv={onExportCsv}
             />
             {rankingList.length === 0 && (
                 <div className="flex flex-col items-center gap-3 py-16 text-center">
@@ -80,6 +110,9 @@ export const MyRanking = (props: PropsType) => {
                                 isFavorite={ranking.isFavorite}
                                 onSelect={onSelectRanking}
                                 onToggleFavorite={onToggleFavorite}
+                                isSelectionMode={isSelectionMode}
+                                isSelected={selectedIdSet.has(ranking.id)}
+                                onToggleSelect={onToggleSelect}
                             />
                         ))}
                     </div>

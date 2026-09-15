@@ -1,10 +1,14 @@
 import { useIcons } from "@/app/api/get-icons";
+import { paths } from "@/config/paths";
+import { useAppNavigation } from "@/hooks/use-app-navigation";
 import { useDelayedFlag } from "@/hooks/use-delayed-flag";
 import { useTransitionSearchParams } from "@/hooks/use-transition-search-params";
+import { downloadBlobFile } from "@/utils/download-blob-file";
 import { formatDaysAgo } from "@/utils/date-util";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import { useExportMyRankingCsvMutation } from "../api/export-my-ranking-csv";
 import { MyRankingListQueryDataType, useMyRankings } from "../api/get-my-rankings";
 import { myRankingKeys } from "../api/query-key";
 import { useToggleMyRankingFavoriteMutation } from "../api/toggle-my-ranking-favorite";
@@ -40,6 +44,8 @@ export const useMyRankingList = () => {
     // オーバーレイ表示フラグ
     const isShowOverlay = useDelayedFlag(isPending, 250);
     const queryClient = useQueryClient();
+    // ルーティング用
+    const { appNavigate } = useAppNavigation();
 
     // 画面表示用に整形したランキング一覧
     const rankingList = useMemo(() => {
@@ -99,6 +105,79 @@ export const useMyRankingList = () => {
         toggleFavoriteMutation.mutate({ rankingId: id, isFavorite: !isFavorite });
     }, [toggleFavoriteMutation]);
 
+    // 選択モードのON/OFF
+    const [isSelectionMode, setIsSelectionMode] = useState(false);
+    // 選択中のランキングID（ページ送りしても保持する）
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+    /**
+     * 選択モードの切り替え（OFFにする際は選択状態もクリアする）
+     */
+    const toggleSelectionMode = useCallback(() => {
+        setIsSelectionMode((prev) => {
+            if (prev) {
+                setSelectedIds([]);
+            }
+            return !prev;
+        });
+    }, []);
+
+    /**
+     * 1件の選択トグル
+     */
+    const toggleSelect = useCallback((id: string) => {
+        setSelectedIds((prev) =>
+            prev.includes(id) ? prev.filter((selectedId) => selectedId !== id) : [...prev, id]
+        );
+    }, []);
+
+    /**
+     * 指定idの選択状態をまとめて設定する
+     */
+    const setSelectedForIds = useCallback((ids: string[], selected: boolean) => {
+        setSelectedIds((prev) => {
+            if (selected) {
+                return Array.from(new Set([...prev, ...ids]));
+            }
+            return prev.filter((id) => !ids.includes(id));
+        });
+    }, []);
+
+    // CSVエクスポート
+    const exportCsvMutation = useExportMyRankingCsvMutation({
+        onSuccess: (result) => {
+            if (result.isEmpty) {
+                toast.info(result.message);
+                return;
+            }
+            downloadBlobFile(result.filename, result.csvBlob);
+        },
+        onError: (message) => {
+            toast.error(message);
+        },
+    });
+
+    // 現在ページの行がすべて選択済みか（チェックボックスの表示状態に使用）
+    const isAllSelectedOnPage = rankingList.length > 0
+        && rankingList.every((ranking) => selectedIds.includes(ranking.id));
+
+    /**
+     * 現在ページの行の全選択・全解除を切り替える
+     */
+    const toggleSelectAllOnPage = useCallback(() => {
+        setSelectedForIds(rankingList.map((ranking) => ranking.id), !isAllSelectedOnPage);
+    }, [setSelectedForIds, rankingList, isAllSelectedOnPage]);
+
+    /**
+     * 選択中のランキングをCSV出力
+     */
+    const exportSelectedCsv = useCallback(() => {
+        exportCsvMutation.mutate(selectedIds);
+    }, [exportCsvMutation, selectedIds]);
+
+    // 選択中IDの集合（一覧描画時の選択判定に使用）
+    const selectedIdSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+
     /**
      * 検索条件クリア
      */
@@ -155,6 +234,17 @@ export const useMyRankingList = () => {
         setSearchParams(params);
     }
 
+    /**
+     * ランキングカードクリック（選択モード中は選択トグル、それ以外は詳細画面へ遷移）
+     */
+    const handleCardClick = useCallback((id: string) => {
+        if (isSelectionMode) {
+            toggleSelect(id);
+            return;
+        }
+        appNavigate(paths.rankingDetail.getHref(id));
+    }, [isSelectionMode, toggleSelect, appNavigate]);
+
     return {
         rankingList,
         total: rankingListQuery.data.data.total,
@@ -168,5 +258,15 @@ export const useMyRankingList = () => {
         changePage,
         isShowOverlay,
         onToggleFavorite: toggleFavorite,
+        isSelectionMode,
+        selectedIdSet,
+        selectedCount: selectedIds.length,
+        onToggleSelectionMode: toggleSelectionMode,
+        onToggleSelect: toggleSelect,
+        isAllSelectedOnPage,
+        onToggleSelectAllOnPage: toggleSelectAllOnPage,
+        onExportCsv: exportSelectedCsv,
+        isExporting: exportCsvMutation.isPending,
+        onSelectRanking: handleCardClick,
     };
 }

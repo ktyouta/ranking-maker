@@ -9,6 +9,8 @@ type PropsType = {
     onSearch: () => void;
     onClear: () => void;
     handleKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+    isSelectionMode: boolean;
+    onToggleSelectionMode: () => void;
 };
 
 const DATE_PICKER_CLASS = 'border-2 border-accent/70 rounded-full focus:ring-accent';
@@ -18,7 +20,7 @@ const DATE_PICKER_CLASS = 'border-2 border-accent/70 rounded-full focus:ring-acc
  */
 export const MyRankingSearchBar = (props: PropsType) => {
 
-    const { searchCondition, onChange, onSearch, onClear, handleKeyPress } = props;
+    const { searchCondition, onChange, onSearch, onClear, handleKeyPress, isSelectionMode, onToggleSelectionMode } = props;
 
     // 詳細フィルター開閉フラグ
     const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -76,6 +78,16 @@ export const MyRankingSearchBar = (props: PropsType) => {
                     >
                         検索
                     </Button>
+                    {!isSelectionMode && (
+                        <Button
+                            colorType="accent"
+                            sizeType="large"
+                            onClick={onToggleSelectionMode}
+                            className="hidden h-10 items-center gap-1.5 whitespace-nowrap rounded-full border-2 border-accent/60 bg-white text-sm font-semibold text-accent shadow-sm hover:bg-accent/10 lg:flex lg:h-12 lg:px-9 lg:text-base"
+                        >
+                            一括選択
+                        </Button>
+                    )}
                 </div>
             </div>
             {isDetailOpen && (
