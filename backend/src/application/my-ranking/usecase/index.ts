@@ -2,6 +2,7 @@ export * from "./create-my-ranking.usecase";
 export * from "./get-icons.usecase";
 export * from "./get-list-my-ranking.usecase";
 export * from "./get-my-ranking.usecase";
+export * from "./get-my-ranking-export.usecase";
 export * from "./get-trash-list-my-ranking.usecase";
 export * from "./get-trash-my-ranking.usecase";
 export * from "./permanent-delete-my-ranking.usecase";

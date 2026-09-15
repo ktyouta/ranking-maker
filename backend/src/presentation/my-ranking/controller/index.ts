@@ -4,6 +4,7 @@ export * from "./my-ranking.controller";
 export * from "./get-icons.controller";
 export * from "./get-list-my-ranking.controller";
 export * from "./get-my-ranking.controller";
+export * from "./get-my-ranking-export.controller";
 export * from "./get-trash-list-my-ranking.controller";
 export * from "./get-trash-my-ranking.controller";
 export * from "./permanent-delete-my-ranking.controller";

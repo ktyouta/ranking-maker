@@ -3,6 +3,7 @@ export * from "./create-my-ranking.repository.interface";
 export * from "./get-list-my-ranking.repository.interface";
 export * from "./get-icons.repository.interface";
 export * from "./get-my-ranking.repository.interface";
+export * from "./get-my-ranking-export.repository.interface";
 export * from "./get-trash-list-my-ranking.repository.interface";
 export * from "./icon-validity.repository.interface";
 export * from "./get-trash-my-ranking.repository.interface";
