@@ -1,3 +1,4 @@
+export * from "./bulk-soft-delete-my-ranking.usecase";
 export * from "./create-my-ranking.usecase";
 export * from "./get-icons.usecase";
 export * from "./get-list-my-ranking.usecase";

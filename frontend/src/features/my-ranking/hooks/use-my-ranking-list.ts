@@ -2,12 +2,14 @@ import { useIcons } from "@/app/api/get-icons";
 import { paths } from "@/config/paths";
 import { useAppNavigation } from "@/hooks/use-app-navigation";
 import { useDelayedFlag } from "@/hooks/use-delayed-flag";
+import { useSwitch } from "@/hooks/use-switch";
 import { useTransitionSearchParams } from "@/hooks/use-transition-search-params";
 import { downloadBlobFile } from "@/utils/download-blob-file";
 import { formatDaysAgo } from "@/utils/date-util";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import { useBulkDeleteMyRankingMutation } from "../api/bulk-delete-my-ranking";
 import { useExportMyRankingCsvMutation } from "../api/export-my-ranking-csv";
 import { MyRankingListQueryDataType, useMyRankings } from "../api/get-my-rankings";
 import { myRankingKeys } from "../api/query-key";
@@ -175,6 +177,44 @@ export const useMyRankingList = () => {
         exportCsvMutation.mutate(selectedIds);
     }, [exportCsvMutation, selectedIds]);
 
+    // 一括削除確認ダイアログの開閉
+    const bulkDeleteDialog = useSwitch();
+
+    // 一括削除（論理削除）
+    const bulkDeleteMutation = useBulkDeleteMyRankingMutation({
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+            setSelectedIds([]);
+            setIsSelectionMode(false);
+            toast.success(data.message);
+        },
+        onError: (message) => {
+            toast.error(message);
+        },
+    });
+
+    /**
+     * 一括削除ボタン押下イベント（確認ダイアログを開く）
+     */
+    const clickBulkDelete = useCallback(() => {
+        bulkDeleteDialog.on();
+    }, [bulkDeleteDialog]);
+
+    /**
+     * 一括削除確認ダイアログを閉じる
+     */
+    const cancelBulkDelete = useCallback(() => {
+        bulkDeleteDialog.off();
+    }, [bulkDeleteDialog]);
+
+    /**
+     * 一括削除実行
+     */
+    const confirmBulkDelete = useCallback(() => {
+        bulkDeleteDialog.off();
+        bulkDeleteMutation.mutate(selectedIds);
+    }, [bulkDeleteDialog, bulkDeleteMutation, selectedIds]);
+
     // 選択中IDの集合（一覧描画時の選択判定に使用）
     const selectedIdSet = useMemo(() => new Set(selectedIds), [selectedIds]);
 
@@ -268,5 +308,10 @@ export const useMyRankingList = () => {
         onExportCsv: exportSelectedCsv,
         isExporting: exportCsvMutation.isPending,
         onSelectRanking: handleCardClick,
+        isBulkDeleteDialogOpen: bulkDeleteDialog.flag,
+        onClickBulkDelete: clickBulkDelete,
+        onCancelBulkDelete: cancelBulkDelete,
+        onConfirmBulkDelete: confirmBulkDelete,
+        isBulkDeleting: bulkDeleteMutation.isPending,
     };
 }

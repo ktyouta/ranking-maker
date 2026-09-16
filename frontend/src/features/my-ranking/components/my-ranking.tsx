@@ -1,4 +1,4 @@
-import { LoadingOverlay, Pagination, ScrollToTopButton } from '@/components';
+import { Dialog, LoadingOverlay, Pagination, ScrollToTopButton } from '@/components';
 import { IoTrophyOutline } from 'react-icons/io5';
 import { MyRankingSearchFilter } from '../types/my-ranking-search-filter';
 import { BulkActionBar } from './bulk-action-bar';
@@ -37,6 +37,11 @@ type PropsType = {
     onToggleSelectAllOnPage: () => void;
     onExportCsv: () => void;
     isExporting: boolean;
+    isBulkDeleteDialogOpen: boolean;
+    onClickBulkDelete: () => void;
+    onCancelBulkDelete: () => void;
+    onConfirmBulkDelete: () => void;
+    isBulkDeleting: boolean;
 };
 
 export const MyRanking = (props: PropsType) => {
@@ -64,6 +69,11 @@ export const MyRanking = (props: PropsType) => {
         onToggleSelectAllOnPage,
         onExportCsv,
         isExporting,
+        isBulkDeleteDialogOpen,
+        onClickBulkDelete,
+        onCancelBulkDelete,
+        onConfirmBulkDelete,
+        isBulkDeleting,
     } = props;
 
     return (
@@ -82,10 +92,12 @@ export const MyRanking = (props: PropsType) => {
                 isSelectionMode={isSelectionMode}
                 selectedCount={selectedCount}
                 isExporting={isExporting}
+                isDeleting={isBulkDeleting}
                 onToggleSelectionMode={onToggleSelectionMode}
                 isAllSelectedOnPage={isAllSelectedOnPage}
                 onToggleSelectAllOnPage={onToggleSelectAllOnPage}
                 onExportCsv={onExportCsv}
+                onClickBulkDelete={onClickBulkDelete}
             />
             {rankingList.length === 0 && (
                 <div className="flex flex-col items-center gap-3 py-16 text-center">
@@ -126,6 +138,35 @@ export const MyRanking = (props: PropsType) => {
                 </>
             )}
             <ScrollToTopButton />
+            <Dialog
+                isOpen={isBulkDeleteDialogOpen}
+                onClose={onCancelBulkDelete}
+                title="ランキングの一括削除"
+                size="small"
+            >
+                <div className="space-y-4">
+                    <p className="text-base text-ink">
+                        選択中の{selectedCount}件を削除しますか？<br />
+                        削除後もゴミ箱からいつでも復元できます。
+                    </p>
+                    <div className="flex justify-end gap-3">
+                        <button
+                            type="button"
+                            className="rounded-full border-2 border-accent/30 bg-surface px-6 py-2 text-base font-medium text-ink-sub hover:bg-canvas"
+                            onClick={onCancelBulkDelete}
+                        >
+                            キャンセル
+                        </button>
+                        <button
+                            type="button"
+                            className="rounded-full bg-danger-fill px-6 py-2 text-base font-medium text-white hover:bg-danger-fill-hover"
+                            onClick={onConfirmBulkDelete}
+                        >
+                            削除
+                        </button>
+                    </div>
+                </div>
+            </Dialog>
         </div>
     )
 };

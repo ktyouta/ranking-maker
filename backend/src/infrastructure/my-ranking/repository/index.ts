@@ -1,3 +1,4 @@
+export * from "./bulk-soft-delete-my-ranking.repository";
 export * from "./content-moderation.repository";
 export * from "./create-my-ranking.repository";
 export * from "./get-icons.repository";

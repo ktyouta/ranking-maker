@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { AppEnv } from "../../../types";
+import { bulkSoftDeleteMyRanking } from "./bulk-soft-delete-my-ranking.controller";
 import { createMyRanking } from "./create-my-ranking.controller";
 import { favoriteMyRanking } from "./favorite-my-ranking.controller";
 import { getIcons } from "./get-icons.controller";
@@ -19,6 +20,7 @@ import { updateMyRanking } from "./update-my-ranking.controller";
 const myRanking = new Hono<AppEnv>()
     .route("/", getListMyRanking)
     .route("/", createMyRanking)
+    .route("/", bulkSoftDeleteMyRanking)
     .route("/", getTrashListMyRanking)
     .route("/", getTrashMyRanking)
     .route("/", permanentDeleteMyRanking)

@@ -40,7 +40,7 @@ export class SoftDeleteMyRankingRepository implements ISoftDeleteMyRankingReposi
         itemMemo: rankingOrderMaster.itemMemo,
       })
       .from(rankingOrderMaster)
-      .where(and(eq(rankingOrderMaster.deleteFlg, true), eq(rankingOrderMaster.rankingId, ranking.id)));
+      .where(and(eq(rankingOrderMaster.deleteFlg, false), eq(rankingOrderMaster.rankingId, ranking.id)));
 
     return RankingAggregate.reconstruct({
       rankingId: RankingId.of(ranking.id),

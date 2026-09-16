@@ -1,3 +1,4 @@
+export * from "./bulk-soft-delete-my-ranking.controller";
 export * from "./create-my-ranking.controller";
 export * from "./favorite-my-ranking.controller";
 export * from "./my-ranking.controller";

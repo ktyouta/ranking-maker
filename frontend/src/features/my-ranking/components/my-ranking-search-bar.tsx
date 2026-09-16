@@ -46,11 +46,26 @@ export const MyRankingSearchBar = (props: PropsType) => {
                     />
                 </div>
                 <div className="flex flex-wrap items-center justify-start sm:justify-end gap-2">
+                    {/* sm未満: アイコンのみ（4つのボタンが1行に収まりきらないため、意味の推測がしやすい詳細フィルターのみアイコン化する） */}
+                    <button
+                        type="button"
+                        onClick={() => setIsDetailOpen(!isDetailOpen)}
+                        aria-label="詳細フィルター"
+                        className="relative flex size-10 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-surface text-accent hover:bg-accent/10 sm:hidden"
+                    >
+                        <IoOptionsOutline className="size-4" />
+                        {activeCount > 0 && (
+                            <span className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-accent-surface text-[11px] font-bold text-white shadow-sm">
+                                {activeCount}
+                            </span>
+                        )}
+                    </button>
+                    {/* sm以上: テキスト付きボタン */}
                     <Button
                         colorType="accent"
                         sizeType="large"
                         onClick={() => setIsDetailOpen(!isDetailOpen)}
-                        className="relative flex h-10 items-center gap-1.5 whitespace-nowrap rounded-full border border-accent/40 bg-surface text-sm text-accent hover:bg-accent/10 sm:h-12 sm:text-base"
+                        className="relative hidden h-10 items-center gap-1.5 whitespace-nowrap font-semibold rounded-full border border-accent/40 bg-surface text-sm text-accent hover:bg-accent/10 sm:flex sm:h-12 sm:text-base"
                     >
                         <IoOptionsOutline className="size-4" />
                         詳細フィルター
@@ -83,7 +98,7 @@ export const MyRankingSearchBar = (props: PropsType) => {
                             colorType="accent"
                             sizeType="large"
                             onClick={onToggleSelectionMode}
-                            className="hidden h-10 items-center gap-1.5 whitespace-nowrap rounded-full border-2 border-accent/60 bg-white text-sm font-semibold text-accent shadow-sm hover:bg-accent/10 lg:flex lg:h-12 lg:px-9 lg:text-base"
+                            className="h-10 items-center gap-1.5 whitespace-nowrap rounded-full border border-accent/40 bg-white text-sm font-semibold text-accent shadow-sm hover:bg-accent/10 flex lg:h-12 lg:px-9 lg:text-base"
                         >
                             一括選択
                         </Button>

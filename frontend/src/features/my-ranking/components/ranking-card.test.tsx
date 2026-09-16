@@ -141,4 +141,29 @@ describe('RankingCard', () => {
         expect(onToggleSelect).toHaveBeenCalledWith('ranking-1');
         expect(onSelect).not.toHaveBeenCalled();
     });
+
+    test('選択モード時、お気に入り登録済みのカードも通常通りチェックボックスで選択できる（CSV出力等、削除以外の一括操作でもお気に入りを選択できる必要があるため）', () => {
+
+        const onToggleSelect = vi.fn();
+
+        render(
+            <RankingCard
+                id="ranking-1"
+                title="好きなラーメン屋ランキング"
+                icon="🏆"
+                itemCount={5}
+                updatedAt="3日前"
+                isFavorite
+                onSelect={vi.fn()}
+                onToggleFavorite={vi.fn()}
+                isSelectionMode
+                isSelected={false}
+                onToggleSelect={onToggleSelect}
+            />
+        );
+
+        fireEvent.click(screen.getByLabelText('選択する'));
+
+        expect(onToggleSelect).toHaveBeenCalledWith('ranking-1');
+    });
 });
