@@ -35,8 +35,8 @@ export const BulkActionBar = (props: PropsType) => {
     }
 
     return (
-        <div className="mb-3 flex flex-col gap-4 rounded-2xl border border-accent/35 bg-surface px-4 py-4 sm:mb-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-3">
-            <div className="flex items-center justify-between gap-3 sm:justify-start sm:gap-6">
+        <div className="mb-3 flex flex-col gap-5 rounded-2xl border border-accent/35 bg-surface px-4 py-4 sm:mb-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 sm:justify-start sm:gap-6">
                 <p className="text-sm font-semibold text-accent sm:text-base">
                     {selectedCount}件選択中
                 </p>

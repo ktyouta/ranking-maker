@@ -68,7 +68,7 @@ export const MyRankingSearchBar = (props: PropsType) => {
                         className="relative hidden h-10 items-center gap-1.5 whitespace-nowrap font-semibold rounded-full border border-accent/40 bg-surface text-sm text-accent hover:bg-accent/10 sm:flex sm:h-12 sm:text-base"
                     >
                         <IoOptionsOutline className="size-4" />
-                        詳細フィルター
+                        絞り込み
                         {isDetailOpen ? <IoChevronUp className="size-4" /> : <IoChevronDown className="size-4" />}
                         {activeCount > 0 && (
                             <span className="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-accent-surface text-[11px] font-bold text-white shadow-sm">
