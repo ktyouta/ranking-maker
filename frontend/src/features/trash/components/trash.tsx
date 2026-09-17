@@ -65,7 +65,7 @@ export const Trash = (props: PropsType) => {
             {trashList.length > 0 && (
                 <>
                     <p className="mb-2 text-right text-[12px] sm:text-base font-medium text-accent">全 {total} 件</p>
-                    <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-2 sm:gap-8 2xl:grid-cols-3">
+                    <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-2 sm:gap-x-9 sm:gap-y-10 2xl:grid-cols-3">
                         {trashList.map((ranking) => (
                             <TrashCard
                                 key={ranking.id}

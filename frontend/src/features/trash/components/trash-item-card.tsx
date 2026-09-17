@@ -42,13 +42,23 @@ export function TrashItemCard(props: PropsType) {
         <div
             className={`flex items-center gap-3 rounded-2xl border bg-surface sm:gap-4 ${cardBorderClass} p-4 sm:p-6 shadow-sm`}
         >
-            <span
-                className={`flex shrink-0 items-center justify-center rounded-full font-bold shadow-sm ${rankBadgeClass} ${isTopRank ? 'mt-1 size-10 text-lg sm:size-12 sm:text-xl' : 'size-8 text-sm'}`}
-            >
-                {item.order}
-            </span>
+            {isTopRank ? (
+                <span
+                    className={`flex size-10 shrink-0 items-center justify-center rounded-full text-lg font-bold leading-none shadow-sm sm:size-12 sm:text-xl ${rankBadgeClass}`}
+                >
+                    {item.order}
+                </span>
+            ) : (
+                <span className="flex size-10 shrink-0 items-center justify-center sm:size-12">
+                    <span
+                        className={`flex size-9 items-center justify-center rounded-full text-sm font-bold leading-none shadow-sm sm:size-10 sm:text-lg ${rankBadgeClass}`}
+                    >
+                        {item.order}
+                    </span>
+                </span>
+            )}
             <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
-                <p className={`break-words font-semibold text-ink ${isTopRank ? 'text-lg sm:text-xl' : 'text-base'}`}>
+                <p className="break-words text-sm sm:text-[17px] font-semibold text-ink/90">
                     {item.itemName || <span className="text-ink-sub">項目未設定</span>}
                 </p>
                 <button

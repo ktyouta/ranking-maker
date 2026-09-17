@@ -66,7 +66,7 @@ export function TrashDetail(props: PropsType) {
         <div className="flex flex-1 flex-col">
             {isLoading && <LoadingOverlay />}
             {/* 一覧に戻る（ヘッダーのアプリタイトルと同じ左位置に揃え、常に画面上部の左に固定する） */}
-            <div className="flex w-full items-center px-4 pt-4 sm:px-6 sm:pt-6 lg:px-8">
+            <div className="flex w-full min-h-14 items-center px-4 pt-4 sm:min-h-[72px] sm:px-6 sm:pt-6 lg:px-8">
                 <button
                     type="button"
                     onClick={onBack}
@@ -88,16 +88,41 @@ export function TrashDetail(props: PropsType) {
                         <p>{errMessage}</p>
                     </div>
                 )}
-                <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 sm:gap-5">
-                        <span className="flex shrink-0 items-center justify-center text-3xl sm:text-5xl">
+                {/* sm未満/sm以上でDOM構造が異なる二重定義。片方を直す際はもう片方も直すこと */}
+                <div className="flex flex-col gap-3 sm:hidden">
+                    <div className="flex items-center gap-3">
+                        <span className="flex shrink-0 items-center justify-center text-3xl">
+                            {icon}
+                        </span>
+                        <h1 className="text-xl font-bold text-ink">
+                            {title}
+                        </h1>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1.5 text-xs text-ink-sub">
+                            <IoCalendarOutline className="size-4" />
+                            更新日 {updatedAt}
+                        </span>
+                        <button
+                            type="button"
+                            onClick={onClickMemo}
+                            className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                            aria-label="メモを見る"
+                        >
+                            <HiOutlineDocumentText className="size-6" />
+                        </button>
+                    </div>
+                </div>
+                <div className="hidden items-center justify-between gap-3 sm:flex">
+                    <div className="flex items-center gap-5">
+                        <span className="flex shrink-0 items-center justify-center text-5xl">
                             {icon}
                         </span>
                         <div>
-                            <h1 className="text-xl font-bold text-ink sm:text-3xl">
+                            <h1 className="text-3xl font-bold text-ink">
                                 {title}
                             </h1>
-                            <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1 text-xs sm:text-base text-ink-sub">
+                            <span className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1.5 text-base text-ink-sub">
                                 <IoCalendarOutline className="size-4" />
                                 更新日 {updatedAt}
                             </span>
@@ -109,7 +134,7 @@ export function TrashDetail(props: PropsType) {
                         className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
                         aria-label="メモを見る"
                     >
-                        <HiOutlineDocumentText className="size-6 sm:size-7" />
+                        <HiOutlineDocumentText className="size-7" />
                     </button>
                 </div>
                 <div className="mt-12 sm:mt-16 flex flex-1 flex-col gap-[1.8rem] md:gap-[2.8rem]">
