@@ -12,6 +12,7 @@ export class RankingOrderEntity {
     private _itemName: ItemName,
     private _order: Order,
     private _memo: ItemMemo,
+    private _deleteFlg: boolean,
   ) { }
 
   get id() {
@@ -28,5 +29,13 @@ export class RankingOrderEntity {
 
   get memo() {
     return this._memo.value;
+  }
+
+  get deleteFlg() {
+    return this._deleteFlg;
+  }
+
+  delete() {
+    this._deleteFlg = true;
   }
 }

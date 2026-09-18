@@ -38,6 +38,7 @@ export class SoftDeleteMyRankingRepository implements ISoftDeleteMyRankingReposi
         itemName: rankingOrderMaster.itemName,
         order: rankingOrderMaster.order,
         itemMemo: rankingOrderMaster.itemMemo,
+        deleteFlg: rankingOrderMaster.deleteFlg,
       })
       .from(rankingOrderMaster)
       .where(and(eq(rankingOrderMaster.deleteFlg, false), eq(rankingOrderMaster.rankingId, ranking.id)));
@@ -55,6 +56,7 @@ export class SoftDeleteMyRankingRepository implements ISoftDeleteMyRankingReposi
           new ItemName(e.itemName),
           new Order(e.order),
           new ItemMemo(e.itemMemo ?? ""),
+          e.deleteFlg
         )
       ),
       isDeleted: ranking.deleteFlg,

@@ -27,12 +27,13 @@ export class SoftDeleteMyRankingUsecase {
       return err({ type: "NOT_FOUND" });
     }
 
-    // お気に入り登録済み
-    if (ranking.isFavorite()) {
-      return err({ type: "IS_FAVORITE" });
+    // ランキング本体と項目を論理削除（お気に入り登録中の場合は delete() が拒否する）
+    const deleteResult = ranking.delete();
+
+    if (deleteResult.isErr()) {
+      return err(deleteResult.error);
     }
 
-    // ランキング本体と項目を論理削除
     await this.repository.deleteRanking(ranking);
 
     return ok(undefined);

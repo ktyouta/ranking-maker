@@ -31,6 +31,11 @@ export type ContentModerationTarget = {
   value: string;
 };
 
+/**
+ * ランキング削除時のエラー
+ */
+export type RankingDeleteError = { type: "IS_FAVORITE" };
+
 type RankingSnapshot = {
   id: string;
   title: string;
@@ -241,6 +246,7 @@ export class RankingAggregate {
           itemName: e.itemName,
           memo: e.memo,
           order: e.order,
+          deleteFlg: e.deleteFlg
         }
       }),
       deleteFlg: this._deleteFlg,
@@ -254,5 +260,29 @@ export class RankingAggregate {
    */
   isFavorite() {
     return this._isFavorite;
+  }
+
+  /**
+   * ランキング削除判定
+   * @returns 
+   */
+  isDeleted() {
+    return this._deleteFlg;
+  }
+
+  /**
+   * ランキングを削除
+   * @returns 削除成功時は ok、お気に入り登録中で削除できない場合は IS_FAVORITE
+   */
+  delete(): Result<void, RankingDeleteError> {
+    // お気に入り登録中のランキングは削除不可
+    if (this.isFavorite()) {
+      return err({ type: "IS_FAVORITE" });
+    }
+    this._deleteFlg = true;
+    this._rankingOrderEntityList.forEach((order) => {
+      order.delete();
+    })
+    return ok(undefined);
   }
 }

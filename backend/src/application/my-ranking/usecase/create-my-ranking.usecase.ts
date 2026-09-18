@@ -64,6 +64,7 @@ export class CreateMyRankingUsecase {
           new ItemName(e.itemName),
           new Order(e.order),
           new ItemMemo(e.memo),
+          false,
         )
       })
     });

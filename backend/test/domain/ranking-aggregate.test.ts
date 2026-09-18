@@ -28,9 +28,9 @@ function buildBaseParams() {
 describe("RankingAggregate", () => {
   it("項目名が未入力(null)の項目が複数あっても重複エラーにならないこと", () => {
     const items = [
-      new RankingOrderEntity(RankingOrderId.generate(), new ItemName(""), new Order(1), new ItemMemo("")),
-      new RankingOrderEntity(RankingOrderId.generate(), new ItemName(""), new Order(2), new ItemMemo("")),
-      new RankingOrderEntity(RankingOrderId.generate(), new ItemName(""), new Order(3), new ItemMemo("")),
+      new RankingOrderEntity(RankingOrderId.generate(), new ItemName(""), new Order(1), new ItemMemo(""), false),
+      new RankingOrderEntity(RankingOrderId.generate(), new ItemName(""), new Order(2), new ItemMemo(""), false),
+      new RankingOrderEntity(RankingOrderId.generate(), new ItemName(""), new Order(3), new ItemMemo(""), false),
     ];
 
     const result = RankingAggregate.create({ ...buildBaseParams(), rankingOrderEntityList: items });
@@ -40,8 +40,8 @@ describe("RankingAggregate", () => {
 
   it("項目名が入力されていて重複している場合はエラーになること", () => {
     const items = [
-      new RankingOrderEntity(RankingOrderId.generate(), new ItemName("ラーメン"), new Order(1), new ItemMemo("")),
-      new RankingOrderEntity(RankingOrderId.generate(), new ItemName("ラーメン"), new Order(2), new ItemMemo("")),
+      new RankingOrderEntity(RankingOrderId.generate(), new ItemName("ラーメン"), new Order(1), new ItemMemo(""), false),
+      new RankingOrderEntity(RankingOrderId.generate(), new ItemName("ラーメン"), new Order(2), new ItemMemo(""), false),
     ];
 
     const result = RankingAggregate.create({ ...buildBaseParams(), rankingOrderEntityList: items });
@@ -51,8 +51,8 @@ describe("RankingAggregate", () => {
 
   it("項目名が未入力(null)の項目は不適切内容チェックの対象に含めないこと", () => {
     const items = [
-      new RankingOrderEntity(RankingOrderId.generate(), new ItemName(""), new Order(1), new ItemMemo("")),
-      new RankingOrderEntity(RankingOrderId.generate(), new ItemName("ラーメン"), new Order(2), new ItemMemo("")),
+      new RankingOrderEntity(RankingOrderId.generate(), new ItemName(""), new Order(1), new ItemMemo(""), false),
+      new RankingOrderEntity(RankingOrderId.generate(), new ItemName("ラーメン"), new Order(2), new ItemMemo(""), false),
     ];
 
     const result = RankingAggregate.create({ ...buildBaseParams(), rankingOrderEntityList: items });
