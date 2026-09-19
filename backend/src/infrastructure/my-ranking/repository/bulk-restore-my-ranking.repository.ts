@@ -1,16 +1,16 @@
 import { and, eq, inArray } from "drizzle-orm";
-import { IBulkSoftDeleteMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle } from "../../../domain";
+import { IBulkRestoreMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle } from "../../../domain";
 import { UserId } from "../../../domain/user";
 import { rankingMaster, rankingOrderMaster, type Database } from "../../db";
 
 /**
- * ランキング一括削除リポジトリ実装
+ * ランキング一括復元リポジトリ実装
  */
-export class BulkSoftDeleteMyRankingRepository implements IBulkSoftDeleteMyRankingRepository {
+export class BulkRestoreMyRankingRepository implements IBulkRestoreMyRankingRepository {
   constructor(private readonly db: Database) { }
 
   /**
-   * ランキングマスタ取得（所有権フィルタ済み・生存行のみ）
+   * ランキングマスタ取得（所有権フィルタ済み・削除済み行のみ）
    */
   async findRankings(userId: UserId, rankingIds: RankingId[]): Promise<RankingAggregate[]> {
     const rankingResult = await this.db
@@ -25,7 +25,7 @@ export class BulkSoftDeleteMyRankingRepository implements IBulkSoftDeleteMyRanki
         isFavorite: rankingMaster.isFavorite,
       })
       .from(rankingMaster)
-      .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.userId, userId.value), inArray(rankingMaster.id, rankingIds.map((e) => e.value))));
+      .where(and(eq(rankingMaster.deleteFlg, true), eq(rankingMaster.userId, userId.value), inArray(rankingMaster.id, rankingIds.map((e) => e.value))));
 
     const orderResult = await this.db
       .select({
@@ -37,7 +37,7 @@ export class BulkSoftDeleteMyRankingRepository implements IBulkSoftDeleteMyRanki
         deleteFlg: rankingOrderMaster.deleteFlg,
       })
       .from(rankingOrderMaster)
-      .where(and(eq(rankingOrderMaster.deleteFlg, false), inArray(rankingOrderMaster.rankingId, rankingIds.map((e) => e.value))));
+      .where(and(eq(rankingOrderMaster.deleteFlg, true), inArray(rankingOrderMaster.rankingId, rankingIds.map((e) => e.value))));
 
     return rankingResult.map((ranking) => {
       const rankingOrder = orderResult.filter((order) => order.rankingId === ranking.id);
@@ -64,23 +64,23 @@ export class BulkSoftDeleteMyRankingRepository implements IBulkSoftDeleteMyRanki
   }
 
   /**
-   * ランキング一括削除（論理削除）
-   * ランキング本体と紐づく項目を同時に削除する
-   * @param rankings 削除対象のランキング一覧（呼び出し元で所有権フィルタ済み・delete() 実行済みであること）
+   * ランキング一括復元（論理削除の取り消し）
+   * ランキング本体と紐づく項目を同時に復元する
+   * @param restorableRankings 復元対象のランキング一覧（呼び出し元で所有権フィルタ済み・restore() 実行済みであること）
    */
-  async deleteRankings(rankings: RankingAggregate[]): Promise<void> {
+  async restoreRankings(restorableRankings: RankingAggregate[]): Promise<void> {
     const now = new Date().toISOString();
-    const ids = rankings.map((ranking) => ranking.id);
+    const ids = restorableRankings.map((ranking) => ranking.id);
 
     await this.db.batch([
       this.db
         .update(rankingMaster)
-        .set({ deleteFlg: true, updatedAt: now })
-        .where(and(eq(rankingMaster.deleteFlg, false), inArray(rankingMaster.id, ids))),
+        .set({ deleteFlg: false, updatedAt: now })
+        .where(and(eq(rankingMaster.deleteFlg, true), inArray(rankingMaster.id, ids))),
       this.db
         .update(rankingOrderMaster)
-        .set({ deleteFlg: true, updatedAt: now })
-        .where(and(eq(rankingOrderMaster.deleteFlg, false), inArray(rankingOrderMaster.rankingId, ids))),
+        .set({ deleteFlg: false, updatedAt: now })
+        .where(and(eq(rankingOrderMaster.deleteFlg, true), inArray(rankingOrderMaster.rankingId, ids))),
     ]);
   }
 }

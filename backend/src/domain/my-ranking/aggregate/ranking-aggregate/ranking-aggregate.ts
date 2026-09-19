@@ -195,12 +195,16 @@ export class RankingAggregate {
 
   /**
    * ランキング復元
+   * 配下の項目もあわせて復元する
    */
   restore() {
     if (!this._deleteFlg) {
       throw new Error(`削除されていないランキングです。`);
     }
     this._deleteFlg = false;
+    this._rankingOrderEntityList.forEach((order) => {
+      order.restore();
+    });
   }
 
   /**

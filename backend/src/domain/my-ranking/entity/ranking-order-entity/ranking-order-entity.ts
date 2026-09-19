@@ -38,4 +38,8 @@ export class RankingOrderEntity {
   delete() {
     this._deleteFlg = true;
   }
+
+  restore() {
+    this._deleteFlg = false;
+  }
 }

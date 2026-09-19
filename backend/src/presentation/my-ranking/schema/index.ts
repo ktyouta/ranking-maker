@@ -1,3 +1,4 @@
+export * from "./bulk-restore-my-ranking.schema";
 export * from "./bulk-soft-delete-my-ranking.schema";
 export * from "./create-my-ranking.schema";
 export * from "./get-list-my-ranking.schema";

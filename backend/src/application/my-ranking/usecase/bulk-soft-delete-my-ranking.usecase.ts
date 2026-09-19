@@ -29,7 +29,7 @@ export class BulkSoftDeleteMyRankingUsecase {
 
     // 削除を実行し、実際に削除できたものだけを残す（お気に入りは delete() 内で除外される）
     const deletableRankings = rankings.filter((ranking) => ranking.delete().isOk());
-    await this.repository.deleteRankings(rankings);
+    await this.repository.deleteRankings(deletableRankings);
 
     const skippedCount = rankings.length - deletableRankings.length;
 
