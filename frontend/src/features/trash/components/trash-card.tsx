@@ -1,3 +1,4 @@
+import { Checkbox } from '@/components';
 import { HiArrowRight, HiOutlineClock, HiOutlineListBullet } from 'react-icons/hi2';
 
 type PropsType = {
@@ -7,6 +8,9 @@ type PropsType = {
     itemCount: number;
     updatedAt: string;
     onSelect: (id: string) => void;
+    isSelectionMode?: boolean;
+    isSelected?: boolean;
+    onToggleSelect?: (id: string) => void;
 };
 
 /**
@@ -14,13 +18,27 @@ type PropsType = {
  */
 export const TrashCard = (props: PropsType) => {
 
-    const { id, title, icon, itemCount, updatedAt, onSelect } = props;
+    const {
+        id, title, icon, itemCount, updatedAt, onSelect,
+        isSelectionMode = false, isSelected = false, onToggleSelect,
+    } = props;
 
     return (
         <div
             onClick={() => onSelect(id)}
-            className="flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-accent/35 bg-surface shadow-sm sm:shadow-md hover:-translate-y-0.5 hover:shadow-lg sm:border-2 sm:border-accent/[40%]"
+            className="relative isolate flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-accent/35 bg-surface shadow-sm sm:shadow-md sm:hover:-translate-y-0.5 sm:hover:shadow-lg sm:border-2 sm:border-accent/[40%]"
         >
+            {isSelectionMode && (
+                <div className="absolute left-3 sm:left-4 top-2 sm:top-3 z-10 flex size-9 items-center justify-center">
+                    <Checkbox
+                        checked={isSelected}
+                        onChange={() => onToggleSelect?.(id)}
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label={isSelected ? '選択を解除する' : '選択する'}
+                        size="large"
+                    />
+                </div>
+            )}
             <div className="flex items-stretch gap-5 px-5 py-5 sm:gap-7 sm:px-6 sm:py-6">
                 <div className="flex w-[70px] shrink-0 items-center justify-center overflow-hidden rounded-lg bg-accent-surface/15 text-5xl sm:w-[90px] sm:text-6xl">
                     {icon}

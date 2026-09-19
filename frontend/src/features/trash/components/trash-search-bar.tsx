@@ -9,6 +9,8 @@ type PropsType = {
     onSearch: () => void;
     onClear: () => void;
     handleKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+    isSelectionMode: boolean;
+    onToggleSelectionMode: () => void;
 };
 
 const DATE_PICKER_CLASS = 'border-2 border-accent/70 rounded-full focus:ring-accent';
@@ -18,7 +20,7 @@ const DATE_PICKER_CLASS = 'border-2 border-accent/70 rounded-full focus:ring-acc
  */
 export const TrashSearchBar = (props: PropsType) => {
 
-    const { searchCondition, onChange, onSearch, onClear, handleKeyPress } = props;
+    const { searchCondition, onChange, onSearch, onClear, handleKeyPress, isSelectionMode, onToggleSelectionMode } = props;
 
     // 詳細フィルター開閉フラグ
     const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -43,14 +45,29 @@ export const TrashSearchBar = (props: PropsType) => {
                     />
                 </div>
                 <div className="flex flex-wrap items-center justify-start sm:justify-end gap-2">
+                    {/* sm未満: アイコンのみ（4つのボタンが1行に収まりきらないため、意味の推測がしやすい詳細フィルターのみアイコン化する） */}
+                    <button
+                        type="button"
+                        onClick={() => setIsDetailOpen(!isDetailOpen)}
+                        aria-label="詳細フィルター"
+                        className="relative flex size-10 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-surface text-accent hover:bg-accent/10 sm:hidden"
+                    >
+                        <IoOptionsOutline className="size-4" />
+                        {activeCount > 0 && (
+                            <span className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-accent-surface text-[11px] font-bold text-white shadow-sm">
+                                {activeCount}
+                            </span>
+                        )}
+                    </button>
+                    {/* sm以上: テキスト付きボタン */}
                     <Button
                         colorType="accent"
                         sizeType="large"
                         onClick={() => setIsDetailOpen(!isDetailOpen)}
-                        className="relative flex h-10 items-center gap-1.5 whitespace-nowrap rounded-full border border-accent/40 bg-surface text-sm text-accent hover:bg-accent/10 sm:h-12 sm:text-base"
+                        className="relative hidden h-10 items-center gap-1.5 whitespace-nowrap font-semibold rounded-full border border-accent/40 bg-surface text-sm text-accent hover:bg-accent/10 sm:flex sm:h-12 sm:text-base"
                     >
                         <IoOptionsOutline className="size-4" />
-                        詳細フィルター
+                        絞り込み
                         {isDetailOpen ? <IoChevronUp className="size-4" /> : <IoChevronDown className="size-4" />}
                         {activeCount > 0 && (
                             <span className="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-accent-surface text-[11px] font-bold text-white shadow-sm">
@@ -75,6 +92,16 @@ export const TrashSearchBar = (props: PropsType) => {
                     >
                         検索
                     </Button>
+                    {!isSelectionMode && (
+                        <Button
+                            colorType="accent"
+                            sizeType="large"
+                            onClick={onToggleSelectionMode}
+                            className="h-10 items-center gap-1.5 whitespace-nowrap rounded-full border border-accent/40 bg-white text-sm font-semibold text-accent shadow-sm hover:bg-accent/10 flex lg:h-12 lg:px-9 lg:text-base"
+                        >
+                            一括選択
+                        </Button>
+                    )}
                 </div>
             </div>
             {isDetailOpen && (

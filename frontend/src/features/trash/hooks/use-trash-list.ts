@@ -2,10 +2,15 @@ import { useIcons } from "@/app/api/get-icons";
 import { paths } from "@/config/paths";
 import { useAppNavigation } from "@/hooks/use-app-navigation";
 import { useDelayedFlag } from "@/hooks/use-delayed-flag";
+import { useSwitch } from "@/hooks/use-switch";
 import { useTransitionSearchParams } from "@/hooks/use-transition-search-params";
 import { formatDaysAgo } from "@/utils/date-util";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
+import { toast } from "react-toastify";
+import { useBulkRestoreTrashMutation } from "../api/bulk-restore-trash";
 import { useTrashList } from "../api/get-trash-list";
+import { trashKeys } from "../api/query-key";
 import { TRASH_QUERY_KEY } from "../constants/trash-query-params";
 import { initialTrashSearchFilter, TrashSearchFilter } from "../types/trash-search-filter";
 
@@ -38,6 +43,7 @@ export function useTrashListScreen() {
     const icons = iconsQuery.data.data;
     // オーバーレイ表示フラグ
     const isShowOverlay = useDelayedFlag(isPending, 250);
+    const queryClient = useQueryClient();
 
     // 画面表示用に整形したゴミ箱一覧
     const trashList = useMemo(() => {
@@ -50,12 +56,106 @@ export function useTrashListScreen() {
         }));
     }, [trashListQuery.data, icons]);
 
+    // 選択モードのON/OFF
+    const [isSelectionMode, setIsSelectionMode] = useState(false);
+    // 選択中のランキングID（ページ送りしても保持する）
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
     /**
-     * ゴミ箱詳細画面へ遷移
+     * 選択モードの切り替え（OFFにする際は選択状態もクリアする）
+     */
+    const toggleSelectionMode = useCallback(() => {
+        setIsSelectionMode((prev) => {
+            if (prev) {
+                setSelectedIds([]);
+            }
+            return !prev;
+        });
+    }, []);
+
+    /**
+     * 1件の選択トグル
+     */
+    const toggleSelect = useCallback((id: string) => {
+        setSelectedIds((prev) =>
+            prev.includes(id) ? prev.filter((selectedId) => selectedId !== id) : [...prev, id]
+        );
+    }, []);
+
+    /**
+     * 指定idの選択状態をまとめて設定する
+     */
+    const setSelectedForIds = useCallback((ids: string[], selected: boolean) => {
+        setSelectedIds((prev) => {
+            if (selected) {
+                return Array.from(new Set([...prev, ...ids]));
+            }
+            return prev.filter((id) => !ids.includes(id));
+        });
+    }, []);
+
+    // 現在ページの行がすべて選択済みか（チェックボックスの表示状態に使用）
+    const isAllSelectedOnPage = trashList.length > 0
+        && trashList.every((ranking) => selectedIds.includes(ranking.id));
+
+    /**
+     * 現在ページの行の全選択・全解除を切り替える
+     */
+    const toggleSelectAllOnPage = useCallback(() => {
+        setSelectedForIds(trashList.map((ranking) => ranking.id), !isAllSelectedOnPage);
+    }, [setSelectedForIds, trashList, isAllSelectedOnPage]);
+
+    // 選択中IDの集合（一覧描画時の選択判定に使用）
+    const selectedIdSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+
+    // 一括復元確認ダイアログの開閉
+    const bulkRestoreDialog = useSwitch();
+
+    // 一括復元
+    const bulkRestoreMutation = useBulkRestoreTrashMutation({
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: trashKeys.lists() });
+            setSelectedIds([]);
+            setIsSelectionMode(false);
+            toast.success(data.message);
+        },
+        onError: (message) => {
+            toast.error(message);
+        },
+    });
+
+    /**
+     * 一括復元ボタン押下イベント（確認ダイアログを開く）
+     */
+    const clickBulkRestore = useCallback(() => {
+        bulkRestoreDialog.on();
+    }, [bulkRestoreDialog]);
+
+    /**
+     * 一括復元確認ダイアログを閉じる
+     */
+    const cancelBulkRestore = useCallback(() => {
+        bulkRestoreDialog.off();
+    }, [bulkRestoreDialog]);
+
+    /**
+     * 一括復元実行
+     */
+    const confirmBulkRestore = useCallback(() => {
+        bulkRestoreDialog.off();
+        bulkRestoreMutation.mutate(selectedIds);
+    }, [bulkRestoreDialog, bulkRestoreMutation, selectedIds]);
+
+    /**
+     * ゴミ箱カードクリック（選択モード中は選択トグル、それ以外は詳細画面へ遷移）
      */
     const selectTrash = useCallback((id: string) => {
+        if (isSelectionMode) {
+            toggleSelect(id);
+            return;
+        }
         appNavigate(paths.trashDetail.getHref(id));
-    }, [appNavigate]);
+    }, [isSelectionMode, toggleSelect, appNavigate]);
 
     /**
      * 検索条件クリア
@@ -123,5 +223,17 @@ export function useTrashListScreen() {
         handleKeyPress,
         changePage,
         isShowOverlay,
+        isSelectionMode,
+        selectedIdSet,
+        selectedCount: selectedIds.length,
+        onToggleSelectionMode: toggleSelectionMode,
+        onToggleSelect: toggleSelect,
+        isAllSelectedOnPage,
+        onToggleSelectAllOnPage: toggleSelectAllOnPage,
+        isBulkRestoreDialogOpen: bulkRestoreDialog.flag,
+        onClickBulkRestore: clickBulkRestore,
+        onCancelBulkRestore: cancelBulkRestore,
+        onConfirmBulkRestore: confirmBulkRestore,
+        isBulkRestoring: bulkRestoreMutation.isPending,
     };
 }
