@@ -41,10 +41,12 @@ export function Dialog({
     );
 
     useEffect(() => {
-        if (isOpen) {
-            document.addEventListener("keydown", handleKeyDown);
-            document.body.style.overflow = "hidden";
+        if (!isOpen) {
+            return;
         }
+
+        document.addEventListener("keydown", handleKeyDown);
+        document.body.style.overflow = "hidden";
 
         return () => {
             document.removeEventListener("keydown", handleKeyDown);

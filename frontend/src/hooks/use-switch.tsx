@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 export function useSwitch() {
 
@@ -6,14 +6,14 @@ export function useSwitch() {
     const [flag, setFlag] = useState(false);
 
     //フラグオン
-    function on() {
+    const on = useCallback(() => {
         setFlag(true);
-    }
+    }, []);
 
     //フラグオフ
-    function off() {
+    const off = useCallback(() => {
         setFlag(false);
-    }
+    }, []);
 
-    return { flag, on, off }
+    return useMemo(() => ({ flag, on, off }), [flag, on, off]);
 }
