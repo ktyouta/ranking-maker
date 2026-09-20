@@ -99,30 +99,30 @@ export function ItemRow(props: PropsType) {
                 <div className="flex flex-col gap-1 opacity-40 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
                     <button
                         type="button"
-                        className="rounded p-1 text-ink-sub hover:bg-canvas disabled:opacity-30"
+                        className="rounded py-1 text-ink-sub hover:bg-canvas disabled:opacity-30"
                         aria-label="1つ上に移動"
                         disabled={isFirst}
                         onClick={() => moveItemUp(index)}
                     >
-                        <HiOutlineChevronUp className="h-5 w-5" />
+                        <HiOutlineChevronUp className="h-5 w-5 sm:h-6 sm:w-6" />
                     </button>
                     <button
                         type="button"
-                        className="rounded p-1 text-ink-sub hover:bg-canvas disabled:opacity-30"
+                        className="rounded py-1 text-ink-sub hover:bg-canvas disabled:opacity-30"
                         aria-label="1つ下に移動"
                         disabled={isLast}
                         onClick={() => moveItemDown(index)}
                     >
-                        <HiOutlineChevronDown className="h-5 w-5" />
+                        <HiOutlineChevronDown className="h-5 w-5 sm:h-6 sm:w-6" />
                     </button>
                     <button
                         type="button"
-                        className="rounded p-1 text-ink-sub hover:bg-canvas disabled:opacity-30"
+                        className="mt-5 rounded py-1 text-ink-sub hover:bg-canvas disabled:opacity-30"
                         aria-label="この項目を削除"
                         disabled={!canRemove}
                         onClick={() => removeItem(index)}
                     >
-                        <HiOutlineTrash className="h-5 w-5" />
+                        <HiOutlineTrash className="h-5 w-5 sm:h-6 sm:w-6" />
                     </button>
                 </div>
             </div>
