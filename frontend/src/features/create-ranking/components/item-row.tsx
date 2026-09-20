@@ -61,7 +61,7 @@ export function ItemRow(props: PropsType) {
             style={style}
             className="group animate-fade-in rounded-xl border-2 border-accent/30 bg-surface p-5 shadow-sm"
         >
-            <div className="flex items-start gap-3">
+            <div className="flex items-stretch gap-3">
                 <div className="flex-1">
                     <div className="flex items-start gap-3">
                         <button
@@ -92,9 +92,6 @@ export function ItemRow(props: PropsType) {
                         placeholder="メモ（任意）"
                         registration={register(`items.${index}.memo`)}
                     />
-                    {errors.items?.[index]?.memo?.message && (
-                        <p className="mt-2 text-base text-red-500">{errors.items[index]?.memo?.message}</p>
-                    )}
                 </div>
                 <div className="flex flex-col gap-1 opacity-40 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
                     <button
@@ -117,7 +114,7 @@ export function ItemRow(props: PropsType) {
                     </button>
                     <button
                         type="button"
-                        className="mt-5 rounded py-1 text-ink-sub hover:bg-canvas disabled:opacity-30"
+                        className="mt-auto rounded py-1 text-ink-sub hover:bg-canvas disabled:opacity-30"
                         aria-label="この項目を削除"
                         disabled={!canRemove}
                         onClick={() => removeItem(index)}
@@ -126,6 +123,9 @@ export function ItemRow(props: PropsType) {
                     </button>
                 </div>
             </div>
+            {errors.items?.[index]?.memo?.message && (
+                <p className="mt-2 text-base text-red-500">{errors.items[index]?.memo?.message}</p>
+            )}
         </div>
     );
 }
