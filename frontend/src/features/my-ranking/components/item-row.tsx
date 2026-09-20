@@ -88,7 +88,7 @@ export function ItemRow(props: PropsType) {
                         </div>
                     </div>
                     <Textarea
-                        className="mt-3 w-full rounded-lg border border-line bg-canvas/60 px-3 py-2 text-base text-ink-sub focus:border-accent focus:bg-canvas focus:ring-0"
+                        className="mt-3 block w-full rounded-lg border border-line bg-canvas/60 px-3 py-2 text-base text-ink-sub focus:border-accent focus:bg-canvas focus:ring-0"
                         placeholder="メモ（任意）"
                         registration={register(`items.${index}.memo`)}
                     />
