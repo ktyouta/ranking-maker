@@ -52,14 +52,18 @@ export function Dashboard(props: PropsType) {
                 style={{ paddingTop: 'max(env(safe-area-inset-top), 1.5rem)' }}
             >
                 {/* 開閉ボタン */}
-                <button
-                    type="button"
-                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className={`flex h-16 shrink-0 items-center text-white/80 hover:text-white ${isSidebarOpen ? 'justify-end px-6' : 'justify-center'} mb-[45px]`}
-                    aria-label={isSidebarOpen ? 'サイドバーを閉じる' : 'サイドバーを開く'}
+                <div
+                    className={`flex h-16 shrink-0 items-center text-white/80 ${isSidebarOpen ? 'justify-end px-4' : 'justify-center'} mb-[45px]`}
                 >
-                    <HiBars3 className="h-6 w-6" />
-                </button>
+                    <button
+                        type="button"
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                        className="p-2 transition-colors hover:text-white"
+                        aria-label={isSidebarOpen ? 'サイドバーを閉じる' : 'サイドバーを開く'}
+                    >
+                        <HiBars3 className="h-6 w-6" />
+                    </button>
+                </div>
 
                 {/* メニューリスト */}
                 <div className="flex-1 overflow-y-auto pb-3">
