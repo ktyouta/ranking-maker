@@ -1,6 +1,7 @@
 import { paths } from "@/config/paths";
 import { registerResetLogin } from "@/stores/access-token-store";
 import { createCtx } from "@/utils/create-ctx";
+import { useQueryClient } from "@tanstack/react-query";
 import { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginUserType } from "../api/verify";
@@ -22,6 +23,8 @@ export function LoginUserProvider(props: PropsType) {
     const [loginUser, setLoginUser] = useState<LoginUserType | null>(props.loginUser);
     // ルーティング用
     const navigate = useNavigate();
+    // QueryClientインスタンス
+    const queryClient = useQueryClient();
     // テーマ状態(setter)
     const setTheme = SetThemeContext.useCtx();
 
@@ -34,9 +37,11 @@ export function LoginUserProvider(props: PropsType) {
 
     /**
      * ユーザー情報をリセット
+     * 別ユーザーのログイン時に前ユーザーのキャッシュが表示されないよう、全キャッシュをクリアする
      */
     function resetUser() {
         setLoginUser(null);
+        queryClient.clear();
     }
 
     // ログインリセット処理を登録
