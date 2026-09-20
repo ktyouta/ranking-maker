@@ -79,10 +79,18 @@ export class UserPassword {
   }
 
   /**
-   * パスワードの一致チェック
+   * パスワードの一致チェック（タイミング攻撃対策済み）
    * @param other 比較対象
    */
   equals(other: UserPassword): boolean {
-    return this._value === other.value;
+    const encoder = new TextEncoder();
+    const encodedThis = encoder.encode(this._value);
+    const encodedOther = encoder.encode(other.value);
+
+    if (encodedThis.length !== encodedOther.length) {
+      return false;
+    }
+
+    return crypto.subtle.timingSafeEqual(encodedThis, encodedOther);
   }
 }
