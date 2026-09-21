@@ -1,4 +1,5 @@
 import { UserId } from "../../user";
+import { TrashRankingSort } from "../value-object";
 
 export type TrashMyRankingListType = {
   id: string;
@@ -21,6 +22,7 @@ export type TrashMyRankingQueryType = {
   createdAtTo?: string;
   updatedAtFrom?: string;
   updatedAtTo?: string;
+  sort: TrashRankingSort;
   page: number;
 };
 

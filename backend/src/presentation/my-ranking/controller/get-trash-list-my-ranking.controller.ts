@@ -2,7 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { GetTrashListMyRankingUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { UserId } from "../../../domain";
+import { TrashRankingSort, UserId } from "../../../domain";
 import { GetTrashListMyRankingRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import type { AppEnv } from "../../../types";
@@ -27,7 +27,8 @@ const getTrashListMyRanking = new Hono<AppEnv>().get(API_ENDPOINT.MY_RANKING_TRA
       return c.json({ message: "認証エラー" }, HTTP_STATUS.UNAUTHORIZED);
     }
     const userId = UserId.of(user.userId.value);
-    const query = c.req.valid("query");
+    const { sort, ...condition } = c.req.valid("query");
+    const query = { ...condition, sort: new TrashRankingSort(sort) };
     const usecase = new GetTrashListMyRankingUsecase(repository);
 
     const { list, total } = await usecase.execute(userId, query);

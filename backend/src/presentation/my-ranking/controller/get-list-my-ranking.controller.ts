@@ -2,7 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { GetListMyRankingUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { UserId } from "../../../domain";
+import { RankingSort, UserId } from "../../../domain";
 import { GetListMyRankingRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import type { AppEnv } from "../../../types";
@@ -27,7 +27,8 @@ const getListMyRanking = new Hono<AppEnv>().get(API_ENDPOINT.MY_RANKING,
       return c.json({ message: "認証エラー" }, HTTP_STATUS.UNAUTHORIZED);
     }
     const userId = UserId.of(user.userId.value);
-    const query = c.req.valid("query");
+    const { sort, ...condition } = c.req.valid("query");
+    const query = { ...condition, sort: new RankingSort(sort) };
     const usecase = new GetListMyRankingUsecase(repository);
 
     const { list, total } = await usecase.execute(userId, query);

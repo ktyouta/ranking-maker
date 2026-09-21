@@ -5,4 +5,6 @@ export * from "./public-status";
 export * from "./ranking-icon";
 export * from "./ranking-memo";
 export * from "./ranking-order-id";
+export * from "./ranking-sort";
 export * from "./ranking-title";
+export * from "./trash-ranking-sort";

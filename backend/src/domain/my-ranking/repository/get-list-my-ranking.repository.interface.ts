@@ -1,4 +1,5 @@
 import { UserId } from "../../user";
+import { RankingSort } from "../value-object";
 
 export type MyRankingListType = {
   id: string;
@@ -23,6 +24,7 @@ export type MyRankingQueryType = {
   updatedAtFrom?: string;
   updatedAtTo?: string;
   favoriteOnly?: boolean;
+  sort: RankingSort;
   page: number;
 };
 

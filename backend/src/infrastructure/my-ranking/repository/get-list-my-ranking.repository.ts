@@ -1,5 +1,5 @@
-import { and, count, desc, eq, exists, gte, like, lte, or } from "drizzle-orm";
-import { IGetListMyRankingRepository, MyRankingListType, MyRankingQueryType } from "../../../domain";
+import { and, asc, count, desc, eq, exists, gte, like, lte, or, type SQL } from "drizzle-orm";
+import { IGetListMyRankingRepository, MyRankingListType, MyRankingQueryType, RankingSort, RankingSortType } from "../../../domain";
 import { UserId } from "../../../domain/user";
 import type { Database } from "../../db";
 import { publicStatusMaster, rankingMaster, rankingOrderMaster, userMaster } from "../../db";
@@ -40,7 +40,7 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
       .leftJoin(rankingOrderMaster, and(eq(rankingOrderMaster.rankingId, rankingMaster.id), eq(rankingOrderMaster.deleteFlg, false)))
       .where(and(...conditions))
       .groupBy(rankingMaster.id, userMaster.name, publicStatusMaster.name)
-      .orderBy(desc(rankingMaster.updatedAt))
+      .orderBy(...this.buildOrderBy(query.sort))
       .limit(GetListMyRankingRepository.LIMIT)
       .offset((query.page - 1) * GetListMyRankingRepository.LIMIT);
   }
@@ -58,6 +58,22 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
       .where(and(...conditions));
 
     return total;
+  }
+
+  /**
+   * 並び順をDrizzleの式に変換（同値の行のページ境界が安定するよう、最後に必ず id を含める）
+   */
+  private buildOrderBy(sort: RankingSort): SQL[] {
+    const orderBy: Record<RankingSortType, SQL[]> = {
+      updatedAtDesc: [desc(rankingMaster.updatedAt), desc(rankingMaster.id)],
+      updatedAtAsc: [asc(rankingMaster.updatedAt), asc(rankingMaster.id)],
+      createdAtDesc: [desc(rankingMaster.createdAt), desc(rankingMaster.id)],
+      createdAtAsc: [asc(rankingMaster.createdAt), asc(rankingMaster.id)],
+      itemCountDesc: [desc(count(rankingOrderMaster.id)), desc(rankingMaster.updatedAt), desc(rankingMaster.id)],
+      itemCountAsc: [asc(count(rankingOrderMaster.id)), desc(rankingMaster.updatedAt), desc(rankingMaster.id)],
+      favoriteDesc: [desc(rankingMaster.isFavorite), desc(rankingMaster.updatedAt), desc(rankingMaster.id)],
+    };
+    return orderBy[sort.value];
   }
 
   private buildConditions(userId: UserId, query: MyRankingQueryType) {

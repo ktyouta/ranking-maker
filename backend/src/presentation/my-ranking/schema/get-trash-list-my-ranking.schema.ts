@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TrashRankingSort } from "../../../domain";
 
 /**
  * ゴミ箱のランキング一覧取得クエリパラメータスキーマ
@@ -12,6 +13,8 @@ export const GetTrashListMyRankingQuerySchema = z.object({
   createdAtTo: z.string().optional(),
   updatedAtFrom: z.string().optional(),
   updatedAtTo: z.string().optional(),
+  // 許容値は TrashRankingSort 値オブジェクト（TrashRankingSort.VALUES）を単一権威とする
+  sort: z.enum(TrashRankingSort.VALUES).default(TrashRankingSort.DEFAULT),
   page: z.preprocess(
     (v) => (v === "" ? undefined : v),
     z.coerce.number().int().positive().default(1)
