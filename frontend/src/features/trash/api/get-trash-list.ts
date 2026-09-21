@@ -27,6 +27,7 @@ export function useTrashList({ searchParams }: PropsType) {
           createdAtTo: searchParams.get(TRASH_QUERY_KEY.CREATED_AT_TO) || undefined,
           updatedAtFrom: searchParams.get(TRASH_QUERY_KEY.UPDATED_AT_FROM) || undefined,
           updatedAtTo: searchParams.get(TRASH_QUERY_KEY.UPDATED_AT_TO) || undefined,
+          sort: searchParams.get(TRASH_QUERY_KEY.SORT) || undefined,
           page: searchParams.get(TRASH_QUERY_KEY.PAGE) || undefined,
         },
       });

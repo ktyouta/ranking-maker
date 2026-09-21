@@ -1,5 +1,6 @@
 import { Dialog, LoadingOverlay, Pagination, ScrollToTopButton } from '@/components';
 import { IoTrophyOutline } from 'react-icons/io5';
+import { MyRankingSortType } from '../constants/my-ranking-sort-options';
 import { MyRankingSearchFilter } from '../types/my-ranking-search-filter';
 import { BulkActionBar } from './bulk-action-bar';
 import { MyRankingSearchBar } from './my-ranking-search-bar';
@@ -27,6 +28,8 @@ type PropsType = {
     clickSearch: () => void;
     handleKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
     changePage: (page: number) => void;
+    sort: MyRankingSortType;
+    onChangeSort: (sort: MyRankingSortType) => void;
     isShowOverlay: boolean;
     isSelectionMode: boolean;
     selectedIdSet: Set<string>;
@@ -59,6 +62,8 @@ export const MyRanking = (props: PropsType) => {
         clickSearch,
         handleKeyPress,
         changePage,
+        sort,
+        onChangeSort,
         isShowOverlay,
         isSelectionMode,
         selectedIdSet,
@@ -85,6 +90,8 @@ export const MyRanking = (props: PropsType) => {
                 onSearch={clickSearch}
                 onClear={clearSearchCondition}
                 handleKeyPress={handleKeyPress}
+                sort={sort}
+                onChangeSort={onChangeSort}
                 isSelectionMode={isSelectionMode}
                 onToggleSelectionMode={onToggleSelectionMode}
             />

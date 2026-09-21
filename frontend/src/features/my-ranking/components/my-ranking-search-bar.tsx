@@ -1,6 +1,7 @@
 import { Button, DatePicker, Textbox } from '@/components';
 import { useState } from 'react';
-import { IoChevronDown, IoChevronUp, IoOptionsOutline, IoSearchOutline, IoStar, IoStarOutline } from 'react-icons/io5';
+import { IoChevronDown, IoChevronUp, IoOptionsOutline, IoSearchOutline, IoStar, IoStarOutline, IoSwapVerticalOutline } from 'react-icons/io5';
+import { DEFAULT_MY_RANKING_SORT, MY_RANKING_SORT_OPTIONS, MyRankingSortType } from '../constants/my-ranking-sort-options';
 import { MyRankingSearchFilter } from '../types/my-ranking-search-filter';
 
 type PropsType = {
@@ -9,6 +10,8 @@ type PropsType = {
     onSearch: () => void;
     onClear: () => void;
     handleKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+    sort: MyRankingSortType;
+    onChangeSort: (sort: MyRankingSortType) => void;
     isSelectionMode: boolean;
     onToggleSelectionMode: () => void;
 };
@@ -16,21 +19,25 @@ type PropsType = {
 const DATE_PICKER_CLASS = 'border-2 border-accent/70 rounded-full focus:ring-accent';
 
 /**
- * ランキング一覧の検索バー（キーワード検索＋登録日・更新日の詳細フィルター）
+ * ランキング一覧の検索バー（キーワード検索＋登録日・更新日の詳細フィルター＋並び替え）
  */
 export const MyRankingSearchBar = (props: PropsType) => {
 
-    const { searchCondition, onChange, onSearch, onClear, handleKeyPress, isSelectionMode, onToggleSelectionMode } = props;
+    const { searchCondition, onChange, onSearch, onClear, handleKeyPress, sort, onChangeSort, isSelectionMode, onToggleSelectionMode } = props;
 
     // 詳細フィルター開閉フラグ
     const [isDetailOpen, setIsDetailOpen] = useState(false);
+    // 並び替えパネル開閉フラグ
+    const [isSortOpen, setIsSortOpen] = useState(false);
 
     const activeCount = [
         searchCondition.createdAtFrom !== null || searchCondition.createdAtTo !== null,
         searchCondition.updatedAtFrom !== null || searchCondition.updatedAtTo !== null,
         searchCondition.favoriteOnly,
     ].filter(Boolean).length;
-    const isEmpty = searchCondition.keyword === '' && activeCount === 0;
+    // 既定以外の並び順が選ばれているか
+    const isSortChanged = sort !== DEFAULT_MY_RANKING_SORT;
+    const isEmpty = searchCondition.keyword === '' && activeCount === 0 && !isSortChanged;
 
     return (
         <div className="mb-3 pb-4 sm:mb-6">
@@ -46,11 +53,35 @@ export const MyRankingSearchBar = (props: PropsType) => {
                     />
                 </div>
                 <div className="flex flex-wrap items-center justify-start sm:justify-end gap-2">
-                    {/* sm未満: アイコンのみ（4つのボタンが1行に収まりきらないため、意味の推測がしやすい詳細フィルターのみアイコン化する） */}
+                    <button
+                        type="button"
+                        onClick={() => setIsSortOpen(!isSortOpen)}
+                        aria-label="並び替え"
+                        className="relative flex size-10 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-surface text-accent hover:bg-accent/10 sm:hidden"
+                    >
+                        <IoSwapVerticalOutline className="size-4" />
+                        {isSortChanged && (
+                            <span className="absolute -right-1 -top-1 size-3 rounded-full bg-accent-surface shadow-sm" />
+                        )}
+                    </button>
+                    <Button
+                        colorType="accent"
+                        sizeType="large"
+                        onClick={() => setIsSortOpen(!isSortOpen)}
+                        className="relative hidden h-10 items-center gap-1.5 whitespace-nowrap font-semibold rounded-full border border-accent/40 bg-surface text-sm text-accent hover:bg-accent/10 sm:flex sm:h-12 sm:text-base"
+                    >
+                        <IoSwapVerticalOutline className="size-4" />
+                        並び替え
+                        {isSortOpen ? <IoChevronUp className="size-4" /> : <IoChevronDown className="size-4" />}
+                        {isSortChanged && (
+                            <span className="absolute -right-1.5 -top-1.5 size-3.5 rounded-full bg-accent-surface shadow-sm" />
+                        )}
+                    </Button>
+                    {/* sm未満: ボタンを横一列に収めるためアイコンのみ */}
                     <button
                         type="button"
                         onClick={() => setIsDetailOpen(!isDetailOpen)}
-                        aria-label="詳細フィルター"
+                        aria-label="絞り込み"
                         className="relative flex size-10 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-surface text-accent hover:bg-accent/10 sm:hidden"
                     >
                         <IoOptionsOutline className="size-4" />
@@ -105,6 +136,24 @@ export const MyRankingSearchBar = (props: PropsType) => {
                     )}
                 </div>
             </div>
+            {isSortOpen && (
+                <div className="mt-2 grid grid-cols-3 gap-2 pt-4 sm:mt-4 sm:flex sm:flex-wrap">
+                    {MY_RANKING_SORT_OPTIONS.map((option) => (
+                        <Button
+                            key={option.value}
+                            colorType="accent"
+                            sizeType="medium"
+                            onClick={() => onChangeSort(option.value)}
+                            aria-pressed={sort === option.value}
+                            className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm sm:text-base font-semibold shadow-none ${sort === option.value ?
+                                `border-accent bg-accent/15 text-accent hover:bg-accent/25` :
+                                `border-accent/40 bg-surface text-accent hover:bg-accent/10`}`}
+                        >
+                            {option.label}
+                        </Button>
+                    ))}
+                </div>
+            )}
             {isDetailOpen && (
                 <div className="mt-2 sm:mt-4 flex flex-col gap-3 pt-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">

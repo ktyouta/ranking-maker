@@ -15,6 +15,7 @@ import { MyRankingListQueryDataType, useMyRankings } from "../api/get-my-ranking
 import { myRankingKeys } from "../api/query-key";
 import { useToggleMyRankingFavoriteMutation } from "../api/toggle-my-ranking-favorite";
 import { MY_RANKING_QUERY_KEY } from "../constants/my-ranking-query-params";
+import { DEFAULT_MY_RANKING_SORT, MY_RANKING_SORT_OPTIONS, MyRankingSortType } from "../constants/my-ranking-sort-options";
 import { initialMyRankingSearchFilter, MyRankingSearchFilter } from "../types/my-ranking-search-filter";
 
 /**
@@ -38,6 +39,9 @@ export const useMyRankingList = () => {
     // 選択中のページ
     const pageParam = searchParams.get(MY_RANKING_QUERY_KEY.PAGE);
     const currentPage = pageParam && !Number.isNaN(Number(pageParam)) ? Number(pageParam) : 1;
+    // 並び順（URLの値が選択肢にない場合は既定）
+    const sort = MY_RANKING_SORT_OPTIONS.find((option) => option.value === searchParams.get(MY_RANKING_QUERY_KEY.SORT))?.value
+        ?? DEFAULT_MY_RANKING_SORT;
     // ランキング一覧取得（Suspense対応のため取得中は呼び出し元で中断される）
     const rankingListQuery = useMyRankings({ searchParams });
     // アイコン候補一覧（idからemojiを引くために使用）
@@ -249,6 +253,23 @@ export const useMyRankingList = () => {
         if (searchCondition.favoriteOnly) {
             params[MY_RANKING_QUERY_KEY.FAVORITE_ONLY] = 'true';
         }
+        if (sort !== DEFAULT_MY_RANKING_SORT) {
+            params[MY_RANKING_QUERY_KEY.SORT] = sort;
+        }
+        setSearchParams(params);
+    }
+
+    /**
+     * 並び替え変更イベント（選択した時点で反映し、ページは1に戻す）
+     */
+    function changeSort(newSort: MyRankingSortType) {
+        const params = Object.fromEntries(searchParams);
+        delete params[MY_RANKING_QUERY_KEY.PAGE];
+        if (newSort === DEFAULT_MY_RANKING_SORT) {
+            delete params[MY_RANKING_QUERY_KEY.SORT];
+        } else {
+            params[MY_RANKING_QUERY_KEY.SORT] = newSort;
+        }
         setSearchParams(params);
     }
 
@@ -296,6 +317,8 @@ export const useMyRankingList = () => {
         clickSearch,
         handleKeyPress,
         changePage,
+        sort,
+        onChangeSort: changeSort,
         isShowOverlay,
         onToggleFavorite: toggleFavorite,
         isSelectionMode,

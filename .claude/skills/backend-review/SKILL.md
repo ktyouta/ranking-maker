@@ -10,7 +10,7 @@ description: |
   以下の場合は使用しない：
   - フロントエンドのみの変更
   - 調査・説明・設計相談のみの場合
-version: 2.1.0
+version: 2.2.0
 ---
 
 # Backend Review Skill
@@ -86,6 +86,10 @@ version: 2.1.0
 - VOに複数の生成意味（値検証によるインスタンス化 vs デフォルト値生成 等）がある場合、`private constructor` + 名前付き静的ファクトリメソッド（`of` / `default` 等）に分離しているか
   - アンチパターン: `public constructor` のみを持つVOに対し、デフォルト値生成のために `new Theme(Theme.LAVENDER)` のような自己参照的な呼び出しをコール側に書かせている
   - 正しいパターン: `UserId` の `static generate()`（新規生成）/ `static of()`（既存値から復元）のように、生成意味ごとに名前付きファクトリメソッドを分離する（例: `static of(value)` / `static default()`）
+- 新規に定義した定数・型・クラスごとに、同種の既存要素を検索し、置き場所・命名・構造が前例と一致しているか
+  - 例: 許容値の集合（並び順・ステータス等）なら、既存の `PublicStatus.VALUES` のように `domain/{機能}/value-object/` の VO が単一権威になっており、スキーマ（presentation）もそれを参照している
+  - `domain/*/repository/*.interface.ts` に、型とインターフェース以外の実行時の値（`export const` やクラス）を置いていないか
+  - 前例と異なる場合は、設計で承認済みでも違反または要確認として報告する
 
 ### Repository 単一操作（Infrastructure層）
 - Repositoryの1メソッドは、そのユースケースが要求するアトミックな書き込み単位に対応しているか（無関係な操作を便宜的に1メソッドにまとめていないか）
@@ -114,8 +118,9 @@ version: 2.1.0
 
 1. 変更されたバックエンドファイルを確認する
 2. Controller(Presentation) / Usecase(Application) / Repository(Infrastructure) / Entity・VO(Domain) のレイヤーを特定する
-3. 各チェック項目を照合する
-4. 以下の形式で報告する
+3. 新規に定義した要素（定数・型・クラス）ごとに、既存の同種の要素を検索して前例を確認する（設計で承認済みでも省略しない）
+4. 各チェック項目を照合する
+5. 以下の形式で報告する
 
 ---
 

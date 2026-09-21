@@ -1,5 +1,6 @@
 import { Dialog, LoadingOverlay, Pagination, ScrollToTopButton } from '@/components';
 import { IoTrashBinOutline } from 'react-icons/io5';
+import { TrashSortType } from '../constants/trash-sort-options';
 import { TrashSearchFilter } from '../types/trash-search-filter';
 import { BulkActionBar } from './bulk-action-bar';
 import { TrashCard } from './trash-card';
@@ -25,6 +26,8 @@ type PropsType = {
     clickSearch: () => void;
     handleKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
     changePage: (page: number) => void;
+    sort: TrashSortType;
+    onChangeSort: (sort: TrashSortType) => void;
     isShowOverlay: boolean;
     isSelectionMode: boolean;
     selectedIdSet: Set<string>;
@@ -54,6 +57,8 @@ export const Trash = (props: PropsType) => {
         clickSearch,
         handleKeyPress,
         changePage,
+        sort,
+        onChangeSort,
         isShowOverlay,
         isSelectionMode,
         selectedIdSet,
@@ -78,6 +83,8 @@ export const Trash = (props: PropsType) => {
                 onSearch={clickSearch}
                 onClear={clearSearchCondition}
                 handleKeyPress={handleKeyPress}
+                sort={sort}
+                onChangeSort={onChangeSort}
                 isSelectionMode={isSelectionMode}
                 onToggleSelectionMode={onToggleSelectionMode}
             />

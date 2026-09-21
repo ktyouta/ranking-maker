@@ -29,6 +29,7 @@ export function useMyRankings({ searchParams }: PropsType) {
           updatedAtFrom: searchParams.get(MY_RANKING_QUERY_KEY.UPDATED_AT_FROM) || undefined,
           updatedAtTo: searchParams.get(MY_RANKING_QUERY_KEY.UPDATED_AT_TO) || undefined,
           favoriteOnly: searchParams.get(MY_RANKING_QUERY_KEY.FAVORITE_ONLY) || undefined,
+          sort: searchParams.get(MY_RANKING_QUERY_KEY.SORT) || undefined,
           page: searchParams.get(MY_RANKING_QUERY_KEY.PAGE) || undefined,
         },
       });

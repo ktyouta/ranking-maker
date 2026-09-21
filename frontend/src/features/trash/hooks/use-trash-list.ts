@@ -12,6 +12,7 @@ import { useBulkRestoreTrashMutation } from "../api/bulk-restore-trash";
 import { useTrashList } from "../api/get-trash-list";
 import { trashKeys } from "../api/query-key";
 import { TRASH_QUERY_KEY } from "../constants/trash-query-params";
+import { DEFAULT_TRASH_SORT, TRASH_SORT_OPTIONS, TrashSortType } from "../constants/trash-sort-options";
 import { initialTrashSearchFilter, TrashSearchFilter } from "../types/trash-search-filter";
 
 /**
@@ -36,6 +37,9 @@ export function useTrashListScreen() {
     // 選択中のページ
     const pageParam = searchParams.get(TRASH_QUERY_KEY.PAGE);
     const currentPage = pageParam && !Number.isNaN(Number(pageParam)) ? Number(pageParam) : 1;
+    // 並び順（URLの値が選択肢にない場合は既定）
+    const sort = TRASH_SORT_OPTIONS.find((option) => option.value === searchParams.get(TRASH_QUERY_KEY.SORT))?.value
+        ?? DEFAULT_TRASH_SORT;
     // ゴミ箱一覧取得
     const trashListQuery = useTrashList({ searchParams });
     // アイコン候補一覧（idからemojiを引くために使用）
@@ -185,6 +189,23 @@ export function useTrashListScreen() {
         if (searchCondition.updatedAtTo) {
             params[TRASH_QUERY_KEY.UPDATED_AT_TO] = searchCondition.updatedAtTo;
         }
+        if (sort !== DEFAULT_TRASH_SORT) {
+            params[TRASH_QUERY_KEY.SORT] = sort;
+        }
+        setSearchParams(params);
+    }
+
+    /**
+     * 並び替え変更イベント（選択した時点で反映し、ページは1に戻す）
+     */
+    function changeSort(newSort: TrashSortType) {
+        const params = Object.fromEntries(searchParams);
+        delete params[TRASH_QUERY_KEY.PAGE];
+        if (newSort === DEFAULT_TRASH_SORT) {
+            delete params[TRASH_QUERY_KEY.SORT];
+        } else {
+            params[TRASH_QUERY_KEY.SORT] = newSort;
+        }
         setSearchParams(params);
     }
 
@@ -222,6 +243,8 @@ export function useTrashListScreen() {
         clickSearch,
         handleKeyPress,
         changePage,
+        sort,
+        onChangeSort: changeSort,
         isShowOverlay,
         isSelectionMode,
         selectedIdSet,
