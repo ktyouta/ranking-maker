@@ -12,7 +12,6 @@ type PropsType = {
     handleKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) => void;
     sort: MyRankingSortType;
     onChangeSort: (sort: MyRankingSortType) => void;
-    isSelectionMode: boolean;
     onToggleSelectionMode: () => void;
 };
 
@@ -23,7 +22,7 @@ const DATE_PICKER_CLASS = 'border-2 border-accent/70 rounded-full focus:ring-acc
  */
 export const MyRankingSearchBar = (props: PropsType) => {
 
-    const { searchCondition, onChange, onSearch, onClear, handleKeyPress, sort, onChangeSort, isSelectionMode, onToggleSelectionMode } = props;
+    const { searchCondition, onChange, onSearch, onClear, handleKeyPress, sort, onChangeSort, onToggleSelectionMode } = props;
 
     // 詳細フィルター開閉フラグ
     const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -53,6 +52,14 @@ export const MyRankingSearchBar = (props: PropsType) => {
                     />
                 </div>
                 <div className="flex flex-wrap items-center justify-start sm:justify-end gap-2">
+                    <Button
+                        colorType="accent"
+                        sizeType="large"
+                        onClick={onToggleSelectionMode}
+                        className="h-10 items-center gap-1.5 whitespace-nowrap rounded-full border border-accent/40 bg-white text-sm font-semibold text-accent shadow-sm hover:bg-accent/10 flex lg:h-12 lg:px-9 lg:text-base"
+                    >
+                        一括選択
+                    </Button>
                     <button
                         type="button"
                         onClick={() => setIsSortOpen(!isSortOpen)}
@@ -124,16 +131,6 @@ export const MyRankingSearchBar = (props: PropsType) => {
                     >
                         検索
                     </Button>
-                    {!isSelectionMode && (
-                        <Button
-                            colorType="accent"
-                            sizeType="large"
-                            onClick={onToggleSelectionMode}
-                            className="h-10 items-center gap-1.5 whitespace-nowrap rounded-full border border-accent/40 bg-white text-sm font-semibold text-accent shadow-sm hover:bg-accent/10 flex lg:h-12 lg:px-9 lg:text-base"
-                        >
-                            一括選択
-                        </Button>
-                    )}
                 </div>
             </div>
             {isSortOpen && (

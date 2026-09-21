@@ -84,17 +84,18 @@ export const MyRanking = (props: PropsType) => {
     return (
         <div className="relative w-full flex-1 px-3 py-5 sm:py-12 sm:px-6 lg:px-20">
             {isShowOverlay && <LoadingOverlay />}
-            <MyRankingSearchBar
-                searchCondition={searchCondition}
-                onChange={setSearchCondition}
-                onSearch={clickSearch}
-                onClear={clearSearchCondition}
-                handleKeyPress={handleKeyPress}
-                sort={sort}
-                onChangeSort={onChangeSort}
-                isSelectionMode={isSelectionMode}
-                onToggleSelectionMode={onToggleSelectionMode}
-            />
+            {!isSelectionMode && (
+                <MyRankingSearchBar
+                    searchCondition={searchCondition}
+                    onChange={setSearchCondition}
+                    onSearch={clickSearch}
+                    onClear={clearSearchCondition}
+                    handleKeyPress={handleKeyPress}
+                    sort={sort}
+                    onChangeSort={onChangeSort}
+                    onToggleSelectionMode={onToggleSelectionMode}
+                />
+            )}
             <BulkActionBar
                 isSelectionMode={isSelectionMode}
                 selectedCount={selectedCount}
