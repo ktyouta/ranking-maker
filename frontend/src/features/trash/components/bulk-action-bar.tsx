@@ -31,7 +31,7 @@ export const BulkActionBar = (props: PropsType) => {
     }
 
     return (
-        <div className="mb-3 flex flex-col gap-5 rounded-2xl border border-accent/35 bg-surface px-4 py-4 sm:mb-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-3">
+        <div className="mb-3 flex flex-col gap-5 rounded-2xl border border-accent/70 bg-surface px-4 py-4 sm:mb-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 sm:justify-start sm:gap-6">
                 <p className="text-sm font-semibold text-accent sm:text-base">
                     {selectedCount}件選択中
@@ -53,7 +53,7 @@ export const BulkActionBar = (props: PropsType) => {
                     colorType="accent"
                     sizeType="medium"
                     onClick={onToggleSelectionMode}
-                    className="flex items-center justify-center rounded-full bg-white px-5 py-2 text-sm text-accent shadow-none ring-1 ring-inset ring-accent/40 hover:bg-canvas sm:text-base"
+                    className="flex items-center justify-center rounded-full bg-surface px-5 py-2 text-sm text-accent shadow-none ring-1 ring-inset ring-accent/50 hover:bg-canvas sm:text-base"
                 >
                     キャンセル
                 </Button>

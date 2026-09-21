@@ -15,7 +15,7 @@ type PropsType = {
     onToggleSelectionMode: () => void;
 };
 
-const DATE_PICKER_CLASS = 'border-2 border-accent/70 rounded-full focus:ring-accent';
+const DATE_PICKER_CLASS = 'border border-accent/70 rounded-full focus:ring-accent';
 
 /**
  * ランキング一覧の検索バー（キーワード検索＋登録日・更新日の詳細フィルター＋並び替え）
@@ -56,7 +56,7 @@ export const MyRankingSearchBar = (props: PropsType) => {
                         colorType="accent"
                         sizeType="large"
                         onClick={onToggleSelectionMode}
-                        className="h-10 items-center gap-1.5 whitespace-nowrap rounded-full border border-accent/40 bg-white text-sm font-semibold text-accent shadow-sm hover:bg-accent/10 flex lg:h-12 lg:px-9 lg:text-base"
+                        className="h-10 items-center gap-1.5 whitespace-nowrap rounded-full border border-accent/70 bg-surface text-sm font-semibold text-accent shadow-sm hover:bg-accent/10 flex lg:h-12 lg:px-9 lg:text-base"
                     >
                         一括選択
                     </Button>
@@ -64,7 +64,7 @@ export const MyRankingSearchBar = (props: PropsType) => {
                         type="button"
                         onClick={() => setIsSortOpen(!isSortOpen)}
                         aria-label="並び替え"
-                        className="relative flex size-10 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-surface text-accent hover:bg-accent/10 sm:hidden"
+                        className="relative flex size-10 shrink-0 items-center justify-center rounded-full border border-accent/70 bg-surface text-accent hover:bg-accent/10 sm:hidden"
                     >
                         <IoSwapVerticalOutline className="size-4" />
                         {isSortChanged && (
@@ -75,7 +75,7 @@ export const MyRankingSearchBar = (props: PropsType) => {
                         colorType="accent"
                         sizeType="large"
                         onClick={() => setIsSortOpen(!isSortOpen)}
-                        className="relative hidden h-10 items-center gap-1.5 whitespace-nowrap font-semibold rounded-full border border-accent/40 bg-surface text-sm text-accent hover:bg-accent/10 sm:flex sm:h-12 sm:text-base"
+                        className="relative hidden h-10 items-center gap-1.5 whitespace-nowrap font-semibold rounded-full border border-accent/70 bg-surface text-sm text-accent hover:bg-accent/10 sm:flex sm:h-12 sm:text-base"
                     >
                         <IoSwapVerticalOutline className="size-4" />
                         並び替え
@@ -89,7 +89,7 @@ export const MyRankingSearchBar = (props: PropsType) => {
                         type="button"
                         onClick={() => setIsDetailOpen(!isDetailOpen)}
                         aria-label="絞り込み"
-                        className="relative flex size-10 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-surface text-accent hover:bg-accent/10 sm:hidden"
+                        className="relative flex size-10 shrink-0 items-center justify-center rounded-full border border-accent/70 bg-surface text-accent hover:bg-accent/10 sm:hidden"
                     >
                         <IoOptionsOutline className="size-4" />
                         {activeCount > 0 && (
@@ -103,7 +103,7 @@ export const MyRankingSearchBar = (props: PropsType) => {
                         colorType="accent"
                         sizeType="large"
                         onClick={() => setIsDetailOpen(!isDetailOpen)}
-                        className="relative hidden h-10 items-center gap-1.5 whitespace-nowrap font-semibold rounded-full border border-accent/40 bg-surface text-sm text-accent hover:bg-accent/10 sm:flex sm:h-12 sm:text-base"
+                        className="relative hidden h-10 items-center gap-1.5 whitespace-nowrap font-semibold rounded-full border border-accent/70 bg-surface text-sm text-accent hover:bg-accent/10 sm:flex sm:h-12 sm:text-base"
                     >
                         <IoOptionsOutline className="size-4" />
                         絞り込み
@@ -119,7 +119,7 @@ export const MyRankingSearchBar = (props: PropsType) => {
                         sizeType="large"
                         onClick={onClear}
                         disabled={isEmpty}
-                        className="flex h-10 items-center justify-center whitespace-nowrap rounded-full bg-accent/10 text-sm font-semibold text-accent shadow-none ring-1 ring-inset ring-accent/40 hover:bg-accent/20 disabled:opacity-50 sm:h-12 sm:px-9 sm:text-base"
+                        className="flex h-10 items-center justify-center whitespace-nowrap rounded-full bg-accent/10 text-sm font-semibold text-accent shadow-none ring-1 ring-inset ring-accent/70 hover:bg-accent/20 disabled:opacity-50 sm:h-12 sm:px-9 sm:text-base"
                     >
                         クリア
                     </Button>
@@ -144,7 +144,7 @@ export const MyRankingSearchBar = (props: PropsType) => {
                             aria-pressed={sort === option.value}
                             className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm sm:text-base font-semibold shadow-none ${sort === option.value ?
                                 `border-accent bg-accent/15 text-accent hover:bg-accent/25` :
-                                `border-accent/40 bg-surface text-accent hover:bg-accent/10`}`}
+                                `border-accent/70 bg-surface text-accent hover:bg-accent/10`}`}
                         >
                             {option.label}
                         </Button>
@@ -198,9 +198,9 @@ export const MyRankingSearchBar = (props: PropsType) => {
                                 onClick={() => onChange({ ...searchCondition, favoriteOnly: !searchCondition.favoriteOnly })}
                                 aria-pressed={searchCondition.favoriteOnly}
                                 aria-label="お気に入りのみ表示"
-                                className={`flex w-fit items-center gap-1.5 rounded-full border-2 text-base px-4 py-2 ${searchCondition.favoriteOnly ?
+                                className={`flex w-fit items-center gap-1.5 rounded-full border text-base px-4 py-2 ${searchCondition.favoriteOnly ?
                                     `border-amber-400/60 bg-amber-400/15 text-amber-500 hover:bg-amber-400/25` :
-                                    `border-accent/70 bg-white text-gray-400 hover:bg-canvas`}`}
+                                    `border-accent/70 bg-surface text-gray-400 hover:bg-canvas`}`}
                             >
                                 {searchCondition.favoriteOnly ? <IoStar className="size-4" /> : <IoStarOutline className="size-4" />}
                                 のみ表示

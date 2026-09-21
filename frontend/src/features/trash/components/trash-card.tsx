@@ -58,7 +58,7 @@ export const TrashCard = (props: PropsType) => {
                                 {updatedAt}
                             </span>
                         </div>
-                        <p className="flex items-center gap-1 text-xs font-medium text-accent hover:underline sm:text-sm">
+                        <p className="flex items-center gap-1 text-xs font-medium text-accent sm:hover:underline sm:text-sm">
                             詳細を見る
                             <HiArrowRight className="size-3 sm:size-3.5" />
                         </p>
