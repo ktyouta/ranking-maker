@@ -108,6 +108,13 @@ docs/[機能名]/spec.md が存在する場合のみ実施する。
 - 新しい Usecase が自モジュール以外の `domain/{他モジュール}/repository` interface に依存する場合、その越境が正当か（単なるモジュール分割漏れでないか）確認したか
 - join テーブルの PK が新規採番すべきか、既存の関連 ID を流用すべきか検討されているか
 
+### フロントエンド設計チェック（CLAUDE.md 準拠）
+フロントエンドの変更がある場合のみ実施する。
+
+- 計画上の Presentational コンポーネント（-container.tsx サフィックスのないコンポーネント）に、useState/useEffect やデータフェッチ hook（useQuery 系）の呼び出しが含まれる設計になっていないか
+- Suspense Query（useSuspenseQuery 等）を呼ぶ処理は hooks/ 配下のファイルに閉じ込められ、それを呼び出す側が Container（-container.tsx）として計画されているか
+- Suspense 境界の配置が必要な場合、その境界の内側・外側のどちらに何を置くかが具体的なファイル単位で決まっているか
+
 問題がなければ実装に進みます。よろしいですか？
 ```
 

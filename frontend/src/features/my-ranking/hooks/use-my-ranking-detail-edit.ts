@@ -1,6 +1,7 @@
 import { useIcons } from '@/app/api/get-icons';
+import { useMyRanking } from '@/app/api/get-my-ranking';
+import { myRankingKeys } from '@/app/api/query-key';
 import { PUBLIC_STATUS } from '@/constants/public-status';
-import { myRankingKeys } from '@/features/my-ranking/api/query-key';
 import { useSwitch } from '@/hooks/use-switch';
 import { KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
@@ -8,7 +9,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useMyRanking } from '../api/get-my-ranking';
 import { useUpdateMyRankingMutation, ViolationType } from '../api/update-my-ranking';
 import { useUpdateMyRankingForm } from './use-update-my-ranking.form';
 

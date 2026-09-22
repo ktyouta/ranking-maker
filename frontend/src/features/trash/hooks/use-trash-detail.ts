@@ -1,6 +1,6 @@
 import { useIcons } from '@/app/api/get-icons';
+import { myRankingKeys } from '@/app/api/query-key';
 import { paths } from '@/config/paths';
-import { myRankingKeys } from '@/features/my-ranking/api/query-key';
 import { useAppNavigation } from '@/hooks/use-app-navigation';
 import { useSwitch } from '@/hooks/use-switch';
 import { formatDate } from '@/utils/date-util';

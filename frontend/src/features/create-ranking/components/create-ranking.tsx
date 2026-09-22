@@ -8,6 +8,7 @@ import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { HiOutlineExclamationTriangle } from 'react-icons/hi2';
 import { CreateRankingRequestType } from '../types/create-ranking-request-type';
 import { ItemFieldType, ItemRow } from './item-row';
+import { TemplateSelectDialog } from './template-select-dialog';
 
 type PropsType = {
     errMessage: string;
@@ -29,6 +30,10 @@ type PropsType = {
     openIconDialog: () => void;
     closeIconDialog: () => void;
     selectIcon: (iconId: number) => void;
+    isTemplateDialogOpen: boolean;
+    openTemplateDialog: () => void;
+    closeTemplateDialog: () => void;
+    selectTemplate: (rankingId: string) => void;
 };
 
 export function CreateRanking(props: PropsType) {
@@ -53,6 +58,10 @@ export function CreateRanking(props: PropsType) {
         openIconDialog,
         closeIconDialog,
         selectIcon,
+        isTemplateDialogOpen,
+        openTemplateDialog,
+        closeTemplateDialog,
+        selectTemplate,
     } = props;
 
     // 選択中のアイコンの絵文字
@@ -61,23 +70,32 @@ export function CreateRanking(props: PropsType) {
     return (
         <div className="mx-auto w-full max-w-[max(48rem,60vw)] flex flex-col flex-1 px-4 pb-10 pt-8 sm:px-6 sm:pt-10 lg:px-8">
             {isLoading && <LoadingOverlay />}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-3">
+                    <button
+                        type="button"
+                        onClick={openIconDialog}
+                        className="flex size-14 shrink-0 items-center justify-center rounded-lg border-2 border-accent/50 bg-surface text-3xl shadow-sm hover:bg-canvas sm:size-16 sm:text-4xl"
+                        aria-label="アイコンを選択"
+                    >
+                        {selectedIconEmoji}
+                    </button>
+                    <div>
+                        <h1 className="text-xl font-bold text-ink sm:text-3xl">
+                            ランキングを作成
+                        </h1>
+                        <p className="mt-1 text-sm text-ink-sub sm:text-lg">
+                            あなたの「好き」を並べて、ランキングを作ろう
+                        </p>
+                    </div>
+                </div>
                 <button
                     type="button"
-                    onClick={openIconDialog}
-                    className="flex size-14 shrink-0 items-center justify-center rounded-lg border-2 border-accent/50 bg-surface text-3xl shadow-sm hover:bg-canvas sm:size-16 sm:text-4xl"
-                    aria-label="アイコンを選択"
+                    onClick={openTemplateDialog}
+                    className="ml-auto shrink-0 rounded-full border border-accent/70 bg-surface px-4 py-2 text-sm font-semibold text-accent hover:bg-accent/10 sm:px-6 sm:py-2.5 sm:text-base"
                 >
-                    {selectedIconEmoji}
+                    テンプレートから作成
                 </button>
-                <div>
-                    <h1 className="text-xl font-bold text-ink sm:text-3xl">
-                        ランキングを作成
-                    </h1>
-                    <p className="mt-1 text-sm text-ink-sub sm:text-lg">
-                        あなたの「好き」を並べて、ランキングを作ろう
-                    </p>
-                </div>
             </div>
             {(errMessage || violations.length > 0) && (
                 <div className="mt-4 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-base text-red-600">
@@ -96,7 +114,7 @@ export function CreateRanking(props: PropsType) {
                     </div>
                 </div>
             )}
-            <div className="mt-10 flex flex-col flex-1 gap-[1.8rem] md:gap-[2.8rem]">
+            <div className="mt-1 md:mt-10 flex flex-col flex-1 gap-[1.8rem] md:gap-[2.8rem]">
                 <div>
                     <label className="mb-3 block text-lg font-semibold text-ink">
                         タイトル
@@ -208,6 +226,11 @@ export function CreateRanking(props: PropsType) {
                 icons={icons}
                 selectedIconId={selectedIconId}
                 onSelect={selectIcon}
+            />
+            <TemplateSelectDialog
+                isOpen={isTemplateDialogOpen}
+                onClose={closeTemplateDialog}
+                onSelectRanking={selectTemplate}
             />
         </div>
     );

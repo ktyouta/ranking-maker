@@ -1,7 +1,9 @@
 import { useIcons } from '@/app/api/get-icons';
+import { MyRankingDetailQueryDataType, useMyRanking } from '@/app/api/get-my-ranking';
+import { MyRankingListQueryDataType } from '@/app/api/get-my-rankings';
+import { myRankingKeys } from '@/app/api/query-key';
 import { paths } from '@/config/paths';
 import { PUBLIC_STATUS } from '@/constants/public-status';
-import { myRankingKeys } from '@/features/my-ranking/api/query-key';
 import { useSwitch } from '@/hooks/use-switch';
 import { formatDate } from '@/utils/date-util';
 import { useQueryClient } from '@tanstack/react-query';
@@ -9,8 +11,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useDeleteMyRankingMutation } from '../api/delete-my-ranking';
-import { MyRankingDetailQueryDataType, useMyRanking } from '../api/get-my-ranking';
-import { MyRankingListQueryDataType } from '../api/get-my-rankings';
 import { useToggleMyRankingFavoriteMutation } from '../api/toggle-my-ranking-favorite';
 
 type PropsType = {

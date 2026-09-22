@@ -9,10 +9,10 @@ import { formatDaysAgo } from "@/utils/date-util";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import { MyRankingListQueryDataType, useMyRankings } from "@/app/api/get-my-rankings";
+import { myRankingKeys } from "@/app/api/query-key";
 import { useBulkDeleteMyRankingMutation } from "../api/bulk-delete-my-ranking";
 import { useExportMyRankingCsvMutation } from "../api/export-my-ranking-csv";
-import { MyRankingListQueryDataType, useMyRankings } from "../api/get-my-rankings";
-import { myRankingKeys } from "../api/query-key";
 import { useToggleMyRankingFavoriteMutation } from "../api/toggle-my-ranking-favorite";
 import { MY_RANKING_QUERY_KEY } from "../constants/my-ranking-query-params";
 import { DEFAULT_MY_RANKING_SORT, MY_RANKING_SORT_OPTIONS, MyRankingSortType } from "../constants/my-ranking-sort-options";
@@ -43,7 +43,16 @@ export const useMyRankingList = () => {
     const sort = MY_RANKING_SORT_OPTIONS.find((option) => option.value === searchParams.get(MY_RANKING_QUERY_KEY.SORT))?.value
         ?? DEFAULT_MY_RANKING_SORT;
     // ランキング一覧取得（Suspense対応のため取得中は呼び出し元で中断される）
-    const rankingListQuery = useMyRankings({ searchParams });
+    const rankingListQuery = useMyRankings({
+        keyword: searchParams.get(MY_RANKING_QUERY_KEY.KEYWORD) || undefined,
+        createdAtFrom: searchParams.get(MY_RANKING_QUERY_KEY.CREATED_AT_FROM) || undefined,
+        createdAtTo: searchParams.get(MY_RANKING_QUERY_KEY.CREATED_AT_TO) || undefined,
+        updatedAtFrom: searchParams.get(MY_RANKING_QUERY_KEY.UPDATED_AT_FROM) || undefined,
+        updatedAtTo: searchParams.get(MY_RANKING_QUERY_KEY.UPDATED_AT_TO) || undefined,
+        favoriteOnly: searchParams.get(MY_RANKING_QUERY_KEY.FAVORITE_ONLY) || undefined,
+        sort: searchParams.get(MY_RANKING_QUERY_KEY.SORT) || undefined,
+        page: searchParams.get(MY_RANKING_QUERY_KEY.PAGE) || undefined,
+    });
     // アイコン候補一覧（idからemojiを引くために使用）
     const iconsQuery = useIcons();
     const icons = iconsQuery.data.data;

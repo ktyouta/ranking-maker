@@ -1,7 +1,8 @@
 import { useIcons } from '@/app/api/get-icons';
+import { fetchMyRankingDetail } from '@/app/api/get-my-ranking';
+import { myRankingKeys } from '@/app/api/query-key';
 import { paths } from '@/config/paths';
 import { PUBLIC_STATUS } from '@/constants/public-status';
-import { myRankingKeys } from '@/features/my-ranking/api/query-key';
 import { useSwitch } from '@/hooks/use-switch';
 import { KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
@@ -24,12 +25,14 @@ export function useCreateRanking() {
     // フィールド単位に紐付かないエラー一覧（バリデーション・不適切内容検出）
     const [violations, setViolations] = useState<ViolationType[]>([]);
     // フォーム
-    const { register, handleSubmit, watch, setValue, formState: { errors }, itemFieldArray } = useCreateRankingForm();
+    const { register, handleSubmit, watch, setValue, reset, formState: { errors }, itemFieldArray } = useCreateRankingForm();
     // アイコン候補一覧
     const iconsQuery = useIcons();
     const icons = iconsQuery.data.data;
     // アイコン選択ダイアログの開閉
     const iconDialog = useSwitch();
+    // テンプレート選択ダイアログの開閉
+    const templateDialog = useSwitch();
     // 選択中のアイコンID
     const selectedIconId = watch('icon');
     // ポインター操作とキーボード操作の両方でドラッグ&ドロップを可能にする
@@ -148,6 +151,46 @@ export function useCreateRanking() {
         iconDialog.off();
     }, [setValue, iconDialog]);
 
+    /**
+     * テンプレート選択ダイアログを開く
+     */
+    const openTemplateDialog = useCallback(() => {
+        templateDialog.on();
+    }, [templateDialog]);
+
+    /**
+     * テンプレート選択ダイアログを閉じる
+     */
+    const closeTemplateDialog = useCallback(() => {
+        templateDialog.off();
+    }, [templateDialog]);
+
+    /**
+     * テンプレートとなるランキングを選択（詳細取得しフォームへ反映してダイアログを閉じる）
+     */
+    const selectTemplate = useCallback(async (rankingId: string) => {
+        try {
+            const detail = await fetchMyRankingDetail(queryClient, rankingId);
+            // ランキング本体と項目一覧
+            const { ranking, rankingOrder } = detail.data;
+            // 項目一覧を順位順に整形したもの
+            const sortedItems = [...rankingOrder].sort((a, b) => a.order - b.order);
+            reset({
+                title: ranking.title,
+                isPublic: false,
+                icon: ranking.icon,
+                memo: ranking.memo ?? ``,
+                items: sortedItems.map((item) => ({
+                    itemName: item.itemName ?? ``,
+                    memo: item.itemMemo ?? ``,
+                })),
+            });
+            templateDialog.off();
+        } catch {
+            toast.error('テンプレートの取得に失敗しました');
+        }
+    }, [queryClient, reset, templateDialog]);
+
     return {
         errMessage,
         violations,
@@ -168,5 +211,9 @@ export function useCreateRanking() {
         openIconDialog,
         closeIconDialog,
         selectIcon,
+        isTemplateDialogOpen: templateDialog.flag,
+        openTemplateDialog,
+        closeTemplateDialog,
+        selectTemplate,
     };
 }
