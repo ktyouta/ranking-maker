@@ -1,4 +1,4 @@
-import { Dialog, LoadingOverlay } from '@/components';
+import { Dialog, LoadingOverlay, ScrollToTopButton } from '@/components';
 import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineDocumentText, HiOutlineExclamationTriangle } from 'react-icons/hi2';
 import { IoCalendarOutline } from 'react-icons/io5';
 import { ItemType, TrashItemCard } from './trash-item-card';
@@ -66,7 +66,7 @@ export function TrashDetail(props: PropsType) {
         <div className="flex flex-1 flex-col">
             {isLoading && <LoadingOverlay />}
             {/* 一覧に戻る（ヘッダーのアプリタイトルと同じ左位置に揃え、常に画面上部の左に固定する） */}
-            <div className="flex w-full min-h-14 items-center px-4 pt-4 sm:min-h-[72px] sm:px-6 sm:pt-6 lg:px-8">
+            <div className="flex w-full items-center px-4 pt-4 sm:px-6 sm:pt-6 lg:px-8">
                 <button
                     type="button"
                     onClick={onBack}
@@ -114,11 +114,11 @@ export function TrashDetail(props: PropsType) {
                     </div>
                 </div>
                 <div className="hidden items-center justify-between gap-3 sm:flex">
-                    <div className="flex items-center gap-5">
+                    <div className="flex min-w-0 items-center gap-5">
                         <span className="flex shrink-0 items-center justify-center text-5xl">
                             {icon}
                         </span>
-                        <div>
+                        <div className="min-w-0">
                             <h1 className="text-3xl font-bold text-ink">
                                 {title}
                             </h1>
@@ -138,17 +138,15 @@ export function TrashDetail(props: PropsType) {
                     </button>
                 </div>
                 <div className="mt-12 sm:mt-16 flex flex-1 flex-col gap-[1.8rem] md:gap-[2.8rem]">
-                    <div>
-                        <div className="flex flex-col gap-6">
-                            {items.map((item, index) => (
-                                <TrashItemCard
-                                    key={item.id}
-                                    item={item}
-                                    index={index}
-                                    onClickMemo={onClickItemMemo}
-                                />
-                            ))}
-                        </div>
+                    <div className="flex flex-col gap-6">
+                        {items.map((item, index) => (
+                            <TrashItemCard
+                                key={item.id}
+                                item={item}
+                                index={index}
+                                onClickMemo={onClickItemMemo}
+                            />
+                        ))}
                     </div>
                     <div className="mt-auto flex flex-col gap-4 border-t border-line pt-16 sm:pt-6">
                         <div className="flex flex-col gap-4 rounded-xl border-2 border-accent/30 bg-accent/5 p-5 sm:flex-row sm:items-center sm:justify-between">
@@ -266,6 +264,7 @@ export function TrashDetail(props: PropsType) {
                     </div>
                 </div>
             </Dialog>
+            <ScrollToTopButton />
         </div>
     );
 }

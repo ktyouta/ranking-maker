@@ -144,11 +144,11 @@ export function MyRankingDetailView(props: PropsType) {
                     </div>
                 </div>
                 <div className="hidden items-center justify-between gap-3 sm:flex">
-                    <div className="flex items-center gap-5">
+                    <div className="flex min-w-0 items-center gap-5">
                         <span className="flex shrink-0 items-center justify-center text-5xl">
                             {icon}
                         </span>
-                        <div>
+                        <div className="min-w-0">
                             <h1 className="text-3xl font-bold text-ink">
                                 {title}
                             </h1>

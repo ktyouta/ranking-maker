@@ -76,7 +76,7 @@ export function CreateRanking(props: PropsType) {
     const selectedIconEmoji = icons.find((icon) => icon.id === selectedIconId)?.emoji;
 
     return (
-        <div className="mx-auto w-full max-w-[max(48rem,60vw)] flex flex-col flex-1 px-4 pb-10 pt-8 sm:px-6 sm:pt-10 lg:px-8">
+        <div className="mx-auto w-full max-w-[max(48rem,60vw)] flex flex-col flex-1 px-4 pb-10 pt-8 sm:px-6 sm:pt-16 lg:px-8">
             {isLoading && <LoadingOverlay />}
             <div className="flex flex-wrap items-center gap-3">
                 <div className="flex items-center gap-3">
@@ -122,7 +122,7 @@ export function CreateRanking(props: PropsType) {
                     </div>
                 </div>
             )}
-            <div className="mt-1 md:mt-10 flex flex-col flex-1 gap-[1.8rem] md:gap-[2.8rem]">
+            <div className="mt-1 md:mt-9 flex flex-col flex-1 gap-[1.8rem] md:gap-[2.8rem]">
                 <div>
                     <label className="mb-3 block text-lg font-semibold text-ink">
                         タイトル

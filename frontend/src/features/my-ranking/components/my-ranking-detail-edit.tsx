@@ -84,7 +84,7 @@ export function MyRankingDetailEdit(props: PropsType) {
                     </span>
                 </button>
             </div>
-            <div className="mx-auto w-full max-w-[max(48rem,60vw)] flex flex-col flex-1 px-4 pb-10 pt-4 sm:px-6 sm:pt-6 lg:px-8">
+            <div className="mx-auto w-full max-w-[max(48rem,60vw)] flex flex-col flex-1 px-4 pb-10 pt-4 sm:px-6 sm:pt-4 lg:px-8">
                 {isLoading && <LoadingOverlay />}
                 <div className="flex items-center gap-3">
                     <button
