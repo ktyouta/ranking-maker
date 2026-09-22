@@ -1,5 +1,5 @@
 import { IconType } from '@/app/api/get-icons';
-import { LoadingOverlay, ScrollToTopButton, Textarea, Textbox } from '@/components';
+import { Dialog, LoadingOverlay, ScrollToTopButton, Textarea, Textbox } from '@/components';
 import { IconSelectDialog } from '@/components/layouts/icon-select-dialog/icon-select-dialog';
 import { closestCenter, DndContext, DragEndEvent, SensorDescriptor, SensorOptions } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -34,6 +34,10 @@ type PropsType = {
     openTemplateDialog: () => void;
     closeTemplateDialog: () => void;
     selectTemplate: (rankingId: string) => void;
+    isClearDialogOpen: boolean;
+    clickClear: () => void;
+    cancelClear: () => void;
+    confirmClear: () => void;
 };
 
 export function CreateRanking(props: PropsType) {
@@ -62,6 +66,10 @@ export function CreateRanking(props: PropsType) {
         openTemplateDialog,
         closeTemplateDialog,
         selectTemplate,
+        isClearDialogOpen,
+        clickClear,
+        cancelClear,
+        confirmClear,
     } = props;
 
     // 選択中のアイコンの絵文字
@@ -212,6 +220,13 @@ export function CreateRanking(props: PropsType) {
                 <div className="mt-2 flex flex-row gap-3 justify-end">
                     <button
                         type="button"
+                        className="rounded-full border-2 border-accent/30 bg-surface px-8 py-3 text-base font-medium text-ink-sub transition-colors hover:bg-canvas"
+                        onClick={clickClear}
+                    >
+                        クリア
+                    </button>
+                    <button
+                        type="button"
                         className="rounded-full bg-accent-surface px-8 py-3 text-base font-medium text-white hover:bg-accent-surface-hover"
                         onClick={handleConfirm}
                     >
@@ -232,6 +247,34 @@ export function CreateRanking(props: PropsType) {
                 onClose={closeTemplateDialog}
                 onSelectRanking={selectTemplate}
             />
+            <Dialog
+                isOpen={isClearDialogOpen}
+                onClose={cancelClear}
+                title="入力内容のクリア"
+                size="small"
+            >
+                <div className="space-y-4">
+                    <p className="text-base text-ink">
+                        現在の入力をクリアしますか？
+                    </p>
+                    <div className="flex justify-end gap-3">
+                        <button
+                            type="button"
+                            className="rounded-full border-2 border-accent/30 bg-surface px-6 py-2 text-base font-medium text-ink-sub hover:bg-canvas"
+                            onClick={cancelClear}
+                        >
+                            キャンセル
+                        </button>
+                        <button
+                            type="button"
+                            className="rounded-full bg-accent-surface px-6 py-2 text-base font-medium text-white hover:bg-accent-surface-hover"
+                            onClick={confirmClear}
+                        >
+                            クリア
+                        </button>
+                    </div>
+                </div>
+            </Dialog>
         </div>
     );
 }

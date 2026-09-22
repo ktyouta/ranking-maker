@@ -11,7 +11,7 @@ import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useCreateRankingMutation, ViolationType } from '../api/create-ranking';
-import { useCreateRankingForm } from './use-create-ranking.form';
+import { getCreateRankingDefaultValues, useCreateRankingForm } from './use-create-ranking.form';
 
 const MIN_ITEM_COUNT = 1;
 
@@ -40,6 +40,8 @@ export function useCreateRanking() {
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
     );
+    // クリア確認ダイアログの開閉
+    const clearDialog = useSwitch();
     // 作成リクエスト
     const postMutation = useCreateRankingMutation({
         // 正常終了後の処理
@@ -191,6 +193,28 @@ export function useCreateRanking() {
         }
     }, [queryClient, reset, templateDialog]);
 
+    /**
+     * クリアボタン押下
+     */
+    const clickClear = useCallback(() => {
+        clearDialog.on();
+    }, [clearDialog]);
+
+    /**
+     * キャンセルクリア
+     */
+    const cancelClear = useCallback(() => {
+        clearDialog.off();
+    }, [clearDialog]);
+
+    /**
+     * 入力値クリア
+     */
+    const confirmClear = useCallback(() => {
+        reset(getCreateRankingDefaultValues());
+        clearDialog.off();
+    }, [reset, clearDialog]);
+
     return {
         errMessage,
         violations,
@@ -215,5 +239,9 @@ export function useCreateRanking() {
         openTemplateDialog,
         closeTemplateDialog,
         selectTemplate,
+        isClearDialogOpen: clearDialog.flag,
+        clickClear,
+        cancelClear,
+        confirmClear,
     };
 }

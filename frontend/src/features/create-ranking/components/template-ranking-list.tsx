@@ -29,7 +29,7 @@ export function TemplateRankingList(props: PropsType) {
                         <button
                             type="button"
                             onClick={() => onSelectRanking(ranking.id)}
-                            className="w-full truncate rounded-lg border-2 border-line px-4 py-3 text-left text-base font-semibold text-ink hover:border-accent hover:bg-canvas"
+                            className="w-full truncate rounded-lg border-2 border-line px-4 py-3 text-left text-base font-semibold text-ink lg:hover:border-accent lg:hover:bg-canvas"
                         >
                             {ranking.title}
                         </button>
