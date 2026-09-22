@@ -66,7 +66,7 @@ export function MyRankingDetailView(props: PropsType) {
     return (
         <div className="flex flex-1 flex-col">
             {isLoading && <LoadingOverlay />}
-            {/* 一覧に戻る・編集（ヘッダーのアプリタイトルと同じ左位置に揃え、常に画面上部の左右に固定する） */}
+            {/* 一覧に戻る（ヘッダーのアプリタイトルと同じ左位置に揃え、常に画面上部の左に固定する） */}
             <div className="flex w-full items-center justify-between px-4 pt-4 sm:px-6 sm:pt-6 lg:px-8">
                 <button
                     type="button"
@@ -81,9 +81,10 @@ export function MyRankingDetailView(props: PropsType) {
                         一覧に戻る
                     </span>
                 </button>
+                {/* md以上ではコンテンツ列の幅に揃えるため、下のアイコン+タイトル行側に表示を切り替える */}
                 <button
                     type="button"
-                    className="shrink-0 rounded-full bg-accent-surface px-5 py-2 text-base font-medium text-white hover:bg-accent-surface-hover sm:px-8 sm:py-3"
+                    className="shrink-0 rounded-full bg-accent-surface px-5 py-2 text-base font-medium text-white hover:bg-accent-surface-hover sm:px-8 sm:py-3 md:hidden"
                     onClick={onStartEdit}
                 >
                     編集
@@ -157,33 +158,43 @@ export function MyRankingDetailView(props: PropsType) {
                             </span>
                         </div>
                     </div>
-                    <div className="flex shrink-0 items-center gap-2">
+                    <div className="flex shrink-0 items-center gap-5">
+                        <div className="flex shrink-0 items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={onToggleFavorite}
+                                className={isFavorite
+                                    ? "shrink-0 rounded-full bg-amber-400/15 p-2.5 text-amber-400 hover:bg-amber-400/25"
+                                    : "shrink-0 rounded-full bg-gray-400/15 p-2.5 text-gray-400 hover:bg-gray-400/25"
+                                }
+                                aria-label={isFavorite ? 'お気に入りから外す' : 'お気に入りに登録する'}
+                            >
+                                {isFavorite ? <IoStar className="size-7" /> : <IoStarOutline className="size-7" />}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={onClickMemo}
+                                className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                                aria-label="メモを見る"
+                            >
+                                <HiOutlineDocumentText className="size-7" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={onClickDelete}
+                                className="shrink-0 rounded-full bg-danger/15 p-2.5 text-danger hover:bg-danger/25"
+                                aria-label="ランキングを削除"
+                            >
+                                <HiOutlineTrash className="size-7" />
+                            </button>
+                        </div>
+                        {/* md未満では上部の全幅バー側に表示するため、ここでは非表示にする */}
                         <button
                             type="button"
-                            onClick={onToggleFavorite}
-                            className={isFavorite
-                                ? "shrink-0 rounded-full bg-amber-400/15 p-2.5 text-amber-400 hover:bg-amber-400/25"
-                                : "shrink-0 rounded-full bg-gray-400/15 p-2.5 text-gray-400 hover:bg-gray-400/25"
-                            }
-                            aria-label={isFavorite ? 'お気に入りから外す' : 'お気に入りに登録する'}
+                            className="hidden shrink-0 rounded-full bg-accent-surface px-8 py-3 text-base font-medium text-white hover:bg-accent-surface-hover md:inline-flex"
+                            onClick={onStartEdit}
                         >
-                            {isFavorite ? <IoStar className="size-7" /> : <IoStarOutline className="size-7" />}
-                        </button>
-                        <button
-                            type="button"
-                            onClick={onClickMemo}
-                            className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
-                            aria-label="メモを見る"
-                        >
-                            <HiOutlineDocumentText className="size-7" />
-                        </button>
-                        <button
-                            type="button"
-                            onClick={onClickDelete}
-                            className="shrink-0 rounded-full bg-danger/15 p-2.5 text-danger hover:bg-danger/25"
-                            aria-label="ランキングを削除"
-                        >
-                            <HiOutlineTrash className="size-7" />
+                            編集
                         </button>
                     </div>
                 </div>
