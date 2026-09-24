@@ -1,6 +1,5 @@
-import { UserId } from "../../user";
 import { RankingAggregate } from "../aggregate";
-import { RankingId } from "../../shared";
+import { RankingId, UserId } from "../../shared";
 
 /**
  * ランキング復元リポジトリインターフェース

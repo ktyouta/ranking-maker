@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { ICreateMyRankingRepository, RankingAggregate, RankingTitle } from "../../../domain";
-import { UserId } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
 import { rankingMaster, rankingOrderMaster, type Database } from "../../db";
 
 /**

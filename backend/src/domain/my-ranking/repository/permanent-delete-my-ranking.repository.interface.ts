@@ -1,5 +1,4 @@
-import { RankingId } from "../../shared";
-import { UserId } from "../../user";
+import { RankingId, UserId } from "../../shared";
 
 /**
  * ランキング完全削除リポジトリインターフェース

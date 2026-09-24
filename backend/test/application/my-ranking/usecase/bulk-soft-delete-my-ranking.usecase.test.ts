@@ -2,8 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { BulkSoftDeleteMyRankingUsecase } from "../../../../src/application/my-ranking";
 import type { IBulkSoftDeleteMyRankingRepository } from "../../../../src/domain/my-ranking";
 import { PublicStatus, RankingAggregate, RankingIcon, RankingMemo, RankingTitle } from "../../../../src/domain/my-ranking";
-import { RankingId } from "../../../../src/domain/shared";
-import { UserId } from "../../../../src/domain/user";
+import { RankingId, UserId } from "../../../../src/domain/shared";
 
 function buildRanking(id: string, isFavorite: boolean) {
   return RankingAggregate.reconstruct({

@@ -1,7 +1,8 @@
 import type { EnvConfig } from "../../../config";
 import { AccessToken, Pepper, RefreshToken } from "../../../domain/auth";
 import type { IUserLoginRepository } from "../../../domain/auth";
-import { UserId, UserName } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
+import { UserName } from "../../../domain/user";
 import type { IGetUserProfileRepository, UserProfile } from "../../../domain/user";
 
 export type LoginResult = {

@@ -1,5 +1,5 @@
 import { IBulkSoftDeleteMyRankingRepository, RankingId } from "../../../domain";
-import { UserId } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
 
 export type BulkSoftDeleteMyRankingResultType = {
   deletedCount: number;

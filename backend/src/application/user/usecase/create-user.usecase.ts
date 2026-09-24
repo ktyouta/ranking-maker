@@ -1,6 +1,7 @@
 import type { EnvConfig } from "../../../config";
 import { AccessToken, Pepper, RefreshToken, UserLoginEntity, UserPassword, UserSalt } from "../../../domain/auth";
-import { UserBirthday, UserEntity, UserId, UserName, UserTheme } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
+import { UserBirthday, UserEntity, UserName, UserTheme } from "../../../domain/user";
 import type { ICreateUserRepository } from "../../../domain/user";
 
 export type CreateUserResult = {

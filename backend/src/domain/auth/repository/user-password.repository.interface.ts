@@ -1,4 +1,4 @@
-import type { UserId } from "../../user";
+import type { UserId } from "../../shared";
 import type { UserLoginEntity } from "../entity";
 import type { UserPassword } from "../value-object";
 

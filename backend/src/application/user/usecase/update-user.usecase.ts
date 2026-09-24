@@ -1,6 +1,7 @@
 import type { EnvConfig } from "../../../config";
 import { RefreshToken } from "../../../domain/auth";
-import { UserBirthday, UserId, UserName } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
+import { UserBirthday, UserName } from "../../../domain/user";
 import type { IUpdateUserRepository, UserEntity } from "../../../domain/user";
 
 export type UpdateUserResult =

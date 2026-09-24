@@ -1,5 +1,6 @@
 import { and, eq } from "drizzle-orm";
-import type { IDeleteUserRepository, UserId } from "../../../domain/user";
+import type { UserId } from "../../../domain/shared";
+import type { IDeleteUserRepository } from "../../../domain/user";
 import type { Database } from "../../db";
 import { userLoginMaster, userMaster } from "../../db";
 

@@ -1,6 +1,6 @@
 import { err, ok, Result } from "neverthrow";
 import { ISoftDeleteMyRankingRepository, RankingId } from "../../../domain";
-import { UserId } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
 
 export type SoftDeleteMyRankingError =
   | { type: "NOT_FOUND" }

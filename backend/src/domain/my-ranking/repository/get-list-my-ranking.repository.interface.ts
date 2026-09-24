@@ -1,4 +1,4 @@
-import { UserId } from "../../user";
+import { UserId } from "../../shared";
 import { RankingSort } from "../value-object";
 
 export type MyRankingListType = {

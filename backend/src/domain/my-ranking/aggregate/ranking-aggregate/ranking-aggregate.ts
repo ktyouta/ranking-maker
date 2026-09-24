@@ -1,7 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { Violation } from "../../../../util/violation";
-import { RankingId } from "../../../shared";
-import { UserId } from "../../../user";
+import { RankingId, UserId } from "../../../shared";
 import { RankingOrderEntity } from "../../entity";
 import { PublicStatus, RankingIcon, RankingMemo, RankingTitle } from "../../value-object";
 
@@ -26,10 +24,18 @@ type RankingAggregateReconstructParams = RankingAggregateParams & {
 /**
  * 不適切内容チェックの判定対象
  */
-export type ContentModerationTarget = {
-  field: string;
-  value: string;
-};
+export type ContentModerationTarget =
+  | { type: "TITLE"; value: string }
+  | { type: "MEMO"; value: string }
+  | { type: "ITEM_NAME"; itemIndex: number; value: string }
+  | { type: "ITEM_MEMO"; itemIndex: number; value: string };
+
+/**
+ * ランキング生成時のエラー
+ */
+export type RankingCreateError =
+  | { type: "DUPLICATE_ITEM_NAME"; itemName: string }
+  | { type: "DUPLICATE_ORDER"; order: number };
 
 /**
  * ランキング削除時のエラー
@@ -78,11 +84,11 @@ export class RankingAggregate {
    * @param params 集約の構成要素
    * @returns 検証成功時は集約、失敗時は違反一覧を持つ Result
    */
-  static create(params: RankingAggregateParams): Result<RankingAggregate, Violation[]> {
-    const violations = RankingAggregate.collectItemViolations(params.rankingOrderEntityList);
+  static create(params: RankingAggregateParams): Result<RankingAggregate, RankingCreateError[]> {
+    const errors = RankingAggregate.collectItemErrors(params.rankingOrderEntityList);
 
-    if (violations.length > 0) {
-      return err(violations);
+    if (errors.length > 0) {
+      return err(errors);
     }
 
     return ok(
@@ -158,18 +164,19 @@ export class RankingAggregate {
    * @param items ランキング項目エンティティ一覧
    * @returns 違反一覧（違反がなければ空配列）
    */
-  private static collectItemViolations(items: RankingOrderEntity[]): Violation[] {
-    const violations: Violation[] = [];
+  private static collectItemErrors(items: RankingOrderEntity[]): RankingCreateError[] {
+    const errors: RankingCreateError[] = [];
+    const itemNames = items.map((e) => e.itemName).filter((itemName): itemName is string => !!itemName);
 
-    for (const itemName of RankingAggregate.findDuplicates(items.map((e) => e.itemName))) {
-      violations.push({ field: "items", message: `名称が重複しています: ${itemName}` });
+    for (const itemName of RankingAggregate.findDuplicates(itemNames)) {
+      errors.push({ type: "DUPLICATE_ITEM_NAME", itemName });
     }
 
     for (const order of RankingAggregate.findDuplicates(items.map((e) => e.order))) {
-      violations.push({ field: "items", message: `順位が重複しています: ${order}` });
+      errors.push({ type: "DUPLICATE_ORDER", order });
     }
 
-    return violations;
+    return errors;
   }
 
   /**
@@ -213,19 +220,19 @@ export class RankingAggregate {
    */
   toModerationTargets(): ContentModerationTarget[] {
     const targets: ContentModerationTarget[] = [
-      { field: "タイトル", value: this._rankingTitle.value },
+      { type: "TITLE", value: this._rankingTitle.value },
     ];
 
     if (this._memo.value) {
-      targets.push({ field: "メモ", value: this._memo.value });
+      targets.push({ type: "MEMO", value: this._memo.value });
     }
 
     this._rankingOrderEntityList.forEach((item, index) => {
       if (item.itemName) {
-        targets.push({ field: `項目名（${index + 1}件目）`, value: item.itemName });
+        targets.push({ type: "ITEM_NAME", itemIndex: index, value: item.itemName });
       }
       if (item.memo) {
-        targets.push({ field: `メモ（${index + 1}件目）`, value: item.memo });
+        targets.push({ type: "ITEM_MEMO", itemIndex: index, value: item.memo });
       }
     });
 

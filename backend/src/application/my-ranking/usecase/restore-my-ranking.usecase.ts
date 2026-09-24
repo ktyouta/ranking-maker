@@ -1,6 +1,6 @@
 import { err, ok, Result } from "neverthrow";
 import { IRestoreMyRankingRepository, RankingAggregate, RankingId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
-import { UserId } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
 
 export type RestoreMyRankingError =
   | { type: "NOT_FOUND" }

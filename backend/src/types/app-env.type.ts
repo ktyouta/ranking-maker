@@ -1,5 +1,6 @@
 import type { EnvBindings, EnvConfig } from "../config";
-import type { UserId, UserProfile } from "../domain/user";
+import type { UserId } from "../domain/shared";
+import type { UserProfile } from "../domain/user";
 import type { Database } from "../infrastructure/db";
 
 export type UserInfoType = UserProfile;

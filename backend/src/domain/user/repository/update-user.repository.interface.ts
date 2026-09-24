@@ -1,5 +1,6 @@
 import type { UserEntity } from "../entity";
-import type { UserBirthday, UserId, UserName } from "../value-object";
+import type { UserId } from "../../shared";
+import type { UserBirthday, UserName } from "../value-object";
 
 /**
  * ユーザー更新リポジトリインターフェース

@@ -1,5 +1,5 @@
 import { IGetTrashListMyRankingRepository, TrashMyRankingListType, TrashMyRankingQueryType } from "../../../domain";
-import { UserId } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
 
 export type TrashMyRankingListResult = {
   list: TrashMyRankingListType[];

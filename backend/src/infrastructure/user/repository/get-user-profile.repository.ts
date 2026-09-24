@@ -1,5 +1,6 @@
 import { and, eq } from "drizzle-orm";
-import type { IGetUserProfileRepository, UserId, UserProfile } from "../../../domain/user";
+import type { UserId } from "../../../domain/shared";
+import type { IGetUserProfileRepository, UserProfile } from "../../../domain/user";
 import type { Database } from "../../db";
 import { userMaster } from "../../db";
 

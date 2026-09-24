@@ -1,7 +1,7 @@
 import type { EnvConfig } from "../../../config";
 import { Pepper } from "../../../domain/auth";
 import type { IUserPasswordRepository } from "../../../domain/auth";
-import { UserId } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
 
 /**
  * パスワード更新ユースケース

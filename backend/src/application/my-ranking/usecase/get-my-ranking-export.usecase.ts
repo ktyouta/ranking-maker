@@ -1,5 +1,5 @@
 import { IGetMyRankingExportRepository, RankingId } from "../../../domain";
-import { UserId } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
 
 export type MyRankingExportResultType = {
   ranking: {

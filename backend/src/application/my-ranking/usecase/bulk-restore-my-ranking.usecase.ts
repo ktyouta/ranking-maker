@@ -1,5 +1,5 @@
 import { IBulkRestoreMyRankingRepository, RankingId, RankingTitleUniquenessDomainService } from "../../../domain";
-import { UserId } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
 
 export type BulkRestoreMyRankingResultType = {
   restoreCount: number;

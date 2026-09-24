@@ -3,7 +3,7 @@ import { env } from "cloudflare:test";
 import { ulid } from "ulid";
 import { describe, expect, it } from "vitest";
 import { RankingSort, RankingSortType } from "../../../../src/domain/my-ranking";
-import { UserId } from "../../../../src/domain/user";
+import { UserId } from "../../../../src/domain/shared";
 import type { Database } from "../../../../src/infrastructure/db";
 import * as schema from "../../../../src/infrastructure/db/schema";
 import { publicStatusMaster, rankingMaster, rankingOrderMaster, userMaster } from "../../../../src/infrastructure/db/schema";

@@ -1,4 +1,5 @@
-import type { IGetUserProfileRepository, UserId, UserProfile } from "../../../domain/user";
+import type { UserId } from "../../../domain/shared";
+import type { IGetUserProfileRepository, UserProfile } from "../../../domain/user";
 
 /**
  * 認証済みユーザー取得ユースケース（authMiddleware専用）

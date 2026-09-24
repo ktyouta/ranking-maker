@@ -1,4 +1,5 @@
-import type { UserId, UserTheme } from "../value-object";
+import type { UserId } from "../../shared";
+import type { UserTheme } from "../value-object";
 
 /**
  * ユーザーテーマ更新リポジトリインターフェース

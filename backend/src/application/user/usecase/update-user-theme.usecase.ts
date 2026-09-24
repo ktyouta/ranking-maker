@@ -1,4 +1,5 @@
-import { UserId, UserTheme } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
+import { UserTheme } from "../../../domain/user";
 import type { IUpdateUserThemeRepository } from "../../../domain/user";
 
 /**

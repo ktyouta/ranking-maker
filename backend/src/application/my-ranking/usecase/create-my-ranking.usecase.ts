@@ -1,13 +1,12 @@
 import { err, ok, Result } from "neverthrow";
-import { ContentModerationDomainService, ContentModerationViolation, ICreateMyRankingRepository, IconValidityDomainService, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
-import { UserId } from "../../../domain/user";
-import { Violation } from "../../../util";
+import { ContentModerationDomainService, ContentModerationTarget, ICreateMyRankingRepository, IconValidityDomainService, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingCreateError, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
+import { UserId } from "../../../domain/shared";
 
 export type CreateMyRankingError =
   | { type: "DUPLICATE_TITLE" }
   | { type: "INVALID_ICON" }
-  | { type: "VALIDATION"; violations: Violation[] }
-  | { type: "INAPPROPRIATE_CONTENT"; violations: ContentModerationViolation[] };
+  | { type: "VALIDATION"; errors: RankingCreateError[] }
+  | { type: "INAPPROPRIATE_CONTENT"; targets: ContentModerationTarget[] };
 
 type CreateMyRankingBody = {
   title: string;
@@ -71,15 +70,15 @@ export class CreateMyRankingUsecase {
 
     // 集約時エラー
     if (aggregateResult.isErr()) {
-      return err({ type: "VALIDATION", violations: aggregateResult.error });
+      return err({ type: "VALIDATION", errors: aggregateResult.error });
     }
 
     const rankingAggrigate = aggregateResult.value;
 
     // 不適切内容チェック
-    const moderationViolations = await this.contentModerationService.moderate(rankingAggrigate);
-    if (moderationViolations.length > 0) {
-      return err({ type: "INAPPROPRIATE_CONTENT", violations: moderationViolations });
+    const inappropriateTargets = await this.contentModerationService.moderate(rankingAggrigate);
+    if (inappropriateTargets.length > 0) {
+      return err({ type: "INAPPROPRIATE_CONTENT", targets: inappropriateTargets });
     }
 
     // ランキング作成

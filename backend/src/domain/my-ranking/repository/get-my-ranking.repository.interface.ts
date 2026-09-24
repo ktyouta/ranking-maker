@@ -1,5 +1,4 @@
-import { UserId } from "../../user";
-import { RankingId } from "../../shared";
+import { RankingId, UserId } from "../../shared";
 
 export type MyRankingType = {
   id: string;

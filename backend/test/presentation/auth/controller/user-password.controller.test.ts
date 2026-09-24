@@ -5,7 +5,7 @@ import { ulid } from "ulid";
 import { describe, expect, it } from "vitest";
 import { createEnvConfig } from "../../../../src/config";
 import { AccessToken, Pepper, UserPassword, UserSalt } from "../../../../src/domain/auth";
-import { UserId } from "../../../../src/domain/user";
+import { UserId } from "../../../../src/domain/shared";
 import { userLoginMaster, userMaster } from "../../../../src/infrastructure/db";
 import * as schema from "../../../../src/infrastructure/db/schema";
 

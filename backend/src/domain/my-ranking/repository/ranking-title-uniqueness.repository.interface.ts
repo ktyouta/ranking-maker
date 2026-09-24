@@ -1,6 +1,5 @@
 import { RankingTitle } from "../value-object";
-import { RankingId } from "../../shared";
-import { UserId } from "../../user";
+import { RankingId, UserId } from "../../shared";
 
 export interface IRankingTitleUniquenessRepository {
     /**

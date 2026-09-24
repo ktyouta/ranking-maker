@@ -1,6 +1,5 @@
 import { RankingAggregate } from "../aggregate";
-import { RankingId } from "../../shared";
-import { UserId } from "../../user";
+import { RankingId, UserId } from "../../shared";
 
 
 /**

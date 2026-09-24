@@ -12,7 +12,7 @@ import {
   RankingOrderId,
   RankingTitle,
 } from "../../src/domain";
-import { UserId } from "../../src/domain/user";
+import { UserId } from "../../src/domain/shared";
 
 function buildBaseParams() {
   return {
@@ -61,7 +61,7 @@ describe("RankingAggregate", () => {
     }
 
     const targets = result.value.toModerationTargets();
-    const itemNameTargets = targets.filter((t) => t.field.startsWith("項目名"));
+    const itemNameTargets = targets.filter((t) => t.type === "ITEM_NAME");
 
     expect(itemNameTargets).toHaveLength(1);
     expect(itemNameTargets[0].value).toBe("ラーメン");

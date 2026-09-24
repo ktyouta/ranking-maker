@@ -1,6 +1,6 @@
 import { and, asc, count, desc, eq, exists, gte, like, lte, or, type SQL } from "drizzle-orm";
 import { IGetTrashListMyRankingRepository, TrashMyRankingListType, TrashMyRankingQueryType, TrashRankingSort, TrashRankingSortType } from "../../../domain";
-import { UserId } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
 import type { Database } from "../../db";
 import { publicStatusMaster, rankingMaster, rankingOrderMaster, userMaster } from "../../db";
 

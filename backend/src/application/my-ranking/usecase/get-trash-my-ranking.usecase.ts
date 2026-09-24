@@ -1,5 +1,5 @@
 import { IGetTrashMyRankingRepository, RankingId, TrashMyRankingOrderType, TrashMyRankingType } from "../../../domain";
-import { UserId } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
 
 type ReturnType = {
   ranking: TrashMyRankingType;

@@ -1,5 +1,5 @@
 import { IGetListMyRankingRepository, MyRankingListType, MyRankingQueryType } from "../../../domain";
-import { UserId } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
 
 export type MyRankingListResult = {
   list: MyRankingListType[];

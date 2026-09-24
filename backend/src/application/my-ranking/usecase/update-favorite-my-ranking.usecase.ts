@@ -1,6 +1,6 @@
 import { err, ok, Result } from "neverthrow";
 import { IUpdateFavoriteMyRankingRepository, RankingId } from "../../../domain";
-import { UserId } from "../../../domain/user";
+import { UserId } from "../../../domain/shared";
 
 export type UpdateFavoriteMyRankingError =
   | { type: "NOT_FOUND" };

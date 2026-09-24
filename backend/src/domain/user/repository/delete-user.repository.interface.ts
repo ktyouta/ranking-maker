@@ -1,4 +1,4 @@
-import type { UserId } from "../value-object";
+import type { UserId } from "../../shared";
 
 /**
  * ユーザー削除リポジトリインターフェース

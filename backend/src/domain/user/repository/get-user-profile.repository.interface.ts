@@ -1,4 +1,4 @@
-import type { UserId } from "../value-object";
+import type { UserId } from "../../shared";
 
 /**
  * ユーザープロフィール（認証結果等で使う軽量な参照専用データ）

@@ -1,8 +1,8 @@
 import { sign, verify } from "hono/jwt";
 import type { EnvConfig } from "../../../../config";
 import { parseDuration } from "../../../../util";
+import { UserId } from "../../../shared";
 import { Cookie } from "../cookie";
-import { UserId } from "../../../user/value-object/user-id";
 
 
 export class RefreshToken {

@@ -7,4 +7,6 @@ export * from "./ranking-memo";
 export * from "./ranking-order-id";
 export * from "./ranking-sort";
 export * from "./ranking-title";
+export * from "./tag-id";
+export * from "./tag-name";
 export * from "./trash-ranking-sort";

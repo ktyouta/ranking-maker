@@ -7,7 +7,7 @@ describe("ContentModerationRepository", () => {
     const ai = { run: runMock } as unknown as Ai;
     const repository = new ContentModerationRepository(ai);
 
-    await repository.detectInappropriateIndexes([{ field: "タイトル", value: "テスト" }]);
+    await repository.detectInappropriateIndexes([{ type: "TITLE", value: "テスト" }]);
 
     const [calledModel] = runMock.mock.calls[0];
     expect(calledModel).not.toBe("@cf/meta/llama-3-8b-instruct");
@@ -18,7 +18,7 @@ describe("ContentModerationRepository", () => {
     const ai = { run: runMock } as unknown as Ai;
     const repository = new ContentModerationRepository(ai);
 
-    await repository.detectInappropriateIndexes([{ field: "タイトル", value: "テスト" }]);
+    await repository.detectInappropriateIndexes([{ type: "TITLE", value: "テスト" }]);
 
     const [, options] = runMock.mock.calls[0];
     expect(options).not.toHaveProperty("response_format");
@@ -30,8 +30,8 @@ describe("ContentModerationRepository", () => {
     const repository = new ContentModerationRepository(ai);
 
     const result = await repository.detectInappropriateIndexes([
-      { field: "タイトル", value: "テスト" },
-      { field: "メモ", value: "不適切な内容" },
+      { type: "TITLE", value: "テスト" },
+      { type: "MEMO", value: "不適切な内容" },
     ]);
 
     expect(result).toEqual([1]);
@@ -44,7 +44,7 @@ describe("ContentModerationRepository", () => {
     const ai = { run: runMock } as unknown as Ai;
     const repository = new ContentModerationRepository(ai);
 
-    const result = await repository.detectInappropriateIndexes([{ field: "タイトル", value: "テスト" }]);
+    const result = await repository.detectInappropriateIndexes([{ type: "TITLE", value: "テスト" }]);
 
     expect(result).toEqual([0]);
   });
@@ -54,7 +54,7 @@ describe("ContentModerationRepository", () => {
     const ai = { run: runMock } as unknown as Ai;
     const repository = new ContentModerationRepository(ai);
 
-    const result = await repository.detectInappropriateIndexes([{ field: "タイトル", value: "テスト" }]);
+    const result = await repository.detectInappropriateIndexes([{ type: "TITLE", value: "テスト" }]);
 
     expect(result).toEqual([]);
   });
@@ -64,7 +64,7 @@ describe("ContentModerationRepository", () => {
     const ai = { run: runMock } as unknown as Ai;
     const repository = new ContentModerationRepository(ai);
 
-    const result = await repository.detectInappropriateIndexes([{ field: "タイトル", value: "テスト" }]);
+    const result = await repository.detectInappropriateIndexes([{ type: "TITLE", value: "テスト" }]);
 
     expect(result).toEqual([]);
   });
@@ -74,7 +74,7 @@ describe("ContentModerationRepository", () => {
     const ai = { run: runMock } as unknown as Ai;
     const repository = new ContentModerationRepository(ai);
 
-    const result = await repository.detectInappropriateIndexes([{ field: "タイトル", value: "テスト" }]);
+    const result = await repository.detectInappropriateIndexes([{ type: "TITLE", value: "テスト" }]);
 
     expect(result).toEqual([]);
   });
