@@ -1,14 +1,29 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { BulkRestoreMyRankingUsecase } from "../../../application";
+import type { BulkRestoreMyRankingResultType } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
 import { RankingId, RankingTitleUniquenessDomainService, UserId } from "../../../domain";
 import { BulkRestoreMyRankingRepository, RankingTitleUniquenessRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import type { AppEnv } from "../../../types";
 import { formatZodErrors } from "../../../util";
-import { BulkRestoreMyRankingResponseDto } from "../dto";
 import { BulkRestoreMyRankingSchema } from "../schema";
+
+/**
+ * 復元件数・同名ランキングによるスキップ件数から通知文言を作成する
+ * @param result 一括復元の結果
+ * @returns 通知文言
+ */
+function toMessage({ restoreCount, skippedCount }: BulkRestoreMyRankingResultType): string {
+  if (restoreCount === 0 && skippedCount === 0) {
+    return "復元対象のランキングが見つかりませんでした。";
+  }
+  if (skippedCount === 0) {
+    return `${restoreCount}件を復元しました。`;
+  }
+  return `${restoreCount}件を復元しました（${skippedCount}件は同名のランキングが存在するためスキップされました）。`;
+}
 
 /**
  * ランキング一括復元
@@ -33,11 +48,13 @@ const bulkRestoreMyRanking = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING_BUL
     const uniquenessService = new RankingTitleUniquenessDomainService(new RankingTitleUniquenessRepository(db));
     const usecase = new BulkRestoreMyRankingUsecase(repository, uniquenessService);
 
-    const result = await usecase.execute(userId, rankingIds);
+    const { value: result } = await usecase.execute(userId, rankingIds);
 
-    const dto = new BulkRestoreMyRankingResponseDto(result);
-
-    return c.json(dto.value, HTTP_STATUS.OK);
+    return c.json({
+      message: toMessage(result),
+      restoreCount: result.restoreCount,
+      skippedCount: result.skippedCount,
+    }, HTTP_STATUS.OK);
   });
 
 export { bulkRestoreMyRanking };

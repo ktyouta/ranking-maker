@@ -36,7 +36,7 @@ const getTrashMyRanking = new Hono<AppEnv>().get(API_ENDPOINT.MY_RANKING_TRASH_I
       return c.json({ message: "削除済みランキングが存在しません" }, HTTP_STATUS.NOT_FOUND);
     }
 
-    return c.json({ message: "削除済みランキングを取得しました。", data: result }, HTTP_STATUS.OK);
+    return c.json({ message: "削除済みランキングを取得しました。", data: result.value }, HTTP_STATUS.OK);
   });
 
 export { getTrashMyRanking };

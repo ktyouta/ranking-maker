@@ -1,10 +1,6 @@
-import { IGetMyRankingRepository, RankingId, MyRankingOrderType, MyRankingType } from "../../../domain";
+import { IGetMyRankingRepository, RankingId } from "../../../domain";
 import { UserId } from "../../../domain/shared";
-
-type ReturnType = {
-  ranking: MyRankingType;
-  rankingOrder: MyRankingOrderType[];
-}
+import { GetMyRankingResultDto } from "../dto";
 
 /**
  * ランキング取得ユースケース
@@ -15,7 +11,7 @@ export class GetMyRankingUsecase {
   /**
    * ランキング取得
    */
-  async execute(userId: UserId, rankingId: RankingId): Promise<ReturnType | null> {
+  async execute(userId: UserId, rankingId: RankingId): Promise<GetMyRankingResultDto | null> {
 
     // ランキング
     const ranking = await this.repository.findRanking(userId, rankingId);
@@ -27,9 +23,6 @@ export class GetMyRankingUsecase {
     // ランキングオーダー
     const rankingOrder = await this.repository.findRankingOrder(rankingId);
 
-    return {
-      ranking,
-      rankingOrder,
-    }
+    return new GetMyRankingResultDto(ranking, rankingOrder);
   }
 }

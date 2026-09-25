@@ -17,7 +17,7 @@ const getIcons = new Hono<AppEnv>().get(API_ENDPOINT.MY_RANKING_ICONS,
 
     const result = await usecase.execute();
 
-    return c.json({ message: "アイコン一覧を取得しました。", data: result }, HTTP_STATUS.OK);
+    return c.json({ message: "アイコン一覧を取得しました。", data: result.value }, HTTP_STATUS.OK);
   });
 
 export { getIcons };

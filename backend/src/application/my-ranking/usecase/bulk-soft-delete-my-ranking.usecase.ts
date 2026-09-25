@@ -1,10 +1,6 @@
 import { IBulkSoftDeleteMyRankingRepository, RankingId } from "../../../domain";
 import { UserId } from "../../../domain/shared";
-
-export type BulkSoftDeleteMyRankingResultType = {
-  deletedCount: number;
-  skippedCount: number;
-};
+import { BulkSoftDeleteMyRankingResultDto } from "../dto";
 
 /**
  * ランキング一括削除ユースケース
@@ -22,7 +18,7 @@ export class BulkSoftDeleteMyRankingUsecase {
    * @param rankingIds 削除対象のランキングID一覧（クライアントからの未フィルタな入力）
    * @returns 実際に削除した件数と、お気に入りのためスキップした件数
    */
-  async execute(userId: UserId, rankingIds: RankingId[]): Promise<BulkSoftDeleteMyRankingResultType> {
+  async execute(userId: UserId, rankingIds: RankingId[]): Promise<BulkSoftDeleteMyRankingResultDto> {
 
     // ①所有権フィルタ済みのランキング一覧（生存行のみ）
     const rankings = await this.repository.findRankings(userId, rankingIds);
@@ -33,6 +29,6 @@ export class BulkSoftDeleteMyRankingUsecase {
 
     const skippedCount = rankings.length - deletableRankings.length;
 
-    return { deletedCount: deletableRankings.length, skippedCount };
+    return new BulkSoftDeleteMyRankingResultDto(deletableRankings.length, skippedCount);
   }
 }

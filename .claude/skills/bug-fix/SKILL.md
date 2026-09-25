@@ -100,7 +100,7 @@ Step 3 のテストが通るように修正する。
 
 ### Step 5: テスト通過確認
 
-`npm run test` でテストが通ることを確認する。
+`npm run test --prefix backend -- --run`（フロントエンドは `--prefix frontend`）でテストが通ることを確認する。`npm run test` 単体は watch モードで終了しないため使わない。
 
 ---
 

@@ -1,6 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import { ContentModerationDomainService, ContentModerationTarget, ItemMemo, ItemName, IUpdateMyRankingRepository, IconValidityDomainService, Order, PublicStatus, RankingAggregate, RankingCreateError, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
 import { UserId } from "../../../domain/shared";
+import { UpdateMyRankingResultDto } from "../dto";
 
 export type UpdateMyRankingError =
   | { type: "DUPLICATE_TITLE" }
@@ -36,7 +37,7 @@ export class UpdateMyRankingUsecase {
   /**
    * ランキング更新
    */
-  async execute({ userId, rankingId, body }: PropsType): Promise<Result<RankingAggregate, UpdateMyRankingError>> {
+  async execute({ userId, rankingId, body }: PropsType): Promise<Result<UpdateMyRankingResultDto, UpdateMyRankingError>> {
 
     // ランキング存在チェック（他ユーザーのものは取得できないため所有権も担保する）
     const result = await this.repository.findRanking(userId, rankingId);
@@ -91,6 +92,6 @@ export class UpdateMyRankingUsecase {
     // ランキング更新
     await this.repository.updateRanking(rankingAggrigate);
 
-    return ok(rankingAggrigate);
+    return ok(new UpdateMyRankingResultDto(rankingAggrigate));
   }
 }

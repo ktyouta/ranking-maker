@@ -1,17 +1,6 @@
 import { IGetMyRankingExportRepository, RankingId } from "../../../domain";
 import { UserId } from "../../../domain/shared";
-
-export type MyRankingExportResultType = {
-  ranking: {
-    id: string;
-    title: string;
-  };
-  items: {
-    itemName: string | null;
-    itemMemo: string | null;
-    order: number;
-  }[];
-};
+import { GetMyRankingExportResultDto } from "../dto";
 
 /**
  * ランキングCSVエクスポート用データ取得ユースケース
@@ -26,24 +15,19 @@ export class GetMyRankingExportUsecase {
    * ②その結果に含まれる rankingId のみをオーダー取得に渡す、の順序を守る。
    * クライアントから渡された生の rankingIds をオーダー取得にそのまま渡さない。
    */
-  async execute(userId: UserId, rankingIds: RankingId[]): Promise<MyRankingExportResultType[]> {
+  async execute(userId: UserId, rankingIds: RankingId[]): Promise<GetMyRankingExportResultDto> {
 
     // ①所有権フィルタ済みのランキング一覧
     const rankings = await this.repository.findRankings(userId, rankingIds);
 
     if (rankings.length === 0) {
-      return [];
+      return new GetMyRankingExportResultDto([], []);
     }
 
     // ②①に含まれる rankingId のみでオーダーを取得
     const ownedRankingIds = rankings.map((ranking) => RankingId.of(ranking.id));
     const orders = await this.repository.findRankingOrders(ownedRankingIds);
 
-    return rankings.map((ranking) => ({
-      ranking,
-      items: orders
-        .filter((order) => order.rankingId === ranking.id)
-        .map((order) => ({ itemName: order.itemName, itemMemo: order.itemMemo, order: order.order })),
-    }));
+    return new GetMyRankingExportResultDto(rankings, orders);
   }
 }

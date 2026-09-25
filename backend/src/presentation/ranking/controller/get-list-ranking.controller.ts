@@ -15,7 +15,7 @@ const getListRanking = new Hono<AppEnv>().get(API_ENDPOINT.RANKING, async (c) =>
 
   const result = await usecase.execute();
 
-  return c.json({ message: "ランキング一覧を取得しました。", data: result }, HTTP_STATUS.OK);
+  return c.json({ message: "ランキング一覧を取得しました。", data: result.value }, HTTP_STATUS.OK);
 });
 
 export { getListRanking };

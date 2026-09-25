@@ -1,9 +1,5 @@
-import type { IGetRankingRepository, RankingId, RankingOrderType, RankingType } from "../../../domain";
-
-type ReturnType = {
-  ranking: RankingType;
-  rankingOrder: RankingOrderType[];
-}
+import type { IGetRankingRepository, RankingId } from "../../../domain";
+import { GetRankingResultDto } from "../dto";
 
 /**
  * ランキング取得ユースケース
@@ -16,7 +12,7 @@ export class GetRankingUsecase {
    * @param rankingId ランキングID
    * @returns ランキングと項目一覧。存在しない場合は null
    */
-  async execute(rankingId: RankingId): Promise<ReturnType | null> {
+  async execute(rankingId: RankingId): Promise<GetRankingResultDto | null> {
     // ランキング
     const ranking = await this.repository.findRanking(rankingId);
 
@@ -27,9 +23,6 @@ export class GetRankingUsecase {
     // ランキングオーダー
     const rankingOrder = await this.repository.findRankingOrder(rankingId);
 
-    return {
-      ranking,
-      rankingOrder,
-    }
+    return new GetRankingResultDto(ranking, rankingOrder);
   }
 }

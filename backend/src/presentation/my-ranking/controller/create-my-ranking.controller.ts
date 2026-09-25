@@ -7,7 +7,6 @@ import { ContentModerationRepository, CreateMyRankingRepository, IconValidityRep
 import { authMiddleware } from "../../../middleware";
 import type { AppEnv, ValidationErrorType } from "../../../types";
 import { formatZodErrors } from "../../../util";
-import { CreateMyRankingResponseDto } from "../dto";
 import { CreateMyRankingSchema } from "../schema";
 
 /**
@@ -75,8 +74,8 @@ const createMyRanking = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING,
 
     return result.match(
       // 成功
-      (aggregate) => c.json(
-        { message: "ランキングを作成しました。", data: new CreateMyRankingResponseDto(aggregate).value },
+      (dto) => c.json(
+        { message: "ランキングを作成しました。", data: dto.value },
         HTTP_STATUS.CREATED,
       ),
       // 失敗

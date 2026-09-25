@@ -1,4 +1,5 @@
-import { IconMasterRecord, IGetIconsRepository } from "../../../domain";
+import { IGetIconsRepository } from "../../../domain";
+import { GetIconsResultDto } from "../dto";
 
 /**
  * アイコン一覧取得ユースケース
@@ -9,7 +10,8 @@ export class GetIconsUsecase {
   /**
    * 選択可能なアイコン一覧を取得する
    */
-  async execute(): Promise<IconMasterRecord[]> {
-    return this.repository.findIcons();
+  async execute(): Promise<GetIconsResultDto> {
+    const icons = await this.repository.findIcons();
+    return new GetIconsResultDto(icons);
   }
 }

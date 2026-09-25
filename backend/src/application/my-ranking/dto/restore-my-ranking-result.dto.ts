@@ -1,0 +1,41 @@
+import type { RankingAggregate } from "../../../domain";
+
+export type RestoreMyRankingResultType = {
+  id: string;
+  title: string;
+  publicStatus: number;
+  memo: string | null;
+  items: {
+    id: string;
+    itemName: string | null;
+    order: number;
+    memo: string | null;
+  }[];
+};
+
+/**
+ * ランキング復元結果 DTO
+ * 永続化した集約を唯一の情報源として組み立てる（DB の再取得はしない）。
+ */
+export class RestoreMyRankingResultDto {
+  private readonly _value: RestoreMyRankingResultType;
+
+  constructor(aggregate: RankingAggregate) {
+    this._value = {
+      id: aggregate.id,
+      title: aggregate.title,
+      publicStatus: aggregate.publicStatus,
+      memo: aggregate.memo,
+      items: aggregate.rankingOrderEntityList.map((e) => ({
+        id: e.id,
+        itemName: e.itemName,
+        order: e.order,
+        memo: e.memo,
+      })),
+    };
+  }
+
+  get value(): RestoreMyRankingResultType {
+    return this._value;
+  }
+}

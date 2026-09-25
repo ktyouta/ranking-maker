@@ -41,7 +41,7 @@ describe("BulkSoftDeleteMyRankingUsecase", () => {
 
     const result = await usecase.execute(userId, rankingIds);
 
-    expect(result).toEqual({ deletedCount: 2, skippedCount: 0 });
+    expect(result.value).toEqual({ deletedCount: 2, skippedCount: 0 });
     expect(mockRepository.deleteRankings).toHaveBeenCalledTimes(1);
     const passedRankings = vi.mocked(mockRepository.deleteRankings).mock.calls[0][0];
     expect(passedRankings.map((ranking) => ranking.id)).toEqual(["ranking-1", "ranking-2"]);
@@ -56,7 +56,7 @@ describe("BulkSoftDeleteMyRankingUsecase", () => {
 
     const result = await usecase.execute(userId, rankingIds);
 
-    expect(result).toEqual({ deletedCount: 1, skippedCount: 1 });
+    expect(result.value).toEqual({ deletedCount: 1, skippedCount: 1 });
     expect(mockRepository.deleteRankings).toHaveBeenCalledTimes(1);
     const passedRankings = vi.mocked(mockRepository.deleteRankings).mock.calls[0][0];
     expect(passedRankings.map((ranking) => ranking.id)).toEqual(["ranking-2"]);
@@ -71,7 +71,7 @@ describe("BulkSoftDeleteMyRankingUsecase", () => {
 
     const result = await usecase.execute(userId, rankingIds);
 
-    expect(result).toEqual({ deletedCount: 0, skippedCount: 2 });
+    expect(result.value).toEqual({ deletedCount: 0, skippedCount: 2 });
     expect(mockRepository.deleteRankings).toHaveBeenCalledTimes(1);
     expect(mockRepository.deleteRankings).toHaveBeenCalledWith([]);
   });
@@ -81,7 +81,7 @@ describe("BulkSoftDeleteMyRankingUsecase", () => {
 
     const result = await usecase.execute(userId, rankingIds);
 
-    expect(result).toEqual({ deletedCount: 0, skippedCount: 0 });
+    expect(result.value).toEqual({ deletedCount: 0, skippedCount: 0 });
     expect(mockRepository.deleteRankings).toHaveBeenCalledWith([]);
   });
 });

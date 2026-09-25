@@ -36,12 +36,12 @@ const verify = new Hono<AppEnv>().get(
             return c.json({
                 message: "認証成功",
                 data: {
-                    accessToken: result.accessToken.token,
+                    accessToken: result.dto.value.accessToken,
                     userInfo: {
-                        id: result.userInfo.id,
-                        name: result.userInfo.name,
-                        birthday: result.userInfo.birthday,
-                        theme: result.userInfo.theme,
+                        id: result.dto.value.user.id,
+                        name: result.dto.value.user.name,
+                        birthday: result.dto.value.user.birthday,
+                        theme: result.dto.value.user.theme,
                     },
                 },
             }, 200);

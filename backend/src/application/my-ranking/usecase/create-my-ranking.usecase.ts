@@ -1,6 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import { ContentModerationDomainService, ContentModerationTarget, ICreateMyRankingRepository, IconValidityDomainService, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingCreateError, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
 import { UserId } from "../../../domain/shared";
+import { CreateMyRankingResultDto } from "../dto";
 
 export type CreateMyRankingError =
   | { type: "DUPLICATE_TITLE" }
@@ -34,7 +35,7 @@ export class CreateMyRankingUsecase {
   /**
    * ランキング作成
    */
-  async execute({ userId, body }: PropsType): Promise<Result<RankingAggregate, CreateMyRankingError>> {
+  async execute({ userId, body }: PropsType): Promise<Result<CreateMyRankingResultDto, CreateMyRankingError>> {
 
     const rankingId = RankingId.generate();
     const rankingTitle = new RankingTitle(body.title);
@@ -84,6 +85,6 @@ export class CreateMyRankingUsecase {
     // ランキング作成
     await this.repository.createRanking(rankingAggrigate);
 
-    return ok(rankingAggrigate);
+    return ok(new CreateMyRankingResultDto(rankingAggrigate));
   }
 }

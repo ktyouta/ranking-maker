@@ -8,7 +8,6 @@ import { authMiddleware } from "../../../middleware";
 import { RankingIdParamSchema } from "../../../schema";
 import type { AppEnv, ValidationErrorType } from "../../../types";
 import { formatZodErrors } from "../../../util";
-import { UpdateMyRankingResponseDto } from "../dto";
 import { UpdateMyRankingSchema } from "../schema";
 
 /**
@@ -82,8 +81,8 @@ const updateMyRanking = new Hono<AppEnv>().patch(API_ENDPOINT.MY_RANKING_ID,
 
     return result.match(
       // 成功
-      (aggregate) => c.json(
-        { message: "ランキングを更新しました。", data: new UpdateMyRankingResponseDto(aggregate).value },
+      (dto) => c.json(
+        { message: "ランキングを更新しました。", data: dto.value },
         HTTP_STATUS.OK,
       ),
       // 失敗

@@ -1,10 +1,6 @@
 import { IBulkRestoreMyRankingRepository, RankingId, RankingTitleUniquenessDomainService } from "../../../domain";
 import { UserId } from "../../../domain/shared";
-
-export type BulkRestoreMyRankingResultType = {
-  restoreCount: number;
-  skippedCount: number;
-};
+import { BulkRestoreMyRankingResultDto } from "../dto";
 
 /**
  * ランキング一括復元ユースケース
@@ -24,7 +20,7 @@ export class BulkRestoreMyRankingUsecase {
    * @param rankingIds 復元対象のランキングID一覧（クライアントからの未フィルタな入力）
    * @returns 実際に復元した件数と、同名重複のためスキップした件数
    */
-  async execute(userId: UserId, rankingIds: RankingId[]): Promise<BulkRestoreMyRankingResultType> {
+  async execute(userId: UserId, rankingIds: RankingId[]): Promise<BulkRestoreMyRankingResultDto> {
 
     // 所有権フィルタ済みのランキング一覧（削除済み行のみ）
     const rankings = await this.repository.findRankings(userId, rankingIds);
@@ -38,6 +34,6 @@ export class BulkRestoreMyRankingUsecase {
     restorableRankings.forEach((ranking) => ranking.restore());
     await this.repository.restoreRankings(restorableRankings);
 
-    return { restoreCount: restorableRankings.length, skippedCount: duplicatedRankings.length };
+    return new BulkRestoreMyRankingResultDto(restorableRankings.length, duplicatedRankings.length);
   }
 }

@@ -128,11 +128,6 @@ React + Hono + RPC を用いたフロントエンド・バックエンド統合�
   * `rpc-client.ts` → `refresh-handler.ts` → `rpc-client.ts` の循環参照を避けるため
 * 新しい API エンドポイントを追加する際は `rpc` を使うこと
 
-### sample 機能
-
-* `features/sample/` はテンプレートのリファレンス実装（Container / Presentational パターンの参考）
-* 実際のプロジェクトでは削除または置き換える想定
-
 ---
 
 ## バックエンド固有の設計指針

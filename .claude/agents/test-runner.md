@@ -19,15 +19,17 @@ tools: Bash, Read, Grep, Glob
 ## 許可されたコマンド
 
 ```bash
-# ルートから両方実行
-npm run test
+# 両方実行
+npm run test --prefix frontend -- --run && npm run test --prefix backend -- --run
 
 # フロントエンドのみ
-npm run test --prefix frontend
+npm run test --prefix frontend -- --run
 
 # バックエンドのみ
-npm run test --prefix backend
+npm run test --prefix backend -- --run
 ```
+
+`npm run test` を `-- --run` なしで実行しない（vitest が watch モードで起動し終了しない）。
 
 ## 実行ワークフロー
 

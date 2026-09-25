@@ -1,4 +1,5 @@
-import type { IGetListRankingRepository, RankingListType } from "../../../domain/ranking";
+import type { IGetListRankingRepository } from "../../../domain/ranking";
+import { GetListRankingResultDto } from "../dto";
 
 /**
  * ランキング一覧取得ユースケース
@@ -9,7 +10,8 @@ export class GetListRankingUsecase {
   /**
    * 全件取得
    */
-  async execute(): Promise<RankingListType[]> {
-    return await this.repository.findAll();
+  async execute(): Promise<GetListRankingResultDto> {
+    const list = await this.repository.findAll();
+    return new GetListRankingResultDto(list);
   }
 }

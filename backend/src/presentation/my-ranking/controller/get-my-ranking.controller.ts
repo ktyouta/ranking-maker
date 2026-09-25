@@ -36,7 +36,7 @@ const getMyRanking = new Hono<AppEnv>().get(API_ENDPOINT.MY_RANKING_ID,
       return c.json({ message: "ランキングが存在しません" }, HTTP_STATUS.NOT_FOUND);
     }
 
-    return c.json({ message: "ランキングを取得しました。", data: result }, HTTP_STATUS.OK);
+    return c.json({ message: "ランキングを取得しました。", data: result.value }, HTTP_STATUS.OK);
   });
 
 export { getMyRanking };

@@ -3,7 +3,6 @@
  */
 export const API_ENDPOINT = {
   HEALTH: "/api/v1/health",
-  SAMPLE: "/api/v1/sample",
   USER: "/api/v1/user",
   USER_THEME: "/api/v1/user/theme",
   USER_LOGIN: "/api/v1/user-login",

@@ -8,7 +8,6 @@ import { authMiddleware } from "../../../middleware";
 import { RankingIdParamSchema } from "../../../schema/ranking-id-param.schema";
 import type { AppEnv } from "../../../types";
 import { formatZodErrors } from "../../../util";
-import { RestoreMyRankingResponseDto } from "../dto";
 
 /**
  * ランキング復元
@@ -36,8 +35,8 @@ const restoreMyRanking = new Hono<AppEnv>().patch(API_ENDPOINT.MY_RANKING_TRASH_
 
     return result.match(
       // 成功
-      (aggregate) => c.json(
-        { message: "ランキングを復元しました。", data: new RestoreMyRankingResponseDto(aggregate).value },
+      (dto) => c.json(
+        { message: "ランキングを復元しました。", data: dto.value },
         HTTP_STATUS.OK,
       ),
       // 失敗
