@@ -6,7 +6,7 @@ let resetLoginRef: ResetLoginType | null = null;
 
 type ResetLoginType = {
     resetUser(): void,
-    moveHome(): void,
+    moveLogin(): void,
 }
 
 /**
@@ -37,5 +37,5 @@ export const registerResetLogin = (props: ResetLoginType) => {
  */
 export const resetLogin = () => {
     resetLoginRef?.resetUser();
-    resetLoginRef?.moveHome();
+    resetLoginRef?.moveLogin();
 }

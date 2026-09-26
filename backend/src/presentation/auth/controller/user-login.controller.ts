@@ -27,7 +27,7 @@ const userLogin = new Hono<AppEnv>().post(
         const result = await usecase.execute(body.name, body.password);
 
         if (!result) {
-            return c.json({ message: "IDかパスワードが間違っています。" }, HTTP_STATUS.UNAUTHORIZED);
+            return c.json({ message: "IDかパスワードが間違っています。" }, HTTP_STATUS.BAD_REQUEST);
         }
 
         const { accessToken, refreshToken, user } = result.value;

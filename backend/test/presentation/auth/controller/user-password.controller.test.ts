@@ -74,4 +74,49 @@ describe("PATCH /api/v1/user-password", () => {
         expect(authenticatedUserLoginRow.passwordHash).not.toBe(authenticatedUserPasswordHash.value);
         expect(otherUserLoginRow.passwordHash).toBe(otherUserPasswordHash.value);
     });
+
+    it("現在のパスワードが誤っている場合、400を返しパスワードは更新されないこと", async () => {
+        const db = drizzle(env.DB, { schema });
+        const now = new Date().toISOString();
+
+        const userId = ulid();
+        const config = createEnvConfig(env);
+        const pepper = new Pepper(config.pepper);
+
+        await db.insert(userMaster).values({ id: userId, name: `test-user-${userId}`, createdAt: now, updatedAt: now });
+
+        const salt = UserSalt.generate();
+        const passwordHash = await UserPassword.hash("CorrectHorse1!", salt, pepper);
+
+        await db.insert(userLoginMaster).values({
+            id: ulid(),
+            userId,
+            loginId: `login-${userId}`,
+            passwordHash: passwordHash.value,
+            salt: salt.value,
+            createdAt: now,
+            updatedAt: now,
+        });
+
+        const accessToken = await AccessToken.create(UserId.of(userId), config);
+
+        const res = await SELF.fetch("http://localhost/api/v1/user-password", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken.token}`,
+            },
+            body: JSON.stringify({
+                nowPassword: "WrongHorse1!",
+                newPassword: "NewPassw0rd1!",
+                confirmPassword: "NewPassw0rd1!",
+            }),
+        });
+
+        expect(res.status).toBe(400);
+
+        const [loginRow] = await db.select().from(userLoginMaster).where(eq(userLoginMaster.userId, userId));
+
+        expect(loginRow.passwordHash).toBe(passwordHash.value);
+    });
 });

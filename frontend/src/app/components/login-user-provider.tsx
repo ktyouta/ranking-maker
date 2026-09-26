@@ -29,10 +29,10 @@ export function LoginUserProvider(props: PropsType) {
     const setTheme = SetThemeContext.useCtx();
 
     /**
-     * ホーム画面に遷移
+     * ログイン画面に遷移
      */
-    function moveHome() {
-        navigate(paths.home.path);
+    function moveLogin() {
+        navigate(paths.login.path);
     }
 
     /**
@@ -48,7 +48,7 @@ export function LoginUserProvider(props: PropsType) {
     useEffect(() => {
         registerResetLogin({
             resetUser,
-            moveHome,
+            moveLogin,
         });
     }, []);
 
