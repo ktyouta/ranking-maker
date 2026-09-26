@@ -1,7 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import { RankingId, UserId } from "../../../shared";
 import { RankingOrderEntity } from "../../entity";
-import { PublicStatus, RankingIcon, RankingMemo, RankingTitle } from "../../value-object";
+import { PublicStatus, RankingIcon, RankingMemo, RankingTitle, TagId } from "../../value-object";
 
 /**
  * ランキング集約の生成・再構築に渡すパラメータ
@@ -14,6 +14,7 @@ type RankingAggregateParams = {
   memo: RankingMemo;
   userId: UserId;
   rankingOrderEntityList: RankingOrderEntity[];
+  tagIdList: TagId[];
 };
 
 type RankingAggregateReconstructParams = RankingAggregateParams & {
@@ -35,7 +36,8 @@ export type ContentModerationTarget =
  */
 export type RankingCreateError =
   | { type: "DUPLICATE_ITEM_NAME"; itemName: string }
-  | { type: "DUPLICATE_ORDER"; order: number };
+  | { type: "DUPLICATE_ORDER"; order: number }
+  | { type: "DUPLICATE_TAG"; tagId: string };
 
 /**
  * ランキング削除時のエラー
@@ -49,7 +51,7 @@ type RankingSnapshot = {
   publicStatus: number;
   icon: number;
   userId: string;
-  rankingOrderEntityList: {
+  rankingOrderList: {
     id: string;
     itemName: string | null;
     memo: string | null;
@@ -57,6 +59,7 @@ type RankingSnapshot = {
   }[];
   deleteFlg: boolean;
   isFavorite: boolean;
+  tagIdList: string[];
 };
 
 /**
@@ -73,19 +76,23 @@ export class RankingAggregate {
     private readonly _rankingOrderEntityList: RankingOrderEntity[],
     private _deleteFlg: boolean,
     private _isFavorite: boolean,
+    private readonly _tagIdList: TagId[],
   ) { }
 
   /**
    * ランキング集約を生成する（新規作成・全置換更新の入口）。
    *
-   * 集約の不変条件（順位・名称の重複禁止）を検証し、違反があれば
+   * 集約の不変条件（順位・名称・タグの重複禁止）を検証し、違反があれば
    * すべて収集して err で返す。各項目の単一フィールド検証は
    * 値オブジェクトが担うため、ここでは集約横断の一意性のみを検証する。
    * @param params 集約の構成要素
    * @returns 検証成功時は集約、失敗時は違反一覧を持つ Result
    */
   static create(params: RankingAggregateParams): Result<RankingAggregate, RankingCreateError[]> {
-    const errors = RankingAggregate.collectItemErrors(params.rankingOrderEntityList);
+    const errors = [
+      ...RankingAggregate.collectItemErrors(params.rankingOrderEntityList),
+      ...RankingAggregate.collectTagErrors(params.tagIdList),
+    ];
 
     if (errors.length > 0) {
       return err(errors);
@@ -102,6 +109,7 @@ export class RankingAggregate {
         params.rankingOrderEntityList,
         false,
         false,
+        params.tagIdList,
       ),
     );
   }
@@ -124,6 +132,7 @@ export class RankingAggregate {
       params.rankingOrderEntityList,
       params.isDeleted,
       params.isFavorite,
+      params.tagIdList,
     );
   }
 
@@ -159,8 +168,12 @@ export class RankingAggregate {
     return this._deleteFlg;
   }
 
+  get tagIdList() {
+    return this._tagIdList.map((e) => e.value);
+  }
+
   /**
-   * 集約横断の一意性違反をすべて収集する
+   * 集約横断の一意性違反をすべて収集する(項目)
    * @param items ランキング項目エンティティ一覧
    * @returns 違反一覧（違反がなければ空配列）
    */
@@ -174,6 +187,21 @@ export class RankingAggregate {
 
     for (const order of RankingAggregate.findDuplicates(items.map((e) => e.order))) {
       errors.push({ type: "DUPLICATE_ORDER", order });
+    }
+
+    return errors;
+  }
+
+  /**
+   * 集約横断の一意性違反をすべて収集する(タグ)
+   * @param tagIds 付与するタグID一覧
+   * @returns 違反一覧（違反がなければ空配列）
+   */
+  private static collectTagErrors(tagIds: TagId[]): RankingCreateError[] {
+    const errors: RankingCreateError[] = [];
+
+    for (const tagId of RankingAggregate.findDuplicates(tagIds.map((e) => e.value))) {
+      errors.push({ type: "DUPLICATE_TAG", tagId });
     }
 
     return errors;
@@ -251,7 +279,7 @@ export class RankingAggregate {
       publicStatus: this._publicStatus.value,
       icon: this._icon.value,
       userId: this._userId.value,
-      rankingOrderEntityList: this._rankingOrderEntityList.map((e) => {
+      rankingOrderList: this._rankingOrderEntityList.map((e) => {
         return {
           id: e.id,
           itemName: e.itemName,
@@ -262,6 +290,7 @@ export class RankingAggregate {
       }),
       deleteFlg: this._deleteFlg,
       isFavorite: this._isFavorite,
+      tagIdList: this._tagIdList.map((e) => e.value),
     };
   }
 

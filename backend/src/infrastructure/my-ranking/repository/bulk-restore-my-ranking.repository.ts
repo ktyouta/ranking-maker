@@ -59,6 +59,7 @@ export class BulkRestoreMyRankingRepository implements IBulkRestoreMyRankingRepo
         ),
         isDeleted: ranking.deleteFlg,
         isFavorite: ranking.isFavorite,
+        tagIdList: [],
       });
     });
   }

@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { ContentModerationDomainService, ContentModerationTarget, ItemMemo, ItemName, IUpdateMyRankingRepository, IconValidityDomainService, Order, PublicStatus, RankingAggregate, RankingCreateError, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../domain";
+import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, ItemMemo, ItemName, IUpdateMyRankingRepository, Order, PublicStatus, RankingAggregate, RankingCreateError, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService, TagId, TagName, TagResolutionDomainService } from "../../../domain";
 import { UserId } from "../../../domain/shared";
 import { UpdateMyRankingResultDto } from "../dto";
 
@@ -16,6 +16,7 @@ type UpdateMyRankingBody = {
   icon: number;
   memo: string;
   items: { itemName: string; order: number; memo: string }[];
+  tags: string[];
 };
 
 type PropsType = {
@@ -32,6 +33,7 @@ export class UpdateMyRankingUsecase {
     private readonly uniquenessService: RankingTitleUniquenessDomainService,
     private readonly contentModerationService: ContentModerationDomainService,
     private readonly iconValidityService: IconValidityDomainService,
+    private readonly tagResolutionService: TagResolutionDomainService,
   ) { }
 
   /**
@@ -57,6 +59,12 @@ export class UpdateMyRankingUsecase {
       return err({ type: "INVALID_ICON" });
     }
 
+    // タグ名を既存タグ・新規タグに解決
+    const { tags, newTags } = await this.tagResolutionService.resolve({
+      userId,
+      tagNames: body.tags.map((e) => new TagName(e)),
+    });
+
     // ランキング集約
     const aggregateResult = RankingAggregate.create({
       rankingId,
@@ -73,7 +81,8 @@ export class UpdateMyRankingUsecase {
           new ItemMemo(e.memo),
           false,
         )
-      })
+      }),
+      tagIdList: tags.map((e) => TagId.of(e.id)),
     });
 
     // 集約時エラー
@@ -90,7 +99,7 @@ export class UpdateMyRankingUsecase {
     }
 
     // ランキング更新
-    await this.repository.updateRanking(rankingAggrigate);
+    await this.repository.updateRanking(rankingAggrigate, newTags);
 
     return ok(new UpdateMyRankingResultDto(rankingAggrigate));
   }

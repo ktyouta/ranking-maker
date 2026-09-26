@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ItemMemo, ItemName, PublicStatus, RankingMemo, RankingTitle } from "../../../domain";
+import { ItemMemo, ItemName, PublicStatus, RankingMemo, RankingTitle, TagName } from "../../../domain";
 
 /**
  * ランキング更新リクエストスキーマ
@@ -40,6 +40,14 @@ export const UpdateMyRankingSchema = z.object({
           .max(ItemMemo.MAX_LENGTH, `メモは${ItemMemo.MAX_LENGTH}文字以内で入力してください`)
           .default(""),
       })
+    ),
+  tags: z
+    .array(
+      z
+        .string()
+        .trim()
+        .min(1, "タグは必須です")
+        .max(TagName.MAX_LENGTH, `タグは${TagName.MAX_LENGTH}文字以内で入力してください`)
     )
 });
 

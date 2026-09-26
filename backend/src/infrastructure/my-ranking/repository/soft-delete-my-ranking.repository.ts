@@ -61,6 +61,7 @@ export class SoftDeleteMyRankingRepository implements ISoftDeleteMyRankingReposi
       ),
       isDeleted: ranking.deleteFlg,
       isFavorite: ranking.isFavorite,
+      tagIdList: [],
     });
   }
 

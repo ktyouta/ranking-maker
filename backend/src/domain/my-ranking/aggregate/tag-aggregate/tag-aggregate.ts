@@ -1,55 +1,84 @@
-import { RankingId } from "../../../shared";
-import { TagEntity } from "../../entity";
+import { UserId } from "../../../shared";
+import { TagId, TagName } from "../../value-object";
 
 /**
- * タグ集約の生成・再構築に渡すパラメータ
+ * タグ集約の生成に渡すパラメータ
  */
-type TagAggregateParams = {
-    rankingId: RankingId;
-    tagList: TagEntity[];
+type TagAggregateCreateParams = {
+  userId: UserId;
+  tagName: TagName;
+};
+
+/**
+ * タグ集約の再構築に渡すパラメータ
+ */
+type TagAggregateReconstructParams = TagAggregateCreateParams & {
+  tagId: TagId;
 };
 
 type TagSnapshot = {
-    rankingId: string;
-    tagList: {
-        id: string;
-        name: string;
-    }[];
+  id: string;
+  userId: string;
+  name: string;
 };
 
+/**
+ * タグ集約
+ */
 export class TagAggregate {
 
-    constructor(private readonly _rankingId: RankingId,
-        private readonly _tagList: TagEntity[],
-    ) { }
+  private constructor(private readonly _tagId: TagId,
+    private readonly _userId: UserId,
+    private readonly _tagName: TagName,
+  ) { }
 
-    static create(params: TagAggregateParams) {
+  /**
+   * タグ集約を新規作成する
+   * @param params 集約の構成要素
+   * @returns 新しいタグIDを採番した集約
+   */
+  static create(params: TagAggregateCreateParams): TagAggregate {
+    return new TagAggregate(
+      TagId.generate(),
+      params.userId,
+      params.tagName,
+    );
+  }
 
-    }
+  /**
+   * 永続化データから集約を再構築する（リポジトリ・ドメインサービス専用）。
+   * @param params 集約の構成要素
+   * @returns 再構築した集約
+   */
+  static reconstruct(params: TagAggregateReconstructParams): TagAggregate {
+    return new TagAggregate(
+      params.tagId,
+      params.userId,
+      params.tagName,
+    );
+  }
 
-    static reconstruct(params: TagAggregateParams) {
-        return new TagAggregate(
-            params.rankingId,
-            params.tagList,
-        );
-    }
+  get id() {
+    return this._tagId.value;
+  }
 
-    private static collectItemViolations() {
-    }
+  get userId() {
+    return this._userId.value;
+  }
 
-    /**
-     * スナップショット作成
-     * @returns 
-     */
-    toSnapshot(): TagSnapshot {
-        return {
-            rankingId: this._rankingId.value,
-            tagList: this._tagList.map((tag) => {
-                return {
-                    id: tag.tagId,
-                    name: tag.name,
-                }
-            })
-        }
-    }
+  get name() {
+    return this._tagName.value;
+  }
+
+  /**
+   * スナップショット作成
+   * @returns
+   */
+  toSnapshot(): TagSnapshot {
+    return {
+      id: this._tagId.value,
+      userId: this._userId.value,
+      name: this._tagName.value,
+    };
+  }
 }

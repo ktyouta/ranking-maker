@@ -61,6 +61,7 @@ export class RestoreMyRankingRepository implements IRestoreMyRankingRepository {
       ),
       isDeleted: ranking.deleteFlg,
       isFavorite: ranking.isFavorite,
+      tagIdList: [],
     });
   }
 

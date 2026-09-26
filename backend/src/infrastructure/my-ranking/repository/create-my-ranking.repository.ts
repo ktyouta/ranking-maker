@@ -1,7 +1,8 @@
 import { and, eq } from "drizzle-orm";
-import { ICreateMyRankingRepository, RankingAggregate, RankingTitle } from "../../../domain";
+import { ulid } from "ulid";
+import { ICreateMyRankingRepository, RankingAggregate, RankingTitle, TagAggregate } from "../../../domain";
 import { UserId } from "../../../domain/shared";
-import { rankingMaster, rankingOrderMaster, type Database } from "../../db";
+import { rankingMaster, rankingOrderMaster, rankingTagMaster, tagMaster, type Database } from "../../db";
 
 /**
  * ランキング作成リポジトリ実装
@@ -26,12 +27,14 @@ export class CreateMyRankingRepository implements ICreateMyRankingRepository {
   /**
    * ランキング作成
    * @param db 
-   * @param rankingAggregate 
+   * @param rankingAggregate
+   * @param newTagAggregates ランキングに付与する新規タグ
    */
-  async createRanking(rankingAggregate: RankingAggregate) {
+  async createRanking(rankingAggregate: RankingAggregate, newTagAggregates: TagAggregate[]) {
     const now = new Date().toISOString();
     const rankingSnapshot = rankingAggregate.toSnapshot();
-    const rankingOrderEntityList = rankingSnapshot.rankingOrderEntityList;
+    const rankingOrderList = rankingSnapshot.rankingOrderList;
+    const newTagList = newTagAggregates.map((e) => e.toSnapshot());
 
     await this.db.batch([
       this.db.insert(rankingMaster).values({
@@ -45,13 +48,34 @@ export class CreateMyRankingRepository implements ICreateMyRankingRepository {
         createdAt: now,
         updatedAt: now,
       }),
-      ...rankingOrderEntityList.map((e) =>
+      ...newTagList.map((e) =>
+        this.db.insert(tagMaster).values({
+          id: e.id,
+          userId: e.userId,
+          name: e.name,
+          deleteFlg: false,
+          createdAt: now,
+          updatedAt: now,
+        })
+      ),
+      ...rankingOrderList.map((e) =>
         this.db.insert(rankingOrderMaster).values({
           id: e.id,
           rankingId: rankingSnapshot.id,
           order: e.order,
           itemName: e.itemName,
           itemMemo: e.memo,
+          deleteFlg: false,
+          createdAt: now,
+          updatedAt: now,
+        })
+      ),
+      ...rankingSnapshot.tagIdList.map((tagId) =>
+        this.db.insert(rankingTagMaster).values({
+          id: ulid(),
+          rankingId: rankingSnapshot.id,
+          tagId,
+          userId: rankingSnapshot.userId,
           deleteFlg: false,
           createdAt: now,
           updatedAt: now,

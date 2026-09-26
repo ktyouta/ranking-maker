@@ -1,4 +1,4 @@
-import { RankingAggregate } from "../aggregate";
+import { RankingAggregate, TagAggregate } from "../aggregate";
 import { RankingId, UserId } from "../../shared";
 
 
@@ -13,7 +13,9 @@ export interface IUpdateMyRankingRepository {
 
   /**
    * ランキング更新
+   * ランキングと、ランキングに付与する新規タグをまとめて保存する。
    * @param rankingAggregate 更新後の状態を表す集約
+   * @param newTagAggregates ランキングに付与する新規タグ
    */
-  updateRanking(rankingAggregate: RankingAggregate): Promise<void>;
+  updateRanking(rankingAggregate: RankingAggregate, newTagAggregates: TagAggregate[]): Promise<void>;
 }

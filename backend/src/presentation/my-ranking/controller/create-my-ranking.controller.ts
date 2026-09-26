@@ -2,8 +2,8 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { CreateMyRankingUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, RankingCreateError, RankingTitleUniquenessDomainService, UserId } from "../../../domain";
-import { ContentModerationRepository, CreateMyRankingRepository, IconValidityRepository, RankingTitleUniquenessRepository } from "../../../infrastructure";
+import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, RankingCreateError, RankingTitleUniquenessDomainService, TagResolutionDomainService, UserId } from "../../../domain";
+import { ContentModerationRepository, CreateMyRankingRepository, IconValidityRepository, RankingTitleUniquenessRepository, TagResolutionRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import type { AppEnv, ValidationErrorType } from "../../../types";
 import { formatZodErrors } from "../../../util";
@@ -19,6 +19,8 @@ function toValidationError(error: RankingCreateError): ValidationErrorType {
       return { field: "items", message: `名称が重複しています: ${error.itemName}` };
     case "DUPLICATE_ORDER":
       return { field: "items", message: `順位が重複しています: ${error.order}` };
+    case "DUPLICATE_TAG":
+      return { field: "tags", message: "同じタグが複数指定されています" };
   }
 }
 
@@ -68,7 +70,8 @@ const createMyRanking = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING,
     const uniquenessService = new RankingTitleUniquenessDomainService(new RankingTitleUniquenessRepository(db));
     const contentModerationService = new ContentModerationDomainService(new ContentModerationRepository(c.env.AI));
     const iconValidityService = new IconValidityDomainService(new IconValidityRepository(db));
-    const service = new CreateMyRankingUsecase(new CreateMyRankingRepository(db), uniquenessService, contentModerationService, iconValidityService);
+    const tagResolutionService = new TagResolutionDomainService(new TagResolutionRepository(db));
+    const service = new CreateMyRankingUsecase(new CreateMyRankingRepository(db), uniquenessService, contentModerationService, iconValidityService, tagResolutionService);
 
     const result = await service.execute({ userId, body });
 

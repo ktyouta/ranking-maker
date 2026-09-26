@@ -59,6 +59,7 @@ export class BulkSoftDeleteMyRankingRepository implements IBulkSoftDeleteMyRanki
         ),
         isDeleted: ranking.deleteFlg,
         isFavorite: ranking.isFavorite,
+        tagIdList: [],
       });
     });
   }

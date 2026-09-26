@@ -1,4 +1,4 @@
-import { RankingAggregate } from "../aggregate";
+import { RankingAggregate, TagAggregate } from "../aggregate";
 
 /**
  * ランキング作成リポジトリインターフェース
@@ -6,7 +6,9 @@ import { RankingAggregate } from "../aggregate";
 export interface ICreateMyRankingRepository {
   /**
    * ランキング作成
-   * @param rankingAggregate 
+   * ランキングと、ランキングに付与する新規タグをまとめて保存する。
+   * @param rankingAggregate
+   * @param newTagAggregates ランキングに付与する新規タグ
    */
-  createRanking(rankingAggregate: RankingAggregate): Promise<void>;
+  createRanking(rankingAggregate: RankingAggregate, newTagAggregates: TagAggregate[]): Promise<void>;
 }

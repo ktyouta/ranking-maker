@@ -73,6 +73,7 @@ export function useCreateRanking() {
                 memo: item.memo,
                 order: index + 1,
             })),
+            tags: [],
         });
     }, () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
