@@ -2,7 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { CreateMyRankingUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, RankingCreateError, RankingTitleUniquenessDomainService, TagResolutionDomainService, UserId } from "../../../domain";
+import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, RankingValidationError, RankingTitleUniquenessDomainService, TagResolutionDomainService, UserId } from "../../../domain";
 import { ContentModerationRepository, CreateMyRankingRepository, IconValidityRepository, RankingTitleUniquenessRepository, TagResolutionRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import type { AppEnv, ValidationErrorType } from "../../../types";
@@ -10,10 +10,10 @@ import { formatZodErrors } from "../../../util";
 import { CreateMyRankingSchema } from "../schema";
 
 /**
- * ランキング生成時のエラーをレスポンス用のバリデーションエラーに変換する
- * @param error ランキング生成時のエラー
+ * ランキングの不変条件の違反をレスポンス用のバリデーションエラーに変換する
+ * @param error ランキングの不変条件の違反
  */
-function toValidationError(error: RankingCreateError): ValidationErrorType {
+function toValidationError(error: RankingValidationError): ValidationErrorType {
   switch (error.type) {
     case "DUPLICATE_ITEM_NAME":
       return { field: "items", message: `名称が重複しています: ${error.itemName}` };
@@ -21,6 +21,8 @@ function toValidationError(error: RankingCreateError): ValidationErrorType {
       return { field: "items", message: `順位が重複しています: ${error.order}` };
     case "DUPLICATE_TAG":
       return { field: "tags", message: "同じタグが複数指定されています" };
+    case "TOO_MANY_TAGS":
+      return { field: "tags", message: `タグは${error.maxCount}個までです` };
   }
 }
 
@@ -43,9 +45,11 @@ function toModerationTargetLabel(target: ContentModerationTarget): string {
     case "MEMO":
       return "メモ";
     case "ITEM_NAME":
-      return `項目名（${target.itemIndex + 1}件目）`;
+      return target.itemIndex === null ? "項目名" : `項目名（${target.itemIndex + 1}件目）`;
     case "ITEM_MEMO":
-      return `メモ（${target.itemIndex + 1}件目）`;
+      return target.itemIndex === null ? "メモ" : `メモ（${target.itemIndex + 1}件目）`;
+    case "TAG_NAME":
+      return "タグ";
   }
 }
 

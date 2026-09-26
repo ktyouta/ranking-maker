@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import { ContentModerationTarget } from "../../../src/domain";
 import { ContentModerationRepository } from "../../../src/infrastructure/my-ranking/repository/content-moderation.repository";
 
 describe("ContentModerationRepository", () => {
@@ -7,7 +8,7 @@ describe("ContentModerationRepository", () => {
     const ai = { run: runMock } as unknown as Ai;
     const repository = new ContentModerationRepository(ai);
 
-    await repository.detectInappropriateIndexes([{ type: "TITLE", value: "テスト" }]);
+    await repository.detectInappropriateIndexes([ContentModerationTarget.title("テスト")]);
 
     const [calledModel] = runMock.mock.calls[0];
     expect(calledModel).not.toBe("@cf/meta/llama-3-8b-instruct");
@@ -18,7 +19,7 @@ describe("ContentModerationRepository", () => {
     const ai = { run: runMock } as unknown as Ai;
     const repository = new ContentModerationRepository(ai);
 
-    await repository.detectInappropriateIndexes([{ type: "TITLE", value: "テスト" }]);
+    await repository.detectInappropriateIndexes([ContentModerationTarget.title("テスト")]);
 
     const [, options] = runMock.mock.calls[0];
     expect(options).not.toHaveProperty("response_format");
@@ -30,8 +31,8 @@ describe("ContentModerationRepository", () => {
     const repository = new ContentModerationRepository(ai);
 
     const result = await repository.detectInappropriateIndexes([
-      { type: "TITLE", value: "テスト" },
-      { type: "MEMO", value: "不適切な内容" },
+      ContentModerationTarget.title("テスト"),
+      ContentModerationTarget.memo("不適切な内容"),
     ]);
 
     expect(result).toEqual([1]);
@@ -44,7 +45,7 @@ describe("ContentModerationRepository", () => {
     const ai = { run: runMock } as unknown as Ai;
     const repository = new ContentModerationRepository(ai);
 
-    const result = await repository.detectInappropriateIndexes([{ type: "TITLE", value: "テスト" }]);
+    const result = await repository.detectInappropriateIndexes([ContentModerationTarget.title("テスト")]);
 
     expect(result).toEqual([0]);
   });
@@ -54,7 +55,7 @@ describe("ContentModerationRepository", () => {
     const ai = { run: runMock } as unknown as Ai;
     const repository = new ContentModerationRepository(ai);
 
-    const result = await repository.detectInappropriateIndexes([{ type: "TITLE", value: "テスト" }]);
+    const result = await repository.detectInappropriateIndexes([ContentModerationTarget.title("テスト")]);
 
     expect(result).toEqual([]);
   });
@@ -64,7 +65,7 @@ describe("ContentModerationRepository", () => {
     const ai = { run: runMock } as unknown as Ai;
     const repository = new ContentModerationRepository(ai);
 
-    const result = await repository.detectInappropriateIndexes([{ type: "TITLE", value: "テスト" }]);
+    const result = await repository.detectInappropriateIndexes([ContentModerationTarget.title("テスト")]);
 
     expect(result).toEqual([]);
   });
@@ -74,7 +75,7 @@ describe("ContentModerationRepository", () => {
     const ai = { run: runMock } as unknown as Ai;
     const repository = new ContentModerationRepository(ai);
 
-    const result = await repository.detectInappropriateIndexes([{ type: "TITLE", value: "テスト" }]);
+    const result = await repository.detectInappropriateIndexes([ContentModerationTarget.title("テスト")]);
 
     expect(result).toEqual([]);
   });

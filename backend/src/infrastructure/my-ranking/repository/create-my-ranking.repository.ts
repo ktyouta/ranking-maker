@@ -1,5 +1,4 @@
 import { and, eq } from "drizzle-orm";
-import { ulid } from "ulid";
 import { ICreateMyRankingRepository, RankingAggregate, RankingTitle, TagAggregate } from "../../../domain";
 import { UserId } from "../../../domain/shared";
 import { rankingMaster, rankingOrderMaster, rankingTagMaster, tagMaster, type Database } from "../../db";
@@ -70,11 +69,11 @@ export class CreateMyRankingRepository implements ICreateMyRankingRepository {
           updatedAt: now,
         })
       ),
-      ...rankingSnapshot.tagIdList.map((tagId) =>
+      ...rankingSnapshot.rankingTagList.map((e) =>
         this.db.insert(rankingTagMaster).values({
-          id: ulid(),
+          id: e.id,
           rankingId: rankingSnapshot.id,
-          tagId,
+          tagId: e.tagId,
           userId: rankingSnapshot.userId,
           deleteFlg: false,
           createdAt: now,

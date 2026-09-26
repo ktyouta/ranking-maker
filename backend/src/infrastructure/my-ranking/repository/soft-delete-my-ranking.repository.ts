@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
-import { ISoftDeleteMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle } from "../../../domain";
+import { ISoftDeleteMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTagEntity, RankingTagId, RankingTitle, TagId } from "../../../domain";
 import { UserId } from "../../../domain/shared";
-import { rankingMaster, rankingOrderMaster, type Database } from "../../db";
+import { rankingMaster, rankingOrderMaster, rankingTagMaster, type Database } from "../../db";
 
 /**
  * ランキング削除リポジトリ実装
@@ -43,6 +43,15 @@ export class SoftDeleteMyRankingRepository implements ISoftDeleteMyRankingReposi
       .from(rankingOrderMaster)
       .where(and(eq(rankingOrderMaster.deleteFlg, false), eq(rankingOrderMaster.rankingId, ranking.id)));
 
+    const tagResult = await this.db
+      .select({
+        id: rankingTagMaster.id,
+        tagId: rankingTagMaster.tagId,
+        deleteFlg: rankingTagMaster.deleteFlg,
+      })
+      .from(rankingTagMaster)
+      .where(and(eq(rankingTagMaster.deleteFlg, false), eq(rankingTagMaster.userId, ranking.userId), eq(rankingTagMaster.rankingId, ranking.id)));
+
     return RankingAggregate.reconstruct({
       rankingId: RankingId.of(ranking.id),
       rankingTitle: new RankingTitle(ranking.title),
@@ -61,27 +70,33 @@ export class SoftDeleteMyRankingRepository implements ISoftDeleteMyRankingReposi
       ),
       isDeleted: ranking.deleteFlg,
       isFavorite: ranking.isFavorite,
-      tagIdList: [],
+      rankingTagEntityList: tagResult.map((e) => new RankingTagEntity(RankingTagId.of(e.id), TagId.of(e.tagId), e.deleteFlg)),
     });
   }
 
   /**
    * ランキング削除（論理削除）
-   * ランキング本体と紐づく項目を同時に削除する
+   * ランキング本体と紐づく項目・タグ付けを同時に削除する
+   * 配下の項目・タグ付けには、ランキング本体と同じ集約の削除状態をランキング単位でまとめて書き込む
    * @param rankingId
    */
   async deleteRanking(ranking: RankingAggregate): Promise<void> {
     const now = new Date().toISOString();
+    const rankingSnapshot = ranking.toSnapshot();
 
     await this.db.batch([
       this.db
         .update(rankingMaster)
-        .set({ deleteFlg: true, updatedAt: now })
-        .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.id, ranking.id))),
+        .set({ deleteFlg: rankingSnapshot.deleteFlg, updatedAt: now })
+        .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.id, rankingSnapshot.id))),
       this.db
         .update(rankingOrderMaster)
-        .set({ deleteFlg: true, updatedAt: now })
-        .where(and(eq(rankingOrderMaster.deleteFlg, false), eq(rankingOrderMaster.rankingId, ranking.id))),
+        .set({ deleteFlg: rankingSnapshot.deleteFlg, updatedAt: now })
+        .where(and(eq(rankingOrderMaster.deleteFlg, false), eq(rankingOrderMaster.rankingId, rankingSnapshot.id))),
+      this.db
+        .update(rankingTagMaster)
+        .set({ deleteFlg: rankingSnapshot.deleteFlg, updatedAt: now })
+        .where(and(eq(rankingTagMaster.deleteFlg, false), eq(rankingTagMaster.rankingId, rankingSnapshot.id))),
     ]);
   }
 }

@@ -1,4 +1,4 @@
-import { ContentModerationTarget } from "../aggregate";
+import { ContentModerationTarget } from "../value-object";
 
 export interface IContentModerationRepository {
 

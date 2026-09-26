@@ -2,8 +2,8 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { PermanentDeleteMyRankingUsecase } from "../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../constant";
-import { RankingId, UserId } from "../../../domain";
-import { PermanentDeleteMyRankingRepository } from "../../../infrastructure";
+import { RankingId, TagUsageDomainService, UserId } from "../../../domain";
+import { PermanentDeleteMyRankingRepository, TagUsageRepository } from "../../../infrastructure";
 import { authMiddleware } from "../../../middleware";
 import { RankingIdParamSchema } from "../../../schema/ranking-id-param.schema";
 import type { AppEnv } from "../../../types";
@@ -28,7 +28,8 @@ const permanentDeleteMyRanking = new Hono<AppEnv>().delete(API_ENDPOINT.MY_RANKI
     }
     const userId = UserId.of(user.userId.value);
     const rankingId = RankingId.of(c.req.valid("param").rankingId);
-    const usecase = new PermanentDeleteMyRankingUsecase(repository);
+    const tagUsageService = new TagUsageDomainService(new TagUsageRepository(db));
+    const usecase = new PermanentDeleteMyRankingUsecase(repository, tagUsageService);
 
     const result = await usecase.execute(userId, rankingId);
 

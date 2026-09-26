@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, ItemMemo, ItemName, IUpdateMyRankingRepository, Order, PublicStatus, RankingAggregate, RankingCreateError, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService, TagId, TagName, TagResolutionDomainService } from "../../../domain";
+import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, ItemMemo, ItemName, IUpdateMyRankingRepository, Order, PublicStatus, RankingValidationError, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTagEntity, RankingTagId, RankingTitle, RankingTitleUniquenessDomainService, TagId, TagName, TagResolutionDomainService, TagUsageDomainService } from "../../../domain";
 import { UserId } from "../../../domain/shared";
 import { UpdateMyRankingResultDto } from "../dto";
 
@@ -7,7 +7,7 @@ export type UpdateMyRankingError =
   | { type: "DUPLICATE_TITLE" }
   | { type: "NOT_FOUND" }
   | { type: "INVALID_ICON" }
-  | { type: "VALIDATION"; errors: RankingCreateError[] }
+  | { type: "VALIDATION"; errors: RankingValidationError[] }
   | { type: "INAPPROPRIATE_CONTENT"; targets: ContentModerationTarget[] };
 
 type UpdateMyRankingBody = {
@@ -34,6 +34,7 @@ export class UpdateMyRankingUsecase {
     private readonly contentModerationService: ContentModerationDomainService,
     private readonly iconValidityService: IconValidityDomainService,
     private readonly tagResolutionService: TagResolutionDomainService,
+    private readonly tagUsageService: TagUsageDomainService,
   ) { }
 
   /**
@@ -41,9 +42,9 @@ export class UpdateMyRankingUsecase {
    */
   async execute({ userId, rankingId, body }: PropsType): Promise<Result<UpdateMyRankingResultDto, UpdateMyRankingError>> {
 
-    // ランキング存在チェック（他ユーザーのものは取得できないため所有権も担保する）
-    const result = await this.repository.findRanking(userId, rankingId);
-    if (result.length === 0) {
+    // 更新前のランキング取得（他ユーザーのものは取得できないため所有権も担保する）
+    const currentRanking = await this.repository.findRanking(userId, rankingId);
+    if (!currentRanking) {
       return err({ type: "NOT_FOUND" });
     }
 
@@ -65,14 +66,12 @@ export class UpdateMyRankingUsecase {
       tagNames: body.tags.map((e) => new TagName(e)),
     });
 
-    // ランキング集約
-    const aggregateResult = RankingAggregate.create({
-      rankingId,
+    // ランキング更新（集約）
+    const updateResult = currentRanking.update({
       rankingTitle,
       publicStatus: new PublicStatus(body.publicStatus),
       icon,
       memo: new RankingMemo(body.memo),
-      userId,
       rankingOrderEntityList: body.items.map((e) => {
         return new RankingOrderEntity(
           RankingOrderId.generate(),
@@ -82,25 +81,28 @@ export class UpdateMyRankingUsecase {
           false,
         )
       }),
-      tagIdList: tags.map((e) => TagId.of(e.id)),
+      rankingTagEntityList: tags.map((e) => new RankingTagEntity(RankingTagId.generate(), TagId.of(e.id), false)),
     });
 
     // 集約時エラー
-    if (aggregateResult.isErr()) {
-      return err({ type: "VALIDATION", errors: aggregateResult.error });
+    if (updateResult.isErr()) {
+      return err({ type: "VALIDATION", errors: updateResult.error });
     }
 
-    const rankingAggrigate = aggregateResult.value;
+    const { ranking, releasedTagIds } = updateResult.value;
 
     // 不適切内容チェック
-    const inappropriateTargets = await this.contentModerationService.moderate(rankingAggrigate);
+    const inappropriateTargets = await this.contentModerationService.moderate(ranking, newTags);
     if (inappropriateTargets.length > 0) {
       return err({ type: "INAPPROPRIATE_CONTENT", targets: inappropriateTargets });
     }
 
-    // ランキング更新
-    await this.repository.updateRanking(rankingAggrigate, newTags);
+    // 手放したタグのうち、どのランキングにも紐づかなくなるタグ
+    const unusedTagIds = await this.tagUsageService.findUnused({ userId, rankingId, releasedTagIds });
 
-    return ok(new UpdateMyRankingResultDto(rankingAggrigate));
+    // ランキング更新
+    await this.repository.updateRanking(ranking, newTags, unusedTagIds);
+
+    return ok(new UpdateMyRankingResultDto(ranking));
   }
 }

@@ -14,5 +14,6 @@ export * from "./ranking-title-uniqueness.repository";
 export * from "./restore-my-ranking.repository";
 export * from "./soft-delete-my-ranking.repository";
 export * from "./tag-resolution.repository";
+export * from "./tag-usage.repository";
 export * from "./update-favorite-my-ranking.repository";
 export * from "./update-my-ranking.repository";

@@ -1,7 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { TagName, TagResolutionDomainService } from "../../src/domain";
+import { TagAggregate, TagId, TagName, TagResolutionDomainService } from "../../src/domain";
 import type { ITagResolutionRepository } from "../../src/domain";
 import { UserId } from "../../src/domain/shared";
+
+function buildExistingTag(id: string, name: string) {
+  return TagAggregate.reconstruct({ tagId: TagId.of(id), userId: UserId.of("user-1"), tagName: new TagName(name) });
+}
 
 describe("TagResolutionDomainService", () => {
   let mockRepository: ITagResolutionRepository;
@@ -17,7 +21,7 @@ describe("TagResolutionDomainService", () => {
   const userId = UserId.of("user-1");
 
   it("既存タグと同名のタグ名は既存タグに解決し、新規タグに含めないこと", async () => {
-    vi.mocked(mockRepository.findTags).mockResolvedValue([{ id: "tag-1", name: "ラーメン" }]);
+    vi.mocked(mockRepository.findTags).mockResolvedValue([buildExistingTag("tag-1", "ラーメン")]);
 
     const result = await service.resolve({ userId, tagNames: [new TagName("ラーメン")] });
 
@@ -37,7 +41,7 @@ describe("TagResolutionDomainService", () => {
   });
 
   it("既存タグと新規タグが混在する場合、指定順に解決すること", async () => {
-    vi.mocked(mockRepository.findTags).mockResolvedValue([{ id: "tag-1", name: "ラーメン" }]);
+    vi.mocked(mockRepository.findTags).mockResolvedValue([buildExistingTag("tag-1", "ラーメン")]);
 
     const result = await service.resolve({ userId, tagNames: [new TagName("寿司"), new TagName("ラーメン")] });
 

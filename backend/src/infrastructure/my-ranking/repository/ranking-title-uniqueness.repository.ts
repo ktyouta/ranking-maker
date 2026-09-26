@@ -1,4 +1,4 @@
-import { and, eq, ne, notInArray } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { IRankingTitleUniquenessRepository, RankingId, RankingTitle } from "../../../domain";
 import { UserId } from "../../../domain/shared";
 import { rankingMaster, type Database } from "../../db";
@@ -34,6 +34,7 @@ export class RankingTitleUniquenessRepository implements IRankingTitleUniqueness
    * rankingIds 自身は除外する（一括判定時の自己重複を防ぐ）。
    */
   async findRankings(userId: UserId, rankingIds: RankingId[]): Promise<{ id: string, title: string }[]> {
+    const excludedIds = new Set(rankingIds.map((rankingId) => rankingId.value));
     const result = await this.db
       .select({
         id: rankingMaster.id,
@@ -43,9 +44,8 @@ export class RankingTitleUniquenessRepository implements IRankingTitleUniqueness
       .where(and(
         eq(rankingMaster.deleteFlg, false),
         eq(rankingMaster.userId, userId.value),
-        notInArray(rankingMaster.id, rankingIds.map((rankingId) => rankingId.value)),
       ));
 
-    return result;
+    return result.filter((ranking) => !excludedIds.has(ranking.id));
   }
 }

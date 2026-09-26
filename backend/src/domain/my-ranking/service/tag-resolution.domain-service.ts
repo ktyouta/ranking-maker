@@ -1,7 +1,7 @@
 import { UserId } from "../../shared";
 import { TagAggregate } from "../aggregate";
 import { ITagResolutionRepository } from "../repository";
-import { TagId, TagName } from "../value-object";
+import { TagName } from "../value-object";
 
 type PropsType = {
     userId: UserId;
@@ -27,7 +27,7 @@ export class TagResolutionDomainService {
 
     /**
      * タグ名を既存タグまたは新規タグに解決する。
-     * 同一ユーザーの既存タグと同名であれば既存タグを再構築し、なければ新規作成する。
+     * 同一ユーザーの既存タグと同名であれば既存タグを使い、なければ新規作成する。
      * 同じタグ名が複数指定された場合は同じタグに解決する。
      * @param userId タグの所有ユーザー
      * @param tagNames 解決するタグ名一覧
@@ -40,11 +40,7 @@ export class TagResolutionDomainService {
 
         const existingTags = await this.repository.findTags(userId, tagNames);
         const tagByName = new Map<string, TagAggregate>(
-            existingTags.map((e) => [e.name, TagAggregate.reconstruct({
-                tagId: TagId.of(e.id),
-                userId,
-                tagName: new TagName(e.name),
-            })])
+            existingTags.map((e) => [e.name, e])
         );
         const newTags: TagAggregate[] = [];
 

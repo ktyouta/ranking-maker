@@ -1,12 +1,12 @@
 import { err, ok, Result } from "neverthrow";
-import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, ICreateMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingCreateError, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, RankingTitleUniquenessDomainService, TagId, TagName, TagResolutionDomainService } from "../../../domain";
+import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, ICreateMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingValidationError, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTagEntity, RankingTagId, RankingTitle, RankingTitleUniquenessDomainService, TagId, TagName, TagResolutionDomainService } from "../../../domain";
 import { UserId } from "../../../domain/shared";
 import { CreateMyRankingResultDto } from "../dto";
 
 export type CreateMyRankingError =
   | { type: "DUPLICATE_TITLE" }
   | { type: "INVALID_ICON" }
-  | { type: "VALIDATION"; errors: RankingCreateError[] }
+  | { type: "VALIDATION"; errors: RankingValidationError[] }
   | { type: "INAPPROPRIATE_CONTENT"; targets: ContentModerationTarget[] };
 
 type CreateMyRankingBody = {
@@ -75,7 +75,7 @@ export class CreateMyRankingUsecase {
           false,
         )
       }),
-      tagIdList: tags.map((e) => TagId.of(e.id)),
+      rankingTagEntityList: tags.map((e) => new RankingTagEntity(RankingTagId.generate(), TagId.of(e.id), false)),
     });
 
     // 集約時エラー
@@ -86,7 +86,7 @@ export class CreateMyRankingUsecase {
     const rankingAggrigate = aggregateResult.value;
 
     // 不適切内容チェック
-    const inappropriateTargets = await this.contentModerationService.moderate(rankingAggrigate);
+    const inappropriateTargets = await this.contentModerationService.moderate(rankingAggrigate, newTags);
     if (inappropriateTargets.length > 0) {
       return err({ type: "INAPPROPRIATE_CONTENT", targets: inappropriateTargets });
     }

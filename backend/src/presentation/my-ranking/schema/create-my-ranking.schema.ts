@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ItemMemo, ItemName, PublicStatus, RankingMemo, RankingTitle, TagName } from "../../../domain";
+import { ItemMemo, ItemName, PublicStatus, RankingAggregate, RankingMemo, RankingTitle, TagName } from "../../../domain";
 
 /**
  * ランキング作成リクエストスキーマ
@@ -49,6 +49,18 @@ export const CreateMyRankingSchema = z.object({
         .min(1, "タグは必須です")
         .max(TagName.MAX_LENGTH, `タグは${TagName.MAX_LENGTH}文字以内で入力してください`)
     )
+    .max(RankingAggregate.MAX_TAG_COUNT, `タグは${RankingAggregate.MAX_TAG_COUNT}個までです`)
+    .superRefine((tags, ctx) => {
+      const seen = new Set<string>();
+      const reported = new Set<string>();
+      tags.forEach((tag, index) => {
+        if (seen.has(tag) && !reported.has(tag)) {
+          reported.add(tag);
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: `タグが重複しています: ${tag}`, path: [index] });
+        }
+        seen.add(tag);
+      });
+    }),
 });
 
 export type CreateMyRankingSchemaType = z.infer<typeof CreateMyRankingSchema>;

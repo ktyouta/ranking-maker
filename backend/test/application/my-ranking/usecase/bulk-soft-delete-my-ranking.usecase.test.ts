@@ -13,7 +13,7 @@ function buildRanking(id: string, isFavorite: boolean) {
     memo: new RankingMemo(""),
     userId: UserId.of("user-1"),
     rankingOrderEntityList: [],
-    tagIdList: [],
+    rankingTagEntityList: [],
     isDeleted: false,
     isFavorite,
   });

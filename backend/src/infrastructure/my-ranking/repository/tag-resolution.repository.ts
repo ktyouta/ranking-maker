@@ -1,7 +1,8 @@
 import { and, eq, inArray } from "drizzle-orm";
-import { ITagResolutionRepository, TagName } from "../../../domain";
+import { ITagResolutionRepository, TagAggregate, TagId, TagName } from "../../../domain";
 import { UserId } from "../../../domain/shared";
-import { tagMaster, type Database } from "../../db";
+import { chunk } from "../../../util";
+import { D1_MAX_IN_CLAUSE_VALUES, tagMaster, type Database } from "../../db";
 
 /**
  * タグ名解決リポジトリ実装
@@ -15,19 +16,30 @@ export class TagResolutionRepository implements ITagResolutionRepository {
    * @param tagNames 取得するタグ名一覧
    * @returns 一致したタグ一覧
    */
-  async findTags(userId: UserId, tagNames: TagName[]): Promise<{ id: string, name: string }[]> {
-    const result = await this.db
-      .select({
-        id: tagMaster.id,
-        name: tagMaster.name,
-      })
-      .from(tagMaster)
-      .where(and(
-        eq(tagMaster.deleteFlg, false),
-        eq(tagMaster.userId, userId.value),
-        inArray(tagMaster.name, tagNames.map((tagName) => tagName.value)),
-      ));
+  async findTags(userId: UserId, tagNames: TagName[]): Promise<TagAggregate[]> {
+    const results = await Promise.all(
+      chunk(tagNames.map((tagName) => tagName.value), D1_MAX_IN_CLAUSE_VALUES).map((names) =>
+        this.db
+          .select({
+            id: tagMaster.id,
+            userId: tagMaster.userId,
+            name: tagMaster.name,
+          })
+          .from(tagMaster)
+          .where(and(
+            eq(tagMaster.deleteFlg, false),
+            eq(tagMaster.userId, userId.value),
+            inArray(tagMaster.name, names),
+          ))
+      )
+    );
 
-    return result;
+    return results.flat().map((e) =>
+      TagAggregate.reconstruct({
+        tagId: TagId.of(e.id),
+        userId: UserId.of(e.userId),
+        tagName: new TagName(e.name),
+      })
+    );
   }
 }

@@ -1,4 +1,5 @@
 import { UserId } from "../../shared";
+import { TagAggregate } from "../aggregate";
 import { TagName } from "../value-object";
 
 /**
@@ -11,5 +12,5 @@ export interface ITagResolutionRepository {
      * @param tagNames 取得するタグ名一覧
      * @returns 一致したタグ一覧
      */
-    findTags(userId: UserId, tagNames: TagName[]): Promise<{ id: string, name: string }[]>;
+    findTags(userId: UserId, tagNames: TagName[]): Promise<TagAggregate[]>;
 }
