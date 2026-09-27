@@ -35,12 +35,12 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
     // ランキング取得（Suspense対応のため取得中は呼び出し元で中断される）
     const rankingQuery = useMyRanking(rankingId);
     // ランキング本体と項目一覧
-    const { ranking, rankingOrder } = rankingQuery.data.data;
+    const { ranking, items } = rankingQuery.data.data;
 
     // 項目一覧を順位順に整形したもの
     const sortedItems = useMemo(() => {
-        return [...rankingOrder].sort((a, b) => a.order - b.order);
-    }, [rankingOrder]);
+        return [...items].sort((a, b) => a.order - b.order);
+    }, [items]);
 
     // 編集フォームの初期値
     const defaultValues = useMemo(() => ({

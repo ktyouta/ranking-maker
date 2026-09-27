@@ -7,7 +7,7 @@ export type GetRankingResultType = {
     userName: string;
     createdAt: string;
   };
-  rankingOrder: {
+  items: {
     id: string;
     itemName: string | null;
     itemMemo: string | null;
@@ -33,7 +33,7 @@ export class GetRankingResultDto {
         userName: ranking.userName,
         createdAt: ranking.createdAt,
       },
-      rankingOrder: rankingOrder.map((e) => ({
+      items: rankingOrder.map((e) => ({
         id: e.id,
         itemName: e.itemName,
         itemMemo: e.itemMemo,

@@ -14,11 +14,12 @@
 
 - 対象は「自分のランキング」を閲覧・編集する画面。バックエンドは `my-ranking` ドメインの既存APIを使う（`ranking` ドメインの `GET /api/v1/ranking/:rankingId` は公開ランキング閲覧用の別APIであり今回は使わない）
   - 取得: `GET /api/v1/my-ranking/:rankingId`（`get-my-ranking.controller.ts`、認証必須・userIdでスコープ）
-    - レスポンス: `{ ranking: MyRankingType, rankingOrder: MyRankingOrderType[] }`
-    - `MyRankingType`: `id, title, createdAt, updatedAt, publicStatus, publicStatusName`
+    - レスポンス: `{ ranking: MyRankingType, items: MyRankingOrderType[], tags: MyRankingTagType[] }`（キー名は当初 `rankingOrder` / `rankingTag` だったが、作成・更新のリクエストに揃えて `items` / `tags` に変更した）
+    - `MyRankingType`: `id, title, memo, createdAt, updatedAt, publicStatus, publicStatusName, icon, isFavorite`
     - `MyRankingOrderType`: `id, itemName, itemMemo, order, createdAt`（`order` は本計画のタスク#1,#2で追加。既存実装は `order` を返しておらず、並び順も保証されていなかった）
+    - `MyRankingTagType`: `name`（タグ名順）
   - 更新: `PATCH /api/v1/my-ranking/:rankingId`（`update-my-ranking.controller.ts`、直前のバグ修正でルーティングが正常化済み）
-    - リクエスト: `title`, `publicStatus`(1=非公開/2=公開), `memo`, `items[]`(`itemName`, `order`, `memo`)。**全置換方式**（既存itemの`id`は送らない。サーバー側で洗い替える）
+    - リクエスト: `title`, `publicStatus`(1=非公開/2=公開), `icon`, `memo`, `items[]`(`itemName`, `order`, `memo`), `tags[]`(タグ名)。**全置換方式**（既存itemの`id`は送らない。サーバー側で洗い替える）
     - レスポンス: 200（更新後の値）／401／404／409（タイトル重複）／422（入力エラー・不適切内容）／500
 - 画面は「閲覧モード」と「編集モード」を持ち、切り替えは画面内部の state で行う（URL・ルーティングでは分けない）
   - `RankingDetailContainer` が `useState<'view' | 'edit'>('view')` でモードを保持し、Presentational（`RankingDetail`）に props として渡す（Presentationalコンポーネントの純粋性ルールを維持するため）

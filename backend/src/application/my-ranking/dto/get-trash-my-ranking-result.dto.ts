@@ -11,14 +11,14 @@ export type GetTrashMyRankingResultType = {
     publicStatusName: string;
     icon: number;
   };
-  rankingOrder: {
+  items: {
     id: string;
     itemName: string | null;
     itemMemo: string | null;
     order: number;
     createdAt: string;
   }[];
-  rankingTag: {
+  tags: {
     name: string;
   }[];
 };
@@ -46,14 +46,14 @@ export class GetTrashMyRankingResultDto {
         publicStatusName: ranking.publicStatusName,
         icon: ranking.icon,
       },
-      rankingOrder: rankingOrder.map((e) => ({
+      items: rankingOrder.map((e) => ({
         id: e.id,
         itemName: e.itemName,
         itemMemo: e.itemMemo,
         order: e.order,
         createdAt: e.createdAt,
       })),
-      rankingTag: rankingTag.map((e) => ({
+      tags: rankingTag.map((e) => ({
         name: e.name,
       })),
     };

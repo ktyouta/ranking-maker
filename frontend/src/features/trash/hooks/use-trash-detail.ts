@@ -37,15 +37,15 @@ export function useTrashDetailScreen() {
 
     // ゴミ箱のランキング取得（Suspense対応のため取得中は呼び出し元で中断される）
     const trashQuery = useTrashDetail(rankingId);
-    const { ranking, rankingOrder } = trashQuery.data.data;
+    const { ranking, items } = trashQuery.data.data;
     // アイコン候補一覧（idからemojiを引くために使用）
     const iconsQuery = useIcons();
     const icons = iconsQuery.data.data;
 
     // 項目一覧を順位順に整形したもの
     const sortedItems = useMemo(() => {
-        return [...rankingOrder].sort((a, b) => a.order - b.order);
-    }, [rankingOrder]);
+        return [...items].sort((a, b) => a.order - b.order);
+    }, [items]);
 
     /**
      * 一覧画面へ戻る

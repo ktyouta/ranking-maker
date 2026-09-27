@@ -175,9 +175,9 @@ export function useCreateRanking() {
         try {
             const detail = await fetchMyRankingDetail(queryClient, rankingId);
             // ランキング本体と項目一覧
-            const { ranking, rankingOrder } = detail.data;
+            const { ranking, items } = detail.data;
             // 項目一覧を順位順に整形したもの
-            const sortedItems = [...rankingOrder].sort((a, b) => a.order - b.order);
+            const sortedItems = [...items].sort((a, b) => a.order - b.order);
             reset({
                 title: ranking.title,
                 isPublic: false,
