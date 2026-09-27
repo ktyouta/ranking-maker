@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
-import { IGetTrashMyRankingRepository, RankingId, TrashMyRankingOrderType, TrashMyRankingType } from "../../../domain";
+import { IGetTrashMyRankingRepository, RankingId, TrashMyRankingOrderType, TrashMyRankingTagType, TrashMyRankingType } from "../../../domain";
 import { UserId } from "../../../domain/shared";
-import { publicStatusMaster, rankingMaster, rankingOrderMaster, type Database } from "../../db";
+import { publicStatusMaster, rankingMaster, rankingOrderMaster, rankingTagMaster, tagMaster, type Database } from "../../db";
 
 /**
  * ゴミ箱のランキング取得リポジトリ実装
@@ -51,5 +51,21 @@ export class GetTrashMyRankingRepository implements IGetTrashMyRankingRepository
       .from(rankingOrderMaster)
       .where(and(eq(rankingOrderMaster.deleteFlg, true), eq(rankingOrderMaster.rankingId, rankingId.value)))
       .orderBy(rankingOrderMaster.order);
+  }
+
+  /**
+   * ランキングタグ取得（削除済みのみ）
+   * @param userId
+   * @param rankingId
+   */
+  async findRankingTag(userId: UserId, rankingId: RankingId): Promise<TrashMyRankingTagType[]> {
+    return await this.db
+      .select({
+        name: tagMaster.name,
+      })
+      .from(rankingTagMaster)
+      .innerJoin(tagMaster, eq(rankingTagMaster.tagId, tagMaster.id))
+      .where(and(eq(rankingTagMaster.deleteFlg, true), eq(rankingTagMaster.rankingId, rankingId.value), eq(rankingTagMaster.userId, userId.value)))
+      .orderBy(tagMaster.name);
   }
 }

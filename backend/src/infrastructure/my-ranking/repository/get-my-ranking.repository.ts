@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
-import { IGetMyRankingRepository, RankingId, MyRankingOrderType, MyRankingType } from "../../../domain";
+import { IGetMyRankingRepository, MyRankingOrderType, MyRankingTagType, MyRankingType, RankingId } from "../../../domain";
 import { UserId } from "../../../domain/shared";
-import { publicStatusMaster, rankingMaster, rankingOrderMaster, type Database } from "../../db";
+import { publicStatusMaster, rankingMaster, rankingOrderMaster, rankingTagMaster, tagMaster, type Database } from "../../db";
 
 /**
  * ランキング取得リポジトリ実装
@@ -52,5 +52,21 @@ export class GetMyRankingRepository implements IGetMyRankingRepository {
       .from(rankingOrderMaster)
       .where(and(eq(rankingOrderMaster.deleteFlg, false), eq(rankingOrderMaster.rankingId, rankingId.value)))
       .orderBy(rankingOrderMaster.order);
+  }
+
+  /**
+   * ランキングタグ取得
+   * @param userId
+   * @param rankingId
+   */
+  async findRankingTag(userId: UserId, rankingId: RankingId): Promise<MyRankingTagType[]> {
+    return await this.db
+      .select({
+        name: tagMaster.name,
+      })
+      .from(rankingTagMaster)
+      .innerJoin(tagMaster, eq(rankingTagMaster.tagId, tagMaster.id))
+      .where(and(eq(rankingTagMaster.deleteFlg, false), eq(rankingTagMaster.rankingId, rankingId.value), eq(rankingTagMaster.userId, userId.value)))
+      .orderBy(tagMaster.name);
   }
 }

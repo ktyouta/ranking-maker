@@ -1,4 +1,4 @@
-import type { MyRankingOrderType, MyRankingType } from "../../../domain";
+import type { MyRankingOrderType, MyRankingTagType, MyRankingType } from "../../../domain";
 
 export type GetMyRankingResultType = {
   ranking: {
@@ -19,6 +19,9 @@ export type GetMyRankingResultType = {
     order: number;
     createdAt: string;
   }[];
+  rankingTag: {
+    name: string;
+  }[];
 };
 
 /**
@@ -31,7 +34,7 @@ export class GetMyRankingResultDto {
    * @param ranking ランキング
    * @param rankingOrder ランキングオーダー一覧
    */
-  constructor(ranking: MyRankingType, rankingOrder: MyRankingOrderType[]) {
+  constructor(ranking: MyRankingType, rankingOrder: MyRankingOrderType[], rankingTag: MyRankingTagType[]) {
     this._value = {
       ranking: {
         id: ranking.id,
@@ -51,6 +54,9 @@ export class GetMyRankingResultDto {
         order: e.order,
         createdAt: e.createdAt,
       })),
+      rankingTag: rankingTag.map((e) => ({
+        name: e.name
+      }))
     };
   }
 

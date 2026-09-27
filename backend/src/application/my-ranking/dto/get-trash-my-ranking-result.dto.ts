@@ -1,4 +1,4 @@
-import type { TrashMyRankingOrderType, TrashMyRankingType } from "../../../domain";
+import type { TrashMyRankingOrderType, TrashMyRankingTagType, TrashMyRankingType } from "../../../domain";
 
 export type GetTrashMyRankingResultType = {
   ranking: {
@@ -18,6 +18,9 @@ export type GetTrashMyRankingResultType = {
     order: number;
     createdAt: string;
   }[];
+  rankingTag: {
+    name: string;
+  }[];
 };
 
 /**
@@ -29,8 +32,9 @@ export class GetTrashMyRankingResultDto {
   /**
    * @param ranking 削除済みランキング
    * @param rankingOrder 削除済みランキングのオーダー一覧
+   * @param rankingTag 削除済みランキングのタグ一覧
    */
-  constructor(ranking: TrashMyRankingType, rankingOrder: TrashMyRankingOrderType[]) {
+  constructor(ranking: TrashMyRankingType, rankingOrder: TrashMyRankingOrderType[], rankingTag: TrashMyRankingTagType[]) {
     this._value = {
       ranking: {
         id: ranking.id,
@@ -48,6 +52,9 @@ export class GetTrashMyRankingResultDto {
         itemMemo: e.itemMemo,
         order: e.order,
         createdAt: e.createdAt,
+      })),
+      rankingTag: rankingTag.map((e) => ({
+        name: e.name,
       })),
     };
   }

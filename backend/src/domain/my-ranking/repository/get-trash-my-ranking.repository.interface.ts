@@ -19,6 +19,10 @@ export type TrashMyRankingOrderType = {
   createdAt: string;
 };
 
+export type TrashMyRankingTagType = {
+  name: string;
+};
+
 /**
  * ゴミ箱のランキング取得リポジトリインターフェース
  */
@@ -33,4 +37,11 @@ export interface IGetTrashMyRankingRepository {
    * @param rankingId
    */
   findRankingOrder(rankingId: RankingId): Promise<TrashMyRankingOrderType[]>;
+
+  /**
+   * ランキングタグ取得（削除済みのみ）
+   * @param userId
+   * @param rankingId
+   */
+  findRankingTag(userId: UserId, rankingId: RankingId): Promise<TrashMyRankingTagType[]>;
 }

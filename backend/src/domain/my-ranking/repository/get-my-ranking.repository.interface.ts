@@ -20,6 +20,10 @@ export type MyRankingOrderType = {
   createdAt: string;
 };
 
+export type MyRankingTagType = {
+  name: string;
+};
+
 /**
  * ランキング取得リポジトリインターフェース
  */
@@ -34,4 +38,11 @@ export interface IGetMyRankingRepository {
    * @param rankingId 
    */
   findRankingOrder(rankingId: RankingId): Promise<MyRankingOrderType[]>;
+
+  /**
+   * ランキングタグ取得
+   * @param userId
+   * @param rankingId
+   */
+  findRankingTag(userId: UserId, rankingId: RankingId): Promise<MyRankingTagType[]>;
 }

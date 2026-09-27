@@ -23,6 +23,9 @@ export class GetTrashMyRankingUsecase {
     // ランキングオーダー
     const rankingOrder = await this.repository.findRankingOrder(rankingId);
 
-    return new GetTrashMyRankingResultDto(ranking, rankingOrder);
+    // ランキングタグ
+    const rankingTag = await this.repository.findRankingTag(userId, rankingId);
+
+    return new GetTrashMyRankingResultDto(ranking, rankingOrder, rankingTag);
   }
 }
