@@ -1,5 +1,5 @@
 import { useIcons } from '@/app/api/get-icons';
-import { myRankingKeys } from '@/app/api/query-key';
+import { myRankingKeys, tagKeys } from '@/app/api/query-key';
 import { paths } from '@/config/paths';
 import { useAppNavigation } from '@/hooks/use-app-navigation';
 import { useSwitch } from '@/hooks/use-switch';
@@ -32,12 +32,14 @@ export function useTrashDetailScreen() {
     const permanentDeleteDialog = useSwitch();
     // メモダイアログの開閉
     const memoDialog = useSwitch();
+    // タグダイアログの開閉
+    const tagDialog = useSwitch();
     // 項目メモダイアログで表示中の項目（未選択時は null）
     const [selectedItemMemo, setSelectedItemMemo] = useState<{ itemName: string; itemMemo: string } | null>(null);
 
     // ゴミ箱のランキング取得（Suspense対応のため取得中は呼び出し元で中断される）
     const trashQuery = useTrashDetail(rankingId);
-    const { ranking, items } = trashQuery.data.data;
+    const { ranking, items, tags } = trashQuery.data.data;
     // アイコン候補一覧（idからemojiを引くために使用）
     const iconsQuery = useIcons();
     const icons = iconsQuery.data.data;
@@ -75,6 +77,7 @@ export function useTrashDetailScreen() {
         // 正常終了後の処理
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: trashKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: tagKeys.all });
             navigate(paths.trash.path);
         },
         // 失敗後の処理
@@ -144,6 +147,20 @@ export function useTrashDetailScreen() {
     }, [memoDialog]);
 
     /**
+     * タグダイアログを開く
+     */
+    const clickTag = useCallback(() => {
+        tagDialog.on();
+    }, [tagDialog]);
+
+    /**
+     * タグダイアログを閉じる
+     */
+    const closeTag = useCallback(() => {
+        tagDialog.off();
+    }, [tagDialog]);
+
+    /**
      * 項目メモダイアログを開く
      */
     const clickItemMemo = useCallback((item: { itemName: string; itemMemo: string }) => {
@@ -181,6 +198,10 @@ export function useTrashDetailScreen() {
         isMemoDialogOpen: memoDialog.flag,
         onClickMemo: clickMemo,
         onCloseMemo: closeMemo,
+        tags: tags.map((tag) => tag.name),
+        isTagDialogOpen: tagDialog.flag,
+        onClickTag: clickTag,
+        onCloseTag: closeTag,
         isItemMemoDialogOpen: selectedItemMemo !== null,
         selectedItemName: selectedItemMemo?.itemName ?? ``,
         selectedItemMemo: selectedItemMemo?.itemMemo ?? ``,

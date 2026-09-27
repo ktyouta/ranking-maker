@@ -4,6 +4,8 @@ const RANKING_TITLE_MAX_LENGTH = 100;
 const RANKING_MEMO_MAX_LENGTH = 1000;
 const ITEM_NAME_MAX_LENGTH = 100;
 const ITEM_MEMO_MAX_LENGTH = 1000;
+export const TAG_NAME_MAX_LENGTH = 20;
+export const MAX_TAG_COUNT = 20;
 
 export const CreateRankingRequestSchema = z.object({
     title: z.string()
@@ -26,6 +28,10 @@ export const CreateRankingRequestSchema = z.object({
     }, {
         message: "項目名が重複しています",
     }),
+    tags: z.array(
+        z.string()
+            .max(TAG_NAME_MAX_LENGTH, `タグは${TAG_NAME_MAX_LENGTH}文字以内で入力してください`)
+    ).max(MAX_TAG_COUNT, `タグは${MAX_TAG_COUNT}個までです`),
 });
 
 export type CreateRankingRequestType = z.infer<typeof CreateRankingRequestSchema>;

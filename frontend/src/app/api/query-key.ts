@@ -8,6 +8,11 @@ export const iconKeys = {
     all: ['icons'] as const,
 };
 
+// タグ一覧取得用のキー
+export const tagKeys = {
+    all: ['tags'] as const,
+};
+
 // ランキング一覧取得APIのクエリパラメータ（検索条件）
 export type MyRankingListParamsType = {
     keyword?: string;

@@ -1,12 +1,13 @@
 import { IconType } from '@/app/api/get-icons';
 import { Dialog, LoadingOverlay, ScrollToTopButton, Textarea, Textbox } from '@/components';
 import { IconSelectDialog } from '@/components/layouts/icon-select-dialog/icon-select-dialog';
+import { TagSelectDialog } from '@/components/layouts/tag-select-dialog/tag-select-dialog';
 import { closestCenter, DndContext, DragEndEvent, SensorDescriptor, SensorOptions } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { BaseSyntheticEvent } from 'react';
+import { BaseSyntheticEvent, type KeyboardEvent } from 'react';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
-import { HiOutlineExclamationTriangle } from 'react-icons/hi2';
-import { CreateRankingRequestType } from '../types/create-ranking-request-type';
+import { HiOutlineExclamationTriangle, HiOutlineTag } from 'react-icons/hi2';
+import { CreateRankingRequestType, MAX_TAG_COUNT } from '../types/create-ranking-request-type';
 import { ItemFieldType, ItemRow } from './item-row';
 import { TemplateSelectDialog } from './template-select-dialog';
 
@@ -30,6 +31,18 @@ type PropsType = {
     openIconDialog: () => void;
     closeIconDialog: () => void;
     selectIcon: (iconId: number) => void;
+    selectedTags: string[];
+    candidateTags: string[];
+    isTagDialogOpen: boolean;
+    openTagDialog: () => void;
+    closeTagDialog: () => void;
+    tagInput: string;
+    changeTagInput: (value: string) => void;
+    keyDownTagInput: (event: KeyboardEvent<HTMLInputElement>) => void;
+    addTag: () => void;
+    toggleTag: (tagName: string) => void;
+    removeTag: (tagName: string) => void;
+    tagErrMessage: string;
     isTemplateDialogOpen: boolean;
     openTemplateDialog: () => void;
     closeTemplateDialog: () => void;
@@ -62,6 +75,18 @@ export function CreateRanking(props: PropsType) {
         openIconDialog,
         closeIconDialog,
         selectIcon,
+        selectedTags,
+        candidateTags,
+        isTagDialogOpen,
+        openTagDialog,
+        closeTagDialog,
+        tagInput,
+        changeTagInput,
+        keyDownTagInput,
+        addTag,
+        toggleTag,
+        removeTag,
+        tagErrMessage,
         isTemplateDialogOpen,
         openTemplateDialog,
         closeTemplateDialog,
@@ -124,9 +149,24 @@ export function CreateRanking(props: PropsType) {
             )}
             <div className="mt-1 md:mt-9 flex flex-col flex-1 gap-[1.8rem] md:gap-[2.8rem]">
                 <div>
-                    <label className="mb-3 block text-lg font-semibold text-ink">
-                        タイトル
-                    </label>
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                        <label className="block text-lg font-semibold text-ink">
+                            タイトル
+                        </label>
+                        <button
+                            type="button"
+                            onClick={openTagDialog}
+                            className="relative shrink-0 rounded-full bg-accent/15 p-2 text-accent hover:bg-accent/25"
+                            aria-label="タグを設定"
+                        >
+                            <HiOutlineTag className="size-6" />
+                            {selectedTags.length > 0 && (
+                                <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-surface px-1 text-xs font-bold text-white">
+                                    {selectedTags.length}
+                                </span>
+                            )}
+                        </button>
+                    </div>
                     <Textbox
                         className="h-auto w-full rounded-none border-0 border-b-2 border-accent/50 bg-transparent px-1 py-2 text-xl font-bold text-ink focus:border-accent focus:ring-0 sm:text-2xl"
                         placeholder="例: 好きなラーメン屋ランキング"
@@ -134,6 +174,9 @@ export function CreateRanking(props: PropsType) {
                     />
                     {errors.title?.message && (
                         <p className="mt-2 text-base text-red-500">{errors.title.message}</p>
+                    )}
+                    {errors.tags?.message && (
+                        <p className="mt-2 text-base text-red-500">{errors.tags.message}</p>
                     )}
                 </div>
                 {/* 公開設定は現状UIから外している（ユーザーが自分専用で使う想定のため）
@@ -241,6 +284,20 @@ export function CreateRanking(props: PropsType) {
                 icons={icons}
                 selectedIconId={selectedIconId}
                 onSelect={selectIcon}
+            />
+            <TagSelectDialog
+                isOpen={isTagDialogOpen}
+                onClose={closeTagDialog}
+                selectedTags={selectedTags}
+                maxTagCount={MAX_TAG_COUNT}
+                candidateTags={candidateTags}
+                tagInput={tagInput}
+                onChangeTagInput={changeTagInput}
+                onKeyDownTagInput={keyDownTagInput}
+                onAddTag={addTag}
+                onToggleTag={toggleTag}
+                onRemoveTag={removeTag}
+                errMessage={tagErrMessage}
             />
             <TemplateSelectDialog
                 isOpen={isTemplateDialogOpen}

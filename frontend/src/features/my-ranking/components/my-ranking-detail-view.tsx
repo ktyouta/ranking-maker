@@ -1,5 +1,7 @@
 import { Dialog, LoadingOverlay, ScrollToTopButton } from '@/components';
-import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineDocumentText, HiOutlineExclamationTriangle, HiOutlineTrash } from 'react-icons/hi2';
+import { MemoViewDialog } from '@/components/layouts/memo-view-dialog/memo-view-dialog';
+import { TagViewDialog } from '@/components/layouts/tag-view-dialog/tag-view-dialog';
+import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineDocumentText, HiOutlineExclamationTriangle, HiOutlineTag, HiOutlineTrash } from 'react-icons/hi2';
 import { IoCalendarOutline, IoStar, IoStarOutline } from 'react-icons/io5';
 import { ItemType, RankingItemCard } from './ranking-item-card';
 
@@ -25,6 +27,10 @@ type PropsType = {
     isMemoDialogOpen: boolean;
     onClickMemo: () => void;
     onCloseMemo: () => void;
+    tags: string[];
+    isTagDialogOpen: boolean;
+    onClickTag: () => void;
+    onCloseTag: () => void;
     isItemMemoDialogOpen: boolean;
     selectedItemName: string;
     selectedItemMemo: string;
@@ -56,6 +62,10 @@ export function MyRankingDetailView(props: PropsType) {
         isMemoDialogOpen,
         onClickMemo,
         onCloseMemo,
+        tags,
+        isTagDialogOpen,
+        onClickTag,
+        onCloseTag,
         isItemMemoDialogOpen,
         selectedItemName,
         selectedItemMemo,
@@ -134,6 +144,14 @@ export function MyRankingDetailView(props: PropsType) {
                             </button>
                             <button
                                 type="button"
+                                onClick={onClickTag}
+                                className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                                aria-label="タグを見る"
+                            >
+                                <HiOutlineTag className="size-6" />
+                            </button>
+                            <button
+                                type="button"
                                 onClick={onClickDelete}
                                 className="shrink-0 rounded-full bg-danger/15 p-2.5 text-danger hover:bg-danger/25"
                                 aria-label="ランキングを削除"
@@ -181,6 +199,14 @@ export function MyRankingDetailView(props: PropsType) {
                             </button>
                             <button
                                 type="button"
+                                onClick={onClickTag}
+                                className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                                aria-label="タグを見る"
+                            >
+                                <HiOutlineTag className="size-7" />
+                            </button>
+                            <button
+                                type="button"
                                 onClick={onClickDelete}
                                 className="shrink-0 rounded-full bg-danger/15 p-2.5 text-danger hover:bg-danger/25"
                                 aria-label="ランキングを削除"
@@ -211,26 +237,23 @@ export function MyRankingDetailView(props: PropsType) {
                     </div>
                 </div>
             </div>
-            <Dialog
+            <MemoViewDialog
                 isOpen={isMemoDialogOpen}
                 onClose={onCloseMemo}
                 title="メモ"
-                size="large"
-            >
-                <p className="min-h-[14rem] whitespace-pre-wrap break-words text-base text-ink">
-                    {memo || 'メモはありません'}
-                </p>
-            </Dialog>
-            <Dialog
+                memo={memo}
+            />
+            <TagViewDialog
+                isOpen={isTagDialogOpen}
+                onClose={onCloseTag}
+                tags={tags}
+            />
+            <MemoViewDialog
                 isOpen={isItemMemoDialogOpen}
                 onClose={onCloseItemMemo}
                 title={selectedItemName || 'メモ'}
-                size="large"
-            >
-                <p className="min-h-[14rem] whitespace-pre-wrap break-words text-base text-ink">
-                    {selectedItemMemo || 'メモはありません'}
-                </p>
-            </Dialog>
+                memo={selectedItemMemo}
+            />
             <Dialog
                 isOpen={isDeleteDialogOpen}
                 onClose={onCancelDelete}

@@ -1,5 +1,7 @@
 import { Dialog, LoadingOverlay, ScrollToTopButton } from '@/components';
-import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineDocumentText, HiOutlineExclamationTriangle } from 'react-icons/hi2';
+import { MemoViewDialog } from '@/components/layouts/memo-view-dialog/memo-view-dialog';
+import { TagViewDialog } from '@/components/layouts/tag-view-dialog/tag-view-dialog';
+import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineDocumentText, HiOutlineExclamationTriangle, HiOutlineTag } from 'react-icons/hi2';
 import { IoCalendarOutline } from 'react-icons/io5';
 import { ItemType, TrashItemCard } from './trash-item-card';
 
@@ -22,6 +24,10 @@ type PropsType = {
     isMemoDialogOpen: boolean;
     onClickMemo: () => void;
     onCloseMemo: () => void;
+    tags: string[];
+    isTagDialogOpen: boolean;
+    onClickTag: () => void;
+    onCloseTag: () => void;
     isItemMemoDialogOpen: boolean;
     selectedItemName: string;
     selectedItemMemo: string;
@@ -54,6 +60,10 @@ export function TrashDetail(props: PropsType) {
         isMemoDialogOpen,
         onClickMemo,
         onCloseMemo,
+        tags,
+        isTagDialogOpen,
+        onClickTag,
+        onCloseTag,
         isItemMemoDialogOpen,
         selectedItemName,
         selectedItemMemo,
@@ -103,14 +113,24 @@ export function TrashDetail(props: PropsType) {
                             <IoCalendarOutline className="size-4" />
                             更新日 {updatedAt}
                         </span>
-                        <button
-                            type="button"
-                            onClick={onClickMemo}
-                            className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
-                            aria-label="メモを見る"
-                        >
-                            <HiOutlineDocumentText className="size-6" />
-                        </button>
+                        <div className="flex shrink-0 items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={onClickMemo}
+                                className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                                aria-label="メモを見る"
+                            >
+                                <HiOutlineDocumentText className="size-6" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={onClickTag}
+                                className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                                aria-label="タグを見る"
+                            >
+                                <HiOutlineTag className="size-6" />
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div className="hidden items-center justify-between gap-3 sm:flex">
@@ -128,14 +148,24 @@ export function TrashDetail(props: PropsType) {
                             </span>
                         </div>
                     </div>
-                    <button
-                        type="button"
-                        onClick={onClickMemo}
-                        className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
-                        aria-label="メモを見る"
-                    >
-                        <HiOutlineDocumentText className="size-7" />
-                    </button>
+                    <div className="flex shrink-0 items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={onClickMemo}
+                            className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                            aria-label="メモを見る"
+                        >
+                            <HiOutlineDocumentText className="size-7" />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={onClickTag}
+                            className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                            aria-label="タグを見る"
+                        >
+                            <HiOutlineTag className="size-7" />
+                        </button>
+                    </div>
                 </div>
                 <div className="mt-12 sm:mt-16 flex flex-1 flex-col gap-[1.8rem] md:gap-[2.8rem]">
                     <div className="flex flex-col gap-6">
@@ -186,26 +216,23 @@ export function TrashDetail(props: PropsType) {
                     </div>
                 </div>
             </div>
-            <Dialog
+            <MemoViewDialog
                 isOpen={isMemoDialogOpen}
                 onClose={onCloseMemo}
                 title="メモ"
-                size="large"
-            >
-                <p className="min-h-[14rem] whitespace-pre-wrap break-words text-base text-ink">
-                    {memo || 'メモはありません'}
-                </p>
-            </Dialog>
-            <Dialog
+                memo={memo}
+            />
+            <TagViewDialog
+                isOpen={isTagDialogOpen}
+                onClose={onCloseTag}
+                tags={tags}
+            />
+            <MemoViewDialog
                 isOpen={isItemMemoDialogOpen}
                 onClose={onCloseItemMemo}
                 title={selectedItemName || 'メモ'}
-                size="large"
-            >
-                <p className="min-h-[14rem] whitespace-pre-wrap break-words text-base text-ink">
-                    {selectedItemMemo || 'メモはありません'}
-                </p>
-            </Dialog>
+                memo={selectedItemMemo}
+            />
             <Dialog
                 isOpen={isRestoreDialogOpen}
                 onClose={onCancelRestore}

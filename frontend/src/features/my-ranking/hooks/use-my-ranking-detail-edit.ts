@@ -1,15 +1,17 @@
 import { useIcons } from '@/app/api/get-icons';
 import { useMyRanking } from '@/app/api/get-my-ranking';
-import { myRankingKeys } from '@/app/api/query-key';
+import { useTags } from '@/app/api/get-tags';
+import { myRankingKeys, tagKeys } from '@/app/api/query-key';
 import { PUBLIC_STATUS } from '@/constants/public-status';
 import { useSwitch } from '@/hooks/use-switch';
 import { KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, type KeyboardEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useUpdateMyRankingMutation, ViolationType } from '../api/update-my-ranking';
+import { MAX_TAG_COUNT, TAG_NAME_MAX_LENGTH } from '../types/update-my-ranking-request-type';
 import { useUpdateMyRankingForm } from './use-update-my-ranking.form';
 
 const MIN_ITEM_COUNT = 1;
@@ -34,8 +36,8 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
 
     // ランキング取得（Suspense対応のため取得中は呼び出し元で中断される）
     const rankingQuery = useMyRanking(rankingId);
-    // ランキング本体と項目一覧
-    const { ranking, items } = rankingQuery.data.data;
+    // ランキング本体と項目一覧・タグ一覧
+    const { ranking, items, tags } = rankingQuery.data.data;
 
     // 項目一覧を順位順に整形したもの
     const sortedItems = useMemo(() => {
@@ -52,7 +54,8 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
             itemName: item.itemName ?? ``,
             memo: item.itemMemo ?? ``,
         })),
-    }), [ranking, sortedItems]);
+        tags: tags.map((tag) => tag.name),
+    }), [ranking, sortedItems, tags]);
 
     // フォーム
     const { register, handleSubmit, control, reset, watch, setValue, formState: { errors }, itemFieldArray } = useUpdateMyRankingForm(defaultValues);
@@ -63,6 +66,17 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
     const iconDialog = useSwitch();
     // 選択中のアイコンID
     const selectedIconId = watch('icon');
+    // これまでに使ったタグ（タグ設定ダイアログの候補）
+    const tagsQuery = useTags();
+    const candidateTags = tagsQuery.data.data.map((tag) => tag.name);
+    // タグ設定ダイアログの開閉
+    const tagDialog = useSwitch();
+    // タグ設定ダイアログの入力欄
+    const [tagInput, setTagInput] = useState(``);
+    // タグ設定ダイアログ内のエラーメッセージ
+    const [tagErrMessage, setTagErrMessage] = useState(``);
+    // 付けているタグ
+    const selectedTags = watch('tags');
     // ポインター操作とキーボード操作の両方でドラッグ&ドロップを可能にする
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -76,6 +90,7 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: myRankingKeys.detail(rankingId) });
             queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: tagKeys.all });
             toast.success(data.message);
             onSaveSuccess();
         },
@@ -112,7 +127,7 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
                 memo: item.memo,
                 order: index + 1,
             })),
-            tags: [],
+            tags: data.tags,
         });
     }, () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -193,6 +208,85 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
         iconDialog.off();
     }, [setValue, iconDialog]);
 
+    /**
+     * タグ設定ダイアログを開く
+     */
+    const openTagDialog = useCallback(() => {
+        tagDialog.on();
+    }, [tagDialog]);
+
+    /**
+     * タグ設定ダイアログを閉じる（入力途中の内容とエラーは破棄する）
+     */
+    const closeTagDialog = useCallback(() => {
+        setTagInput(``);
+        setTagErrMessage(``);
+        tagDialog.off();
+    }, [tagDialog]);
+
+    /**
+     * 入力欄のタグを付ける
+     */
+    const addTag = useCallback(() => {
+        const tagName = tagInput.trim();
+        if (!tagName) {
+            return;
+        }
+        if (selectedTags.includes(tagName)) {
+            setTagInput(``);
+            setTagErrMessage(``);
+            return;
+        }
+        if (tagName.length > TAG_NAME_MAX_LENGTH) {
+            setTagErrMessage(`タグは${TAG_NAME_MAX_LENGTH}文字以内で入力してください`);
+            return;
+        }
+        if (selectedTags.length >= MAX_TAG_COUNT) {
+            setTagErrMessage(`タグは${MAX_TAG_COUNT}個までです`);
+            return;
+        }
+        setValue('tags', [...selectedTags, tagName]);
+        setTagInput(``);
+        setTagErrMessage(``);
+    }, [tagInput, selectedTags, setValue]);
+
+    /**
+     * 入力欄で Enter キーを押したらタグを付ける（日本語変換の確定操作では付けない）
+     * @param event キー入力イベント
+     */
+    const keyDownTagInput = useCallback((event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key !== 'Enter' || event.nativeEvent.isComposing) {
+            return;
+        }
+        event.preventDefault();
+        addTag();
+    }, [addTag]);
+
+    /**
+     * これまでに使ったタグの付け外しを切り替える
+     */
+    const toggleTag = useCallback((tagName: string) => {
+        if (selectedTags.includes(tagName)) {
+            setValue('tags', selectedTags.filter((e) => e !== tagName));
+            setTagErrMessage(``);
+            return;
+        }
+        if (selectedTags.length >= MAX_TAG_COUNT) {
+            setTagErrMessage(`タグは${MAX_TAG_COUNT}個までです`);
+            return;
+        }
+        setValue('tags', [...selectedTags, tagName]);
+        setTagErrMessage(``);
+    }, [selectedTags, setValue]);
+
+    /**
+     * タグを外す
+     */
+    const removeTag = useCallback((tagName: string) => {
+        setValue('tags', selectedTags.filter((e) => e !== tagName));
+        setTagErrMessage(``);
+    }, [selectedTags, setValue]);
+
     return {
         title: ranking.title,
         errMessage,
@@ -216,5 +310,17 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
         openIconDialog,
         closeIconDialog,
         selectIcon,
+        selectedTags,
+        candidateTags,
+        isTagDialogOpen: tagDialog.flag,
+        openTagDialog,
+        closeTagDialog,
+        tagInput,
+        changeTagInput: setTagInput,
+        keyDownTagInput,
+        addTag,
+        toggleTag,
+        removeTag,
+        tagErrMessage,
     };
 }

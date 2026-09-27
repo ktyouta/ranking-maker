@@ -14,6 +14,7 @@ export { Pagination } from './ui/pagination/pagination';
 export { ScrollToTopButton } from './ui/scroll-to-top-button/scroll-to-top-button';
 export { Select } from './ui/select/select';
 export { Spinner } from './ui/spinner/spinner';
+export { TagChip } from './ui/tag-chip/tag-chip';
 export { Textarea } from './ui/textarea/textarea';
 export { Textbox } from './ui/textbox/textbox';
 export {

@@ -15,6 +15,7 @@ export function getCreateRankingDefaultValues(): CreateRankingRequestType {
         icon: DEFAULT_ICON_ID,
         memo: ``,
         items: Array.from({ length: INITIAL_ITEM_COUNT }, () => ({ itemName: ``, memo: `` })),
+        tags: [],
     };
 }
 

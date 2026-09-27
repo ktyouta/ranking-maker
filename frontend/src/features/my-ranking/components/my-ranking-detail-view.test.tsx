@@ -21,6 +21,10 @@ const baseProps = {
     isMemoDialogOpen: false,
     onClickMemo: vi.fn(),
     onCloseMemo: vi.fn(),
+    tags: [],
+    isTagDialogOpen: false,
+    onClickTag: vi.fn(),
+    onCloseTag: vi.fn(),
     isItemMemoDialogOpen: false,
     selectedItemName: '',
     selectedItemMemo: '',
@@ -54,5 +58,18 @@ describe('MyRankingDetailView', () => {
         const { container } = render(<MyRankingDetailView {...baseProps} />);
 
         expect(container.querySelector('.animate-spin')).not.toBeInTheDocument();
+    });
+
+    test('タグダイアログを開いた場合、付いているタグが表示されること', () => {
+        render(<MyRankingDetailView {...baseProps} tags={['グルメ', '東京']} isTagDialogOpen />);
+
+        expect(screen.getByText('グルメ')).toBeInTheDocument();
+        expect(screen.getByText('東京')).toBeInTheDocument();
+    });
+
+    test('タグがない状態でタグダイアログを開いた場合、タグがない旨が表示されること', () => {
+        render(<MyRankingDetailView {...baseProps} isTagDialogOpen />);
+
+        expect(screen.getByText('タグはありません')).toBeInTheDocument();
     });
 });

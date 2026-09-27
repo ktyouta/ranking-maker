@@ -33,13 +33,15 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
     const deleteDialog = useSwitch();
     // メモダイアログの開閉
     const memoDialog = useSwitch();
+    // タグダイアログの開閉
+    const tagDialog = useSwitch();
     // 項目メモダイアログで表示中の項目（未選択時は null）
     const [selectedItemMemo, setSelectedItemMemo] = useState<{ itemName: string; itemMemo: string } | null>(null);
 
     // ランキング取得（Suspense対応のため取得中は呼び出し元で中断される）
     const rankingQuery = useMyRanking(rankingId);
-    // ランキング本体と項目一覧
-    const { ranking, items } = rankingQuery.data.data;
+    // ランキング本体と項目一覧・タグ一覧
+    const { ranking, items, tags } = rankingQuery.data.data;
     // アイコン候補一覧（idからemojiを引くために使用）
     const iconsQuery = useIcons();
     const icons = iconsQuery.data.data;
@@ -173,6 +175,20 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
     }, [memoDialog]);
 
     /**
+     * タグダイアログを開く
+     */
+    const clickTag = useCallback(() => {
+        tagDialog.on();
+    }, [tagDialog]);
+
+    /**
+     * タグダイアログを閉じる
+     */
+    const closeTag = useCallback(() => {
+        tagDialog.off();
+    }, [tagDialog]);
+
+    /**
      * 項目メモダイアログを開く
      */
     const clickItemMemo = useCallback((item: { itemName: string; itemMemo: string }) => {
@@ -212,6 +228,10 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
         isMemoDialogOpen: memoDialog.flag,
         onClickMemo: clickMemo,
         onCloseMemo: closeMemo,
+        tags: tags.map((tag) => tag.name),
+        isTagDialogOpen: tagDialog.flag,
+        onClickTag: clickTag,
+        onCloseTag: closeTag,
         isItemMemoDialogOpen: selectedItemMemo !== null,
         selectedItemName: selectedItemMemo?.itemName ?? ``,
         selectedItemMemo: selectedItemMemo?.itemMemo ?? ``,

@@ -1,16 +1,18 @@
 import { useIcons } from '@/app/api/get-icons';
 import { fetchMyRankingDetail } from '@/app/api/get-my-ranking';
-import { myRankingKeys } from '@/app/api/query-key';
+import { useTags } from '@/app/api/get-tags';
+import { myRankingKeys, tagKeys } from '@/app/api/query-key';
 import { paths } from '@/config/paths';
 import { PUBLIC_STATUS } from '@/constants/public-status';
 import { useSwitch } from '@/hooks/use-switch';
 import { KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, type KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useCreateRankingMutation, ViolationType } from '../api/create-ranking';
+import { MAX_TAG_COUNT, TAG_NAME_MAX_LENGTH } from '../types/create-ranking-request-type';
 import { getCreateRankingDefaultValues, useCreateRankingForm } from './use-create-ranking.form';
 
 const MIN_ITEM_COUNT = 1;
@@ -35,6 +37,17 @@ export function useCreateRanking() {
     const templateDialog = useSwitch();
     // 選択中のアイコンID
     const selectedIconId = watch('icon');
+    // これまでに使ったタグ（タグ設定ダイアログの候補）
+    const tagsQuery = useTags();
+    const candidateTags = tagsQuery.data.data.map((tag) => tag.name);
+    // タグ設定ダイアログの開閉
+    const tagDialog = useSwitch();
+    // タグ設定ダイアログの入力欄
+    const [tagInput, setTagInput] = useState(``);
+    // タグ設定ダイアログ内のエラーメッセージ
+    const [tagErrMessage, setTagErrMessage] = useState(``);
+    // 付けているタグ
+    const selectedTags = watch('tags');
     // ポインター操作とキーボード操作の両方でドラッグ&ドロップを可能にする
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -47,6 +60,7 @@ export function useCreateRanking() {
         // 正常終了後の処理
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: tagKeys.all });
             toast.success(data.message);
             navigate(paths.myRanking.path);
         },
@@ -73,7 +87,7 @@ export function useCreateRanking() {
                 memo: item.memo,
                 order: index + 1,
             })),
-            tags: [],
+            tags: data.tags,
         });
     }, () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -155,6 +169,85 @@ export function useCreateRanking() {
     }, [setValue, iconDialog]);
 
     /**
+     * タグ設定ダイアログを開く
+     */
+    const openTagDialog = useCallback(() => {
+        tagDialog.on();
+    }, [tagDialog]);
+
+    /**
+     * タグ設定ダイアログを閉じる（入力途中の内容とエラーは破棄する）
+     */
+    const closeTagDialog = useCallback(() => {
+        setTagInput(``);
+        setTagErrMessage(``);
+        tagDialog.off();
+    }, [tagDialog]);
+
+    /**
+     * 入力欄のタグを付ける
+     */
+    const addTag = useCallback(() => {
+        const tagName = tagInput.trim();
+        if (!tagName) {
+            return;
+        }
+        if (selectedTags.includes(tagName)) {
+            setTagInput(``);
+            setTagErrMessage(``);
+            return;
+        }
+        if (tagName.length > TAG_NAME_MAX_LENGTH) {
+            setTagErrMessage(`タグは${TAG_NAME_MAX_LENGTH}文字以内で入力してください`);
+            return;
+        }
+        if (selectedTags.length >= MAX_TAG_COUNT) {
+            setTagErrMessage(`タグは${MAX_TAG_COUNT}個までです`);
+            return;
+        }
+        setValue('tags', [...selectedTags, tagName]);
+        setTagInput(``);
+        setTagErrMessage(``);
+    }, [tagInput, selectedTags, setValue]);
+
+    /**
+     * 入力欄で Enter キーを押したらタグを付ける（日本語変換の確定操作では付けない）
+     * @param event キー入力イベント
+     */
+    const keyDownTagInput = useCallback((event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key !== 'Enter' || event.nativeEvent.isComposing) {
+            return;
+        }
+        event.preventDefault();
+        addTag();
+    }, [addTag]);
+
+    /**
+     * これまでに使ったタグの付け外しを切り替える
+     */
+    const toggleTag = useCallback((tagName: string) => {
+        if (selectedTags.includes(tagName)) {
+            setValue('tags', selectedTags.filter((e) => e !== tagName));
+            setTagErrMessage(``);
+            return;
+        }
+        if (selectedTags.length >= MAX_TAG_COUNT) {
+            setTagErrMessage(`タグは${MAX_TAG_COUNT}個までです`);
+            return;
+        }
+        setValue('tags', [...selectedTags, tagName]);
+        setTagErrMessage(``);
+    }, [selectedTags, setValue]);
+
+    /**
+     * タグを外す
+     */
+    const removeTag = useCallback((tagName: string) => {
+        setValue('tags', selectedTags.filter((e) => e !== tagName));
+        setTagErrMessage(``);
+    }, [selectedTags, setValue]);
+
+    /**
      * テンプレート選択ダイアログを開く
      */
     const openTemplateDialog = useCallback(() => {
@@ -174,8 +267,8 @@ export function useCreateRanking() {
     const selectTemplate = useCallback(async (rankingId: string) => {
         try {
             const detail = await fetchMyRankingDetail(queryClient, rankingId);
-            // ランキング本体と項目一覧
-            const { ranking, items } = detail.data;
+            // ランキング本体と項目一覧・タグ一覧
+            const { ranking, items, tags } = detail.data;
             // 項目一覧を順位順に整形したもの
             const sortedItems = [...items].sort((a, b) => a.order - b.order);
             reset({
@@ -187,6 +280,7 @@ export function useCreateRanking() {
                     itemName: item.itemName ?? ``,
                     memo: item.itemMemo ?? ``,
                 })),
+                tags: tags.map((tag) => tag.name),
             });
             templateDialog.off();
         } catch {
@@ -236,6 +330,18 @@ export function useCreateRanking() {
         openIconDialog,
         closeIconDialog,
         selectIcon,
+        selectedTags,
+        candidateTags,
+        isTagDialogOpen: tagDialog.flag,
+        openTagDialog,
+        closeTagDialog,
+        tagInput,
+        changeTagInput: setTagInput,
+        keyDownTagInput,
+        addTag,
+        toggleTag,
+        removeTag,
+        tagErrMessage,
         isTemplateDialogOpen: templateDialog.flag,
         openTemplateDialog,
         closeTemplateDialog,
