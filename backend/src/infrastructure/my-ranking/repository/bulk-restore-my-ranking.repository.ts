@@ -1,4 +1,4 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, ne } from "drizzle-orm";
 import { IBulkRestoreMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTagEntity, RankingTagId, RankingTitle, TagId } from "../../../domain";
 import { UserId } from "../../../domain/shared";
 import { chunk } from "../../../util";
@@ -93,22 +93,13 @@ export class BulkRestoreMyRankingRepository implements IBulkRestoreMyRankingRepo
   async restoreRankings(restorableRankings: RankingAggregate[]): Promise<void> {
     const now = new Date().toISOString();
     const snapshots = restorableRankings.map((ranking) => ranking.toSnapshot());
-    const statements = [true, false].flatMap((deleteFlg) =>
-      chunk(snapshots.filter((e) => e.deleteFlg === deleteFlg).map((e) => e.id), D1_MAX_IN_CLAUSE_VALUES).flatMap((ids) => [
-        this.db
-          .update(rankingMaster)
-          .set({ deleteFlg, updatedAt: now })
-          .where(and(eq(rankingMaster.deleteFlg, !deleteFlg), inArray(rankingMaster.id, ids))),
-        this.db
-          .update(rankingOrderMaster)
-          .set({ deleteFlg, updatedAt: now })
-          .where(and(eq(rankingOrderMaster.deleteFlg, !deleteFlg), inArray(rankingOrderMaster.rankingId, ids))),
-        this.db
-          .update(rankingTagMaster)
-          .set({ deleteFlg, updatedAt: now })
-          .where(and(eq(rankingTagMaster.deleteFlg, !deleteFlg), inArray(rankingTagMaster.rankingId, ids))),
-      ])
-    );
+    const deletedIds = snapshots.filter((e) => e.deleteFlg).map((e) => e.id);
+    const aliveIds = snapshots.filter((e) => !e.deleteFlg).map((e) => e.id);
+
+    const statements = [
+      ...this.buildDeleteFlgUpdates(deletedIds, true, now),
+      ...this.buildDeleteFlgUpdates(aliveIds, false, now),
+    ];
 
     const [firstStatement, ...restStatements] = statements;
     if (!firstStatement) {
@@ -116,5 +107,25 @@ export class BulkRestoreMyRankingRepository implements IBulkRestoreMyRankingRepo
     }
 
     await this.db.batch([firstStatement, ...restStatements]);
+  }
+
+  /**
+   * 指定ランキングと配下の項目・タグ付けの削除状態を deleteFlg に揃える UPDATE 文を作る
+   */
+  private buildDeleteFlgUpdates(rankingIds: string[], deleteFlg: boolean, now: string) {
+    return chunk(rankingIds, D1_MAX_IN_CLAUSE_VALUES).flatMap((ids) => [
+      this.db
+        .update(rankingMaster)
+        .set({ deleteFlg, updatedAt: now })
+        .where(and(ne(rankingMaster.deleteFlg, deleteFlg), inArray(rankingMaster.id, ids))),
+      this.db
+        .update(rankingOrderMaster)
+        .set({ deleteFlg, updatedAt: now })
+        .where(and(ne(rankingOrderMaster.deleteFlg, deleteFlg), inArray(rankingOrderMaster.rankingId, ids))),
+      this.db
+        .update(rankingTagMaster)
+        .set({ deleteFlg, updatedAt: now })
+        .where(and(ne(rankingTagMaster.deleteFlg, deleteFlg), inArray(rankingTagMaster.rankingId, ids))),
+    ]);
   }
 }
