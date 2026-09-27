@@ -6,6 +6,7 @@ export * from "./get-icons.repository";
 export * from "./get-list-my-ranking.repository";
 export * from "./get-my-ranking-export.repository";
 export * from "./get-my-ranking.repository";
+export * from "./get-tags.repository";
 export * from "./get-trash-list-my-ranking.repository";
 export * from "./get-trash-my-ranking.repository";
 export * from "./icon-validity.repository";

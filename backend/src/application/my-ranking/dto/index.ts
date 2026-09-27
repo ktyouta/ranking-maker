@@ -5,6 +5,7 @@ export * from "./get-icons-result.dto";
 export * from "./get-list-my-ranking-result.dto";
 export * from "./get-my-ranking-export-result.dto";
 export * from "./get-my-ranking-result.dto";
+export * from "./get-tags-result.dto";
 export * from "./get-trash-list-my-ranking-result.dto";
 export * from "./get-trash-my-ranking-result.dto";
 export * from "./restore-my-ranking-result.dto";

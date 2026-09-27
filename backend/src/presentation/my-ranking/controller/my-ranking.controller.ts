@@ -8,6 +8,7 @@ import { getIcons } from "./get-icons.controller";
 import { getListMyRanking } from "./get-list-my-ranking.controller";
 import { getMyRanking } from "./get-my-ranking.controller";
 import { getMyRankingExport } from "./get-my-ranking-export.controller";
+import { getTags } from "./get-tags.controller";
 import { getTrashListMyRanking } from "./get-trash-list-my-ranking.controller";
 import { getTrashMyRanking } from "./get-trash-my-ranking.controller";
 import { permanentDeleteMyRanking } from "./permanent-delete-my-ranking.controller";
@@ -16,8 +17,8 @@ import { softDeleteMyRanking } from "./soft-delete-my-ranking.controller";
 import { updateMyRanking } from "./update-my-ranking.controller";
 
 // ルーティング（チェーンで型情報を保持）
-// GET /trash・GET /icons は GET /:rankingId と同階層で衝突するため、Hono のルーティング解決順の都合上、
-// 静的パス（/trash, /icons 配下）を :rankingId を含む動的パスより先に登録する
+// GET /trash・GET /icons・GET /tags は GET /:rankingId と同階層で衝突するため、Hono のルーティング解決順の都合上、
+// 静的パス（/trash, /icons, /tags 配下）を :rankingId を含む動的パスより先に登録する
 const myRanking = new Hono<AppEnv>()
     .route("/", getListMyRanking)
     .route("/", createMyRanking)
@@ -28,6 +29,7 @@ const myRanking = new Hono<AppEnv>()
     .route("/", permanentDeleteMyRanking)
     .route("/", restoreMyRanking)
     .route("/", getIcons)
+    .route("/", getTags)
     .route("/", getMyRankingExport)
     .route("/", getMyRanking)
     .route("/", softDeleteMyRanking)
