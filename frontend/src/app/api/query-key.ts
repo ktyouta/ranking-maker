@@ -21,15 +21,17 @@ export type MyRankingListParamsType = {
     updatedAtFrom?: string;
     updatedAtTo?: string;
     favoriteOnly?: string;
+    tags?: string;
     sort?: string;
     page?: string;
 };
 
-// ランキング一覧・詳細取得用のキー
+// ランキング一覧・詳細・一覧の絞り込み候補タグ取得用のキー
 export const myRankingKeys = {
     all: ['myRanking'] as const,
     lists: () => [myRankingKeys.all, 'list'] as const,
     list: (params: MyRankingListParamsType) => [...myRankingKeys.lists(), params] as const,
     details: () => [...myRankingKeys.all, 'detail'] as const,
     detail: (id: string) => [...myRankingKeys.details(), id] as const,
+    filterTags: () => [...myRankingKeys.all, 'filterTags'] as const,
 };

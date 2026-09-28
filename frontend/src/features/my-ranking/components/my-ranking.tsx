@@ -1,7 +1,8 @@
 import { Dialog, LoadingOverlay, Pagination, ScrollToTopButton } from '@/components';
+import { TagFilterDialog } from '@/components/layouts/tag-filter-dialog/tag-filter-dialog';
 import { IoTrophyOutline } from 'react-icons/io5';
 import { MyRankingSortType } from '../constants/my-ranking-sort-options';
-import { MyRankingSearchFilter } from '../types/my-ranking-search-filter';
+import { MAX_FILTER_TAG_COUNT, MyRankingSearchFilter } from '../types/my-ranking-search-filter';
 import { BulkActionBar } from './bulk-action-bar';
 import { MyRankingSearchBar } from './my-ranking-search-bar';
 import { RankingCard } from './ranking-card';
@@ -45,6 +46,14 @@ type PropsType = {
     onCancelBulkDelete: () => void;
     onConfirmBulkDelete: () => void;
     isBulkDeleting: boolean;
+    filterTagOptions: string[];
+    isFilterTagsLoading: boolean;
+    isFilterTagsError: boolean;
+    isTagFilterDialogOpen: boolean;
+    onOpenTagFilterDialog: () => void;
+    onCloseTagFilterDialog: () => void;
+    onToggleFilterTag: (tagName: string) => void;
+    tagFilterErrMessage: string;
 };
 
 export const MyRanking = (props: PropsType) => {
@@ -79,6 +88,14 @@ export const MyRanking = (props: PropsType) => {
         onCancelBulkDelete,
         onConfirmBulkDelete,
         isBulkDeleting,
+        filterTagOptions,
+        isFilterTagsLoading,
+        isFilterTagsError,
+        isTagFilterDialogOpen,
+        onOpenTagFilterDialog,
+        onCloseTagFilterDialog,
+        onToggleFilterTag,
+        tagFilterErrMessage,
     } = props;
 
     return (
@@ -94,6 +111,7 @@ export const MyRanking = (props: PropsType) => {
                     sort={sort}
                     onChangeSort={onChangeSort}
                     onToggleSelectionMode={onToggleSelectionMode}
+                    onOpenTagFilterDialog={onOpenTagFilterDialog}
                 />
             )}
             <BulkActionBar
@@ -146,6 +164,17 @@ export const MyRanking = (props: PropsType) => {
                 </>
             )}
             <ScrollToTopButton />
+            <TagFilterDialog
+                isOpen={isTagFilterDialogOpen}
+                onClose={onCloseTagFilterDialog}
+                isLoading={isFilterTagsLoading}
+                isError={isFilterTagsError}
+                candidateTags={filterTagOptions}
+                selectedTags={searchCondition.tags}
+                maxTagCount={MAX_FILTER_TAG_COUNT}
+                onToggleTag={onToggleFilterTag}
+                errMessage={tagFilterErrMessage}
+            />
             <Dialog
                 isOpen={isBulkDeleteDialogOpen}
                 onClose={onCancelBulkDelete}

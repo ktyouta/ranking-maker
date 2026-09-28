@@ -62,7 +62,9 @@ export function useTrashDetailScreen() {
         // 正常終了後の処理
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: trashKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: trashKeys.filterTags() });
             queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: myRankingKeys.filterTags() });
             navigate(paths.trash.path);
         },
         // 失敗後の処理
@@ -77,6 +79,7 @@ export function useTrashDetailScreen() {
         // 正常終了後の処理
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: trashKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: trashKeys.filterTags() });
             queryClient.invalidateQueries({ queryKey: tagKeys.all });
             navigate(paths.trash.path);
         },

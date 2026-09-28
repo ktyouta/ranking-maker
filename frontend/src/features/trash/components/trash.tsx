@@ -1,7 +1,8 @@
 import { Dialog, LoadingOverlay, Pagination, ScrollToTopButton } from '@/components';
+import { TagFilterDialog } from '@/components/layouts/tag-filter-dialog/tag-filter-dialog';
 import { IoTrashBinOutline } from 'react-icons/io5';
 import { TrashSortType } from '../constants/trash-sort-options';
-import { TrashSearchFilter } from '../types/trash-search-filter';
+import { MAX_FILTER_TAG_COUNT, TrashSearchFilter } from '../types/trash-search-filter';
 import { BulkActionBar } from './bulk-action-bar';
 import { TrashCard } from './trash-card';
 import { TrashSearchBar } from './trash-search-bar';
@@ -41,6 +42,14 @@ type PropsType = {
     onCancelBulkRestore: () => void;
     onConfirmBulkRestore: () => void;
     isBulkRestoring: boolean;
+    filterTagOptions: string[];
+    isFilterTagsLoading: boolean;
+    isFilterTagsError: boolean;
+    isTagFilterDialogOpen: boolean;
+    onOpenTagFilterDialog: () => void;
+    onCloseTagFilterDialog: () => void;
+    onToggleFilterTag: (tagName: string) => void;
+    tagFilterErrMessage: string;
 };
 
 export const Trash = (props: PropsType) => {
@@ -72,6 +81,14 @@ export const Trash = (props: PropsType) => {
         onCancelBulkRestore,
         onConfirmBulkRestore,
         isBulkRestoring,
+        filterTagOptions,
+        isFilterTagsLoading,
+        isFilterTagsError,
+        isTagFilterDialogOpen,
+        onOpenTagFilterDialog,
+        onCloseTagFilterDialog,
+        onToggleFilterTag,
+        tagFilterErrMessage,
     } = props;
 
     return (
@@ -87,6 +104,7 @@ export const Trash = (props: PropsType) => {
                     sort={sort}
                     onChangeSort={onChangeSort}
                     onToggleSelectionMode={onToggleSelectionMode}
+                    onOpenTagFilterDialog={onOpenTagFilterDialog}
                 />
             )}
             <BulkActionBar
@@ -135,6 +153,17 @@ export const Trash = (props: PropsType) => {
                 </>
             )}
             <ScrollToTopButton />
+            <TagFilterDialog
+                isOpen={isTagFilterDialogOpen}
+                onClose={onCloseTagFilterDialog}
+                isLoading={isFilterTagsLoading}
+                isError={isFilterTagsError}
+                candidateTags={filterTagOptions}
+                selectedTags={searchCondition.tags}
+                maxTagCount={MAX_FILTER_TAG_COUNT}
+                onToggleTag={onToggleFilterTag}
+                errMessage={tagFilterErrMessage}
+            />
             <Dialog
                 isOpen={isBulkRestoreDialogOpen}
                 onClose={onCancelBulkRestore}

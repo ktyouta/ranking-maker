@@ -3,6 +3,7 @@ import { useMyRanking } from '@/app/api/get-my-ranking';
 import { useTags } from '@/app/api/get-tags';
 import { myRankingKeys, tagKeys } from '@/app/api/query-key';
 import { PUBLIC_STATUS } from '@/constants/public-status';
+import { TAG_NAME_SEPARATOR } from '@/constants/tag-name';
 import { useSwitch } from '@/hooks/use-switch';
 import { KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
@@ -90,6 +91,7 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: myRankingKeys.detail(rankingId) });
             queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: myRankingKeys.filterTags() });
             queryClient.invalidateQueries({ queryKey: tagKeys.all });
             toast.success(data.message);
             onSaveSuccess();
@@ -239,6 +241,10 @@ export function useMyRankingDetailEdit({ onCancel, onSaveSuccess }: PropsType) {
         }
         if (tagName.length > TAG_NAME_MAX_LENGTH) {
             setTagErrMessage(`タグは${TAG_NAME_MAX_LENGTH}文字以内で入力してください`);
+            return;
+        }
+        if (tagName.includes(TAG_NAME_SEPARATOR)) {
+            setTagErrMessage(`タグに「${TAG_NAME_SEPARATOR}」は使えません`);
             return;
         }
         if (selectedTags.length >= MAX_TAG_COUNT) {

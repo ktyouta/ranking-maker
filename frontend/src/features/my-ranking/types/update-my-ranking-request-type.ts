@@ -1,3 +1,4 @@
+import { TAG_NAME_SEPARATOR } from "@/constants/tag-name";
 import { z } from "zod";
 
 const RANKING_TITLE_MAX_LENGTH = 100;
@@ -31,6 +32,7 @@ export const UpdateMyRankingRequestSchema = z.object({
     tags: z.array(
         z.string()
             .max(TAG_NAME_MAX_LENGTH, `タグは${TAG_NAME_MAX_LENGTH}文字以内で入力してください`)
+            .refine((tag) => !tag.includes(TAG_NAME_SEPARATOR), `タグに「${TAG_NAME_SEPARATOR}」は使えません`)
     ).max(MAX_TAG_COUNT, `タグは${MAX_TAG_COUNT}個までです`),
 });
 

@@ -1,5 +1,6 @@
 import { useIcons } from "@/app/api/get-icons";
 import { paths } from "@/config/paths";
+import { TAG_NAME_SEPARATOR } from "@/constants/tag-name";
 import { useAppNavigation } from "@/hooks/use-app-navigation";
 import { useDelayedFlag } from "@/hooks/use-delayed-flag";
 import { useSwitch } from "@/hooks/use-switch";
@@ -9,11 +10,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useBulkRestoreTrashMutation } from "../api/bulk-restore-trash";
+import { useTrashFilterTags } from "../api/get-trash-filter-tags";
 import { useTrashList } from "../api/get-trash-list";
 import { trashKeys } from "../api/query-key";
 import { TRASH_QUERY_KEY } from "../constants/trash-query-params";
 import { DEFAULT_TRASH_SORT, TRASH_SORT_OPTIONS, TrashSortType } from "../constants/trash-sort-options";
-import { initialTrashSearchFilter, TrashSearchFilter } from "../types/trash-search-filter";
+import { initialTrashSearchFilter, MAX_FILTER_TAG_COUNT, TrashSearchFilter } from "../types/trash-search-filter";
 
 /**
  * ゴミ箱一覧画面用の状態を組み立てる
@@ -31,6 +33,7 @@ export function useTrashListScreen() {
         createdAtTo: searchParams.get(TRASH_QUERY_KEY.CREATED_AT_TO),
         updatedAtFrom: searchParams.get(TRASH_QUERY_KEY.UPDATED_AT_FROM),
         updatedAtTo: searchParams.get(TRASH_QUERY_KEY.UPDATED_AT_TO),
+        tags: searchParams.get(TRASH_QUERY_KEY.TAGS)?.split(TAG_NAME_SEPARATOR) ?? [],
     };
     // 検索条件（フォーム入力中の値）
     const [searchCondition, setSearchCondition] = useState<TrashSearchFilter>(initSearchCondition);
@@ -45,9 +48,22 @@ export function useTrashListScreen() {
     // アイコン候補一覧（idからemojiを引くために使用）
     const iconsQuery = useIcons();
     const icons = iconsQuery.data.data;
+    // 絞り込み候補のタグ（ゴミ箱のランキングに付いているタグ）
+    const filterTagsQuery = useTrashFilterTags();
+    // タグ絞り込みダイアログの開閉
+    const tagFilterDialog = useSwitch();
+    // タグ絞り込みダイアログ内のエラーメッセージ
+    const [tagFilterErrMessage, setTagFilterErrMessage] = useState(``);
     // オーバーレイ表示フラグ
     const isShowOverlay = useDelayedFlag(isPending, 250);
     const queryClient = useQueryClient();
+
+    // タグ絞り込みダイアログに並べるタグ（候補から消えた選択中のタグも外せるよう末尾に残す）
+    const filterTagOptions = useMemo(() => {
+        const candidateTags = filterTagsQuery.data?.data.map((tag) => tag.name) ?? [];
+        const candidateTagSet = new Set(candidateTags);
+        return [...candidateTags, ...searchCondition.tags.filter((tagName) => !candidateTagSet.has(tagName))];
+    }, [filterTagsQuery.data, searchCondition.tags]);
 
     // 画面表示用に整形したゴミ箱一覧
     const trashList = useMemo(() => {
@@ -119,6 +135,7 @@ export function useTrashListScreen() {
     const bulkRestoreMutation = useBulkRestoreTrashMutation({
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: trashKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: trashKeys.filterTags() });
             setSelectedIds([]);
             setIsSelectionMode(false);
             toast.success(data.message);
@@ -189,6 +206,9 @@ export function useTrashListScreen() {
         if (searchCondition.updatedAtTo) {
             params[TRASH_QUERY_KEY.UPDATED_AT_TO] = searchCondition.updatedAtTo;
         }
+        if (searchCondition.tags.length > 0) {
+            params[TRASH_QUERY_KEY.TAGS] = searchCondition.tags.join(TAG_NAME_SEPARATOR);
+        }
         if (sort !== DEFAULT_TRASH_SORT) {
             params[TRASH_QUERY_KEY.SORT] = sort;
         }
@@ -208,6 +228,39 @@ export function useTrashListScreen() {
         }
         setSearchParams(params);
     }
+
+    /**
+     * タグ絞り込みダイアログを開く
+     */
+    const openTagFilterDialog = useCallback(() => {
+        tagFilterDialog.on();
+    }, [tagFilterDialog]);
+
+    /**
+     * タグ絞り込みダイアログを閉じる
+     */
+    const closeTagFilterDialog = useCallback(() => {
+        setTagFilterErrMessage(``);
+        tagFilterDialog.off();
+    }, [tagFilterDialog]);
+
+    /**
+     * 絞り込みに使うタグの選択を切り替える（検索ボタン押下で反映する）
+     * @param tagName 切り替えるタグ名
+     */
+    const toggleFilterTag = useCallback((tagName: string) => {
+        if (searchCondition.tags.includes(tagName)) {
+            setSearchCondition({ ...searchCondition, tags: searchCondition.tags.filter((e) => e !== tagName) });
+            setTagFilterErrMessage(``);
+            return;
+        }
+        if (searchCondition.tags.length >= MAX_FILTER_TAG_COUNT) {
+            setTagFilterErrMessage(`タグは${MAX_FILTER_TAG_COUNT}個まで選べます`);
+            return;
+        }
+        setSearchCondition({ ...searchCondition, tags: [...searchCondition.tags, tagName] });
+        setTagFilterErrMessage(``);
+    }, [searchCondition]);
 
     /**
      * エンターキー押下時イベント
@@ -258,5 +311,13 @@ export function useTrashListScreen() {
         onCancelBulkRestore: cancelBulkRestore,
         onConfirmBulkRestore: confirmBulkRestore,
         isBulkRestoring: bulkRestoreMutation.isPending,
+        filterTagOptions,
+        isFilterTagsLoading: filterTagsQuery.isPending,
+        isFilterTagsError: filterTagsQuery.isError,
+        isTagFilterDialogOpen: tagFilterDialog.flag,
+        onOpenTagFilterDialog: openTagFilterDialog,
+        onCloseTagFilterDialog: closeTagFilterDialog,
+        onToggleFilterTag: toggleFilterTag,
+        tagFilterErrMessage,
     };
 }

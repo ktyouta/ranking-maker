@@ -1,5 +1,6 @@
 import { useIcons } from "@/app/api/get-icons";
 import { paths } from "@/config/paths";
+import { TAG_NAME_SEPARATOR } from "@/constants/tag-name";
 import { useAppNavigation } from "@/hooks/use-app-navigation";
 import { useDelayedFlag } from "@/hooks/use-delayed-flag";
 import { useSwitch } from "@/hooks/use-switch";
@@ -13,10 +14,11 @@ import { MyRankingListQueryDataType, useMyRankings } from "@/app/api/get-my-rank
 import { myRankingKeys } from "@/app/api/query-key";
 import { useBulkDeleteMyRankingMutation } from "../api/bulk-delete-my-ranking";
 import { useExportMyRankingCsvMutation } from "../api/export-my-ranking-csv";
+import { useFilterTags } from "../api/get-filter-tags";
 import { useToggleMyRankingFavoriteMutation } from "../api/toggle-my-ranking-favorite";
 import { MY_RANKING_QUERY_KEY } from "../constants/my-ranking-query-params";
 import { DEFAULT_MY_RANKING_SORT, MY_RANKING_SORT_OPTIONS, MyRankingSortType } from "../constants/my-ranking-sort-options";
-import { initialMyRankingSearchFilter, MyRankingSearchFilter } from "../types/my-ranking-search-filter";
+import { initialMyRankingSearchFilter, MAX_FILTER_TAG_COUNT, MyRankingSearchFilter } from "../types/my-ranking-search-filter";
 
 /**
  * マイランキング一覧画面用の状態を組み立てる
@@ -33,6 +35,7 @@ export const useMyRankingList = () => {
         updatedAtFrom: searchParams.get(MY_RANKING_QUERY_KEY.UPDATED_AT_FROM),
         updatedAtTo: searchParams.get(MY_RANKING_QUERY_KEY.UPDATED_AT_TO),
         favoriteOnly: searchParams.get(MY_RANKING_QUERY_KEY.FAVORITE_ONLY) === 'true',
+        tags: searchParams.get(MY_RANKING_QUERY_KEY.TAGS)?.split(TAG_NAME_SEPARATOR) ?? [],
     };
     // 検索条件（フォーム入力中の値）
     const [searchCondition, setSearchCondition] = useState<MyRankingSearchFilter>(initSearchCondition);
@@ -50,17 +53,31 @@ export const useMyRankingList = () => {
         updatedAtFrom: searchParams.get(MY_RANKING_QUERY_KEY.UPDATED_AT_FROM) || undefined,
         updatedAtTo: searchParams.get(MY_RANKING_QUERY_KEY.UPDATED_AT_TO) || undefined,
         favoriteOnly: searchParams.get(MY_RANKING_QUERY_KEY.FAVORITE_ONLY) || undefined,
+        tags: searchParams.get(MY_RANKING_QUERY_KEY.TAGS) || undefined,
         sort: searchParams.get(MY_RANKING_QUERY_KEY.SORT) || undefined,
         page: searchParams.get(MY_RANKING_QUERY_KEY.PAGE) || undefined,
     });
     // アイコン候補一覧（idからemojiを引くために使用）
     const iconsQuery = useIcons();
     const icons = iconsQuery.data.data;
+    // 絞り込み候補のタグ（ゴミ箱に入っていないランキングに付いているタグ）
+    const filterTagsQuery = useFilterTags();
+    // タグ絞り込みダイアログの開閉
+    const tagFilterDialog = useSwitch();
+    // タグ絞り込みダイアログ内のエラーメッセージ
+    const [tagFilterErrMessage, setTagFilterErrMessage] = useState(``);
     // オーバーレイ表示フラグ
     const isShowOverlay = useDelayedFlag(isPending, 250);
     const queryClient = useQueryClient();
     // ルーティング用
     const { appNavigate } = useAppNavigation();
+
+    // タグ絞り込みダイアログに並べるタグ（候補から消えた選択中のタグも外せるよう末尾に残す）
+    const filterTagOptions = useMemo(() => {
+        const candidateTags = filterTagsQuery.data?.data.map((tag) => tag.name) ?? [];
+        const candidateTagSet = new Set(candidateTags);
+        return [...candidateTags, ...searchCondition.tags.filter((tagName) => !candidateTagSet.has(tagName))];
+    }, [filterTagsQuery.data, searchCondition.tags]);
 
     // 画面表示用に整形したランキング一覧
     const rankingList = useMemo(() => {
@@ -197,6 +214,7 @@ export const useMyRankingList = () => {
     const bulkDeleteMutation = useBulkDeleteMyRankingMutation({
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: myRankingKeys.filterTags() });
             setSelectedIds([]);
             setIsSelectionMode(false);
             toast.success(data.message);
@@ -262,6 +280,9 @@ export const useMyRankingList = () => {
         if (searchCondition.favoriteOnly) {
             params[MY_RANKING_QUERY_KEY.FAVORITE_ONLY] = 'true';
         }
+        if (searchCondition.tags.length > 0) {
+            params[MY_RANKING_QUERY_KEY.TAGS] = searchCondition.tags.join(TAG_NAME_SEPARATOR);
+        }
         if (sort !== DEFAULT_MY_RANKING_SORT) {
             params[MY_RANKING_QUERY_KEY.SORT] = sort;
         }
@@ -281,6 +302,39 @@ export const useMyRankingList = () => {
         }
         setSearchParams(params);
     }
+
+    /**
+     * タグ絞り込みダイアログを開く
+     */
+    const openTagFilterDialog = useCallback(() => {
+        tagFilterDialog.on();
+    }, [tagFilterDialog]);
+
+    /**
+     * タグ絞り込みダイアログを閉じる
+     */
+    const closeTagFilterDialog = useCallback(() => {
+        setTagFilterErrMessage(``);
+        tagFilterDialog.off();
+    }, [tagFilterDialog]);
+
+    /**
+     * 絞り込みに使うタグの選択を切り替える（検索ボタン押下で反映する）
+     * @param tagName 切り替えるタグ名
+     */
+    const toggleFilterTag = useCallback((tagName: string) => {
+        if (searchCondition.tags.includes(tagName)) {
+            setSearchCondition({ ...searchCondition, tags: searchCondition.tags.filter((e) => e !== tagName) });
+            setTagFilterErrMessage(``);
+            return;
+        }
+        if (searchCondition.tags.length >= MAX_FILTER_TAG_COUNT) {
+            setTagFilterErrMessage(`タグは${MAX_FILTER_TAG_COUNT}個まで選べます`);
+            return;
+        }
+        setSearchCondition({ ...searchCondition, tags: [...searchCondition.tags, tagName] });
+        setTagFilterErrMessage(``);
+    }, [searchCondition]);
 
     /**
      * エンターキー押下時イベント
@@ -345,5 +399,13 @@ export const useMyRankingList = () => {
         onCancelBulkDelete: cancelBulkDelete,
         onConfirmBulkDelete: confirmBulkDelete,
         isBulkDeleting: bulkDeleteMutation.isPending,
+        filterTagOptions,
+        isFilterTagsLoading: filterTagsQuery.isPending,
+        isFilterTagsError: filterTagsQuery.isError,
+        isTagFilterDialogOpen: tagFilterDialog.flag,
+        onOpenTagFilterDialog: openTagFilterDialog,
+        onCloseTagFilterDialog: closeTagFilterDialog,
+        onToggleFilterTag: toggleFilterTag,
+        tagFilterErrMessage,
     };
 }

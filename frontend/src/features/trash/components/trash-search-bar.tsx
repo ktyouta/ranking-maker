@@ -1,5 +1,6 @@
 import { Button, DatePicker, Textbox } from '@/components';
 import { useState } from 'react';
+import { HiOutlineTag } from 'react-icons/hi2';
 import { IoChevronDown, IoChevronUp, IoOptionsOutline, IoSearchOutline, IoSwapVerticalOutline } from 'react-icons/io5';
 import { DEFAULT_TRASH_SORT, TRASH_SORT_OPTIONS, TrashSortType } from '../constants/trash-sort-options';
 import { TrashSearchFilter } from '../types/trash-search-filter';
@@ -13,16 +14,17 @@ type PropsType = {
     sort: TrashSortType;
     onChangeSort: (sort: TrashSortType) => void;
     onToggleSelectionMode: () => void;
+    onOpenTagFilterDialog: () => void;
 };
 
 const DATE_PICKER_CLASS = 'border border-accent/70 rounded-full focus:ring-accent';
 
 /**
- * ゴミ箱一覧の検索バー（キーワード検索＋登録日・削除日の詳細フィルター＋並び替え）
+ * ゴミ箱一覧の検索バー（キーワード検索＋登録日・削除日・タグの詳細フィルター＋並び替え）
  */
 export const TrashSearchBar = (props: PropsType) => {
 
-    const { searchCondition, onChange, onSearch, onClear, handleKeyPress, sort, onChangeSort, onToggleSelectionMode } = props;
+    const { searchCondition, onChange, onSearch, onClear, handleKeyPress, sort, onChangeSort, onToggleSelectionMode, onOpenTagFilterDialog } = props;
 
     // 詳細フィルター開閉フラグ
     const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -32,6 +34,7 @@ export const TrashSearchBar = (props: PropsType) => {
     const activeCount = [
         searchCondition.createdAtFrom !== null || searchCondition.createdAtTo !== null,
         searchCondition.updatedAtFrom !== null || searchCondition.updatedAtTo !== null,
+        searchCondition.tags.length > 0,
     ].filter(Boolean).length;
     // 既定以外の並び順が選ばれているか
     const isSortChanged = sort !== DEFAULT_TRASH_SORT;
@@ -186,6 +189,22 @@ export const TrashSearchBar = (props: PropsType) => {
                                 placeholder="終了日"
                                 className={DATE_PICKER_CLASS}
                             />
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <span className="w-20 shrink-0 text-[12px] sm:text-base font-semibold text-accent">タグ</span>
+                        <div className="flex flex-1 items-center gap-2">
+                            <Button
+                                colorType="accent"
+                                sizeType="large"
+                                onClick={onOpenTagFilterDialog}
+                                className={`flex w-fit items-center gap-1.5 rounded-full border text-base px-4 py-2 ${searchCondition.tags.length > 0 ?
+                                    `border-accent bg-accent/15 text-accent hover:bg-accent/25` :
+                                    `border-accent/70 bg-surface text-accent hover:bg-accent/10`}`}
+                            >
+                                <HiOutlineTag className="size-4" />
+                                タグを選ぶ
+                            </Button>
                         </div>
                     </div>
                 </div>

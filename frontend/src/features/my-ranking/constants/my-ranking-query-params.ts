@@ -5,6 +5,7 @@ export const MY_RANKING_QUERY_KEY = {
     UPDATED_AT_FROM: 'updatedAtFrom',
     UPDATED_AT_TO: 'updatedAtTo',
     FAVORITE_ONLY: 'favoriteOnly',
+    TAGS: 'tags',
     SORT: 'sort',
     PAGE: 'page',
 } as const;

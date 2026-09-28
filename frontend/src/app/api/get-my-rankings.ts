@@ -25,6 +25,7 @@ export function useMyRankings(params: MyRankingListParamsType) {
           updatedAtFrom: params.updatedAtFrom || undefined,
           updatedAtTo: params.updatedAtTo || undefined,
           favoriteOnly: params.favoriteOnly || undefined,
+          tags: params.tags || undefined,
           sort: params.sort || undefined,
           page: params.page || undefined,
         },

@@ -1,5 +1,6 @@
 import { Button, DatePicker, Textbox } from '@/components';
 import { useState } from 'react';
+import { HiOutlineTag } from 'react-icons/hi2';
 import { IoChevronDown, IoChevronUp, IoOptionsOutline, IoSearchOutline, IoStar, IoStarOutline, IoSwapVerticalOutline } from 'react-icons/io5';
 import { DEFAULT_MY_RANKING_SORT, MY_RANKING_SORT_OPTIONS, MyRankingSortType } from '../constants/my-ranking-sort-options';
 import { MyRankingSearchFilter } from '../types/my-ranking-search-filter';
@@ -13,16 +14,17 @@ type PropsType = {
     sort: MyRankingSortType;
     onChangeSort: (sort: MyRankingSortType) => void;
     onToggleSelectionMode: () => void;
+    onOpenTagFilterDialog: () => void;
 };
 
 const DATE_PICKER_CLASS = 'border border-accent/70 rounded-full focus:ring-accent';
 
 /**
- * ランキング一覧の検索バー（キーワード検索＋登録日・更新日の詳細フィルター＋並び替え）
+ * ランキング一覧の検索バー（キーワード検索＋登録日・更新日・お気に入り・タグの詳細フィルター＋並び替え）
  */
 export const MyRankingSearchBar = (props: PropsType) => {
 
-    const { searchCondition, onChange, onSearch, onClear, handleKeyPress, sort, onChangeSort, onToggleSelectionMode } = props;
+    const { searchCondition, onChange, onSearch, onClear, handleKeyPress, sort, onChangeSort, onToggleSelectionMode, onOpenTagFilterDialog } = props;
 
     // 詳細フィルター開閉フラグ
     const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -33,6 +35,7 @@ export const MyRankingSearchBar = (props: PropsType) => {
         searchCondition.createdAtFrom !== null || searchCondition.createdAtTo !== null,
         searchCondition.updatedAtFrom !== null || searchCondition.updatedAtTo !== null,
         searchCondition.favoriteOnly,
+        searchCondition.tags.length > 0,
     ].filter(Boolean).length;
     // 既定以外の並び順が選ばれているか
     const isSortChanged = sort !== DEFAULT_MY_RANKING_SORT;
@@ -189,22 +192,40 @@ export const MyRankingSearchBar = (props: PropsType) => {
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                        <span className="w-20 shrink-0 text-[12px] sm:text-base font-semibold text-accent">お気に入り</span>
-                        <div className="flex flex-1 items-center gap-2">
-                            <Button
-                                colorType="accent"
-                                sizeType="large"
-                                onClick={() => onChange({ ...searchCondition, favoriteOnly: !searchCondition.favoriteOnly })}
-                                aria-pressed={searchCondition.favoriteOnly}
-                                aria-label="お気に入りのみ表示"
-                                className={`flex w-fit items-center gap-1.5 rounded-full border text-base px-4 py-2 ${searchCondition.favoriteOnly ?
-                                    `border-amber-400/60 bg-amber-400/15 text-amber-500 hover:bg-amber-400/25` :
-                                    `border-accent/70 bg-surface text-gray-400 hover:bg-canvas`}`}
-                            >
-                                {searchCondition.favoriteOnly ? <IoStar className="size-4" /> : <IoStarOutline className="size-4" />}
-                                のみ表示
-                            </Button>
+                    <div className="flex flex-wrap gap-x-5 sm:gap-x-7 gap-y-3">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                            <span className="w-20 shrink-0 text-[12px] sm:text-base font-semibold text-accent">お気に入り</span>
+                            <div className="flex flex-1 items-center gap-2">
+                                <Button
+                                    colorType="accent"
+                                    sizeType="large"
+                                    onClick={() => onChange({ ...searchCondition, favoriteOnly: !searchCondition.favoriteOnly })}
+                                    aria-pressed={searchCondition.favoriteOnly}
+                                    aria-label="お気に入りのみ表示"
+                                    className={`flex w-fit items-center gap-1.5 rounded-full border text-base px-4 py-2 ${searchCondition.favoriteOnly ?
+                                        `border-amber-400/60 bg-amber-400/15 text-amber-500 hover:bg-amber-400/25` :
+                                        `border-accent/70 bg-surface text-gray-400 hover:bg-canvas`}`}
+                                >
+                                    {searchCondition.favoriteOnly ? <IoStar className="size-4" /> : <IoStarOutline className="size-4" />}
+                                    のみ表示
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-2 sm:gap-3 sm:flex-row sm:items-center">
+                            <span className="shrink-0 text-[12px] sm:text-base font-semibold text-accent">タグ</span>
+                            <div className="flex flex-1 items-center gap-2">
+                                <Button
+                                    colorType="accent"
+                                    sizeType="large"
+                                    onClick={onOpenTagFilterDialog}
+                                    className={`flex w-fit items-center gap-1.5 rounded-full border text-base px-4 py-2 ${searchCondition.tags.length > 0 ?
+                                        `border-accent bg-accent/15 text-accent hover:bg-accent/25` :
+                                        `border-accent/70 bg-surface text-accent hover:bg-accent/10`}`}
+                                >
+                                    <HiOutlineTag className="size-4" />
+                                    タグを選ぶ
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>

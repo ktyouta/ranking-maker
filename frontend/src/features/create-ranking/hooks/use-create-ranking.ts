@@ -4,6 +4,7 @@ import { useTags } from '@/app/api/get-tags';
 import { myRankingKeys, tagKeys } from '@/app/api/query-key';
 import { paths } from '@/config/paths';
 import { PUBLIC_STATUS } from '@/constants/public-status';
+import { TAG_NAME_SEPARATOR } from '@/constants/tag-name';
 import { useSwitch } from '@/hooks/use-switch';
 import { KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
@@ -60,6 +61,7 @@ export function useCreateRanking() {
         // 正常終了後の処理
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: myRankingKeys.filterTags() });
             queryClient.invalidateQueries({ queryKey: tagKeys.all });
             toast.success(data.message);
             navigate(paths.myRanking.path);
@@ -199,6 +201,10 @@ export function useCreateRanking() {
         }
         if (tagName.length > TAG_NAME_MAX_LENGTH) {
             setTagErrMessage(`タグは${TAG_NAME_MAX_LENGTH}文字以内で入力してください`);
+            return;
+        }
+        if (tagName.includes(TAG_NAME_SEPARATOR)) {
+            setTagErrMessage(`タグに「${TAG_NAME_SEPARATOR}」は使えません`);
             return;
         }
         if (selectedTags.length >= MAX_TAG_COUNT) {

@@ -57,6 +57,7 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
         // 正常終了後の処理
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: myRankingKeys.filterTags() });
             toast.success(data.message);
             navigate(paths.myRanking.path);
         },

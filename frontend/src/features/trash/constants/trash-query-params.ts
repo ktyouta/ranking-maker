@@ -4,6 +4,7 @@ export const TRASH_QUERY_KEY = {
     CREATED_AT_TO: 'createdAtTo',
     UPDATED_AT_FROM: 'updatedAtFrom',
     UPDATED_AT_TO: 'updatedAtTo',
+    TAGS: 'tags',
     SORT: 'sort',
     PAGE: 'page',
 } as const;
