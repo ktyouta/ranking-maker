@@ -2,11 +2,11 @@ import { drizzle } from "drizzle-orm/d1";
 import { env } from "cloudflare:test";
 import { ulid } from "ulid";
 import { describe, expect, it } from "vitest";
-import { TrashRankingSort, TrashRankingSortType } from "../../../../src/domain/my-ranking";
+import { TagName, TrashRankingSort, TrashRankingSortType } from "../../../../src/domain/my-ranking";
 import { UserId } from "../../../../src/domain/shared";
 import type { Database } from "../../../../src/infrastructure/db";
 import * as schema from "../../../../src/infrastructure/db/schema";
-import { publicStatusMaster, rankingMaster, rankingOrderMaster, userMaster } from "../../../../src/infrastructure/db/schema";
+import { publicStatusMaster, rankingMaster, rankingOrderMaster, rankingTagMaster, tagMaster, userMaster } from "../../../../src/infrastructure/db/schema";
 import { GetTrashListMyRankingRepository } from "../../../../src/infrastructure/my-ranking/repository/get-trash-list-my-ranking.repository";
 
 type TrashSeed = {
@@ -14,11 +14,12 @@ type TrashSeed = {
     createdAt: string;
     updatedAt: string;
     itemCount?: number;
+    tags?: string[];
 };
 
 /**
  * ユーザーと削除済みランキングを登録する（挿入順 = 引数の並び順。ulid は挿入順に昇順になる）
- * 論理削除のカスケードに合わせ、ランキング本体も項目も deleteFlg=true で登録する
+ * 論理削除のカスケードに合わせ、ランキング本体も項目もタグ付けも deleteFlg=true で登録する
  */
 async function seedTrash(db: Database, seeds: TrashSeed[]) {
     const now = new Date().toISOString();
@@ -33,6 +34,8 @@ async function seedTrash(db: Database, seeds: TrashSeed[]) {
         updatedAt: now,
     }).onConflictDoNothing();
 
+    // タグ名 → タグID（同じユーザー内でタグ名は一意）
+    const tagIds = new Map<string, string>();
     for (const seed of seeds) {
         const rankingId = ulid();
         await db.insert(rankingMaster).values({
@@ -44,6 +47,15 @@ async function seedTrash(db: Database, seeds: TrashSeed[]) {
             createdAt: seed.createdAt,
             updatedAt: seed.updatedAt,
         });
+        for (const tagName of seed.tags ?? []) {
+            let tagId = tagIds.get(tagName);
+            if (!tagId) {
+                tagId = ulid();
+                tagIds.set(tagName, tagId);
+                await db.insert(tagMaster).values({ id: tagId, userId, name: tagName, createdAt: now, updatedAt: now });
+            }
+            await db.insert(rankingTagMaster).values({ id: ulid(), rankingId, tagId, userId, deleteFlg: true, createdAt: now, updatedAt: now });
+        }
         for (let order = 1; order <= (seed.itemCount ?? 0); order++) {
             await db.insert(rankingOrderMaster).values({
                 id: ulid(),
@@ -147,5 +159,49 @@ describe("GetTrashListMyRankingRepository", () => {
         expect(page2).toHaveLength(1);
         expect(new Set(ids).size).toBe(total);
         expect(ids).toEqual([...ids].sort().reverse());
+    });
+
+    describe("タグでの絞り込み", () => {
+
+        const tagSeeds: TrashSeed[] = [
+            { title: "ramen-tokyo", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-02-03T00:00:00.000Z", tags: ["ラーメン", "東京"] },
+            { title: "ramen", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-02-02T00:00:00.000Z", tags: ["ラーメン"] },
+            { title: "no-tag", createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-02-01T00:00:00.000Z" },
+        ];
+
+        async function findByTags(db: Database, userId: UserId, tags: string[]) {
+            const repository = new GetTrashListMyRankingRepository(db);
+            const query = { sort: new TrashRankingSort("updatedAtDesc"), page: 1, tagNames: tags.map((tag) => new TagName(tag)) };
+            const [list, total] = await Promise.all([repository.findAll(userId, query), repository.count(userId, query)]);
+            return { titles: list.map((e) => e.title), total };
+        }
+
+        it("findAll/count: 指定したタグが付いているランキングだけを返す", async () => {
+            const db = drizzle(env.DB, { schema });
+            const userId = await seedTrash(db, tagSeeds);
+
+            expect(await findByTags(db, userId, ["ラーメン"])).toEqual({ titles: ["ramen-tokyo", "ramen"], total: 2 });
+        });
+
+        it("findAll/count: 複数のタグを指定した場合は、すべてのタグが付いているランキングだけを返す", async () => {
+            const db = drizzle(env.DB, { schema });
+            const userId = await seedTrash(db, tagSeeds);
+
+            expect(await findByTags(db, userId, ["ラーメン", "東京"])).toEqual({ titles: ["ramen-tokyo"], total: 1 });
+        });
+
+        it("findAll/count: どのランキングにも付いていないタグを指定した場合は0件になる", async () => {
+            const db = drizzle(env.DB, { schema });
+            const userId = await seedTrash(db, tagSeeds);
+
+            expect(await findByTags(db, userId, ["存在しないタグ"])).toEqual({ titles: [], total: 0 });
+        });
+
+        it("findAll/count: タグを指定しない場合は絞り込まない", async () => {
+            const db = drizzle(env.DB, { schema });
+            const userId = await seedTrash(db, tagSeeds);
+
+            expect(await findByTags(db, userId, [])).toEqual({ titles: ["ramen-tokyo", "ramen", "no-tag"], total: 3 });
+        });
     });
 });

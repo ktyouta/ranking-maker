@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { RankingAggregate } from "../../../../src/domain";
-import { CreateMyRankingSchema, UpdateMyRankingSchema } from "../../../../src/presentation/my-ranking/schema";
+import { RankingAggregate, TagName } from "../../../../src/domain";
+import {
+  CreateMyRankingSchema,
+  GetListMyRankingQuerySchema,
+  GetTrashListMyRankingQuerySchema,
+  UpdateMyRankingSchema,
+} from "../../../../src/presentation/my-ranking/schema";
 
 function buildBody(tags: string[]) {
   return {
@@ -41,6 +46,15 @@ describe("My Ranking Schema Validation", () => {
         expect(schema.safeParse(buildBody(["  "])).success).toBe(false);
       });
 
+      it("区切り文字を含むタグはエラーになること", () => {
+        const result = schema.safeParse(buildBody([`ラーメン${TagName.SEPARATOR}東京`]));
+
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.issues[0].message).toBe(`タグに「${TagName.SEPARATOR}」は使えません`);
+        }
+      });
+
       it("タグが上限件数ちょうどの場合はバリデーションを通過すること", () => {
         const tags = Array.from({ length: RankingAggregate.MAX_TAG_COUNT }, (_, i) => `タグ${i}`);
 
@@ -55,6 +69,58 @@ describe("My Ranking Schema Validation", () => {
         if (!result.success) {
           expect(result.error.issues[0].message).toBe(`タグは${RankingAggregate.MAX_TAG_COUNT}個までです`);
         }
+      });
+    });
+  }
+
+  for (const [name, schema] of [["GetListMyRankingQuerySchema", GetListMyRankingQuerySchema], ["GetTrashListMyRankingQuerySchema", GetTrashListMyRankingQuerySchema]] as const) {
+    describe(`${name} の tags`, () => {
+      it("指定がない場合は空配列になること", () => {
+        const result = schema.safeParse({});
+
+        expect(result.success && result.data.tags).toEqual([]);
+      });
+
+      it("空文字の場合は空配列になること", () => {
+        const result = schema.safeParse({ tags: "" });
+
+        expect(result.success && result.data.tags).toEqual([]);
+      });
+
+      it("1個だけ指定された場合は要素1つの配列になること", () => {
+        const result = schema.safeParse({ tags: "ラーメン" });
+
+        expect(result.success && result.data.tags).toEqual(["ラーメン"]);
+      });
+
+      it("区切り文字でつながれた場合は分割し、前後の空白を除いた配列になること", () => {
+        const result = schema.safeParse({ tags: ["ラーメン", " 東京 "].join(TagName.SEPARATOR) });
+
+        expect(result.success && result.data.tags).toEqual(["ラーメン", "東京"]);
+      });
+
+      it("区切り文字の間が空の場合はエラーになること", () => {
+        expect(schema.safeParse({ tags: ["ラーメン", "", "東京"].join(TagName.SEPARATOR) }).success).toBe(false);
+      });
+
+      it("空白だけのタグはエラーになること", () => {
+        expect(schema.safeParse({ tags: "  " }).success).toBe(false);
+      });
+
+      it("タグ名の上限文字数を超える場合はエラーになること", () => {
+        expect(schema.safeParse({ tags: "あ".repeat(TagName.MAX_LENGTH + 1) }).success).toBe(false);
+      });
+
+      it("タグが上限件数ちょうどの場合はバリデーションを通過すること", () => {
+        const tags = Array.from({ length: RankingAggregate.MAX_TAG_COUNT }, (_, i) => `タグ${i}`);
+
+        expect(schema.safeParse({ tags: tags.join(TagName.SEPARATOR) }).success).toBe(true);
+      });
+
+      it("タグが上限件数を超える場合はエラーになること", () => {
+        const tags = Array.from({ length: RankingAggregate.MAX_TAG_COUNT + 1 }, (_, i) => `タグ${i}`);
+
+        expect(schema.safeParse({ tags: tags.join(TagName.SEPARATOR) }).success).toBe(false);
       });
     });
   }

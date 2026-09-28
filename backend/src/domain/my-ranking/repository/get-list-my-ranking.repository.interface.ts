@@ -1,5 +1,5 @@
 import { UserId } from "../../shared";
-import { RankingSort } from "../value-object";
+import { RankingSort, TagName } from "../value-object";
 
 export type MyRankingListType = {
   id: string;
@@ -24,6 +24,8 @@ export type MyRankingQueryType = {
   updatedAtFrom?: string;
   updatedAtTo?: string;
   favoriteOnly?: boolean;
+  // 指定したタグがすべて付いているランキングに絞り込む
+  tagNames?: TagName[];
   sort: RankingSort;
   page: number;
 };

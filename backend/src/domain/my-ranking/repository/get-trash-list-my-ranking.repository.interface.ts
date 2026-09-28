@@ -1,5 +1,5 @@
 import { UserId } from "../../shared";
-import { TrashRankingSort } from "../value-object";
+import { TagName, TrashRankingSort } from "../value-object";
 
 export type TrashMyRankingListType = {
   id: string;
@@ -22,6 +22,8 @@ export type TrashMyRankingQueryType = {
   createdAtTo?: string;
   updatedAtFrom?: string;
   updatedAtTo?: string;
+  // 指定したタグがすべて付いているランキングに絞り込む
+  tagNames?: TagName[];
   sort: TrashRankingSort;
   page: number;
 };

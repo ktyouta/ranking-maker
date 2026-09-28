@@ -2,7 +2,7 @@ import { and, asc, count, desc, eq, exists, gte, like, lte, or, type SQL } from 
 import { IGetListMyRankingRepository, MyRankingListType, MyRankingQueryType, RankingSort, RankingSortType } from "../../../domain";
 import { UserId } from "../../../domain/shared";
 import type { Database } from "../../db";
-import { publicStatusMaster, rankingMaster, rankingOrderMaster, userMaster } from "../../db";
+import { publicStatusMaster, rankingMaster, rankingOrderMaster, rankingTagMaster, tagMaster, userMaster } from "../../db";
 
 /**
  * ランキング一覧取得リポジトリ実装
@@ -105,6 +105,21 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
       ...(query.updatedAtFrom ? [gte(rankingMaster.updatedAt, query.updatedAtFrom)] : []),
       ...(query.updatedAtTo ? [lte(rankingMaster.updatedAt, query.updatedAtTo)] : []),
       ...(query.favoriteOnly ? [eq(rankingMaster.isFavorite, true)] : []),
+      // 指定したタグがすべて付いているランキングに絞り込むため、タグごとに EXISTS を AND でつなぐ
+      ...(query.tagNames ?? []).map((tagName) =>
+        exists(
+          this.db
+            .select({ id: rankingTagMaster.id })
+            .from(rankingTagMaster)
+            .innerJoin(tagMaster, eq(tagMaster.id, rankingTagMaster.tagId))
+            .where(and(
+              eq(rankingTagMaster.rankingId, rankingMaster.id),
+              eq(rankingTagMaster.deleteFlg, false),
+              eq(tagMaster.deleteFlg, false),
+              eq(tagMaster.name, tagName.value),
+            )),
+        )
+      ),
     ];
   }
 }

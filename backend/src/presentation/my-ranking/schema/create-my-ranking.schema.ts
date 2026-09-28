@@ -48,6 +48,7 @@ export const CreateMyRankingSchema = z.object({
         .trim()
         .min(1, "タグは必須です")
         .max(TagName.MAX_LENGTH, `タグは${TagName.MAX_LENGTH}文字以内で入力してください`)
+        .refine((tag) => !tag.includes(TagName.SEPARATOR), `タグに「${TagName.SEPARATOR}」は使えません`)
     )
     .max(RankingAggregate.MAX_TAG_COUNT, `タグは${RankingAggregate.MAX_TAG_COUNT}個までです`)
     .superRefine((tags, ctx) => {

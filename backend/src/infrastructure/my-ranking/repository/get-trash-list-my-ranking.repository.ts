@@ -2,7 +2,7 @@ import { and, asc, count, desc, eq, exists, gte, like, lte, or, type SQL } from 
 import { IGetTrashListMyRankingRepository, TrashMyRankingListType, TrashMyRankingQueryType, TrashRankingSort, TrashRankingSortType } from "../../../domain";
 import { UserId } from "../../../domain/shared";
 import type { Database } from "../../db";
-import { publicStatusMaster, rankingMaster, rankingOrderMaster, userMaster } from "../../db";
+import { publicStatusMaster, rankingMaster, rankingOrderMaster, rankingTagMaster, tagMaster, userMaster } from "../../db";
 
 /**
  * ゴミ箱のランキング一覧取得リポジトリ実装
@@ -105,6 +105,22 @@ export class GetTrashListMyRankingRepository implements IGetTrashListMyRankingRe
       ...(query.createdAtTo ? [lte(rankingMaster.createdAt, query.createdAtTo)] : []),
       ...(query.updatedAtFrom ? [gte(rankingMaster.updatedAt, query.updatedAtFrom)] : []),
       ...(query.updatedAtTo ? [lte(rankingMaster.updatedAt, query.updatedAtTo)] : []),
+      // 指定したタグがすべて付いているランキングに絞り込むため、タグごとに EXISTS を AND でつなぐ
+      ...(query.tagNames ?? []).map((tagName) =>
+        exists(
+          this.db
+            .select({ id: rankingTagMaster.id })
+            .from(rankingTagMaster)
+            .innerJoin(tagMaster, eq(tagMaster.id, rankingTagMaster.tagId))
+            .where(and(
+              eq(rankingTagMaster.rankingId, rankingMaster.id),
+              // ゴミ箱側は論理削除カスケードによりタグ付けも deleteFlg=true になっているため、生存行(false)と逆の条件になる
+              eq(rankingTagMaster.deleteFlg, true),
+              eq(tagMaster.deleteFlg, false),
+              eq(tagMaster.name, tagName.value),
+            )),
+        )
+      ),
     ];
   }
 }

@@ -15,6 +15,7 @@ export const API_ENDPOINT = {
   MY_RANKING: "/api/v1/my-ranking",
   MY_RANKING_ICONS: "/api/v1/my-ranking/icons",
   MY_RANKING_TAGS: "/api/v1/my-ranking/tags",
+  MY_RANKING_FILTER_TAGS: "/api/v1/my-ranking/filter-tags",
   MY_RANKING_EXPORT: "/api/v1/my-ranking/export",
   MY_RANKING_BULK_DELETE: "/api/v1/my-ranking/bulk-delete",
   MY_RANKING_BULK_RESTORE: "/api/v1/my-ranking/bulk-restore",
@@ -22,6 +23,7 @@ export const API_ENDPOINT = {
   MY_RANKING_ID_FAVORITE: "/api/v1/my-ranking/:rankingId/favorite",
   MY_RANKING_TRASH_ID_RESTORE: "/api/v1/my-ranking/trash/:rankingId/restore",
   MY_RANKING_TRASH: "/api/v1/my-ranking/trash",
+  MY_RANKING_TRASH_FILTER_TAGS: "/api/v1/my-ranking/trash/filter-tags",
   MY_RANKING_TRASH_ID: "/api/v1/my-ranking/trash/:rankingId",
 } as const;
 
