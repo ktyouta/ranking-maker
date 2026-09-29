@@ -154,9 +154,9 @@ export const TrashSearchBar = (props: PropsType) => {
                 </div>
             )}
             {isDetailOpen && (
-                <div className="mt-2 sm:mt-4 flex flex-col gap-3 pt-4">
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                        <span className="w-20 shrink-0 text-[12px] sm:text-base font-semibold text-accent">登録日</span>
+                <div className="mt-2 sm:mt-4 flex flex-col gap-3 pt-4 sm:grid sm:grid-cols-[max-content_1fr] sm:items-center sm:gap-x-5">
+                    <div className="flex flex-col gap-2 sm:contents">
+                        <span className="shrink-0 text-[12px] sm:text-base font-semibold text-accent">登録日</span>
                         <div className="flex flex-1 items-center gap-2">
                             <DatePicker
                                 value={searchCondition.createdAtFrom}
@@ -173,8 +173,8 @@ export const TrashSearchBar = (props: PropsType) => {
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                        <span className="w-20 shrink-0 text-[12px] sm:text-base font-semibold text-accent">削除日</span>
+                    <div className="flex flex-col gap-2 sm:contents">
+                        <span className="shrink-0 text-[12px] sm:text-base font-semibold text-accent">削除日</span>
                         <div className="flex flex-1 items-center gap-2">
                             <DatePicker
                                 value={searchCondition.updatedAtFrom}
@@ -191,8 +191,8 @@ export const TrashSearchBar = (props: PropsType) => {
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                        <span className="w-20 shrink-0 text-[12px] sm:text-base font-semibold text-accent">タグ</span>
+                    <div className="flex flex-col gap-2 sm:contents">
+                        <span className="shrink-0 text-[12px] sm:text-base font-semibold text-accent">タグ</span>
                         <div className="flex flex-1 items-center gap-2">
                             <Button
                                 colorType="accent"
