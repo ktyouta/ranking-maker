@@ -9,6 +9,8 @@ import * as schema from "../../../../src/infrastructure/db/schema";
 import { publicStatusMaster, rankingMaster, rankingOrderMaster, rankingTagMaster, tagMaster, userMaster } from "../../../../src/infrastructure/db/schema";
 import { GetTrashListMyRankingRepository } from "../../../../src/infrastructure/my-ranking/repository/get-trash-list-my-ranking.repository";
 
+const PAGE_SIZE = 30;
+
 type TrashSeed = {
     title: string;
     createdAt: string;
@@ -73,7 +75,7 @@ async function seedTrash(db: Database, seeds: TrashSeed[]) {
 
 async function findTitles(db: Database, userId: UserId, sort: TrashRankingSortType) {
     const repository = new GetTrashListMyRankingRepository(db);
-    const result = await repository.findAll(userId, { sort: new TrashRankingSort(sort), page: 1 });
+    const result = await repository.findAll(userId, { sort: new TrashRankingSort(sort), page: 1 }, PAGE_SIZE);
     return result.map((e) => e.title);
 }
 
@@ -142,7 +144,7 @@ describe("GetTrashListMyRankingRepository", () => {
     // 一括削除は全ランキングに同一の updatedAt を設定するため、ゴミ箱では同値が実際に発生する
     it("findAll: 更新日が同値でも、ページをまたいで重複・欠落しない", async () => {
         const db = drizzle(env.DB, { schema });
-        const total = GetTrashListMyRankingRepository.LIMIT + 1;
+        const total = PAGE_SIZE + 1;
         const sameDate = "2026-02-01T00:00:00.000Z";
         const userId = await seedTrash(
             db,
@@ -151,11 +153,11 @@ describe("GetTrashListMyRankingRepository", () => {
 
         const repository = new GetTrashListMyRankingRepository(db);
         const sort = new TrashRankingSort("updatedAtDesc");
-        const page1 = await repository.findAll(userId, { sort, page: 1 });
-        const page2 = await repository.findAll(userId, { sort, page: 2 });
+        const page1 = await repository.findAll(userId, { sort, page: 1 }, PAGE_SIZE);
+        const page2 = await repository.findAll(userId, { sort, page: 2 }, PAGE_SIZE);
 
         const ids = [...page1, ...page2].map((e) => e.id);
-        expect(page1).toHaveLength(GetTrashListMyRankingRepository.LIMIT);
+        expect(page1).toHaveLength(PAGE_SIZE);
         expect(page2).toHaveLength(1);
         expect(new Set(ids).size).toBe(total);
         expect(ids).toEqual([...ids].sort().reverse());
@@ -172,7 +174,7 @@ describe("GetTrashListMyRankingRepository", () => {
         async function findByTags(db: Database, userId: UserId, tags: string[]) {
             const repository = new GetTrashListMyRankingRepository(db);
             const query = { sort: new TrashRankingSort("updatedAtDesc"), page: 1, tagNames: tags.map((tag) => new TagName(tag)) };
-            const [list, total] = await Promise.all([repository.findAll(userId, query), repository.count(userId, query)]);
+            const [list, total] = await Promise.all([repository.findAll(userId, query, PAGE_SIZE), repository.count(userId, query)]);
             return { titles: list.map((e) => e.title), total };
         }
 

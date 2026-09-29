@@ -31,10 +31,9 @@ const getListMyRanking = new Hono<AppEnv>().get(API_ENDPOINT.MY_RANKING,
     const query = { ...condition, tagNames: tags.map((tag) => new TagName(tag)), sort: new RankingSort(sort) };
     const usecase = new GetListMyRankingUsecase(repository);
 
-    const { list, total } = (await usecase.execute(userId, query)).value;
-    const totalPages = Math.ceil(total / GetListMyRankingRepository.LIMIT);
+    const result = await usecase.execute(userId, query);
 
-    return c.json({ message: "ランキング一覧を取得しました。", data: { list, total, totalPages } }, HTTP_STATUS.OK);
+    return c.json({ message: "ランキング一覧を取得しました。", data: result.value }, HTTP_STATUS.OK);
   });
 
 export { getListMyRanking };

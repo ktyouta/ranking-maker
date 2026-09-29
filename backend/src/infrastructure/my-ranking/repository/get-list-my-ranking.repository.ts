@@ -9,15 +9,12 @@ import { publicStatusMaster, rankingMaster, rankingOrderMaster, rankingTagMaster
  */
 export class GetListMyRankingRepository implements IGetListMyRankingRepository {
 
-  // 1ページあたりの最大取得件数
-  static readonly LIMIT = 30;
-
   constructor(private readonly db: Database) { }
 
   /**
    * 一覧取得（論理削除されていないもの、ページング・絞り込み対応）
    */
-  async findAll(userId: UserId, query: MyRankingQueryType): Promise<MyRankingListType[]> {
+  async findAll(userId: UserId, query: MyRankingQueryType, pageSize: number): Promise<MyRankingListType[]> {
 
     const conditions = this.buildConditions(userId, query);
 
@@ -28,8 +25,8 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
         .from(rankingMaster)
         .where(and(...conditions))
         .orderBy(...this.buildOrderBy(query.sort, this.countItems()))
-        .limit(GetListMyRankingRepository.LIMIT)
-        .offset((query.page - 1) * GetListMyRankingRepository.LIMIT)
+        .limit(pageSize)
+        .offset((query.page - 1) * pageSize)
     );
 
     return await this.db
@@ -58,7 +55,7 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
   /**
    * 件数取得
    */
-  async count(userId: UserId, query: MyRankingQueryType): Promise<number> {
+  async count(userId: UserId, query: Omit<MyRankingQueryType, "page">): Promise<number> {
 
     const conditions = this.buildConditions(userId, query);
 
@@ -100,7 +97,7 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
       .where(and(eq(rankingOrderMaster.rankingId, rankingMaster.id), eq(rankingOrderMaster.deleteFlg, false)));
   }
 
-  private buildConditions(userId: UserId, query: MyRankingQueryType) {
+  private buildConditions(userId: UserId, query: Omit<MyRankingQueryType, "page">) {
     return [
       eq(rankingMaster.deleteFlg, false),
       eq(rankingMaster.userId, userId.value),

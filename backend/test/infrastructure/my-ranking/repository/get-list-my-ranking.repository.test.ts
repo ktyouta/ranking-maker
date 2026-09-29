@@ -9,6 +9,8 @@ import * as schema from "../../../../src/infrastructure/db/schema";
 import { publicStatusMaster, rankingMaster, rankingOrderMaster, rankingTagMaster, tagMaster, userMaster } from "../../../../src/infrastructure/db/schema";
 import { GetListMyRankingRepository } from "../../../../src/infrastructure/my-ranking/repository/get-list-my-ranking.repository";
 
+const PAGE_SIZE = 30;
+
 type RankingSeed = {
     title: string;
     createdAt: string;
@@ -72,7 +74,7 @@ async function seedRankings(db: Database, seeds: RankingSeed[]) {
 
 async function findTitles(db: Database, userId: UserId, sort: RankingSortType) {
     const repository = new GetListMyRankingRepository(db);
-    const result = await repository.findAll(userId, { sort: new RankingSort(sort), page: 1 });
+    const result = await repository.findAll(userId, { sort: new RankingSort(sort), page: 1 }, PAGE_SIZE);
     return result.map((e) => e.title);
 }
 
@@ -152,7 +154,7 @@ describe("GetListMyRankingRepository", () => {
 
     it("findAll: 並び替えの第一キーが同値でも、ページをまたいで重複・欠落しない", async () => {
         const db = drizzle(env.DB, { schema });
-        const total = GetListMyRankingRepository.LIMIT + 1;
+        const total = PAGE_SIZE + 1;
         const sameDate = "2026-02-01T00:00:00.000Z";
         const userId = await seedRankings(
             db,
@@ -161,11 +163,11 @@ describe("GetListMyRankingRepository", () => {
 
         const repository = new GetListMyRankingRepository(db);
         const sort = new RankingSort("updatedAtDesc");
-        const page1 = await repository.findAll(userId, { sort, page: 1 });
-        const page2 = await repository.findAll(userId, { sort, page: 2 });
+        const page1 = await repository.findAll(userId, { sort, page: 1 }, PAGE_SIZE);
+        const page2 = await repository.findAll(userId, { sort, page: 2 }, PAGE_SIZE);
 
         const ids = [...page1, ...page2].map((e) => e.id);
-        expect(page1).toHaveLength(GetListMyRankingRepository.LIMIT);
+        expect(page1).toHaveLength(PAGE_SIZE);
         expect(page2).toHaveLength(1);
         expect(new Set(ids).size).toBe(total);
         expect(ids).toEqual([...ids].sort().reverse());
@@ -182,7 +184,7 @@ describe("GetListMyRankingRepository", () => {
         async function findByTags(db: Database, userId: UserId, tags: string[]) {
             const repository = new GetListMyRankingRepository(db);
             const query = { sort: new RankingSort("updatedAtDesc"), page: 1, tagNames: tags.map((tag) => new TagName(tag)) };
-            const [list, total] = await Promise.all([repository.findAll(userId, query), repository.count(userId, query)]);
+            const [list, total] = await Promise.all([repository.findAll(userId, query, PAGE_SIZE), repository.count(userId, query)]);
             return { titles: list.map((e) => e.title), total };
         }
 

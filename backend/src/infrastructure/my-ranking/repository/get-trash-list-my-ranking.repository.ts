@@ -9,15 +9,12 @@ import { publicStatusMaster, rankingMaster, rankingOrderMaster, rankingTagMaster
  */
 export class GetTrashListMyRankingRepository implements IGetTrashListMyRankingRepository {
 
-  // 1ページあたりの最大取得件数
-  static readonly LIMIT = 30;
-
   constructor(private readonly db: Database) { }
 
   /**
    * 削除済み一覧取得（論理削除されているもの、ページング・絞り込み対応）
    */
-  async findAll(userId: UserId, query: TrashMyRankingQueryType): Promise<TrashMyRankingListType[]> {
+  async findAll(userId: UserId, query: TrashMyRankingQueryType, pageSize: number): Promise<TrashMyRankingListType[]> {
 
     const conditions = this.buildConditions(userId, query);
 
@@ -28,8 +25,8 @@ export class GetTrashListMyRankingRepository implements IGetTrashListMyRankingRe
         .from(rankingMaster)
         .where(and(...conditions))
         .orderBy(...this.buildOrderBy(query.sort, this.countItems()))
-        .limit(GetTrashListMyRankingRepository.LIMIT)
-        .offset((query.page - 1) * GetTrashListMyRankingRepository.LIMIT)
+        .limit(pageSize)
+        .offset((query.page - 1) * pageSize)
     );
 
     return await this.db
@@ -59,7 +56,7 @@ export class GetTrashListMyRankingRepository implements IGetTrashListMyRankingRe
   /**
    * 削除済み件数取得
    */
-  async count(userId: UserId, query: TrashMyRankingQueryType): Promise<number> {
+  async count(userId: UserId, query: Omit<TrashMyRankingQueryType, "page">): Promise<number> {
 
     const conditions = this.buildConditions(userId, query);
 
@@ -104,7 +101,7 @@ export class GetTrashListMyRankingRepository implements IGetTrashListMyRankingRe
       ));
   }
 
-  private buildConditions(userId: UserId, query: TrashMyRankingQueryType) {
+  private buildConditions(userId: UserId, query: Omit<TrashMyRankingQueryType, "page">) {
     return [
       eq(rankingMaster.deleteFlg, true),
       eq(rankingMaster.userId, userId.value),

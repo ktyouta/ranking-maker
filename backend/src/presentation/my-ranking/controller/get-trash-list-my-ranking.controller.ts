@@ -31,10 +31,9 @@ const getTrashListMyRanking = new Hono<AppEnv>().get(API_ENDPOINT.MY_RANKING_TRA
     const query = { ...condition, tagNames: tags.map((tag) => new TagName(tag)), sort: new TrashRankingSort(sort) };
     const usecase = new GetTrashListMyRankingUsecase(repository);
 
-    const { list, total } = (await usecase.execute(userId, query)).value;
-    const totalPages = Math.ceil(total / GetTrashListMyRankingRepository.LIMIT);
+    const result = await usecase.execute(userId, query);
 
-    return c.json({ message: "削除済みランキング一覧を取得しました。", data: { list, total, totalPages } }, HTTP_STATUS.OK);
+    return c.json({ message: "削除済みランキング一覧を取得しました。", data: result.value }, HTTP_STATUS.OK);
   });
 
 export { getTrashListMyRanking };

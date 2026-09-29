@@ -14,6 +14,7 @@ export type GetListMyRankingResultType = {
     isFavorite: boolean;
   }[];
   total: number;
+  totalPages: number;
 };
 
 /**
@@ -25,8 +26,9 @@ export class GetListMyRankingResultDto {
   /**
    * @param list 現在のページのランキング一覧
    * @param total 絞り込み条件に一致する全件数
+   * @param totalPages 総ページ数
    */
-  constructor(list: MyRankingListType[], total: number) {
+  constructor(list: MyRankingListType[], total: number, totalPages: number) {
     this._value = {
       list: list.map((e) => ({
         id: e.id,
@@ -41,6 +43,7 @@ export class GetListMyRankingResultDto {
         isFavorite: e.isFavorite,
       })),
       total,
+      totalPages,
     };
   }
 

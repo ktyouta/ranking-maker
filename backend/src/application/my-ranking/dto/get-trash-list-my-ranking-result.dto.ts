@@ -13,6 +13,7 @@ export type GetTrashListMyRankingResultType = {
     itemCount: number;
   }[];
   total: number;
+  totalPages: number;
 };
 
 /**
@@ -24,8 +25,9 @@ export class GetTrashListMyRankingResultDto {
   /**
    * @param list 現在のページの削除済みランキング一覧
    * @param total 絞り込み条件に一致する全件数
+   * @param totalPages 総ページ数
    */
-  constructor(list: TrashMyRankingListType[], total: number) {
+  constructor(list: TrashMyRankingListType[], total: number, totalPages: number) {
     this._value = {
       list: list.map((e) => ({
         id: e.id,
@@ -39,6 +41,7 @@ export class GetTrashListMyRankingResultDto {
         itemCount: e.itemCount,
       })),
       total,
+      totalPages,
     };
   }
 
