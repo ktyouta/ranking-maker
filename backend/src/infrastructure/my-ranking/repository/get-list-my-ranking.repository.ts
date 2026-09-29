@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, exists, gte, like, lte, or, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, exists, gte, like, lte, or, type SQL, type SQLWrapper } from "drizzle-orm";
 import { IGetListMyRankingRepository, MyRankingListType, MyRankingQueryType, RankingSort, RankingSortType } from "../../../domain";
 import { UserId } from "../../../domain/shared";
 import type { Database } from "../../db";
@@ -21,7 +21,19 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
 
     const conditions = this.buildConditions(userId, query);
 
+    // 表示するページのランキングIDを先に確定し、項目の結合・集計をそのページ分に限定する
+    const page = this.db.$with("page").as(
+      this.db
+        .select({ id: rankingMaster.id })
+        .from(rankingMaster)
+        .where(and(...conditions))
+        .orderBy(...this.buildOrderBy(query.sort, this.countItems()))
+        .limit(GetListMyRankingRepository.LIMIT)
+        .offset((query.page - 1) * GetListMyRankingRepository.LIMIT)
+    );
+
     return await this.db
+      .with(page)
       .select({
         id: rankingMaster.id,
         title: rankingMaster.title,
@@ -34,15 +46,13 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
         itemCount: count(rankingOrderMaster.id),
         isFavorite: rankingMaster.isFavorite,
       })
-      .from(rankingMaster)
+      .from(page)
+      .innerJoin(rankingMaster, eq(rankingMaster.id, page.id))
       .innerJoin(userMaster, eq(userMaster.id, rankingMaster.userId))
       .innerJoin(publicStatusMaster, eq(publicStatusMaster.id, rankingMaster.publicStatus))
       .leftJoin(rankingOrderMaster, and(eq(rankingOrderMaster.rankingId, rankingMaster.id), eq(rankingOrderMaster.deleteFlg, false)))
-      .where(and(...conditions))
       .groupBy(rankingMaster.id, userMaster.name, publicStatusMaster.name)
-      .orderBy(...this.buildOrderBy(query.sort))
-      .limit(GetListMyRankingRepository.LIMIT)
-      .offset((query.page - 1) * GetListMyRankingRepository.LIMIT);
+      .orderBy(...this.buildOrderBy(query.sort, count(rankingOrderMaster.id)));
   }
 
   /**
@@ -62,18 +72,32 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
 
   /**
    * 並び順をDrizzleの式に変換（同値の行のページ境界が安定するよう、最後に必ず id を含める）
+   * @param sort 並び順
+   * @param itemCount 項目数順の並び替えに使う項目数の式
+   * @returns ORDER BY に渡す式の一覧
    */
-  private buildOrderBy(sort: RankingSort): SQL[] {
+  private buildOrderBy(sort: RankingSort, itemCount: SQLWrapper): SQL[] {
     const orderBy: Record<RankingSortType, SQL[]> = {
       updatedAtDesc: [desc(rankingMaster.updatedAt), desc(rankingMaster.id)],
       updatedAtAsc: [asc(rankingMaster.updatedAt), asc(rankingMaster.id)],
       createdAtDesc: [desc(rankingMaster.createdAt), desc(rankingMaster.id)],
       createdAtAsc: [asc(rankingMaster.createdAt), asc(rankingMaster.id)],
-      itemCountDesc: [desc(count(rankingOrderMaster.id)), desc(rankingMaster.updatedAt), desc(rankingMaster.id)],
-      itemCountAsc: [asc(count(rankingOrderMaster.id)), desc(rankingMaster.updatedAt), desc(rankingMaster.id)],
+      itemCountDesc: [desc(itemCount), desc(rankingMaster.updatedAt), desc(rankingMaster.id)],
+      itemCountAsc: [asc(itemCount), desc(rankingMaster.updatedAt), desc(rankingMaster.id)],
       favoriteDesc: [desc(rankingMaster.isFavorite), desc(rankingMaster.updatedAt), desc(rankingMaster.id)],
     };
     return orderBy[sort.value];
+  }
+
+  /**
+   * ランキングごとの項目数を数える相関サブクエリ
+   * @returns 外側の ranking_master の行ごとに項目数を返すサブクエリ
+   */
+  private countItems() {
+    return this.db
+      .select({ itemCount: count() })
+      .from(rankingOrderMaster)
+      .where(and(eq(rankingOrderMaster.rankingId, rankingMaster.id), eq(rankingOrderMaster.deleteFlg, false)));
   }
 
   private buildConditions(userId: UserId, query: MyRankingQueryType) {
@@ -117,6 +141,7 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
               eq(rankingTagMaster.deleteFlg, false),
               eq(tagMaster.deleteFlg, false),
               eq(tagMaster.name, tagName.value),
+              eq(tagMaster.userId, userId.value),
             )),
         )
       ),
