@@ -178,14 +178,14 @@ export const Trash = (props: PropsType) => {
                     <div className="flex justify-end gap-3">
                         <button
                             type="button"
-                            className="rounded-full border-2 border-accent/30 bg-surface px-6 py-2 text-base font-medium text-ink-sub hover:bg-canvas"
+                            className="rounded-full border-2 border-accent/30 bg-surface px-5 py-2 text-sm sm:px-6 sm:text-base font-medium text-ink-sub hover:bg-canvas"
                             onClick={onCancelBulkRestore}
                         >
                             キャンセル
                         </button>
                         <button
                             type="button"
-                            className="rounded-full bg-accent-surface px-6 py-2 text-base font-medium text-white hover:bg-accent-surface-hover"
+                            className="rounded-full bg-accent-surface px-5 py-2 text-sm sm:px-6 sm:text-base font-medium text-white hover:bg-accent-surface-hover"
                             onClick={onConfirmBulkRestore}
                         >
                             復元
