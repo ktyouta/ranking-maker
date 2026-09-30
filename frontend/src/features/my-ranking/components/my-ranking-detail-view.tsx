@@ -182,36 +182,36 @@ export function MyRankingDetailView(props: PropsType) {
                                 type="button"
                                 onClick={onToggleFavorite}
                                 className={isFavorite
-                                    ? "shrink-0 rounded-full bg-amber-400/15 p-2.5 text-amber-400 hover:bg-amber-400/25"
-                                    : "shrink-0 rounded-full bg-gray-400/15 p-2.5 text-gray-400 hover:bg-gray-400/25"
+                                    ? "shrink-0 rounded-full bg-amber-400/15 p-[11px] text-amber-400 hover:bg-amber-400/25"
+                                    : "shrink-0 rounded-full bg-gray-400/15 p-[11px] text-gray-400 hover:bg-gray-400/25"
                                 }
                                 aria-label={isFavorite ? 'お気に入りから外す' : 'お気に入りに登録する'}
                             >
-                                {isFavorite ? <IoStar className="size-7" /> : <IoStarOutline className="size-7" />}
+                                {isFavorite ? <IoStar className="size-[26px]" /> : <IoStarOutline className="size-[26px]" />}
                             </button>
                             <button
                                 type="button"
                                 onClick={onClickMemo}
-                                className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                                className="shrink-0 rounded-full bg-accent/15 p-[11px] text-accent hover:bg-accent/25"
                                 aria-label="メモを見る"
                             >
-                                <HiOutlineDocumentText className="size-7" />
+                                <HiOutlineDocumentText className="size-[26px]" />
                             </button>
                             <button
                                 type="button"
                                 onClick={onClickTag}
-                                className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                                className="shrink-0 rounded-full bg-accent/15 p-[11px] text-accent hover:bg-accent/25"
                                 aria-label="タグを見る"
                             >
-                                <HiOutlineTag className="size-7" />
+                                <HiOutlineTag className="size-[26px]" />
                             </button>
                             <button
                                 type="button"
                                 onClick={onClickDelete}
-                                className="shrink-0 rounded-full bg-danger/15 p-2.5 text-danger hover:bg-danger/25"
+                                className="shrink-0 rounded-full bg-danger/15 p-[11px] text-danger hover:bg-danger/25"
                                 aria-label="ランキングを削除"
                             >
-                                <HiOutlineTrash className="size-7" />
+                                <HiOutlineTrash className="size-[26px]" />
                             </button>
                         </div>
                         {/* md未満では上部の全幅バー側に表示するため、ここでは非表示にする */}

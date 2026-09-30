@@ -152,18 +152,18 @@ export function TrashDetail(props: PropsType) {
                         <button
                             type="button"
                             onClick={onClickMemo}
-                            className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                            className="shrink-0 rounded-full bg-accent/15 p-[11px] text-accent hover:bg-accent/25"
                             aria-label="メモを見る"
                         >
-                            <HiOutlineDocumentText className="size-7" />
+                            <HiOutlineDocumentText className="size-[26px]" />
                         </button>
                         <button
                             type="button"
                             onClick={onClickTag}
-                            className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                            className="shrink-0 rounded-full bg-accent/15 p-[11px] text-accent hover:bg-accent/25"
                             aria-label="タグを見る"
                         >
-                            <HiOutlineTag className="size-7" />
+                            <HiOutlineTag className="size-[26px]" />
                         </button>
                     </div>
                 </div>

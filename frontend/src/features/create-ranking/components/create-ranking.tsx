@@ -164,7 +164,7 @@ export function CreateRanking(props: PropsType) {
                         <TagSettingButton
                             selectedTagCount={selectedTags.length}
                             openTagDialog={openTagDialog}
-                            className="hidden md:block"
+                            className="hidden md:block md:-my-1"
                         />
                     </div>
                     <Textbox

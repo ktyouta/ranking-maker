@@ -152,10 +152,10 @@ export function MyRankingDetailEdit(props: PropsType) {
                             <button
                                 type="button"
                                 onClick={openTagDialog}
-                                className="relative -my-1.5 shrink-0 rounded-full bg-accent/15 p-2 text-accent hover:bg-accent/25 md:my-0"
+                                className="relative -my-1.5 shrink-0 rounded-full bg-accent/15 p-[9px] text-accent hover:bg-accent/25 sm:-my-2.5 sm:p-[11px] md:-my-1"
                                 aria-label="タグを設定"
                             >
-                                <HiOutlineTag className="size-6" />
+                                <HiOutlineTag className="size-[22px] sm:size-[26px]" />
                                 {selectedTags.length > 0 && (
                                     <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-surface px-1 text-xs font-bold text-white">
                                         {selectedTags.length}
