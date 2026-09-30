@@ -143,16 +143,16 @@ export function MyRankingDetailEdit(props: PropsType) {
                         </div>
                     </div>
                 )}
-                <div className="mt-10 flex flex-col flex-1 gap-[1.8rem] md:gap-[2.8rem]">
+                <div className="mt-7 sm:mt-10 flex flex-col flex-1 gap-[1.8rem] md:gap-[2.8rem]">
                     <div>
-                        <div className="mb-3 flex items-center justify-between gap-3">
+                        <div className="flex items-center justify-between gap-3">
                             <label className="block text-lg font-semibold text-ink">
                                 タイトル
                             </label>
                             <button
                                 type="button"
                                 onClick={openTagDialog}
-                                className="relative shrink-0 rounded-full bg-accent/15 p-2 text-accent hover:bg-accent/25"
+                                className="relative -my-1.5 shrink-0 rounded-full bg-accent/15 p-2 text-accent hover:bg-accent/25 md:my-0"
                                 aria-label="タグを設定"
                             >
                                 <HiOutlineTag className="size-6" />

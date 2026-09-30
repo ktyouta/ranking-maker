@@ -6,9 +6,10 @@ import { closestCenter, DndContext, DragEndEvent, SensorDescriptor, SensorOption
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { BaseSyntheticEvent, type KeyboardEvent } from 'react';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
-import { HiOutlineExclamationTriangle, HiOutlineTag } from 'react-icons/hi2';
+import { HiOutlineExclamationTriangle } from 'react-icons/hi2';
 import { CreateRankingRequestType, MAX_TAG_COUNT } from '../types/create-ranking-request-type';
 import { ItemFieldType, ItemRow } from './item-row';
+import { TagSettingButton } from './tag-setting-button';
 import { TemplateSelectDialog } from './template-select-dialog';
 
 type PropsType = {
@@ -122,16 +123,23 @@ export function CreateRanking(props: PropsType) {
                         </p>
                     </div>
                 </div>
-                <button
-                    type="button"
-                    onClick={openTemplateDialog}
-                    className="ml-auto shrink-0 rounded-full border border-accent/70 bg-surface px-4 py-2 text-sm font-semibold text-accent hover:bg-accent/10 sm:px-6 sm:py-2.5 sm:text-base"
-                >
-                    テンプレートから作成
-                </button>
+                <div className="ml-auto flex items-center gap-3">
+                    <button
+                        type="button"
+                        onClick={openTemplateDialog}
+                        className="shrink-0 rounded-full border border-accent/70 bg-surface px-4 py-2 text-sm font-semibold text-accent hover:bg-accent/10 sm:px-6 sm:py-2.5 sm:text-base"
+                    >
+                        テンプレートから作成
+                    </button>
+                    <TagSettingButton
+                        selectedTagCount={selectedTags.length}
+                        openTagDialog={openTagDialog}
+                        className="md:hidden"
+                    />
+                </div>
             </div>
             {(errMessage || violations.length > 0) && (
-                <div className="mt-4 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-base text-red-600">
+                <div className="mt-4 mb-4 sm:mb-0 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-base text-red-600">
                     <HiOutlineExclamationTriangle className="mt-0.5 h-5 w-5 shrink-0" />
                     <div>
                         {errMessage && <p>{errMessage}</p>}
@@ -147,25 +155,17 @@ export function CreateRanking(props: PropsType) {
                     </div>
                 </div>
             )}
-            <div className="mt-1 md:mt-9 flex flex-col flex-1 gap-[1.8rem] md:gap-[2.8rem]">
+            <div className="sm:mt-6 md:mt-9 flex flex-col flex-1 gap-[1.8rem] md:gap-[2.8rem]">
                 <div>
-                    <div className="mb-3 flex items-center justify-between gap-3">
+                    <div className="flex items-center justify-between gap-3">
                         <label className="block text-lg font-semibold text-ink">
                             タイトル
                         </label>
-                        <button
-                            type="button"
-                            onClick={openTagDialog}
-                            className="relative shrink-0 rounded-full bg-accent/15 p-2 text-accent hover:bg-accent/25"
-                            aria-label="タグを設定"
-                        >
-                            <HiOutlineTag className="size-6" />
-                            {selectedTags.length > 0 && (
-                                <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-surface px-1 text-xs font-bold text-white">
-                                    {selectedTags.length}
-                                </span>
-                            )}
-                        </button>
+                        <TagSettingButton
+                            selectedTagCount={selectedTags.length}
+                            openTagDialog={openTagDialog}
+                            className="hidden md:block"
+                        />
                     </div>
                     <Textbox
                         className="h-auto w-full rounded-none border-0 border-b-2 border-accent/50 bg-transparent px-1 py-2 text-xl font-bold text-ink focus:border-accent focus:ring-0 sm:text-2xl"
