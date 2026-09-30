@@ -118,45 +118,45 @@ export function MyRankingDetailView(props: PropsType) {
                         </h1>
                     </div>
                     <div className="flex items-center justify-between gap-2">
-                        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1.5 text-xs text-ink-sub">
+                        <span className="inline-flex w-fit items-center gap-1.5 whitespace-nowrap rounded-full bg-line px-3 py-1.5 text-xs text-ink-sub">
                             <IoCalendarOutline className="size-4" />
                             更新日 {updatedAt}
                         </span>
-                        <div className="flex shrink-0 items-center gap-2">
+                        <div className="flex shrink-0 items-center gap-1.5">
                             <button
                                 type="button"
                                 onClick={onToggleFavorite}
                                 className={isFavorite
-                                    ? "shrink-0 rounded-full bg-amber-400/15 p-2.5 text-amber-400 hover:bg-amber-400/25"
-                                    : "shrink-0 rounded-full bg-gray-400/15 p-2.5 text-gray-400 hover:bg-gray-400/25"
+                                    ? "shrink-0 rounded-full bg-amber-400/15 p-[9px] text-amber-400 hover:bg-amber-400/25"
+                                    : "shrink-0 rounded-full bg-gray-400/15 p-[9px] text-gray-400 hover:bg-gray-400/25"
                                 }
                                 aria-label={isFavorite ? 'お気に入りから外す' : 'お気に入りに登録する'}
                             >
-                                {isFavorite ? <IoStar className="size-6" /> : <IoStarOutline className="size-6" />}
+                                {isFavorite ? <IoStar className="size-[22px]" /> : <IoStarOutline className="size-[22px]" />}
                             </button>
                             <button
                                 type="button"
                                 onClick={onClickMemo}
-                                className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                                className="shrink-0 rounded-full bg-accent/15 p-[9px] text-accent hover:bg-accent/25"
                                 aria-label="メモを見る"
                             >
-                                <HiOutlineDocumentText className="size-6" />
+                                <HiOutlineDocumentText className="size-[22px]" />
                             </button>
                             <button
                                 type="button"
                                 onClick={onClickTag}
-                                className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                                className="shrink-0 rounded-full bg-accent/15 p-[9px] text-accent hover:bg-accent/25"
                                 aria-label="タグを見る"
                             >
-                                <HiOutlineTag className="size-6" />
+                                <HiOutlineTag className="size-[22px]" />
                             </button>
                             <button
                                 type="button"
                                 onClick={onClickDelete}
-                                className="shrink-0 rounded-full bg-danger/15 p-2.5 text-danger hover:bg-danger/25"
+                                className="shrink-0 rounded-full bg-danger/15 p-[9px] text-danger hover:bg-danger/25"
                                 aria-label="ランキングを削除"
                             >
-                                <HiOutlineTrash className="size-6" />
+                                <HiOutlineTrash className="size-[22px]" />
                             </button>
                         </div>
                     </div>

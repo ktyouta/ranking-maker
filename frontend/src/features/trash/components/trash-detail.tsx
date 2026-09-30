@@ -109,26 +109,26 @@ export function TrashDetail(props: PropsType) {
                         </h1>
                     </div>
                     <div className="flex items-center justify-between gap-2">
-                        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-line px-3 py-1.5 text-xs text-ink-sub">
+                        <span className="inline-flex w-fit items-center gap-1.5 whitespace-nowrap rounded-full bg-line px-3 py-1.5 text-xs text-ink-sub">
                             <IoCalendarOutline className="size-4" />
                             更新日 {updatedAt}
                         </span>
-                        <div className="flex shrink-0 items-center gap-2">
+                        <div className="flex shrink-0 items-center gap-1.5">
                             <button
                                 type="button"
                                 onClick={onClickMemo}
-                                className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                                className="shrink-0 rounded-full bg-accent/15 p-[9px] text-accent hover:bg-accent/25"
                                 aria-label="メモを見る"
                             >
-                                <HiOutlineDocumentText className="size-6" />
+                                <HiOutlineDocumentText className="size-[22px]" />
                             </button>
                             <button
                                 type="button"
                                 onClick={onClickTag}
-                                className="shrink-0 rounded-full bg-accent/15 p-2.5 text-accent hover:bg-accent/25"
+                                className="shrink-0 rounded-full bg-accent/15 p-[9px] text-accent hover:bg-accent/25"
                                 aria-label="タグを見る"
                             >
-                                <HiOutlineTag className="size-6" />
+                                <HiOutlineTag className="size-[22px]" />
                             </button>
                         </div>
                     </div>
