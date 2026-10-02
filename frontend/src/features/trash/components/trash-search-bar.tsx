@@ -144,7 +144,7 @@ export const TrashSearchBar = (props: PropsType) => {
                             sizeType="medium"
                             onClick={() => onChangeSort(option.value)}
                             aria-pressed={sort === option.value}
-                            className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm sm:text-base font-semibold shadow-none ${sort === option.value ?
+                            className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm sm:text-base sm:font-semibold shadow-none ${sort === option.value ?
                                 `border-accent bg-accent/15 text-accent hover:bg-accent/25` :
                                 `border-accent/70 bg-surface text-accent hover:bg-accent/10`}`}
                         >
