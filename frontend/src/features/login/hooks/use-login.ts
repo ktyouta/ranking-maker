@@ -16,7 +16,7 @@ export function useLogin() {
     // ログインユーザー情報(setter)
     const setLoginUserInfo = SetLoginUserContext.useCtx();
     // フォーム
-    const { register, handleSubmit, formState: { errors }, reset } = useLoginForm();
+    const { register, handleSubmit, formState: { errors }, resetField } = useLoginForm();
     // ログインユーザー情報
     const loginUser = LoginUserContext.useCtx();
     // ルーティング用
@@ -39,10 +39,7 @@ export function useLogin() {
         // 失敗後の処理
         onError: (errorMessage: string) => {
             setErrMessage(errorMessage);
-            reset({
-                name: ``,
-                password: ``,
-            });
+            resetField(`password`);
         },
     });
 
