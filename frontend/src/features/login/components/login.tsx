@@ -1,4 +1,4 @@
-import { LoadingOverlay, Textbox } from '@/components';
+import { ErrorAlert, LoadingOverlay, Textbox } from '@/components';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 
 type PropsType = {
@@ -37,9 +37,9 @@ export function Login(props: PropsType) {
                     Ranking Maker
                 </h1>
                 {errMessage && (
-                    <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg p-4 mb-6">
-                        {errMessage}
-                    </div>
+                    <ErrorAlert className="mb-6 text-sm sm:text-base">
+                        <p>{errMessage}</p>
+                    </ErrorAlert>
                 )}
                 <div className="flex flex-col gap-6">
                     {/* ユーザー名 */}

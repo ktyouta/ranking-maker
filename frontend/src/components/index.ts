@@ -8,6 +8,7 @@ export { Button } from './ui/button/button';
 export { DatePicker } from './ui/date-picker/date-picker';
 export { Checkbox } from './ui/checkbox/checkbox';
 export { Dialog } from './ui/dialog/dialog';
+export { ErrorAlert } from './ui/error-alert/error-alert';
 export { Footer } from './layouts/footer/footer';
 export { LoadingOverlay } from './ui/loading-overlay/loading-overlay';
 export { Pagination } from './ui/pagination/pagination';

@@ -1,7 +1,7 @@
-import { Dialog, LoadingOverlay, ScrollToTopButton } from '@/components';
+import { Dialog, ErrorAlert, LoadingOverlay, ScrollToTopButton } from '@/components';
 import { MemoViewDialog } from '@/components/layouts/memo-view-dialog/memo-view-dialog';
 import { TagViewDialog } from '@/components/layouts/tag-view-dialog/tag-view-dialog';
-import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineDocumentText, HiOutlineExclamationTriangle, HiOutlineTag, HiOutlineTrash } from 'react-icons/hi2';
+import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineDocumentText, HiOutlineTag, HiOutlineTrash } from 'react-icons/hi2';
 import { IoCalendarOutline, IoStar, IoStarOutline } from 'react-icons/io5';
 import { ItemType, RankingItemCard } from './ranking-item-card';
 
@@ -102,10 +102,9 @@ export function MyRankingDetailView(props: PropsType) {
             </div>
             <div className="mx-auto flex w-full max-w-[max(48rem,60vw)] flex-1 flex-col px-4 pb-8 pt-3 sm:pt-4 sm:px-6 lg:px-8">
                 {errMessage && (
-                    <div className="mb-4 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-base text-red-600">
-                        <HiOutlineExclamationTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+                    <ErrorAlert className="mb-4">
                         <p>{errMessage}</p>
-                    </div>
+                    </ErrorAlert>
                 )}
                 {/* sm未満/sm以上でDOM構造が異なる二重定義。片方を直す際はもう片方も直すこと */}
                 <div className="flex flex-col gap-3 sm:hidden">

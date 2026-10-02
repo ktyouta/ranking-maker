@@ -1,12 +1,12 @@
 import { IconType } from '@/app/api/get-icons';
-import { LoadingOverlay, ScrollToTopButton, Textarea, Textbox } from '@/components';
+import { ErrorAlert, LoadingOverlay, ScrollToTopButton, Textarea, Textbox } from '@/components';
 import { IconSelectDialog } from '@/components/layouts/icon-select-dialog/icon-select-dialog';
 import { TagSelectDialog } from '@/components/layouts/tag-select-dialog/tag-select-dialog';
 import { closestCenter, DndContext, DragEndEvent, SensorDescriptor, SensorOptions } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { BaseSyntheticEvent, type KeyboardEvent } from 'react';
 import { Control, FieldErrors, UseFormRegister } from 'react-hook-form';
-import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineExclamationTriangle, HiOutlineTag } from 'react-icons/hi2';
+import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineTag } from 'react-icons/hi2';
 import { MAX_TAG_COUNT, UpdateMyRankingRequestType } from '../types/update-my-ranking-request-type';
 import { ItemFieldType, ItemRow } from './item-row';
 
@@ -127,21 +127,18 @@ export function MyRankingDetailEdit(props: PropsType) {
                     </div>
                 </div>
                 {(errMessage || violations.length > 0) && (
-                    <div className="mt-4 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-base text-red-600">
-                        <HiOutlineExclamationTriangle className="mt-0.5 h-5 w-5 shrink-0" />
-                        <div>
-                            {errMessage && <p>{errMessage}</p>}
-                            {violations.length > 0 && (
-                                <ul className="mt-2 list-disc pl-5">
-                                    {violations.map((violation) => (
-                                        <li key={`${violation.field}-${violation.message}`}>
-                                            {violation.message}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </div>
-                    </div>
+                    <ErrorAlert className="mt-4">
+                        {errMessage && <p>{errMessage}</p>}
+                        {violations.length > 0 && (
+                            <ul className="mt-2 list-disc pl-5">
+                                {violations.map((violation) => (
+                                    <li key={`${violation.field}-${violation.message}`}>
+                                        {violation.message}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </ErrorAlert>
                 )}
                 <div className="mt-7 sm:mt-10 flex flex-col flex-1 gap-[1.8rem] md:gap-[2.8rem]">
                     <div>
