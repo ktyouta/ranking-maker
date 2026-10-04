@@ -107,7 +107,7 @@
 | 4 | クエリスキーマに `sort` を追加 | `backend/src/presentation/my-ranking/schema/get-list-my-ranking.schema.ts`、`get-trash-list-my-ranking.schema.ts` | #1, #2 |
 | 5 | コントローラーで `sort` を VO に変換 | `backend/src/presentation/my-ranking/controller/get-list-my-ranking.controller.ts`、`get-trash-list-my-ranking.controller.ts` | #3, #4 |
 | 6 | `findAll` の `orderBy` を `buildOrderBy(sort)` に置き換え | `backend/src/infrastructure/my-ranking/repository/get-list-my-ranking.repository.ts`、`get-trash-list-my-ranking.repository.ts` | #3 |
-| 7 | VO のテスト | `backend/test/domain/ranking-sort.test.ts`、`trash-ranking-sort.test.ts` | #1, #2 |
+| 7 | VO のテスト | `backend/test/domain/my-ranking/value-object/ranking-sort.test.ts`、`trash-ranking-sort.test.ts` | #1, #2 |
 | 8 | リポジトリのテスト（全ソート値、タイブレーク） | `backend/test/infrastructure/my-ranking/repository/get-list-my-ranking.repository.test.ts`、`get-trash-list-my-ranking.repository.test.ts` | #6 |
 
 ## フロントエンド タスク（マイランキング・ゴミ箱それぞれ別実装）

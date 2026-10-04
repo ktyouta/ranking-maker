@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ContentModerationDomainService, ContentModerationTarget, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, TagAggregate, TagName } from "../../src/domain";
-import type { IContentModerationRepository } from "../../src/domain";
-import { UserId } from "../../src/domain/shared";
+import { ContentModerationDomainService, ContentModerationTarget, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTitle, TagAggregate, TagName } from "../../../../src/domain";
+import type { IContentModerationRepository } from "../../../../src/domain";
+import { UserId } from "../../../../src/domain/shared";
 
 describe("ContentModerationDomainService", () => {
   let mockRepository: IContentModerationRepository;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { RankingSort } from "../../src/domain/my-ranking/value-object/ranking-sort/ranking-sort";
+import { RankingSort } from "../../../../src/domain/my-ranking/value-object/ranking-sort/ranking-sort";
 
 describe("RankingSort", () => {
   it.each(RankingSort.VALUES)("許容値 %s を保持できること", (value) => {

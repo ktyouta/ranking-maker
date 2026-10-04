@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { RankingTagId } from "../../src/domain";
+import { RankingTagId } from "../../../../src/domain";
 
 describe("RankingTagId", () => {
   it("generate: 空でないIDを生成すること", () => {

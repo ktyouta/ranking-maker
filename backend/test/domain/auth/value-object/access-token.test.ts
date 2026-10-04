@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { AccessToken } from "../../src/domain/auth/value-object/access-token/access-token";
-import { Header } from "../../src/domain/auth/value-object/header/header";
-import { UserId } from "../../src/domain";
-import type { EnvConfig } from "../../src/config";
+import { AccessToken } from "../../../../src/domain/auth/value-object/access-token/access-token";
+import { Header } from "../../../../src/domain/auth/value-object/header/header";
+import { UserId } from "../../../../src/domain";
+import type { EnvConfig } from "../../../../src/config";
 
 const TEST_USER_ID = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
 

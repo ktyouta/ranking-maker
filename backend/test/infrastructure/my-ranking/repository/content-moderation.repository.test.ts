@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import { ContentModerationTarget } from "../../../src/domain";
-import { ContentModerationRepository } from "../../../src/infrastructure/my-ranking/repository/content-moderation.repository";
+import { ContentModerationTarget } from "../../../../src/domain";
+import { ContentModerationRepository } from "../../../../src/infrastructure/my-ranking/repository/content-moderation.repository";
 
 describe("ContentModerationRepository", () => {
   it("廃止されたモデル(@cf/meta/llama-3-8b-instruct)を使用していないこと", async () => {

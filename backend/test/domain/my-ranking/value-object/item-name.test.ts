@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ItemName } from "../../src/domain/my-ranking/value-object/item-name/item-name";
+import { ItemName } from "../../../../src/domain/my-ranking/value-object/item-name/item-name";
 
 describe("ItemName", () => {
   it("通常の文字列を保持できること", () => {

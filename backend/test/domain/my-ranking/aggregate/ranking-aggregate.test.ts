@@ -14,8 +14,8 @@ import {
   RankingTagId,
   RankingTitle,
   TagId,
-} from "../../src/domain";
-import { UserId } from "../../src/domain/shared";
+} from "../../../../src/domain";
+import { UserId } from "../../../../src/domain/shared";
 
 function buildBaseParams() {
   return {

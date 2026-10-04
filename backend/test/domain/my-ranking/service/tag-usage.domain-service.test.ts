@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { TagId, TagUsageDomainService } from "../../src/domain";
-import type { ITagUsageRepository } from "../../src/domain";
-import { RankingId, UserId } from "../../src/domain/shared";
+import { TagId, TagUsageDomainService } from "../../../../src/domain";
+import type { ITagUsageRepository } from "../../../../src/domain";
+import { RankingId, UserId } from "../../../../src/domain/shared";
 
 describe("TagUsageDomainService", () => {
   let mockRepository: ITagUsageRepository;

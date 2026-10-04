@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { TagAggregate, TagId, TagName, TagResolutionDomainService } from "../../src/domain";
-import type { ITagResolutionRepository } from "../../src/domain";
-import { UserId } from "../../src/domain/shared";
+import { TagAggregate, TagId, TagName, TagResolutionDomainService } from "../../../../src/domain";
+import type { ITagResolutionRepository } from "../../../../src/domain";
+import { UserId } from "../../../../src/domain/shared";
 
 function buildExistingTag(id: string, name: string) {
   return TagAggregate.reconstruct({ tagId: TagId.of(id), userId: UserId.of("user-1"), tagName: new TagName(name) });

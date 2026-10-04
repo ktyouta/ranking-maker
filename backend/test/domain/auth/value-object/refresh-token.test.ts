@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { RefreshToken } from "../../src/domain/auth/value-object/refresh-token/refresh-token";
-import { Cookie, UserId } from "../../src/domain";
-import type { EnvConfig } from "../../src/config";
+import { RefreshToken } from "../../../../src/domain/auth/value-object/refresh-token/refresh-token";
+import { Cookie, UserId } from "../../../../src/domain";
+import type { EnvConfig } from "../../../../src/config";
 
 const TEST_USER_ID = "01ARZ3NDEKTSV4RRFFQ69G5FAV";
 

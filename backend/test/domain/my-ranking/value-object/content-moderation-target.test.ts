@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ContentModerationTarget } from "../../src/domain";
+import { ContentModerationTarget } from "../../../../src/domain";
 
 describe("ContentModerationTarget", () => {
   it("項目を持たない判定対象は項目の位置を持たないこと", () => {
