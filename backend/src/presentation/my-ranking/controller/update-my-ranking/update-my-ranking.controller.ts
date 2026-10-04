@@ -2,7 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { UpdateMyRankingUsecase } from "../../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../../constant";
-import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, RankingValidationError, RankingId, RankingTitleUniquenessDomainService, TagResolutionDomainService, TagUsageDomainService, UserId } from "../../../../domain";
+import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, type RankingValidationError, RankingId, RankingTitleUniquenessDomainService, TagResolutionDomainService, TagUsageDomainService, UserId } from "../../../../domain";
 import { ContentModerationRepository, IconValidityRepository, RankingTitleUniquenessRepository, TagResolutionRepository, TagUsageRepository, UpdateMyRankingRepository } from "../../../../infrastructure";
 import { authMiddleware } from "../../../../middleware";
 import { RankingIdParamSchema } from "../../../../schema";
@@ -107,7 +107,8 @@ const updateMyRanking = new Hono<AppEnv>().patch(API_ENDPOINT.MY_RANKING_ID,
           case "INAPPROPRIATE_CONTENT":
             return c.json({ message: "不適切な内容が含まれています。", data: error.targets.map(toInappropriateContentError) }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
           default: {
-            const _: never = error;
+            // 全てのエラー種別を網羅していることを型で保証する
+            error satisfies never;
             return c.json({ message: "サーバーエラー" }, HTTP_STATUS.INTERNAL_SERVER_ERROR);
           }
         }

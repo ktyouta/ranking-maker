@@ -78,6 +78,8 @@ Step 1 の目的に沿って内部構造を改善する。
 
 `npm run test --prefix backend -- --run`（フロントエンドは `--prefix frontend`）を実行し、全テストが引き続き通過することを確認する。
 
+テスト通過後、ルートで `npm run typecheck` と `npm run lint` を実行し、エラーが 0 件であることを確認する（テストでは RPC レスポンス型の変化を検出できないため、変更範囲によらず必ず実行する）。`npx tsc --noEmit` を frontend で直接実行しない（`frontend/tsconfig.json` は references のみで、チェック対象を持たない）。
+
 テストが落ちた場合はリファクタリングを見直す（振る舞いが変わっている可能性がある）。
 
 ---

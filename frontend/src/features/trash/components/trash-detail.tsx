@@ -3,7 +3,7 @@ import { MemoViewDialog } from '@/components/layouts/memo-view-dialog/memo-view-
 import { TagViewDialog } from '@/components/layouts/tag-view-dialog/tag-view-dialog';
 import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineDocumentText, HiOutlineTag } from 'react-icons/hi2';
 import { IoCalendarOutline } from 'react-icons/io5';
-import { ItemType, TrashItemCard } from './trash-item-card';
+import { type ItemType, TrashItemCard } from './trash-item-card';
 
 type PropsType = {
     title: string;

@@ -14,8 +14,8 @@ import { useTrashFilterTags } from "../api/get-trash-filter-tags";
 import { useTrashList } from "../api/get-trash-list";
 import { trashKeys } from "../api/query-key";
 import { TRASH_QUERY_KEY } from "../constants/trash-query-params";
-import { DEFAULT_TRASH_SORT, TRASH_SORT_OPTIONS, TrashSortType } from "../constants/trash-sort-options";
-import { initialTrashSearchFilter, MAX_FILTER_TAG_COUNT, TrashSearchFilter } from "../types/trash-search-filter";
+import { DEFAULT_TRASH_SORT, TRASH_SORT_OPTIONS, type TrashSortType } from "../constants/trash-sort-options";
+import { initialTrashSearchFilter, MAX_FILTER_TAG_COUNT, type TrashSearchFilter } from "../types/trash-search-filter";
 
 /**
  * ゴミ箱一覧画面用の状態を組み立てる

@@ -46,7 +46,7 @@ tools: Read, Glob, Grep
 - Props のインターフェースが明確に定義されているか
 - 再利用性が考慮されているか
 - Container / Presentational パターンが守られているか
-  - `features/sample/` がリファレンス実装
+  - `features/my-ranking/` が参考実装（`*-container.tsx` が Container、対応する `*.tsx` が Presentational）
 
 ### UI の一貫性
 - 既存コンポーネントと色・スペーシング・フォントサイズが統一されているか

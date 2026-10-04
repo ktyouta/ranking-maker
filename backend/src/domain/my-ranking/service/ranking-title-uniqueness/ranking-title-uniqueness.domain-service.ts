@@ -1,6 +1,6 @@
 import { RankingTitle } from "../../value-object";
 import { RankingId, UserId } from "../../../shared";
-import { IRankingTitleUniquenessRepository } from "../../repository";
+import { type IRankingTitleUniquenessRepository } from "../../repository";
 import { RankingAggregate } from "../../aggregate";
 
 type PropsType = {

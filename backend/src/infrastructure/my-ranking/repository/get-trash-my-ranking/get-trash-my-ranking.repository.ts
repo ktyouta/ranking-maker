@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { IGetTrashMyRankingRepository, RankingId, TrashMyRankingOrderType, TrashMyRankingTagType, TrashMyRankingType } from "../../../../domain";
+import { type IGetTrashMyRankingRepository, RankingId, type TrashMyRankingOrderType, type TrashMyRankingTagType, type TrashMyRankingType } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { publicStatusMaster, rankingMaster, rankingOrderMaster, rankingTagMaster, tagMaster, type Database } from "../../../db";
 

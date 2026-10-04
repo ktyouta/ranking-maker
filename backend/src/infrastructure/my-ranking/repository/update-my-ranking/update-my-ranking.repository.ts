@@ -1,5 +1,5 @@
 import { and, eq, inArray, notExists } from "drizzle-orm";
-import { ItemMemo, ItemName, IUpdateMyRankingRepository, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTagEntity, RankingTagId, RankingTitle, TagAggregate, TagId } from "../../../../domain";
+import { ItemMemo, ItemName, type IUpdateMyRankingRepository, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTagEntity, RankingTagId, RankingTitle, TagAggregate, TagId } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { chunk } from "../../../../util";
 import { D1_MAX_IN_CLAUSE_VALUES, rankingMaster, rankingOrderMaster, rankingTagMaster, tagMaster, type Database } from "../../../db";

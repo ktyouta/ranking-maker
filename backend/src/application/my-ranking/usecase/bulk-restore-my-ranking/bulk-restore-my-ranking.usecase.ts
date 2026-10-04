@@ -1,4 +1,4 @@
-import { IBulkRestoreMyRankingRepository, RankingId, RankingTitleUniquenessDomainService } from "../../../../domain";
+import { type IBulkRestoreMyRankingRepository, RankingId, RankingTitleUniquenessDomainService } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { BulkRestoreMyRankingResultDto } from "../../dto";
 

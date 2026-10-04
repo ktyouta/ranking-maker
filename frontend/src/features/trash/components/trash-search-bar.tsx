@@ -2,8 +2,8 @@ import { Button, DatePicker, Textbox } from '@/components';
 import { useState } from 'react';
 import { HiOutlineTag } from 'react-icons/hi2';
 import { IoChevronDown, IoChevronUp, IoOptionsOutline, IoSearchOutline, IoSwapVerticalOutline } from 'react-icons/io5';
-import { DEFAULT_TRASH_SORT, TRASH_SORT_OPTIONS, TrashSortType } from '../constants/trash-sort-options';
-import { TrashSearchFilter } from '../types/trash-search-filter';
+import { DEFAULT_TRASH_SORT, TRASH_SORT_OPTIONS, type TrashSortType } from '../constants/trash-sort-options';
+import { type TrashSearchFilter } from '../types/trash-search-filter';
 
 type PropsType = {
     searchCondition: TrashSearchFilter;

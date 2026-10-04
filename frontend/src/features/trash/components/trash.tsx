@@ -1,8 +1,8 @@
 import { Dialog, LoadingOverlay, Pagination, ScrollToTopButton } from '@/components';
 import { TagFilterDialog } from '@/components/layouts/tag-filter-dialog/tag-filter-dialog';
 import { IoTrashBinOutline } from 'react-icons/io5';
-import { TrashSortType } from '../constants/trash-sort-options';
-import { MAX_FILTER_TAG_COUNT, TrashSearchFilter } from '../types/trash-search-filter';
+import { type TrashSortType } from '../constants/trash-sort-options';
+import { MAX_FILTER_TAG_COUNT, type TrashSearchFilter } from '../types/trash-search-filter';
 import { BulkActionBar } from './bulk-action-bar';
 import { TrashCard } from './trash-card';
 import { TrashSearchBar } from './trash-search-bar';

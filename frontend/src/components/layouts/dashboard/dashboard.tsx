@@ -1,4 +1,4 @@
-import { LoginUserType } from '@/app/api/verify';
+import { type LoginUserType } from '@/app/api/verify';
 import { Button, Footer } from '@/components';
 import type { ReactNode } from 'react';
 import { useState } from 'react';

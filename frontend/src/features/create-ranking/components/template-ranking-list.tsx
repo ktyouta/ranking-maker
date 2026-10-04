@@ -1,4 +1,4 @@
-import { MyRankingListReturnType } from '@/app/api/get-my-rankings';
+import { type MyRankingListReturnType } from '@/app/api/get-my-rankings';
 import { Pagination } from '@/components';
 
 type PropsType = {

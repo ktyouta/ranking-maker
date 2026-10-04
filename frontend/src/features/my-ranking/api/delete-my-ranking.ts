@@ -1,6 +1,6 @@
 import { rpc } from '@/lib/rpc-client';
 import { useMutation } from '@tanstack/react-query';
-import { InferResponseType } from 'hono/client';
+import { type InferResponseType } from 'hono/client';
 
 const endpoint = rpc.api.v1['my-ranking'][':rankingId'].$delete;
 

@@ -1,4 +1,4 @@
-import { ThemeType } from '@/app/components/theme-provider';
+import { type ThemeType } from '@/constants/theme';
 import { Dialog } from '@/components';
 import { HiCheck } from 'react-icons/hi2';
 

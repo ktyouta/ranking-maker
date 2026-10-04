@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { IGetTagsRepository, TagMasterRecord } from "../../../../domain";
+import { type IGetTagsRepository, type TagMasterRecord } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { tagMaster, type Database } from "../../../db";
 

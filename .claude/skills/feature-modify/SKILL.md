@@ -116,7 +116,8 @@ docs/[機能名]/spec.md が存在する場合のみ実施する。
 - 全ての要件項目が差分設計（エンドポイント・Usecase・Repository・コンポーネント）に反映されているか
 
 ### フォルダ構成チェック（CLAUDE.md 準拠）
-- `domain/{機能}/`（entity, value-object, repository interface）、`application/{機能}/usecase/`、`infrastructure/{機能}/repository/`、`presentation/{機能}/`（controller, dto, schema）の4層構成に沿っているか
+- `domain/{機能}/`（entity, value-object, repository interface。必要に応じて aggregate, service）、`application/{機能}/`（usecase, dto）、`infrastructure/{機能}/repository/`、`presentation/{機能}/`（controller, schema）の4層構成に沿っているか
+- バックエンドのファイルが1単位1フォルダ（`<名前>/<名前>.<種別>.ts` + `index.ts`）になっており、テストも同じフォルダに置かれているか
 - エンドポイント単位のファイル分割になっているか
 - repository に .interface.ts が `domain/` 側にセットで存在するか
 - Container に -container.tsx サフィックスがついているか
@@ -243,6 +244,7 @@ Step 6・9・10 でいずれかの NG があった場合、skill-gap-detector �
 - Step 3（horizontal-scope）は省略しない。Step 4 の差分設計に「horizontal-scope 実行結果」欄を必ず含める（対応不要と判断した場合もその旨を明記する。無言でスキップしない）
 - ユーザー確認（Step 4・7）では必ずユーザーの明示的な OK を得てから次に進む。Step 7 はマイグレーション適用可否など他の確認作業と混同して省略しない
 - 既存テストが存在する場合は、変更後も通過するか確認する
+- バックエンド・フロントエンドの実装完了後は、ルートで `npm run typecheck` と `npm run lint` を実行し、エラーが 0 件であることを確認する
 - 指示にない機能を変更に追加しない
 - エラーや NG を無視して次のステップに進まない
 - schema.ts を変更した場合は必ず `db:generate` を実行する。`drizzle/*.sql` を手動作成しない

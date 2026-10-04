@@ -1,5 +1,4 @@
-import type { UserId } from "../../../shared";
-import type { UserName } from "../../../user";
+import type { UserId, UserName } from "../../../shared";
 import type { Pepper, UserSalt } from "../../value-object";
 import { UserPassword } from "../../value-object";
 

@@ -1,6 +1,6 @@
 import { rpc } from '@/lib/rpc-client';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { InferResponseType } from 'hono';
+import { type InferResponseType } from 'hono';
 import { TRASH_QUERY_KEY } from '../constants/trash-query-params';
 import { trashKeys } from './query-key';
 

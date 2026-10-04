@@ -47,7 +47,8 @@ const restoreMyRanking = new Hono<AppEnv>().patch(API_ENDPOINT.MY_RANKING_TRASH_
           case "DUPLICATE_TITLE":
             return c.json({ message: "同名のランキングが存在します。" }, HTTP_STATUS.CONFLICT);
           default: {
-            const _: never = error;
+            // 全てのエラー種別を網羅していることを型で保証する
+            error satisfies never;
             return c.json({ message: "サーバーエラー" }, HTTP_STATUS.INTERNAL_SERVER_ERROR);
           }
         }

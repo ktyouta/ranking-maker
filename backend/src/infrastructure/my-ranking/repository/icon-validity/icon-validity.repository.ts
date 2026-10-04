@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { IIconValidityRepository, RankingIcon } from "../../../../domain";
+import { type IIconValidityRepository, RankingIcon } from "../../../../domain";
 import { iconMaster, type Database } from "../../../db";
 
 /**

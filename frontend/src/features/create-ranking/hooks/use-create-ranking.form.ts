@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DEFAULT_ICON_ID } from "@/constants/icon";
 import { useFieldArray, useForm } from "react-hook-form";
-import { CreateRankingRequestSchema, CreateRankingRequestType } from "../types/create-ranking-request-type";
+import { CreateRankingRequestSchema, type CreateRankingRequestType } from "../types/create-ranking-request-type";
 
 const INITIAL_ITEM_COUNT = 3;
 

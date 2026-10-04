@@ -10,15 +10,15 @@ import { formatDaysAgo } from "@/utils/date-util";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { MyRankingListQueryDataType, useMyRankings } from "@/app/api/get-my-rankings";
+import { type MyRankingListQueryDataType, useMyRankings } from "@/app/api/get-my-rankings";
 import { myRankingKeys } from "@/app/api/query-key";
 import { useBulkDeleteMyRankingMutation } from "../api/bulk-delete-my-ranking";
 import { useExportMyRankingCsvMutation } from "../api/export-my-ranking-csv";
 import { useFilterTags } from "../api/get-filter-tags";
 import { useToggleMyRankingFavoriteMutation } from "../api/toggle-my-ranking-favorite";
 import { MY_RANKING_QUERY_KEY } from "../constants/my-ranking-query-params";
-import { DEFAULT_MY_RANKING_SORT, MY_RANKING_SORT_OPTIONS, MyRankingSortType } from "../constants/my-ranking-sort-options";
-import { initialMyRankingSearchFilter, MAX_FILTER_TAG_COUNT, MyRankingSearchFilter } from "../types/my-ranking-search-filter";
+import { DEFAULT_MY_RANKING_SORT, MY_RANKING_SORT_OPTIONS, type MyRankingSortType } from "../constants/my-ranking-sort-options";
+import { initialMyRankingSearchFilter, MAX_FILTER_TAG_COUNT, type MyRankingSearchFilter } from "../types/my-ranking-search-filter";
 
 /**
  * マイランキング一覧画面用の状態を組み立てる

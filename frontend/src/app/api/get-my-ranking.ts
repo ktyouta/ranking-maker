@@ -1,6 +1,6 @@
 import { rpc } from '@/lib/rpc-client';
 import { QueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { InferResponseType } from 'hono';
+import { type InferResponseType } from 'hono';
 import { myRankingKeys } from './query-key';
 
 const endpoint = rpc.api.v1['my-ranking'][':rankingId'].$get;

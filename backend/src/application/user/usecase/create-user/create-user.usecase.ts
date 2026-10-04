@@ -1,7 +1,7 @@
 import type { EnvConfig } from "../../../../config";
 import { AccessToken, Pepper, RefreshToken, UserLoginEntity, UserPassword, UserSalt } from "../../../../domain/auth";
-import { UserId } from "../../../../domain/shared";
-import { UserBirthday, UserEntity, UserName, UserTheme } from "../../../../domain/user";
+import { UserId, UserName } from "../../../../domain/shared";
+import { UserBirthday, UserEntity, UserTheme } from "../../../../domain/user";
 import type { ICreateUserRepository } from "../../../../domain/user";
 import { CreateUserResultDto } from "../../dto";
 

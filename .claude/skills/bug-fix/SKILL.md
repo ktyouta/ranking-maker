@@ -102,6 +102,8 @@ Step 3 のテストが通るように修正する。
 
 `npm run test --prefix backend -- --run`（フロントエンドは `--prefix frontend`）でテストが通ることを確認する。`npm run test` 単体は watch モードで終了しないため使わない。
 
+テスト通過後、ルートで `npm run typecheck` と `npm run lint` を実行し、エラーが 0 件であることを確認する。
+
 ---
 
 ### Step 6: 横展開確認

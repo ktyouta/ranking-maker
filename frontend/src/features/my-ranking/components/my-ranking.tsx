@@ -1,8 +1,8 @@
 import { Dialog, LoadingOverlay, Pagination, ScrollToTopButton } from '@/components';
 import { TagFilterDialog } from '@/components/layouts/tag-filter-dialog/tag-filter-dialog';
 import { IoTrophyOutline } from 'react-icons/io5';
-import { MyRankingSortType } from '../constants/my-ranking-sort-options';
-import { MAX_FILTER_TAG_COUNT, MyRankingSearchFilter } from '../types/my-ranking-search-filter';
+import { type MyRankingSortType } from '../constants/my-ranking-sort-options';
+import { MAX_FILTER_TAG_COUNT, type MyRankingSearchFilter } from '../types/my-ranking-search-filter';
 import { BulkActionBar } from './bulk-action-bar';
 import { MyRankingSearchBar } from './my-ranking-search-bar';
 import { RankingCard } from './ranking-card';

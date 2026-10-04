@@ -1,4 +1,4 @@
-import { IGetFilterTagsRepository } from "../../../../domain";
+import { type IGetFilterTagsRepository } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { GetFilterTagsResultDto } from "../../dto";
 

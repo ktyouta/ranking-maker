@@ -1,5 +1,5 @@
 import { and, eq, exists } from "drizzle-orm";
-import { IGetFilterTagsRepository, TagMasterRecord } from "../../../../domain";
+import { type IGetFilterTagsRepository, type TagMasterRecord } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { rankingTagMaster, tagMaster, type Database } from "../../../db";
 

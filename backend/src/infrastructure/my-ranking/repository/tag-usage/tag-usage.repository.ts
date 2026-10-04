@@ -1,5 +1,5 @@
 import { and, eq, inArray, ne } from "drizzle-orm";
-import { ITagUsageRepository, TagId } from "../../../../domain";
+import { type ITagUsageRepository, TagId } from "../../../../domain";
 import { RankingId, UserId } from "../../../../domain/shared";
 import { chunk } from "../../../../util";
 import { D1_MAX_IN_CLAUSE_VALUES, rankingTagMaster, type Database } from "../../../db";

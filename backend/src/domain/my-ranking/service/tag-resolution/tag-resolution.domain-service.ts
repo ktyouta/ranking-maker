@@ -1,6 +1,6 @@
 import { UserId } from "../../../shared";
 import { TagAggregate } from "../../aggregate";
-import { ITagResolutionRepository } from "../../repository";
+import { type ITagResolutionRepository } from "../../repository";
 import { TagName } from "../../value-object";
 
 type PropsType = {

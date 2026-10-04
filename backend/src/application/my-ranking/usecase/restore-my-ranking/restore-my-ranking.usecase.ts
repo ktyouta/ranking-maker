@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { IRestoreMyRankingRepository, RankingId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../../domain";
+import { type IRestoreMyRankingRepository, RankingId, RankingTitle, RankingTitleUniquenessDomainService } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { RestoreMyRankingResultDto } from "../../dto";
 

@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { IconMasterRecord, IGetIconsRepository } from "../../../../domain";
+import { type IconMasterRecord, type IGetIconsRepository } from "../../../../domain";
 import { iconMaster, type Database } from "../../../db";
 
 /**

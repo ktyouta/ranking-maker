@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, ItemMemo, ItemName, IUpdateMyRankingRepository, Order, PublicStatus, RankingValidationError, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTagEntity, RankingTagId, RankingTitle, RankingTitleUniquenessDomainService, TagId, TagName, TagResolutionDomainService, TagUsageDomainService } from "../../../../domain";
+import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, ItemMemo, ItemName, type IUpdateMyRankingRepository, Order, PublicStatus, type RankingValidationError, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTagEntity, RankingTagId, RankingTitle, RankingTitleUniquenessDomainService, TagId, TagName, TagResolutionDomainService, TagUsageDomainService } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { UpdateMyRankingResultDto } from "../../dto";
 

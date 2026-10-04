@@ -1,4 +1,4 @@
-import { IBulkSoftDeleteMyRankingRepository, RankingId } from "../../../../domain";
+import { type IBulkSoftDeleteMyRankingRepository, RankingId } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { BulkSoftDeleteMyRankingResultDto } from "../../dto";
 

@@ -1,9 +1,9 @@
 import { Textarea, Textbox } from '@/components';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { FieldArrayWithId, FieldErrors, UseFormRegister } from 'react-hook-form';
+import { type FieldArrayWithId, type FieldErrors, type UseFormRegister } from 'react-hook-form';
 import { HiOutlineBars3, HiOutlineChevronDown, HiOutlineChevronUp, HiOutlineTrash } from 'react-icons/hi2';
-import { CreateRankingRequestType } from '../types/create-ranking-request-type';
+import { type CreateRankingRequestType } from '../types/create-ranking-request-type';
 
 export type ItemFieldType = FieldArrayWithId<CreateRankingRequestType, 'items', 'id'>;
 

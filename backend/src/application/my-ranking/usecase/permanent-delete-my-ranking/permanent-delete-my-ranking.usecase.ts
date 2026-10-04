@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { IPermanentDeleteMyRankingRepository, RankingId, TagUsageDomainService } from "../../../../domain";
+import { type IPermanentDeleteMyRankingRepository, RankingId, TagUsageDomainService } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 
 export type PermanentDeleteMyRankingError =

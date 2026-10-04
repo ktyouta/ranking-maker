@@ -1,4 +1,4 @@
-import { IGetMyRankingExportRepository, RankingId } from "../../../../domain";
+import { type IGetMyRankingExportRepository, RankingId } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { GetMyRankingExportResultDto } from "../../dto";
 

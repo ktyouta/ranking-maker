@@ -1,5 +1,5 @@
 import { and, eq, ne } from "drizzle-orm";
-import { IRankingTitleUniquenessRepository, RankingId, RankingTitle } from "../../../../domain";
+import { type IRankingTitleUniquenessRepository, RankingId, RankingTitle } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { rankingMaster, type Database } from "../../../db";
 

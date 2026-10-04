@@ -1,4 +1,4 @@
-import { IGetListMyRankingRepository, MyRankingQueryType } from "../../../../domain";
+import { type IGetListMyRankingRepository, type MyRankingQueryType } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { GetListMyRankingResultDto } from "../../dto";
 

@@ -1,6 +1,6 @@
-# React Vite Template
+# RankingMaker フロントエンド
 
-React + TypeScript + Vite を使用したフロントエンド開発用テンプレートです。
+RankingMaker のフロントエンド（React + TypeScript + Vite）。
 
 ## 技術スタック
 
@@ -13,7 +13,7 @@ React + TypeScript + Vite を使用したフロントエンド開発用テンプ
 | 状態管理 | React Query (TanStack Query) |
 | ルーティング | React Router v7 |
 | フォーム | React Hook Form + Zod |
-| API通信 | Axios |
+| API通信 | Hono RPC クライアント（`lib/rpc-client.ts`。Axios はリフレッシュトークン専用） |
 | テスト | Vitest + Testing Library |
 | コンポーネントカタログ | Storybook |
 | Linting | ESLint |
@@ -55,6 +55,9 @@ npm run storybook
 # テスト実行
 npm run test
 
+# 型チェック（バックエンドの型定義の生成も含む）
+npm run typecheck
+
 # Lintチェック
 npm run lint
 
@@ -70,18 +73,21 @@ src/
 │   ├── components/         # App, Router, ProtectedRoute等
 ├── components/             # 共通コンポーネント
 │   ├── ui/                 # UIプリミティブ (Button, Textbox等)
+│   ├── layouts/            # レイアウト・共通ダイアログ
 │   └── pages/              # ページレベルコンポーネント (NotFound, Loading等)
 ├── config/                 # 設定 (paths, env)
-├── features/               # 機能別モジュール
+├── constants/              # アプリ全体の定数・定数に対応する型（テーマ等）
+├── features/               # 機能別モジュール（home, login, my-ranking, trash 等）
 │   └── [feature]/
-│       ├── api/            # API呼び出し
-│       ├── components/     # 機能固有コンポーネント
+│       ├── api/            # API呼び出し（RPC）
+│       ├── components/     # 機能固有コンポーネント（Container / Presentational）
+│       ├── constants/      # 機能固有定数
 │       ├── hooks/          # 機能固有フック
 │       └── types/          # 機能固有型定義
 ├── hooks/                  # 共通カスタムフック
-├── lib/                    # 外部ライブラリラッパー
-├── testing/                # テスト設定・ユーティリティ
-├── types/                  # 共通型定義
+├── lib/                    # 外部ライブラリラッパー（RPC クライアント等）
+├── stores/                 # グローバルな状態（アクセストークン等）
+├── testing/                # テスト設定
 └── utils/                  # ユーティリティ関数
 ```
 

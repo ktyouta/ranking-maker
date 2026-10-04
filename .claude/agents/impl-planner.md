@@ -25,10 +25,10 @@ tools: Read, Glob, Grep
 4. リポジトリ実装（infrastructure/<機能>/repository/）
 5. ユースケース実装（application/<機能>/usecase/）
 6. コントローラー実装（presentation/<機能>/controller/）
-7. ルーター定義（presentation/<機能>/index.ts）
-8. RPC 集約への登録（rpc/index.ts）
+7. ルーター定義（presentation/<機能>/controller/<機能>/<機能>.controller.ts）
+8. ルーターの登録（src/index.ts の `.route()`）
 9. フロントエンド実装（features/<機能>/）
-10. テスト実装
+10. テスト実装（バックエンドは実装と同じ単位フォルダ。例: application/<機能>/usecase/<名前>/<名前>.usecase.test.ts）
 ```
 
 **機能がどのモジュール（`user` / `auth` / 等）に属するかは「変更理由の一致」で判断する。** 新しい機能が既存モジュールのどれにも当てはまらない場合のみ新規モジュールを切る。
@@ -51,7 +51,10 @@ tools: Read, Glob, Grep
 - `@/` パスエイリアスを使わない（相対パスで記述）
 - Zod v3 を使う（v4 は使わない）
 - `createEnvConfig(c.env)` で環境変数を取得する
-- 新しいルーターは `rpc/index.ts` に登録する
+- 新しいルーターは `src/index.ts` に登録する（`rpc/index.ts` は `AppType` の型再 export 専用）
+- バックエンドのファイルは1単位1フォルダ（`<名前>/<名前>.<種別>.ts` + `index.ts`）で配置する
+- テストファイルは実装ファイルと同じ単位フォルダに配置する（`backend/test/` はマイグレーション適用・型定義の設定専用）
+- 複数のドメインで共有する VO（`UserId` / `UserName` 等）は `domain/shared/` に置く
 
 ### フロントエンド
 - 通常の API 呼び出しは `lib/rpc-client.ts` の `rpc` を使う

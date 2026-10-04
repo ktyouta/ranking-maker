@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ContentModerationTarget, IContentModerationRepository } from "../../../../domain";
+import { ContentModerationTarget, type IContentModerationRepository } from "../../../../domain";
 
 // AIモデル
 // @cf/meta/llama-3-8b-instruct は 2026-05-30 に廃止された。

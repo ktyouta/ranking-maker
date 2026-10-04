@@ -11,7 +11,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState, type KeyboardEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useUpdateMyRankingMutation, ViolationType } from '../api/update-my-ranking';
+import { useUpdateMyRankingMutation, type ViolationType } from '../api/update-my-ranking';
 import { MAX_TAG_COUNT, TAG_NAME_MAX_LENGTH } from '../types/update-my-ranking-request-type';
 import { useUpdateMyRankingForm } from './use-update-my-ranking.form';
 

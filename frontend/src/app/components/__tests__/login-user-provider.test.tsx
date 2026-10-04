@@ -1,7 +1,7 @@
 import { resetLogin } from "@/stores/access-token-store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, render } from "@testing-library/react";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, test } from "vitest";
 import { LoginUserProvider } from "../login-user-provider";

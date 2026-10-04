@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { IRestoreMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTagEntity, RankingTagId, RankingTitle, TagId } from "../../../../domain";
+import { type IRestoreMyRankingRepository, ItemMemo, ItemName, Order, PublicStatus, RankingAggregate, RankingIcon, RankingId, RankingMemo, RankingOrderEntity, RankingOrderId, RankingTagEntity, RankingTagId, RankingTitle, TagId } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { rankingMaster, rankingOrderMaster, rankingTagMaster, type Database } from "../../../db";
 

@@ -2,10 +2,11 @@ import { paths } from "@/config/paths";
 import { registerResetLogin } from "@/stores/access-token-store";
 import { createCtx } from "@/utils/create-ctx";
 import { useQueryClient } from "@tanstack/react-query";
-import { ReactNode, useEffect, useState } from "react";
+import { isThemeType } from "@/constants/theme";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LoginUserType } from "../api/verify";
-import { isThemeType, SetThemeContext } from "./theme-provider";
+import { type LoginUserType } from "../api/verify";
+import { SetThemeContext } from "./theme-provider";
 
 // ログインユーザー情報
 export const LoginUserContext = createCtx<LoginUserType | null>();
@@ -31,33 +32,34 @@ export function LoginUserProvider(props: PropsType) {
     /**
      * ログイン画面に遷移
      */
-    function moveLogin() {
+    const moveLogin = useCallback(() => {
         navigate(paths.login.path);
-    }
+    }, [navigate]);
 
     /**
      * ユーザー情報をリセット
      * 別ユーザーのログイン時に前ユーザーのキャッシュが表示されないよう、全キャッシュをクリアする
      */
-    function resetUser() {
+    const resetUser = useCallback(() => {
         setLoginUser(null);
         queryClient.clear();
-    }
+    }, [queryClient]);
 
-    // ログインリセット処理を登録
+    // ログインリセット処理を登録（登録は上書きのため、依存が変わった場合は最新の処理で登録し直す）
     useEffect(() => {
         registerResetLogin({
             resetUser,
             moveLogin,
         });
-    }, []);
+    }, [resetUser, moveLogin]);
 
     // ログインユーザーのテーマ設定をThemeContextに反映
+    const theme = loginUser?.theme;
     useEffect(() => {
-        if (loginUser && isThemeType(loginUser.theme)) {
-            setTheme(loginUser.theme);
+        if (theme !== undefined && isThemeType(theme)) {
+            setTheme(theme);
         }
-    }, [loginUser?.theme, setTheme]);
+    }, [theme, setTheme]);
 
     return (
         <LoginUserContext.Provider value={loginUser}>

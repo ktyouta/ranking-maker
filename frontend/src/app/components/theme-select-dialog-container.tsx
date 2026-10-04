@@ -3,7 +3,8 @@ import { ThemeSelectDialog } from '@/components/layouts/theme-select-dialog/them
 import { useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { LoginUserContext, SetLoginUserContext } from './login-user-provider';
-import { SetThemeContext, ThemeContext, ThemeType } from './theme-provider';
+import { type ThemeType } from '@/constants/theme';
+import { SetThemeContext, ThemeContext } from './theme-provider';
 
 type PropsType = {
     isOpen: boolean;
@@ -27,10 +28,11 @@ export function ThemeSelectDialogContainer(props: PropsType) {
      * テーマ選択
      * @param next 選択されたテーマ
      */
+    const { onClose } = props;
     const handleSelect = useCallback((next: ThemeType) => {
         const previousTheme = theme;
         setTheme(next);
-        props.onClose();
+        onClose();
 
         if (!loginUser) {
             return;
@@ -53,7 +55,7 @@ export function ThemeSelectDialogContainer(props: PropsType) {
                 },
             }
         );
-    }, [loginUser, setTheme, setLoginUserInfo, updateThemeMutation]);
+    }, [theme, onClose, loginUser, setTheme, setLoginUserInfo, updateThemeMutation]);
 
     return (
         <ThemeSelectDialog

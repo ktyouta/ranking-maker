@@ -1,5 +1,5 @@
 import { and, eq, inArray } from "drizzle-orm";
-import { IGetMyRankingExportRepository, RankingId, MyRankingExportOrderType, MyRankingExportType } from "../../../../domain";
+import { type IGetMyRankingExportRepository, RankingId, type MyRankingExportOrderType, type MyRankingExportType } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { chunk } from "../../../../util";
 import { D1_MAX_IN_CLAUSE_VALUES, rankingMaster, rankingOrderMaster, type Database } from "../../../db";

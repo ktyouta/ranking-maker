@@ -1,4 +1,4 @@
-import { IGetTrashListMyRankingRepository, TrashMyRankingQueryType } from "../../../../domain";
+import { type IGetTrashListMyRankingRepository, type TrashMyRankingQueryType } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { GetTrashListMyRankingResultDto } from "../../dto";
 

@@ -1,5 +1,5 @@
 import { and, asc, count, desc, eq, exists, gte, like, lte, or, type SQL, type SQLWrapper } from "drizzle-orm";
-import { IGetListMyRankingRepository, MyRankingListType, MyRankingQueryType, RankingSort, RankingSortType } from "../../../../domain";
+import { type IGetListMyRankingRepository, type MyRankingListType, type MyRankingQueryType, RankingSort, type RankingSortType } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import type { Database } from "../../../db";
 import { publicStatusMaster, rankingMaster, rankingOrderMaster, rankingTagMaster, tagMaster, userMaster } from "../../../db";

@@ -9,7 +9,7 @@ import { TrashContainer } from '@/features/trash/components/trash-container';
 import { TrashDetailContainer } from '@/features/trash/components/trash-detail-container';
 import { UpdatePasswordContainer } from '@/features/updatepassword/components/update-password-container';
 import { UpdateUserContainer } from '@/features/updateuser/components/update-user-container';
-import { useEffect } from 'react';
+import { useEffect, useEffectEvent } from 'react';
 import { Navigate, useLocation, useNavigationType, useRoutes } from 'react-router-dom';
 import { DashboardContainer } from './dashboard-container';
 import { GuestRoute } from './guest-route';
@@ -104,10 +104,16 @@ export const AppRouter = () => {
     const { pathname } = useLocation();
     const navigationType = useNavigationType();
 
-    useEffect(() => {
+    // ページ遷移時に先頭へスクロールする（ブラウザの戻る・進むではスクロール位置を保つ）
+    const scrollToTopOnNavigate = useEffectEvent(() => {
         if (navigationType !== "POP") {
             window.scrollTo(0, 0);
         }
+    });
+
+    // ページ遷移（pathname の変化）時だけ実行する
+    useEffect(() => {
+        scrollToTopOnNavigate();
     }, [pathname]);
 
     return router;

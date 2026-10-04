@@ -1,5 +1,5 @@
 import { RankingIcon } from "../../value-object";
-import { IIconValidityRepository } from "../../repository";
+import { type IIconValidityRepository } from "../../repository";
 
 export class IconValidityDomainService {
 

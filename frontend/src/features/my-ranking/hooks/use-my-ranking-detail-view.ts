@@ -1,6 +1,6 @@
 import { useIcons } from '@/app/api/get-icons';
-import { MyRankingDetailQueryDataType, useMyRanking } from '@/app/api/get-my-ranking';
-import { MyRankingListQueryDataType } from '@/app/api/get-my-rankings';
+import { type MyRankingDetailQueryDataType, useMyRanking } from '@/app/api/get-my-ranking';
+import { type MyRankingListQueryDataType } from '@/app/api/get-my-rankings';
 import { myRankingKeys } from '@/app/api/query-key';
 import { paths } from '@/config/paths';
 import { PUBLIC_STATUS } from '@/constants/public-status';

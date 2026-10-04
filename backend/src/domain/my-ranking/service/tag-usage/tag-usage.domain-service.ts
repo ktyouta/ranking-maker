@@ -1,5 +1,5 @@
 import { RankingId, UserId } from "../../../shared";
-import { ITagUsageRepository } from "../../repository";
+import { type ITagUsageRepository } from "../../repository";
 import { TagId } from "../../value-object";
 
 type PropsType = {

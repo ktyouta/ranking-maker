@@ -1,14 +1,14 @@
-import { IconType } from '@/app/api/get-icons';
+import { type IconType } from '@/app/api/get-icons';
 import { ErrorAlert, LoadingOverlay, ScrollToTopButton, Textarea, Textbox } from '@/components';
 import { IconSelectDialog } from '@/components/layouts/icon-select-dialog/icon-select-dialog';
 import { TagSelectDialog } from '@/components/layouts/tag-select-dialog/tag-select-dialog';
-import { closestCenter, DndContext, DragEndEvent, SensorDescriptor, SensorOptions } from '@dnd-kit/core';
+import { closestCenter, DndContext, type DragEndEvent, type SensorDescriptor, type SensorOptions } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { BaseSyntheticEvent, type KeyboardEvent } from 'react';
-import { Control, FieldErrors, UseFormRegister } from 'react-hook-form';
+import { type BaseSyntheticEvent, type KeyboardEvent } from 'react';
+import { type Control, type FieldErrors, type UseFormRegister } from 'react-hook-form';
 import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineTag } from 'react-icons/hi2';
-import { MAX_TAG_COUNT, UpdateMyRankingRequestType } from '../types/update-my-ranking-request-type';
-import { ItemFieldType, ItemRow } from './item-row';
+import { MAX_TAG_COUNT, type UpdateMyRankingRequestType } from '../types/update-my-ranking-request-type';
+import { type ItemFieldType, ItemRow } from './item-row';
 
 type PropsType = {
     title: string;
@@ -57,7 +57,6 @@ export function MyRankingDetailEdit(props: PropsType) {
         errMessage,
         violations,
         register,
-        control,
         errors,
         items,
         sensors,

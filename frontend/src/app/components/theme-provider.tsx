@@ -1,9 +1,8 @@
+import { isThemeType, type ThemeType } from '@/constants/theme';
 import { createCtx } from '@/utils/create-ctx';
-import { ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 
 const THEME_STORAGE_KEY = 'rm-theme';
-
-export type ThemeType = 'teal' | 'lavender' | 'peach' | 'dark';
 
 // テーマ状態
 export const ThemeContext = createCtx<ThemeType>();
@@ -13,13 +12,6 @@ export const SetThemeContext = createCtx<React.Dispatch<React.SetStateAction<The
 type PropsType = {
     children: ReactNode;
 };
-
-/**
- * ThemeType の値かどうかを判定する
- */
-export function isThemeType(value: string | null): value is ThemeType {
-    return value === 'teal' || value === 'lavender' || value === 'peach' || value === 'dark';
-}
 
 /**
  * localStorage からテーマ初期値を取得

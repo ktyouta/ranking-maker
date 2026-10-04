@@ -1,5 +1,5 @@
 import { err, ok, Result } from "neverthrow";
-import { ISoftDeleteMyRankingRepository, RankingId } from "../../../../domain";
+import { type ISoftDeleteMyRankingRepository, RankingId } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 
 export type SoftDeleteMyRankingError =

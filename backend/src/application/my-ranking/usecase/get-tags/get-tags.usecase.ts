@@ -1,4 +1,4 @@
-import { IGetTagsRepository } from "../../../../domain";
+import { type IGetTagsRepository } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { GetTagsResultDto } from "../../dto";
 

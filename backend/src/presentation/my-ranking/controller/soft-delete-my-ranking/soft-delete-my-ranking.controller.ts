@@ -43,7 +43,8 @@ const softDeleteMyRanking = new Hono<AppEnv>().delete(API_ENDPOINT.MY_RANKING_ID
           case "IS_FAVORITE":
             return c.json({ message: "お気に入り登録済みのため削除できません" }, HTTP_STATUS.CONFLICT);
           default: {
-            const _: never = error;
+            // 全てのエラー種別を網羅していることを型で保証する
+            error satisfies never;
             return c.json({ message: "サーバーエラー" }, HTTP_STATUS.INTERNAL_SERVER_ERROR);
           }
         }

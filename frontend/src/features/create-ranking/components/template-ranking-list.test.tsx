@@ -1,4 +1,4 @@
-import { MyRankingListReturnType } from '@/app/api/get-my-rankings';
+import { type MyRankingListReturnType } from '@/app/api/get-my-rankings';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import { TemplateRankingList } from './template-ranking-list';

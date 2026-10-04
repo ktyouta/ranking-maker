@@ -12,7 +12,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState, type KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useCreateRankingMutation, ViolationType } from '../api/create-ranking';
+import { useCreateRankingMutation, type ViolationType } from '../api/create-ranking';
 import { MAX_TAG_COUNT, TAG_NAME_MAX_LENGTH } from '../types/create-ranking-request-type';
 import { getCreateRankingDefaultValues, useCreateRankingForm } from './use-create-ranking.form';
 

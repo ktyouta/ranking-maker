@@ -1,4 +1,4 @@
-import { IGetIconsRepository } from "../../../../domain";
+import { type IGetIconsRepository } from "../../../../domain";
 import { GetIconsResultDto } from "../../dto";
 
 /**

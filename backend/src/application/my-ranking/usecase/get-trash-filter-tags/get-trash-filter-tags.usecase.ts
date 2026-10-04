@@ -1,4 +1,4 @@
-import { IGetTrashFilterTagsRepository } from "../../../../domain";
+import { type IGetTrashFilterTagsRepository } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { GetTrashFilterTagsResultDto } from "../../dto";
 

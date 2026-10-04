@@ -85,7 +85,7 @@
 
 ### 状況
 - `domain/user/value-object/theme/theme.ts` に `Theme` という新規VOを作成した
-- 同じ `domain/user/value-object/` 配下には `UserId`/`UserName`/`UserBirthday` があり、全て `User` プレフィックスが付いている
+- 同じ `domain/user/value-object/` 配下には `UserBirthday` があり、`User` プレフィックスが付いている
 - デフォルト値生成のため呼び出し側で `new Theme(Theme.LAVENDER)` としている
 
 ### 出力
@@ -95,7 +95,7 @@
 
 ### 違反あり
 - **ファイル**: backend/src/domain/user/value-object/theme/theme.ts:1
-- **違反内容**: `domain/user/value-object/` 配下の既存VO（`UserId`/`UserName`/`UserBirthday`）は全て `User` プレフィックスが付いているが、`Theme` だけプレフィックスがなく命名が不整合
+- **違反内容**: `domain/user/value-object/` 配下の既存VO（`UserBirthday`）は `User` プレフィックスが付いているが、`Theme` だけプレフィックスがなく命名が不整合
 - **修正方針**: `UserTheme` にリネームする（フォルダも `user-theme/user-theme.ts` に揃える）
 
 ### 違反あり

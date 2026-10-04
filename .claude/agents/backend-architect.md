@@ -21,30 +21,33 @@ tools: Read, Glob, Grep
 ```
 backend/src/
 ├── domain/            # Entity・Value Object・Repository interface（何にも依存しない）
+│   ├── shared/        #   複数コンテキストで共有する概念（UserId・UserName・RankingId）
 │   ├── user/          #   プロフィール管理
 │   ├── auth/          #   認証（login/logout/password/token/credential）
-│   ├── ranking/
-│   └── sample/
-├── application/        # Usecase（メインロジック。Repository interface経由でdomainを操作）
-│   ├── user/usecase/
-│   ├── auth/usecase/
-│   ├── ranking/usecase/
-│   └── sample/usecase/
+│   ├── my-ranking/    #   自分のランキングの管理（作成・編集・お気に入り・ゴミ箱・タグ・アイコン・エクスポート）。aggregate・service を持つ
+│   └── ranking/       #   ランキングの閲覧（一覧・詳細）
+├── application/        # Usecase・Result DTO（メインロジック。Repository interface経由でdomainを操作）
+│   ├── user/{usecase,dto}/
+│   ├── auth/{usecase,dto}/
+│   ├── my-ranking/{usecase,dto}/
+│   └── ranking/{usecase,dto}/
 ├── infrastructure/     # Repository実装（Drizzle ORM）・DBスキーマ・DBクライアント
 │   ├── db/
 │   ├── user/repository/
 │   ├── auth/repository/
-│   ├── ranking/repository/
-│   └── sample/repository/
-├── presentation/        # Controller・DTO・Zodスキーマ（HTTP入出力のみ）
+│   ├── my-ranking/repository/
+│   └── ranking/repository/
+├── presentation/        # Controller・Zodスキーマ（HTTP入出力のみ）
 │   ├── user/
 │   ├── auth/
-│   ├── ranking/
-│   └── sample/
+│   ├── health/
+│   ├── my-ranking/
+│   └── ranking/
+├── schema/       # 機能をまたいで使うリクエストスキーマ（Zod）
 ├── config/       # 環境変数（EnvConfig ファクトリ）
 ├── constant/     # 定数（エンドポイント名・HTTPステータス）
 ├── middleware/   # Hono ミドルウェア
-├── rpc/          # RPC エンドポイント集約
+├── rpc/          # AppType の型再 export 専用（ルーター登録は src/index.ts）
 ├── types/        # 型定義
 └── util/         # ユーティリティ
 ```
@@ -63,7 +66,7 @@ backend/src/
 
 ### インポート規約
 - `@/` パスエイリアスは使わない（相対パスを使う）
-- 理由: フロントエンドの tsconfig が `@/*` → `frontend/src/*` にマッピングしており、RPC 型チェーンで混入すると誤解決される
+- 理由: フロントエンドはバックエンドの型定義（`backend/dist-types`）を参照する。型定義に `@/` が残ると、フロントエンドの tsconfig の `@/*` → `frontend/src/*` で誤解決される
 
 ### Zod バージョン
 - バックエンドは **Zod v3**（`@hono/zod-validator@0.4.x` が v3 のみ対応）
@@ -71,7 +74,7 @@ backend/src/
 ### API 設計
 - REST API の URL 設計を前提とする
 - ルーター（Controller）は `presentation/<機能名>/controller/` に配置
-- RPC クライアント向けに `rpc/index.ts` で集約
+- ルーターは `src/index.ts` の `.route()` で登録する（`rpc/index.ts` は `AppType` の型再 export 専用）
 
 ## 分析・提案ワークフロー
 
@@ -83,8 +86,10 @@ backend/src/
 ## チェックリスト
 
 ### フォルダ・ファイル配置
-- 新しい機能が `domain/<機能名>/`・`application/<機能名>/usecase/`・`infrastructure/<機能名>/repository/`・`presentation/<機能名>/` の4層に正しく配置されているか
+- 新しい機能が `domain/<機能名>/`・`application/<機能名>/`（usecase, dto）・`infrastructure/<機能名>/repository/`・`presentation/<機能名>/` の4層に正しく配置されているか
+- バックエンドのファイルが1単位1フォルダ（`<名前>/<名前>.<種別>.ts` + `index.ts`）になっており、テストも同じフォルダに置かれているか
 - Entity・Value Object・Repository interface が `domain/` に集約されているか
+- 複数のドメインで共有する VO が `domain/shared/` に置かれ、ドメイン同士が直接 import していないか
 - Repository実装（DB アクセス）が `infrastructure/` に分離されているか
 - 共通ロジックが適切なレイヤーに配置されているか
 - 機能の境界（どのモジュールに属するか）が「変更理由の一致」で切られているか（データの近さだけで判断していないか）
@@ -108,8 +113,8 @@ backend/src/
 - Zod v3 を使っているか（v4 との混在がないか）
 - 型定義が `types/` に集約されているか
 
-### RPC 集約
-- 新しいルーターが `rpc/index.ts` に登録されているか
+### ルーター登録・RPC 型
+- 新しいルーターが `src/index.ts` に登録されているか
 - RPC の型エクスポートが正しいか
 
 ## レポート形式

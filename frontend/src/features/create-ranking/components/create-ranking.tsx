@@ -1,13 +1,13 @@
-import { IconType } from '@/app/api/get-icons';
+import { type IconType } from '@/app/api/get-icons';
 import { Dialog, ErrorAlert, LoadingOverlay, ScrollToTopButton, Textarea, Textbox } from '@/components';
 import { IconSelectDialog } from '@/components/layouts/icon-select-dialog/icon-select-dialog';
 import { TagSelectDialog } from '@/components/layouts/tag-select-dialog/tag-select-dialog';
-import { closestCenter, DndContext, DragEndEvent, SensorDescriptor, SensorOptions } from '@dnd-kit/core';
+import { closestCenter, DndContext, type DragEndEvent, type SensorDescriptor, type SensorOptions } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { BaseSyntheticEvent, type KeyboardEvent } from 'react';
-import { FieldErrors, UseFormRegister } from 'react-hook-form';
-import { CreateRankingRequestType, MAX_TAG_COUNT } from '../types/create-ranking-request-type';
-import { ItemFieldType, ItemRow } from './item-row';
+import { type BaseSyntheticEvent, type KeyboardEvent } from 'react';
+import { type FieldErrors, type UseFormRegister } from 'react-hook-form';
+import { type CreateRankingRequestType, MAX_TAG_COUNT } from '../types/create-ranking-request-type';
+import { type ItemFieldType, ItemRow } from './item-row';
 import { TagSettingButton } from './tag-setting-button';
 import { TemplateSelectDialog } from './template-select-dialog';
 

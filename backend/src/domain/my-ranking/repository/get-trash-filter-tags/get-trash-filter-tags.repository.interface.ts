@@ -1,5 +1,5 @@
 import { UserId } from "../../../shared";
-import { TagMasterRecord } from "../get-tags/get-tags.repository.interface";
+import { type TagMasterRecord } from "../get-tags/get-tags.repository.interface";
 
 /**
  * ゴミ箱一覧の絞り込み候補タグ取得リポジトリインターフェース

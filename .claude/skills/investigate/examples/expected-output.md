@@ -13,7 +13,7 @@
 - backend/src/application/item/usecase/get-item/get-item.usecase.ts
 - backend/src/infrastructure/item/repository/get-item/get-item.repository.ts
 - backend/src/middleware/auth/auth.middleware.ts
-- backend/src/domain/user/value-object/user-id/user-id.ts
+- backend/src/domain/shared/value-object/user-id/user-id.ts
 
 ## 調査結果
 

@@ -1,5 +1,5 @@
 import { RankingAggregate, TagAggregate } from "../../aggregate";
-import { IContentModerationRepository } from "../../repository";
+import { type IContentModerationRepository } from "../../repository";
 import { ContentModerationTarget } from "../../value-object";
 
 export class ContentModerationDomainService {

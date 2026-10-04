@@ -2,8 +2,8 @@ import { Button, DatePicker, Textbox } from '@/components';
 import { useState } from 'react';
 import { HiOutlineTag } from 'react-icons/hi2';
 import { IoChevronDown, IoChevronUp, IoOptionsOutline, IoSearchOutline, IoStar, IoStarOutline, IoSwapVerticalOutline } from 'react-icons/io5';
-import { DEFAULT_MY_RANKING_SORT, MY_RANKING_SORT_OPTIONS, MyRankingSortType } from '../constants/my-ranking-sort-options';
-import { MyRankingSearchFilter } from '../types/my-ranking-search-filter';
+import { DEFAULT_MY_RANKING_SORT, MY_RANKING_SORT_OPTIONS, type MyRankingSortType } from '../constants/my-ranking-sort-options';
+import { type MyRankingSearchFilter } from '../types/my-ranking-search-filter';
 
 type PropsType = {
     searchCondition: MyRankingSearchFilter;

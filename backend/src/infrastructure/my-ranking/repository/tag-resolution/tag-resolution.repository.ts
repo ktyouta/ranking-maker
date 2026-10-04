@@ -1,5 +1,5 @@
 import { and, eq, inArray } from "drizzle-orm";
-import { ITagResolutionRepository, TagAggregate, TagId, TagName } from "../../../../domain";
+import { type ITagResolutionRepository, TagAggregate, TagId, TagName } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { chunk } from "../../../../util";
 import { D1_MAX_IN_CLAUSE_VALUES, tagMaster, type Database } from "../../../db";

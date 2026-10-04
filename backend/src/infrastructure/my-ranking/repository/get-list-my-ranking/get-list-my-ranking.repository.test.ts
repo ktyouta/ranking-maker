@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { env } from "cloudflare:test";
 import { ulid } from "ulid";
 import { describe, expect, it } from "vitest";
-import { RankingSort, RankingSortType, TagName } from "../../../../domain/my-ranking";
+import { RankingSort, type RankingSortType, TagName } from "../../../../domain/my-ranking";
 import { UserId } from "../../../../domain/shared";
 import type { Database } from "../../../db";
 import * as schema from "../../../db/schema/schema";
