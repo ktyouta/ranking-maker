@@ -1,1 +1,1 @@
-export * from "./ranking.controller";
+export * from "./ranking";

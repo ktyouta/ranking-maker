@@ -16,7 +16,7 @@
 - 選択状態（`selectedIds`）はページ単位のデータとは独立したstateで管理し、ページ送りしても保持する。ただし「全選択」ボタンは常に**現在ページの行のみ**を選択対象にする（検索条件に一致する全件を1クリックで選択する機能は今回のスコープ外、下記「将来検討事項」参照）。
 - 一括削除は今回のスコープ外。同じ選択モード基盤（`use-my-ranking-selection.ts`）に将来アクションとして追加する想定。
 - CSVはitem単位で1行に展開する（列: `ランキングタイトル, 順位, 項目名, メモ`）。UTF-8 BOM付きでExcelでの文字化けを防止。ファイル名は`ranking_export_YYYYMMDD_HHmmss.csv`。
-- **CSV文字列の組み立てはバックエンドで行う**（`backend/src/util/build-csv.util.ts`の汎用エスケープ関数＋`backend/src/presentation/my-ranking/dto/get-my-ranking-export-csv.dto.ts`のドメイン別マッピング）。Controllerは`c.text(csv, 200, { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": "attachment; filename=..." })`でCSVをそのままレスポンスとして返す。新規外部ライブラリ（papaparse等）は導入せず、エスケープ処理（カンマ・ダブルクォート・改行を含む場合は`""`で囲む、RFC4180準拠）は自前実装する。
+- **CSV文字列の組み立てはバックエンドで行う**（`backend/src/util/build-csv/build-csv.util.ts`の汎用エスケープ関数＋`backend/src/presentation/my-ranking/dto/get-my-ranking-export-csv/get-my-ranking-export-csv.dto.ts`のドメイン別マッピング）。Controllerは`c.text(csv, 200, { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": "attachment; filename=..." })`でCSVをそのままレスポンスとして返す。新規外部ライブラリ（papaparse等）は導入せず、エスケープ処理（カンマ・ダブルクォート・改行を含む場合は`""`で囲む、RFC4180準拠）は自前実装する。
 - フロントエンドは受け取ったCSVテキストをそのままダウンロードさせるだけで、CSV文字列の組み立ては行わない（旧タスクの`build-ranking-csv.ts`は不要）。新規外部ライブラリ（file-saver等）は導入せず、Blob生成＋aタグdownloadで完結させる。
 - RPCの型はバックエンドをsource of truthとし、フロントでAPI用の型を新規定義しない。`as`によるアサーションは行わない。
 - ルート登録順序: `my-ranking.controller.ts`は「静的パスを`:rankingId`より先に登録する」慣習があるため、`getMyRankingExport`は`getMyRanking`より前に`.route("/", ...)`する。
@@ -38,22 +38,22 @@
 
 | # | タスク | ファイル | 前提 | 状態 |
 |---|--------|----------|------|------|
-| 1 | `API_ENDPOINT.MY_RANKING_EXPORT` 追加（`/api/v1/my-ranking/export`） | `backend/src/constant/api-endpoint.const.ts` | ― | [x] |
-| 2 | リクエストボディZodスキーマ（`ids: string[]`、空配列不可、最大100件） | `backend/src/presentation/my-ranking/schema/get-my-ranking-export.schema.ts` | ― | [x] |
+| 1 | `API_ENDPOINT.MY_RANKING_EXPORT` 追加（`/api/v1/my-ranking/export`） | `backend/src/constant/api-endpoint/api-endpoint.const.ts` | ― | [x] |
+| 2 | リクエストボディZodスキーマ（`ids: string[]`、空配列不可、最大100件） | `backend/src/presentation/my-ranking/schema/get-my-ranking-export/get-my-ranking-export.schema.ts` | ― | [x] |
 | 3 | schemaバレル更新 | `backend/src/presentation/my-ranking/schema/index.ts` | #2 | [x] |
-| 4 | Repository interface定義（`MyRankingExportType`, `MyRankingExportOrderType`（`rankingId`付き）, `IGetMyRankingExportRepository`） | `backend/src/domain/my-ranking/repository/get-my-ranking-export.repository.interface.ts` | ― | [x] |
+| 4 | Repository interface定義（`MyRankingExportType`, `MyRankingExportOrderType`（`rankingId`付き）, `IGetMyRankingExportRepository`） | `backend/src/domain/my-ranking/repository/get-my-ranking-export/get-my-ranking-export.repository.interface.ts` | ― | [x] |
 | 5 | domainバレル更新 | `backend/src/domain/my-ranking/repository/index.ts` | #4 | [x] |
-| 6 | Repository実装（`findRankings`: `inArray`+`userId`一致、`findRankingOrders`: `inArray`。2クエリで完結） | `backend/src/infrastructure/my-ranking/repository/get-my-ranking-export.repository.ts` | #4 | [x] |
+| 6 | Repository実装（`findRankings`: `inArray`+`userId`一致、`findRankingOrders`: `inArray`。2クエリで完結） | `backend/src/infrastructure/my-ranking/repository/get-my-ranking-export/get-my-ranking-export.repository.ts` | #4 | [x] |
 | 7 | infrastructureバレル更新 | `backend/src/infrastructure/my-ranking/repository/index.ts` | #6 | [x] |
-| 8 | Usecase実装（①`findRankings`で所有権フィルタ済み一覧を取得→②そのidのみを`findRankingOrders`に渡す、の順序を厳守。結果を`rankingId`でグルーピングし`{ranking, items}[]`に整形。0件でもエラーにせず空配列を返す。戻り値の型`MyRankingExportResultType`をexportし、presentation層のDTOから参照できるようにする） | `backend/src/application/my-ranking/usecase/get-my-ranking-export.usecase.ts` | #6 | [x] |
+| 8 | Usecase実装（①`findRankings`で所有権フィルタ済み一覧を取得→②そのidのみを`findRankingOrders`に渡す、の順序を厳守。結果を`rankingId`でグルーピングし`{ranking, items}[]`に整形。0件でもエラーにせず空配列を返す。戻り値の型`MyRankingExportResultType`をexportし、presentation層のDTOから参照できるようにする） | `backend/src/application/my-ranking/usecase/get-my-ranking-export/get-my-ranking-export.usecase.ts` | #6 | [x] |
 | 9 | applicationバレル更新 | `backend/src/application/my-ranking/usecase/index.ts` | #8 | [x] |
-| 10 | CSVエスケープ汎用ユーティリティ（`buildCsv(headers, rows)`。カンマ・ダブルクォート・改行を含む値は`""`で囲む＝RFC4180準拠、BOM付与） | `backend/src/util/build-csv.util.ts` | ― | [x] |
-| 11 | ファイル名タイムスタンプ生成ユーティリティ（`formatExportFilenameTimestamp(date)`、`YYYYMMDD_HHmmss`形式） | `backend/src/util/format-export-filename-timestamp.util.ts` | ― | [x] |
+| 10 | CSVエスケープ汎用ユーティリティ（`buildCsv(headers, rows)`。カンマ・ダブルクォート・改行を含む値は`""`で囲む＝RFC4180準拠、BOM付与） | `backend/src/util/build-csv/build-csv.util.ts` | ― | [x] |
+| 11 | ファイル名タイムスタンプ生成ユーティリティ（`formatExportFilenameTimestamp(date)`、`YYYYMMDD_HHmmss`形式） | `backend/src/util/format-export-filename-timestamp/format-export-filename-timestamp.util.ts` | ― | [x] |
 | 12 | utilバレル更新 | `backend/src/util/index.ts` | #10, #11 | [x] |
-| 13 | レスポンスDTO実装（Usecase結果`MyRankingExportResultType[]`を`[ランキングタイトル, 順位, 項目名, メモ]`の行に展開し#10でCSV文字列化。既存`CreateMyRankingResponseDto`の命名規則(`[操作名]-response.dto.ts`)に合わせ`GetMyRankingExportResponseDto`とし、`.value`で公開） | `backend/src/presentation/my-ranking/dto/get-my-ranking-export-response.dto.ts` | #8, #10 | [x] |
+| 13 | レスポンスDTO実装（Usecase結果`MyRankingExportResultType[]`を`[ランキングタイトル, 順位, 項目名, メモ]`の行に展開し#10でCSV文字列化。既存`CreateMyRankingResponseDto`の命名規則(`[操作名]-response.dto.ts`)に合わせ`GetMyRankingExportResponseDto`とし、`.value`で公開） | `backend/src/presentation/my-ranking/dto/get-my-ranking-export-response/get-my-ranking-export-response.dto.ts` | #8, #10 | [x] |
 | 14 | dtoバレル更新 | `backend/src/presentation/my-ranking/dto/index.ts` | #13 | [x] |
-| 15 | Controller実装（POST, authMiddleware, `zValidator("json", ...)`、bodyの`ids`を`RankingId.of(id)`配列に変換してからUsecaseへ渡す。結果0件時は`c.json({message},200)`、1件以上時は#13でCSV文字列化し`c.text(csv,200,{Content-Type:"text/csv; charset=utf-8", Content-Disposition:"attachment; filename=..."})`で返す） | `backend/src/presentation/my-ranking/controller/get-my-ranking-export.controller.ts` | #1, #2, #8, #11, #13 | [x] |
-| 16 | `my-ranking.controller.ts` へルート追加（`getIcons`と`getMyRanking`の間に配置。※ルート衝突の必然性はPOSTのため薄いが、既存の静的パス優先の慣習に合わせて配置） | `backend/src/presentation/my-ranking/controller/my-ranking.controller.ts` | #15 | [x]（配置は変更なし） |
+| 15 | Controller実装（POST, authMiddleware, `zValidator("json", ...)`、bodyの`ids`を`RankingId.of(id)`配列に変換してからUsecaseへ渡す。結果0件時は`c.json({message},200)`、1件以上時は#13でCSV文字列化し`c.text(csv,200,{Content-Type:"text/csv; charset=utf-8", Content-Disposition:"attachment; filename=..."})`で返す） | `backend/src/presentation/my-ranking/controller/get-my-ranking-export/get-my-ranking-export.controller.ts` | #1, #2, #8, #11, #13 | [x] |
+| 16 | `my-ranking.controller.ts` へルート追加（`getIcons`と`getMyRanking`の間に配置。※ルート衝突の必然性はPOSTのため薄いが、既存の静的パス優先の慣習に合わせて配置） | `backend/src/presentation/my-ranking/controller/my-ranking/my-ranking.controller.ts` | #15 | [x]（配置は変更なし） |
 | 17 | presentationバレル更新 | `backend/src/presentation/my-ranking/controller/index.ts` | #15 | [x] |
 | 18 | `npx tsc --noEmit` 確認 | ― | #1〜#17 | [x] |
 

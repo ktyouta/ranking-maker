@@ -1,5 +1,5 @@
-import { UserSalt } from "../user-salt";
-import { Pepper } from "../pepper";
+import { UserSalt } from "../user-salt/user-salt";
+import { Pepper } from "../pepper/pepper";
 
 /**
  * ユーザーパスワード

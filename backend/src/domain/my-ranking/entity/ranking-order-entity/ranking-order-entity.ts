@@ -1,7 +1,7 @@
 import { ItemMemo } from "../../value-object";
-import { ItemName } from "../../value-object/item-name";
-import { Order } from "../../value-object/order";
-import { RankingOrderId } from "../../value-object/ranking-order-id";
+import { ItemName } from "../../value-object/item-name/item-name";
+import { Order } from "../../value-object/order/order";
+import { RankingOrderId } from "../../value-object/ranking-order-id/ranking-order-id";
 
 /**
  * ランキングオーダーエンティティ

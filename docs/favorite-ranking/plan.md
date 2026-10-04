@@ -66,20 +66,20 @@
 
 | # | タスク | ファイル | レイヤー | 操作 | 前提 |
 |---|--------|----------|------|------|------|
-| 1 | `ranking_master` に `is_favorite`（boolean, default false）列追加 | `backend/src/infrastructure/db/schema.ts` | Infrastructure | 修正 | ― |
+| 1 | `ranking_master` に `is_favorite`（boolean, default false）列追加 | `backend/src/infrastructure/db/schema/schema.ts` | Infrastructure | 修正 | ― |
 | 2 | マイグレーション生成（`npm run db:generate`） | `backend/drizzle/*.sql` | ― | 生成 | #1 |
-| 3 | `MyRankingListType` / `MyRankingQueryType` に `isFavorite` / `favoriteOnly` 追加 | `backend/src/domain/my-ranking/repository/get-list-my-ranking.repository.interface.ts` | Domain | 修正 | ― |
-| 4 | `MyRankingType` に `isFavorite` 追加 | `backend/src/domain/my-ranking/repository/get-my-ranking.repository.interface.ts` | Domain | 修正 | ― |
-| 5 | `IUpdateFavoriteMyRankingRepository` interface 新設 | `backend/src/domain/my-ranking/repository/update-favorite-my-ranking.repository.interface.ts` | Domain | 新規 | ― |
-| 6 | `GetListMyRankingRepository` の SELECT に `isFavorite` 追加、`buildConditions` に `favoriteOnly` 条件追加 | `backend/src/infrastructure/my-ranking/repository/get-list-my-ranking.repository.ts` | Infrastructure | 修正 | #1, #3 |
-| 7 | `GetMyRankingRepository` の SELECT に `isFavorite` 追加 | `backend/src/infrastructure/my-ranking/repository/get-my-ranking.repository.ts` | Infrastructure | 修正 | #1, #4 |
-| 8 | `UpdateFavoriteMyRankingRepository` 実装（`findRanking` で所有権確認、`updateFavorite(rankingId, isFavorite)` でUPDATE） | `backend/src/infrastructure/my-ranking/repository/update-favorite-my-ranking.repository.ts` | Infrastructure | 新規 | #1, #5 |
-| 9 | `UpdateFavoriteMyRankingUsecase.execute(userId, rankingId, isFavorite)` 実装 | `backend/src/application/my-ranking/usecase/update-favorite-my-ranking.usecase.ts` | Application | 新規 | #5 |
-| 10 | `GetListMyRankingQuerySchema` に `favoriteOnly: z.string().optional().transform((v) => v === "true")` 追加（スキーマ層でboolean化） | `backend/src/presentation/my-ranking/schema/get-list-my-ranking.schema.ts` | Presentation | 修正 | ― |
-| 10a | `UpdateFavoriteMyRankingSchema`（`{ isFavorite: boolean }`）新設 | `backend/src/presentation/my-ranking/schema/update-favorite-my-ranking.schema.ts` | Presentation | 新規 | ― |
-| 11 | `favorite-my-ranking.controller.ts`（`PUT /api/v1/my-ranking/:rankingId/favorite` 1ルートのみ。bodyの `isFavorite` をそのまま `UpdateFavoriteMyRankingUsecase` に渡す） | `backend/src/presentation/my-ranking/controller/favorite-my-ranking.controller.ts` | Presentation | 新規 | #9, #10a |
-| 12 | ルーター登録 | `backend/src/presentation/my-ranking/controller/my-ranking.controller.ts` | Presentation | 修正 | #11 |
-| 13 | `API_ENDPOINT.MY_RANKING_ID_FAVORITE` 追加 | `backend/src/constant/api-endpoint.const.ts` | ― | 修正 | ― |
+| 3 | `MyRankingListType` / `MyRankingQueryType` に `isFavorite` / `favoriteOnly` 追加 | `backend/src/domain/my-ranking/repository/get-list-my-ranking/get-list-my-ranking.repository.interface.ts` | Domain | 修正 | ― |
+| 4 | `MyRankingType` に `isFavorite` 追加 | `backend/src/domain/my-ranking/repository/get-my-ranking/get-my-ranking.repository.interface.ts` | Domain | 修正 | ― |
+| 5 | `IUpdateFavoriteMyRankingRepository` interface 新設 | `backend/src/domain/my-ranking/repository/update-favorite-my-ranking/update-favorite-my-ranking.repository.interface.ts` | Domain | 新規 | ― |
+| 6 | `GetListMyRankingRepository` の SELECT に `isFavorite` 追加、`buildConditions` に `favoriteOnly` 条件追加 | `backend/src/infrastructure/my-ranking/repository/get-list-my-ranking/get-list-my-ranking.repository.ts` | Infrastructure | 修正 | #1, #3 |
+| 7 | `GetMyRankingRepository` の SELECT に `isFavorite` 追加 | `backend/src/infrastructure/my-ranking/repository/get-my-ranking/get-my-ranking.repository.ts` | Infrastructure | 修正 | #1, #4 |
+| 8 | `UpdateFavoriteMyRankingRepository` 実装（`findRanking` で所有権確認、`updateFavorite(rankingId, isFavorite)` でUPDATE） | `backend/src/infrastructure/my-ranking/repository/update-favorite-my-ranking/update-favorite-my-ranking.repository.ts` | Infrastructure | 新規 | #1, #5 |
+| 9 | `UpdateFavoriteMyRankingUsecase.execute(userId, rankingId, isFavorite)` 実装 | `backend/src/application/my-ranking/usecase/update-favorite-my-ranking/update-favorite-my-ranking.usecase.ts` | Application | 新規 | #5 |
+| 10 | `GetListMyRankingQuerySchema` に `favoriteOnly: z.string().optional().transform((v) => v === "true")` 追加（スキーマ層でboolean化） | `backend/src/presentation/my-ranking/schema/get-list-my-ranking/get-list-my-ranking.schema.ts` | Presentation | 修正 | ― |
+| 10a | `UpdateFavoriteMyRankingSchema`（`{ isFavorite: boolean }`）新設 | `backend/src/presentation/my-ranking/schema/update-favorite-my-ranking/update-favorite-my-ranking.schema.ts` | Presentation | 新規 | ― |
+| 11 | `favorite-my-ranking.controller.ts`（`PUT /api/v1/my-ranking/:rankingId/favorite` 1ルートのみ。bodyの `isFavorite` をそのまま `UpdateFavoriteMyRankingUsecase` に渡す） | `backend/src/presentation/my-ranking/controller/favorite-my-ranking/favorite-my-ranking.controller.ts` | Presentation | 新規 | #9, #10a |
+| 12 | ルーター登録 | `backend/src/presentation/my-ranking/controller/my-ranking/my-ranking.controller.ts` | Presentation | 修正 | #11 |
+| 13 | `API_ENDPOINT.MY_RANKING_ID_FAVORITE` 追加 | `backend/src/constant/api-endpoint/api-endpoint.const.ts` | ― | 修正 | ― |
 | 14 | 各 index.ts のエクスポート追加（domain/application/infrastructure） | `backend/src/domain/my-ranking/repository/index.ts` 他 | ― | 修正 | #5, #8, #9 |
 
 ## フロントエンド タスク

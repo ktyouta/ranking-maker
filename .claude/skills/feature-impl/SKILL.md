@@ -67,10 +67,10 @@ impl-planner を実行し、設計内容・作成ファイル一覧・フォル�
 
 | ファイルパス | レイヤー | 操作 |
 |---|---|---|
-| backend/src/presentation/xxx/controller/get-xxx.controller.ts | Controller (Presentation) | 新規 |
-| backend/src/application/xxx/usecase/get-xxx.usecase.ts | Usecase (Application) | 新規 |
-| backend/src/domain/xxx/repository/get-xxx.repository.interface.ts | Repository interface (Domain) | 新規 |
-| backend/src/infrastructure/xxx/repository/get-xxx.repository.ts | Repository実装 (Infrastructure) | 新規 |
+| backend/src/presentation/xxx/controller/get-xxx/get-xxx.controller.ts | Controller (Presentation) | 新規 |
+| backend/src/application/xxx/usecase/get-xxx/get-xxx.usecase.ts | Usecase (Application) | 新規 |
+| backend/src/domain/xxx/repository/get-xxx/get-xxx.repository.interface.ts | Repository interface (Domain) | 新規 |
+| backend/src/infrastructure/xxx/repository/get-xxx/get-xxx.repository.ts | Repository実装 (Infrastructure) | 新規 |
 | frontend/src/features/xxx/api/get-xxx.ts | API | 新規 |
 | ... | ... | ... |
 

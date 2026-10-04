@@ -1,2 +1,2 @@
-export * from "./get-list-ranking.repository";
-export * from "./get-ranking.repository";
+export * from "./get-list-ranking";
+export * from "./get-ranking";

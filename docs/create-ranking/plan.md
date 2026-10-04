@@ -3,7 +3,7 @@
 ## 前提
 
 - バックエンドは実装済み・変更なし
-  - `POST /api/v1/my-ranking`（`backend/src/presentation/my-ranking/controller/create-my-ranking.controller.ts`）
+  - `POST /api/v1/my-ranking`（`backend/src/presentation/my-ranking/controller/create-my-ranking/create-my-ranking.controller.ts`）
   - リクエスト: `title`, `publicStatus`(1=非公開/2=公開), `memo`, `items[]`(`itemName`, `order`, `memo`)
   - レスポンス:
     - 201: 作成されたランキング（`CreateMyRankingResponseType`）

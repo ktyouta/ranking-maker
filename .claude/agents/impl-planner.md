@@ -19,7 +19,7 @@ tools: Read, Glob, Grep
 このプロジェクトは DDD 4層アーキテクチャ（`presentation → application → domain ← infrastructure`）を採用している。実装依存順序：
 
 ```
-1. DB スキーマ定義（Drizzle ORM, infrastructure/db/schema.ts）
+1. DB スキーマ定義（Drizzle ORM, infrastructure/db/schema/schema.ts）
 2. マイグレーション SQL 生成（npm run db:generate）
 3. ドメイン Entity・Value Object・Repository interface（domain/<機能>/）
 4. リポジトリ実装（infrastructure/<機能>/repository/）

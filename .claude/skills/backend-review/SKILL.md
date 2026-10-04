@@ -77,7 +77,7 @@ Claude 自身が提案・実装した方式も例外なく対象とする。指�
   - アンチパターン: `usecase.buildEntity()` のような、内部で単に `new Entity(...)` するだけのメソッドを Usecase に定義している
   - 正しいパターン: Controller で直接 `new SomeEntity(...)` する（ロジックを含まない単純な構築・変換は Controller で直接行う）
 - Usecase が Drizzle のクエリビルダー（`db.insert(...)` 等）やテーブルスキーマを直接importしていないか（Infrastructure層の詳細はRepository経由でのみ扱う）
-- **モジュール跨ぎの依存は許可される**: Usecase が自モジュール以外の `domain/{他モジュール}/repository` interface に依存すること自体は違反ではない（例: `application/user/usecase/create-user.usecase.ts` が `domain/auth` の `IUserLoginRepository` に依存する）。ただし domain 層の Entity/VO 同士が直接依存するのは違反として指摘する
+- **モジュール跨ぎの依存は許可される**: Usecase が自モジュール以外の `domain/{他モジュール}/repository` interface に依存すること自体は違反ではない（例: `application/user/usecase/create-user/create-user.usecase.ts` が `domain/auth` の `IUserLoginRepository` に依存する）。ただし domain 層の Entity/VO 同士が直接依存するのは違反として指摘する
 
 ### フォルダ・ファイル構成
 - `domain/{機能グループ名}/`（entity, value-object, repository interface）、`application/{機能グループ名}/usecase/`、`infrastructure/{機能グループ名}/repository/`、`presentation/{機能グループ名}/`（controller, dto, schema）の4層構成に沿っているか

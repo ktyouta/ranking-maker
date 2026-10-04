@@ -103,12 +103,12 @@
 |---|--------|----------|------|
 | 1 | `RankingSort` VO を新規作成（`VALUES`・`DEFAULT`・`RankingSortType`）し、バレルに追加 | `backend/src/domain/my-ranking/value-object/ranking-sort/` | ― |
 | 2 | `TrashRankingSort` VO を新規作成（お気に入りを除く6種）し、バレルに追加 | `backend/src/domain/my-ranking/value-object/trash-ranking-sort/` | ― |
-| 3 | クエリ型に `sort`（VO）を追加 | `backend/src/domain/my-ranking/repository/get-list-my-ranking.repository.interface.ts`、`get-trash-list-my-ranking.repository.interface.ts` | #1, #2 |
-| 4 | クエリスキーマに `sort` を追加 | `backend/src/presentation/my-ranking/schema/get-list-my-ranking.schema.ts`、`get-trash-list-my-ranking.schema.ts` | #1, #2 |
-| 5 | コントローラーで `sort` を VO に変換 | `backend/src/presentation/my-ranking/controller/get-list-my-ranking.controller.ts`、`get-trash-list-my-ranking.controller.ts` | #3, #4 |
-| 6 | `findAll` の `orderBy` を `buildOrderBy(sort)` に置き換え | `backend/src/infrastructure/my-ranking/repository/get-list-my-ranking.repository.ts`、`get-trash-list-my-ranking.repository.ts` | #3 |
-| 7 | VO のテスト | `backend/test/domain/my-ranking/value-object/ranking-sort.test.ts`、`trash-ranking-sort.test.ts` | #1, #2 |
-| 8 | リポジトリのテスト（全ソート値、タイブレーク） | `backend/test/infrastructure/my-ranking/repository/get-list-my-ranking.repository.test.ts`、`get-trash-list-my-ranking.repository.test.ts` | #6 |
+| 3 | クエリ型に `sort`（VO）を追加 | `backend/src/domain/my-ranking/repository/get-list-my-ranking/get-list-my-ranking.repository.interface.ts`、`backend/src/domain/my-ranking/repository/get-trash-list-my-ranking/get-trash-list-my-ranking.repository.interface.ts` | #1, #2 |
+| 4 | クエリスキーマに `sort` を追加 | `backend/src/presentation/my-ranking/schema/get-list-my-ranking/get-list-my-ranking.schema.ts`、`backend/src/presentation/my-ranking/schema/get-trash-list-my-ranking/get-trash-list-my-ranking.schema.ts` | #1, #2 |
+| 5 | コントローラーで `sort` を VO に変換 | `backend/src/presentation/my-ranking/controller/get-list-my-ranking/get-list-my-ranking.controller.ts`、`backend/src/presentation/my-ranking/controller/get-trash-list-my-ranking/get-trash-list-my-ranking.controller.ts` | #3, #4 |
+| 6 | `findAll` の `orderBy` を `buildOrderBy(sort)` に置き換え | `backend/src/infrastructure/my-ranking/repository/get-list-my-ranking/get-list-my-ranking.repository.ts`、`backend/src/infrastructure/my-ranking/repository/get-trash-list-my-ranking/get-trash-list-my-ranking.repository.ts` | #3 |
+| 7 | VO のテスト | `backend/src/domain/my-ranking/value-object/ranking-sort/ranking-sort.test.ts`、`backend/src/domain/my-ranking/value-object/trash-ranking-sort/trash-ranking-sort.test.ts` | #1, #2 |
+| 8 | リポジトリのテスト（全ソート値、タイブレーク） | `backend/src/infrastructure/my-ranking/repository/get-list-my-ranking/get-list-my-ranking.repository.test.ts`、`backend/src/infrastructure/my-ranking/repository/get-trash-list-my-ranking/get-trash-list-my-ranking.repository.test.ts` | #6 |
 
 ## フロントエンド タスク（マイランキング・ゴミ箱それぞれ別実装）
 

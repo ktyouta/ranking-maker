@@ -1,0 +1,39 @@
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
+import { GetTrashListMyRankingUsecase } from "../../../../application";
+import { API_ENDPOINT, HTTP_STATUS } from "../../../../constant";
+import { TagName, TrashRankingSort, UserId } from "../../../../domain";
+import { GetTrashListMyRankingRepository } from "../../../../infrastructure";
+import { authMiddleware } from "../../../../middleware";
+import type { AppEnv } from "../../../../types";
+import { formatZodErrors } from "../../../../util";
+import { GetTrashListMyRankingQuerySchema } from "../../schema";
+
+/**
+ * ゴミ箱のランキング一覧取得
+ */
+const getTrashListMyRanking = new Hono<AppEnv>().get(API_ENDPOINT.MY_RANKING_TRASH,
+  authMiddleware,
+  zValidator("query", GetTrashListMyRankingQuerySchema, (result, c) => {
+    if (!result.success) {
+      return c.json({ message: "クエリが不正です。", data: formatZodErrors(result.error) }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
+    }
+  }),
+  async (c) => {
+    const db = c.get('db');
+    const repository = new GetTrashListMyRankingRepository(db);
+    const user = c.get("user");
+    if (!user) {
+      return c.json({ message: "認証エラー" }, HTTP_STATUS.UNAUTHORIZED);
+    }
+    const userId = UserId.of(user.userId.value);
+    const { sort, tags, ...condition } = c.req.valid("query");
+    const query = { ...condition, tagNames: tags.map((tag) => new TagName(tag)), sort: new TrashRankingSort(sort) };
+    const usecase = new GetTrashListMyRankingUsecase(repository);
+
+    const result = await usecase.execute(userId, query);
+
+    return c.json({ message: "削除済みランキング一覧を取得しました。", data: result.value }, HTTP_STATUS.OK);
+  });
+
+export { getTrashListMyRanking };

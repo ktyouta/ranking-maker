@@ -11,7 +11,7 @@
 
 ```
 ## リファクタリング目的
-- 対象: backend/src/application/item/usecase/create-item.usecase.ts
+- 対象: backend/src/application/item/usecase/create-item/create-item.usecase.ts
 - 現在の問題: `create()` メソッドが「重複チェック・INSERT・後処理」を1つのメソッドに詰め込んでいる
 - 改善後の期待状態: 各操作を独立した名前付きメソッドに分割し、Controller の呼び出し順でフローが読めるようにする
 - 振る舞いへの影響: なし（振る舞いを変えないことを確認）

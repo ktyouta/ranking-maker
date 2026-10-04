@@ -22,16 +22,16 @@
 
 | # | タスク | ファイル | 前提 |
 |---|--------|----------|------|
-| 1 | ゴミ箱詳細取得 Repository interface 追加（`MyRankingType`/`MyRankingOrderType` を再利用） | `backend/src/domain/my-ranking/repository/get-trash-my-ranking.repository.interface.ts` | ― |
+| 1 | ゴミ箱詳細取得 Repository interface 追加（`MyRankingType`/`MyRankingOrderType` を再利用） | `backend/src/domain/my-ranking/repository/get-trash-my-ranking/get-trash-my-ranking.repository.interface.ts` | ― |
 | 2 | domain バレル更新 | `backend/src/domain/my-ranking/repository/index.ts` | #1 |
-| 3 | `GetTrashMyRankingRepository` 実装（ranking本体・項目とも `deleteFlg=true` で絞り込み。論理削除は `rankingMaster`/`rankingOrderMaster` 双方を `true` にカスケードするため、`findRankingOrder` 相当も `deleteFlg=true` で絞り込む。`restore-my-ranking.repository.ts` の `findRanking` と同じ条件） | `backend/src/infrastructure/my-ranking/repository/get-trash-my-ranking.repository.ts` | #1 |
-| 4 | ゴミ箱一覧 Repository interface に `itemCount` 追加 | `backend/src/domain/my-ranking/repository/get-trash-list-my-ranking.repository.interface.ts` | ― |
-| 5 | `GetTrashListMyRankingRepository` に `itemCount` 集計追加（leftJoin + count、**`deleteFlg=true` の項目のみカウント**。ゴミ箱内ランキングの項目は論理削除カスケードにより全て `deleteFlg=true` になっているため、非ゴミ箱版の `GetListMyRankingRepository`（`deleteFlg=false`）とは条件が反転する点に注意） | `backend/src/infrastructure/my-ranking/repository/get-trash-list-my-ranking.repository.ts` | #4 |
+| 3 | `GetTrashMyRankingRepository` 実装（ranking本体・項目とも `deleteFlg=true` で絞り込み。論理削除は `rankingMaster`/`rankingOrderMaster` 双方を `true` にカスケードするため、`findRankingOrder` 相当も `deleteFlg=true` で絞り込む。`restore-my-ranking.repository.ts` の `findRanking` と同じ条件） | `backend/src/infrastructure/my-ranking/repository/get-trash-my-ranking/get-trash-my-ranking.repository.ts` | #1 |
+| 4 | ゴミ箱一覧 Repository interface に `itemCount` 追加 | `backend/src/domain/my-ranking/repository/get-trash-list-my-ranking/get-trash-list-my-ranking.repository.interface.ts` | ― |
+| 5 | `GetTrashListMyRankingRepository` に `itemCount` 集計追加（leftJoin + count、**`deleteFlg=true` の項目のみカウント**。ゴミ箱内ランキングの項目は論理削除カスケードにより全て `deleteFlg=true` になっているため、非ゴミ箱版の `GetListMyRankingRepository`（`deleteFlg=false`）とは条件が反転する点に注意） | `backend/src/infrastructure/my-ranking/repository/get-trash-list-my-ranking/get-trash-list-my-ranking.repository.ts` | #4 |
 | 6 | infrastructure バレル更新 | `backend/src/infrastructure/my-ranking/repository/index.ts` | #3 |
-| 7 | `GetTrashMyRankingUsecase` 実装 | `backend/src/application/my-ranking/usecase/get-trash-my-ranking.usecase.ts` | #3 |
+| 7 | `GetTrashMyRankingUsecase` 実装 | `backend/src/application/my-ranking/usecase/get-trash-my-ranking/get-trash-my-ranking.usecase.ts` | #3 |
 | 8 | application usecase バレル更新 | `backend/src/application/my-ranking/usecase/index.ts` | #7 |
-| 9 | `GetTrashMyRankingController` 実装（GET `MY_RANKING_TRASH_ID`） | `backend/src/presentation/my-ranking/controller/get-trash-my-ranking.controller.ts` | #7 |
-| 10 | my-ranking ルーターへ追加 | `backend/src/presentation/my-ranking/controller/my-ranking.controller.ts` | #9 |
+| 9 | `GetTrashMyRankingController` 実装（GET `MY_RANKING_TRASH_ID`） | `backend/src/presentation/my-ranking/controller/get-trash-my-ranking/get-trash-my-ranking.controller.ts` | #7 |
+| 10 | my-ranking ルーターへ追加 | `backend/src/presentation/my-ranking/controller/my-ranking/my-ranking.controller.ts` | #9 |
 | 11 | presentation バレル更新 | `backend/src/presentation/my-ranking/controller/index.ts` | #9 |
 | 12 | `npx tsc --noEmit` で型エラー確認 | ― | #1〜#11 |
 
@@ -81,11 +81,11 @@
 
 | # | タスク | ファイル | 前提 |
 |---|--------|----------|------|
-| 29 | Repository interface を findAll/count 分離形に変更（クエリ型追加） | `backend/src/domain/my-ranking/repository/get-trash-list-my-ranking.repository.interface.ts` | ― |
-| 30 | クエリスキーマ定義（Zod: title, createdAtFrom/To, updatedAtFrom/To, page） | `backend/src/presentation/my-ranking/schema/get-trash-list-my-ranking.schema.ts` | ― |
-| 31 | Repository実装更新（`LIMIT=30` static、`buildConditions` private抽出、`findAll`+`count`実装） | `backend/src/infrastructure/my-ranking/repository/get-trash-list-my-ranking.repository.ts` | #29, #30 |
-| 32 | Usecase更新（`{ list, total, totalPages }` を返す） | `backend/src/application/my-ranking/usecase/get-trash-list-my-ranking.usecase.ts` | #31 |
-| 33 | Controller更新（`zValidator("query", ...)` 追加、totalPages計算） | `backend/src/presentation/my-ranking/controller/get-trash-list-my-ranking.controller.ts` | #30, #32 |
+| 29 | Repository interface を findAll/count 分離形に変更（クエリ型追加） | `backend/src/domain/my-ranking/repository/get-trash-list-my-ranking/get-trash-list-my-ranking.repository.interface.ts` | ― |
+| 30 | クエリスキーマ定義（Zod: title, createdAtFrom/To, updatedAtFrom/To, page） | `backend/src/presentation/my-ranking/schema/get-trash-list-my-ranking/get-trash-list-my-ranking.schema.ts` | ― |
+| 31 | Repository実装更新（`LIMIT=30` static、`buildConditions` private抽出、`findAll`+`count`実装） | `backend/src/infrastructure/my-ranking/repository/get-trash-list-my-ranking/get-trash-list-my-ranking.repository.ts` | #29, #30 |
+| 32 | Usecase更新（`{ list, total, totalPages }` を返す） | `backend/src/application/my-ranking/usecase/get-trash-list-my-ranking/get-trash-list-my-ranking.usecase.ts` | #31 |
+| 33 | Controller更新（`zValidator("query", ...)` 追加、totalPages計算） | `backend/src/presentation/my-ranking/controller/get-trash-list-my-ranking/get-trash-list-my-ranking.controller.ts` | #30, #32 |
 | 34 | `npx tsc --noEmit` で型エラー確認 | ― | #29〜#33 |
 
 ### フロントエンド タスク

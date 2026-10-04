@@ -33,9 +33,9 @@
 
 | # | タスク | ファイル | 前提 |
 |---|--------|----------|------|
-| 1 | `MyRankingOrderType` に `order: number` を追加 | `backend/src/domain/my-ranking/repository/get-my-ranking.repository.interface.ts` | ― |
-| 2 | `findRankingOrder` の SELECT に `order` を追加し `.orderBy(rankingOrderMaster.order)` で並び順を保証する | `backend/src/infrastructure/my-ranking/repository/get-my-ranking.repository.ts` | #1 |
-| 3 | order の取得・ソート順を確認するテスト（`GetMyRankingRepository` を直接インスタンス化し、D1テストDBに項目を1件INSERTして `findRankingOrder` の返り値を検証するリポジトリレベルのテスト。認証込みの統合テスト基盤は今回新設しない） | `backend/src/infrastructure/my-ranking/repository/get-my-ranking.repository.test.ts`（新規） | #1, #2 |
+| 1 | `MyRankingOrderType` に `order: number` を追加 | `backend/src/domain/my-ranking/repository/get-my-ranking/get-my-ranking.repository.interface.ts` | ― |
+| 2 | `findRankingOrder` の SELECT に `order` を追加し `.orderBy(rankingOrderMaster.order)` で並び順を保証する | `backend/src/infrastructure/my-ranking/repository/get-my-ranking/get-my-ranking.repository.ts` | #1 |
+| 3 | order の取得・ソート順を確認するテスト（`GetMyRankingRepository` を直接インスタンス化し、D1テストDBに項目を1件INSERTして `findRankingOrder` の返り値を検証するリポジトリレベルのテスト。認証込みの統合テスト基盤は今回新設しない） | `backend/src/infrastructure/my-ranking/repository/get-my-ranking/get-my-ranking.repository.test.ts`（新規） | #1, #2 |
 
 ## フロントエンド タスク
 

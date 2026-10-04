@@ -1,2 +1,2 @@
-export * from "./get-list-ranking.usecase";
-export * from "./get-ranking.usecase";
+export * from "./get-list-ranking";
+export * from "./get-ranking";

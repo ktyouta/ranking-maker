@@ -1,1 +1,1 @@
-export * from "./ranking-id-param.schema";
+export * from "./ranking-id-param";

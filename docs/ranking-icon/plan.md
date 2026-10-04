@@ -26,30 +26,30 @@
 
 | # | タスク | ファイル | 前提 | 状態 |
 |---|--------|----------|------|------|
-| 1 | `iconMaster`テーブル定義を追加（`ranking_master`はまだ変更しない） | `backend/src/infrastructure/db/schema.ts` | ― | 完了 |
+| 1 | `iconMaster`テーブル定義を追加（`ranking_master`はまだ変更しない） | `backend/src/infrastructure/db/schema/schema.ts` | ― | 完了 |
 | 2 | カスタムマイグレーション作成（`db:generate --custom`）：`icon_master`のCREATE TABLE＋22絵文字INSERT（🏆は`id=1`を明示指定）。ローカルDBに適用して動作確認する | `backend/drizzle/0006_icon-master-seed.sql` | #1 | 完了 |
-| 2a | `rankingMaster.icon`カラム（`.notNull().default(1).references(() => iconMaster.id, {onDelete:"restrict"})`）を追加 | `backend/src/infrastructure/db/schema.ts` | #2 | 完了 |
+| 2a | `rankingMaster.icon`カラム（`.notNull().default(1).references(() => iconMaster.id, {onDelete:"restrict"})`）を追加 | `backend/src/infrastructure/db/schema/schema.ts` | #2 | 完了 |
 | 2b | 通常の`db:generate`（`--custom`なし）を実行し、drizzle-kitにテーブル再作成方式のマイグレーションを自動生成させる。生成SQLが既存カラム・既存FK・部分ユニークインデックスを漏れなく再現しているか確認してからローカルDBに適用する | `backend/drizzle/0007_kind_mindworm.sql` | #2a | 完了 |
 | 3 | `RankingIcon`値オブジェクト定義（同期・構造チェックのみ、整数idをラップ） | `backend/src/domain/my-ranking/value-object/ranking-icon/ranking-icon.ts`（+`index.ts`） | ― | 完了 |
-| 4 | マスタ存在確認用 Repository interface 定義 | `backend/src/domain/my-ranking/repository/icon-validity.repository.interface.ts` | #3 | 完了 |
-| 5 | 選択肢一覧取得用 Repository interface 定義 | `backend/src/domain/my-ranking/repository/get-icons.repository.interface.ts` | #3 | 完了 |
-| 6 | `IconValidityDomainService`定義（`RankingTitleUniquenessDomainService`と同型） | `backend/src/domain/my-ranking/service/icon-validity.domain-service.ts` | #4 | 完了 |
+| 4 | マスタ存在確認用 Repository interface 定義 | `backend/src/domain/my-ranking/repository/icon-validity/icon-validity.repository.interface.ts` | #3 | 完了 |
+| 5 | 選択肢一覧取得用 Repository interface 定義 | `backend/src/domain/my-ranking/repository/get-icons/get-icons.repository.interface.ts` | #3 | 完了 |
+| 6 | `IconValidityDomainService`定義（`RankingTitleUniquenessDomainService`と同型） | `backend/src/domain/my-ranking/service/icon-validity/icon-validity.domain-service.ts` | #4 | 完了 |
 | 7 | `RankingAggregate`修正（`RankingIcon`フィールド追加、`toSnapshot()`反映） | `backend/src/domain/my-ranking/aggregate/ranking-aggregate/ranking-aggregate.ts` | #3 | 完了 |
-| 8 | IconValidityRepository実装（Drizzle） | `backend/src/infrastructure/my-ranking/repository/icon-validity.repository.ts` | #2, #4 | 完了 |
-| 9 | GetIconsRepository実装（`deleteFlg=false`のみ返す、`{id, emoji}`） | `backend/src/infrastructure/my-ranking/repository/get-icons.repository.ts` | #2, #5 | 完了 |
-| 10 | CreateMyRankingRepository修正（`icon`列をinsert対象に追加） | `backend/src/infrastructure/my-ranking/repository/create-my-ranking.repository.ts` | #2b, #7 | 完了 |
-| 11 | UpdateMyRankingRepository修正（`icon`列をupdate対象に追加） | `backend/src/infrastructure/my-ranking/repository/update-my-ranking.repository.ts` | #2b, #7 | 完了 |
-| 12 | GetMyRankingRepository修正（`icon`（id）を含めて返す。JOIN不要、そのままの整数値） | `backend/src/infrastructure/my-ranking/repository/get-my-ranking.repository.ts` | #2b | 完了 |
-| 13 | GetListMyRankingRepository修正（同上、一覧側） | `backend/src/infrastructure/my-ranking/repository/get-list-my-ranking.repository.ts` | #2b | 完了 |
-| 14 | Create/Update Schema に`icon`フィールド追加（構造チェックのみ、整数） | `backend/src/presentation/my-ranking/schema/create-my-ranking.schema.ts` `update-my-ranking.schema.ts` | #3 | 完了 |
+| 8 | IconValidityRepository実装（Drizzle） | `backend/src/infrastructure/my-ranking/repository/icon-validity/icon-validity.repository.ts` | #2, #4 | 完了 |
+| 9 | GetIconsRepository実装（`deleteFlg=false`のみ返す、`{id, emoji}`） | `backend/src/infrastructure/my-ranking/repository/get-icons/get-icons.repository.ts` | #2, #5 | 完了 |
+| 10 | CreateMyRankingRepository修正（`icon`列をinsert対象に追加） | `backend/src/infrastructure/my-ranking/repository/create-my-ranking/create-my-ranking.repository.ts` | #2b, #7 | 完了 |
+| 11 | UpdateMyRankingRepository修正（`icon`列をupdate対象に追加） | `backend/src/infrastructure/my-ranking/repository/update-my-ranking/update-my-ranking.repository.ts` | #2b, #7 | 完了 |
+| 12 | GetMyRankingRepository修正（`icon`（id）を含めて返す。JOIN不要、そのままの整数値） | `backend/src/infrastructure/my-ranking/repository/get-my-ranking/get-my-ranking.repository.ts` | #2b | 完了 |
+| 13 | GetListMyRankingRepository修正（同上、一覧側） | `backend/src/infrastructure/my-ranking/repository/get-list-my-ranking/get-list-my-ranking.repository.ts` | #2b | 完了 |
+| 14 | Create/Update Schema に`icon`フィールド追加（構造チェックのみ、整数） | `backend/src/presentation/my-ranking/schema/create-my-ranking/create-my-ranking.schema.ts` `backend/src/presentation/my-ranking/schema/update-my-ranking/update-my-ranking.schema.ts` | #3 | 完了 |
 | 15 | Create/Update/Get系レスポンスDTOに`icon`（id）フィールド追加 | `backend/src/presentation/my-ranking/dto/` 配下の該当ファイル | #7, #12, #13 | 完了 |
-| 16 | CreateMyRankingUsecase修正（`RankingIcon`構築＋`IconValidityDomainService`呼び出し、エラー型に`INVALID_ICON`追加） | `backend/src/application/my-ranking/usecase/create-my-ranking.usecase.ts` | #6, #7, #14 | 完了 |
-| 17 | UpdateMyRankingUsecase修正（同上） | `backend/src/application/my-ranking/usecase/update-my-ranking.usecase.ts` | #6, #7, #14 | 完了 |
-| 18 | GetIconsUsecase新設（副作用なし・単純参照） | `backend/src/application/my-ranking/usecase/get-icons.usecase.ts` | #9 | 完了 |
-| 19 | CreateMyRankingController修正（`INVALID_ICON`のエラーマッピング追加） | `backend/src/presentation/my-ranking/controller/create-my-ranking.controller.ts` | #16 | 完了 |
-| 20 | UpdateMyRankingController修正（同上） | `backend/src/presentation/my-ranking/controller/update-my-ranking.controller.ts` | #17 | 完了 |
-| 21 | GetIconsController新設（`authMiddleware`必須） | `backend/src/presentation/my-ranking/controller/get-icons.controller.ts` | #18 | 完了 |
-| 22 | ルート統合（動的パス`:rankingId`より前に登録） | `backend/src/presentation/my-ranking/controller/my-ranking.controller.ts` | #21 | 完了 |
+| 16 | CreateMyRankingUsecase修正（`RankingIcon`構築＋`IconValidityDomainService`呼び出し、エラー型に`INVALID_ICON`追加） | `backend/src/application/my-ranking/usecase/create-my-ranking/create-my-ranking.usecase.ts` | #6, #7, #14 | 完了 |
+| 17 | UpdateMyRankingUsecase修正（同上） | `backend/src/application/my-ranking/usecase/update-my-ranking/update-my-ranking.usecase.ts` | #6, #7, #14 | 完了 |
+| 18 | GetIconsUsecase新設（副作用なし・単純参照） | `backend/src/application/my-ranking/usecase/get-icons/get-icons.usecase.ts` | #9 | 完了 |
+| 19 | CreateMyRankingController修正（`INVALID_ICON`のエラーマッピング追加） | `backend/src/presentation/my-ranking/controller/create-my-ranking/create-my-ranking.controller.ts` | #16 | 完了 |
+| 20 | UpdateMyRankingController修正（同上） | `backend/src/presentation/my-ranking/controller/update-my-ranking/update-my-ranking.controller.ts` | #17 | 完了 |
+| 21 | GetIconsController新設（`authMiddleware`必須） | `backend/src/presentation/my-ranking/controller/get-icons/get-icons.controller.ts` | #18 | 完了 |
+| 22 | ルート統合（動的パス`:rankingId`より前に登録） | `backend/src/presentation/my-ranking/controller/my-ranking/my-ranking.controller.ts` | #21 | 完了 |
 
 ### フロントエンド（hooks → Presentational → Container の順）
 

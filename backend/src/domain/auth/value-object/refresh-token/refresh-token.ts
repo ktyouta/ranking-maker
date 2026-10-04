@@ -2,7 +2,7 @@ import { sign, verify } from "hono/jwt";
 import type { EnvConfig } from "../../../../config";
 import { parseDuration } from "../../../../util";
 import { UserId } from "../../../shared";
-import { Cookie } from "../cookie";
+import { Cookie } from "../cookie/cookie";
 
 
 export class RefreshToken {
