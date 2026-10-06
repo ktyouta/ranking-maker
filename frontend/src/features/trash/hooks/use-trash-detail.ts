@@ -6,7 +6,7 @@ import { useSwitch } from '@/hooks/use-switch';
 import { formatDate } from '@/utils/date-util';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { usePermanentDeleteTrashMutation } from '../api/permanent-delete-trash';
 import { useTrashDetail } from '../api/get-trash-detail';
 import { useRestoreTrashMutation } from '../api/restore-trash';
@@ -19,9 +19,7 @@ export function useTrashDetailScreen() {
         throw new Error('rankingIdが指定されていません');
     }
 
-    // ルーティング用（正常終了後の一覧遷移）
-    const navigate = useNavigate();
-    // ルーティング用（一覧に戻るボタン）
+    // ルーティング用
     const { appGoBack } = useAppNavigation();
     const queryClient = useQueryClient();
     // エラーメッセージ
@@ -65,7 +63,7 @@ export function useTrashDetailScreen() {
             queryClient.invalidateQueries({ queryKey: trashKeys.filterTags() });
             queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
             queryClient.invalidateQueries({ queryKey: myRankingKeys.filterTags() });
-            navigate(paths.trash.path);
+            appGoBack(paths.trash.path);
         },
         // 失敗後の処理
         onError: (message) => {
@@ -81,7 +79,7 @@ export function useTrashDetailScreen() {
             queryClient.invalidateQueries({ queryKey: trashKeys.lists() });
             queryClient.invalidateQueries({ queryKey: trashKeys.filterTags() });
             queryClient.invalidateQueries({ queryKey: tagKeys.all });
-            navigate(paths.trash.path);
+            appGoBack(paths.trash.path);
         },
         // 失敗後の処理
         onError: (message) => {

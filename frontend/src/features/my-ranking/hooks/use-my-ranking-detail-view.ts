@@ -4,11 +4,12 @@ import { type MyRankingListQueryDataType } from '@/app/api/get-my-rankings';
 import { myRankingKeys } from '@/app/api/query-key';
 import { paths } from '@/config/paths';
 import { PUBLIC_STATUS } from '@/constants/public-status';
+import { useAppNavigation } from '@/hooks/use-app-navigation';
 import { useSwitch } from '@/hooks/use-switch';
 import { formatDate } from '@/utils/date-util';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useDeleteMyRankingMutation } from '../api/delete-my-ranking';
 import { useToggleMyRankingFavoriteMutation } from '../api/toggle-my-ranking-favorite';
@@ -25,7 +26,7 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
     }
 
     // ルーティング用
-    const navigate = useNavigate();
+    const { appGoBack } = useAppNavigation();
     const queryClient = useQueryClient();
     // エラーメッセージ
     const [errMessage, setErrMessage] = useState(``);
@@ -59,7 +60,7 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
             queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
             queryClient.invalidateQueries({ queryKey: myRankingKeys.filterTags() });
             toast.success(data.message);
-            navigate(paths.myRanking.path);
+            appGoBack(paths.myRanking.path);
         },
         onError: (message) => {
             setErrMessage(message);
@@ -135,8 +136,8 @@ export function useMyRankingDetailView({ onStartEdit }: PropsType) {
      * 一覧画面へ戻る
      */
     const goBack = useCallback(() => {
-        navigate(paths.myRanking.path);
-    }, [navigate]);
+        appGoBack(paths.myRanking.path);
+    }, [appGoBack]);
 
     /**
      * 削除確認ダイアログを開く
