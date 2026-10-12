@@ -173,7 +173,7 @@ describe("GetTrashListMyRankingRepository", () => {
 
         async function findByTags(db: Database, userId: UserId, tags: string[]) {
             const repository = new GetTrashListMyRankingRepository(db);
-            const query = { sort: new TrashRankingSort("updatedAtDesc"), page: 1, tagNames: tags.map((tag) => new TagName(tag)) };
+            const query = { sort: new TrashRankingSort("updatedAtDesc"), page: 1, tagNames: tags.map((tag) => TagName.of(tag)) };
             const [list, total] = await Promise.all([repository.findAll(userId, query, PAGE_SIZE), repository.count(userId, query)]);
             return { titles: list.map((e) => e.title), total };
         }

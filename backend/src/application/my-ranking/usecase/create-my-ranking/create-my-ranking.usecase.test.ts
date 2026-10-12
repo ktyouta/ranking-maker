@@ -31,8 +31,43 @@ describe("CreateMyRankingUsecase", () => {
     );
   });
 
+  it("入力値の制約違反は項目名付きですべて返し、DB を問い合わせず保存しないこと", async () => {
+    const body = {
+      ...buildBody(["ラーメン", "  "]),
+      title: "   ",
+      publicStatus: 99,
+      items: [{ itemName: "ラーメン", order: 1, memo: "" }, { itemName: "あ".repeat(101), order: 0, memo: "" }],
+    };
+
+    const result = await usecase.execute({ userId, body });
+
+    expect(result._unsafeUnwrapErr()).toEqual({
+      type: "INVALID_INPUT",
+      errors: [
+        { field: "title", error: { type: "RANKING_TITLE_EMPTY" } },
+        { field: "publicStatus", error: { type: "PUBLIC_STATUS_INVALID" } },
+        { field: "items.1.itemName", error: { type: "ITEM_NAME_TOO_LONG", max: 100 } },
+        { field: "items.1.order", error: { type: "ORDER_INVALID", min: 1 } },
+        { field: "tags.1", error: { type: "TAG_NAME_EMPTY" } },
+      ],
+    });
+    expect(tagResolutionRepository.findTags).not.toHaveBeenCalled();
+    expect(repository.createRanking).not.toHaveBeenCalled();
+  });
+
+  it("同じタグ名が複数指定された場合は、集約の DUPLICATE_TAG として返し保存しないこと", async () => {
+    const result = await usecase.execute({ userId, body: buildBody(["ラーメン", " ラーメン "]) });
+
+    const error = result._unsafeUnwrapErr();
+    expect(error.type).toBe("VALIDATION");
+    if (error.type === "VALIDATION") {
+      expect(error.errors.map((e) => e.type)).toEqual(["DUPLICATE_TAG"]);
+    }
+    expect(repository.createRanking).not.toHaveBeenCalled();
+  });
+
   it("既存タグは再利用し、新規タグだけをリポジトリに渡すこと", async () => {
-    const existingTag = TagAggregate.reconstruct({ tagId: TagId.of("tag-existing"), userId, tagName: new TagName("ラーメン") });
+    const existingTag = TagAggregate.reconstruct({ tagId: TagId.of("tag-existing"), userId, tagName: TagName.of("ラーメン") });
     vi.mocked(tagResolutionRepository.findTags).mockResolvedValue([existingTag]);
 
     const result = await usecase.execute({ userId, body: buildBody(["ラーメン", "寿司"]) });

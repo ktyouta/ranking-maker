@@ -4,7 +4,7 @@ import type { ITagResolutionRepository } from "../../..";
 import { UserId } from "../../../shared";
 
 function buildExistingTag(id: string, name: string) {
-  return TagAggregate.reconstruct({ tagId: TagId.of(id), userId: UserId.of("user-1"), tagName: new TagName(name) });
+  return TagAggregate.reconstruct({ tagId: TagId.of(id), userId: UserId.of("user-1"), tagName: TagName.of(name) });
 }
 
 describe("TagResolutionDomainService", () => {
@@ -23,7 +23,7 @@ describe("TagResolutionDomainService", () => {
   it("既存タグと同名のタグ名は既存タグに解決し、新規タグに含めないこと", async () => {
     vi.mocked(mockRepository.findTags).mockResolvedValue([buildExistingTag("tag-1", "ラーメン")]);
 
-    const result = await service.resolve({ userId, tagNames: [new TagName("ラーメン")] });
+    const result = await service.resolve({ userId, tagNames: [TagName.of("ラーメン")] });
 
     expect(result.tags.map((e) => e.id)).toEqual(["tag-1"]);
     expect(result.newTags).toHaveLength(0);
@@ -32,7 +32,7 @@ describe("TagResolutionDomainService", () => {
   it("既存タグにないタグ名は新規タグとして作成すること", async () => {
     vi.mocked(mockRepository.findTags).mockResolvedValue([]);
 
-    const result = await service.resolve({ userId, tagNames: [new TagName("寿司")] });
+    const result = await service.resolve({ userId, tagNames: [TagName.of("寿司")] });
 
     expect(result.tags).toHaveLength(1);
     expect(result.newTags).toEqual(result.tags);
@@ -43,7 +43,7 @@ describe("TagResolutionDomainService", () => {
   it("既存タグと新規タグが混在する場合、指定順に解決すること", async () => {
     vi.mocked(mockRepository.findTags).mockResolvedValue([buildExistingTag("tag-1", "ラーメン")]);
 
-    const result = await service.resolve({ userId, tagNames: [new TagName("寿司"), new TagName("ラーメン")] });
+    const result = await service.resolve({ userId, tagNames: [TagName.of("寿司"), TagName.of("ラーメン")] });
 
     expect(result.tags.map((e) => e.name)).toEqual(["寿司", "ラーメン"]);
     expect(result.tags[1].id).toBe("tag-1");
@@ -53,7 +53,7 @@ describe("TagResolutionDomainService", () => {
   it("同じ新規タグ名が複数指定された場合、同じタグに解決し新規タグは1件になること", async () => {
     vi.mocked(mockRepository.findTags).mockResolvedValue([]);
 
-    const result = await service.resolve({ userId, tagNames: [new TagName("寿司"), new TagName("寿司")] });
+    const result = await service.resolve({ userId, tagNames: [TagName.of("寿司"), TagName.of("寿司")] });
 
     expect(result.tags[0].id).toBe(result.tags[1].id);
     expect(result.newTags).toHaveLength(1);

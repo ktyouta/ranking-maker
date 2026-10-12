@@ -31,7 +31,7 @@ export class RestoreMyRankingUsecase {
     }
 
     // タイトル重複（削除されている間に同名の別ランキングが作成されている可能性があるため再検証する）
-    const rankingTitle = new RankingTitle(ranking.title);
+    const rankingTitle = RankingTitle.of(ranking.title);
     if (await this.uniquenessService.isDuplicated({ userId, rankingTitle, rankingId })) {
       return err({ type: "DUPLICATE_TITLE" });
     }

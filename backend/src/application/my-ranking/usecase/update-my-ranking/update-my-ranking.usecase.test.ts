@@ -10,10 +10,10 @@ const rankingId = RankingId.of("ranking-1");
 function buildCurrentRanking(tagIds: string[]) {
   return RankingAggregate.reconstruct({
     rankingId,
-    rankingTitle: new RankingTitle("テストランキング"),
-    publicStatus: new PublicStatus(1),
-    icon: new RankingIcon(1),
-    memo: new RankingMemo(""),
+    rankingTitle: RankingTitle.of("テストランキング"),
+    publicStatus: PublicStatus.of(1),
+    icon: RankingIcon.of(1),
+    memo: RankingMemo.of(""),
     userId,
     rankingOrderEntityList: [],
     rankingTagEntityList: tagIds.map((id) => new RankingTagEntity(RankingTagId.generate(), TagId.of(id), false)),

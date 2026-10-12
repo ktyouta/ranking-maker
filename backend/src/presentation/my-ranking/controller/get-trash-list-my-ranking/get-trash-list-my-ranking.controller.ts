@@ -28,7 +28,7 @@ const getTrashListMyRanking = new Hono<AppEnv>().get(API_ENDPOINT.MY_RANKING_TRA
     }
     const userId = UserId.of(user.userId.value);
     const { sort, tags, ...condition } = c.req.valid("query");
-    const query = { ...condition, tagNames: tags.map((tag) => new TagName(tag)), sort: new TrashRankingSort(sort) };
+    const query = { ...condition, tagNames: tags.map((tag) => TagName.of(tag)), sort: new TrashRankingSort(sort) };
     const usecase = new GetTrashListMyRankingUsecase(repository);
 
     const result = await usecase.execute(userId, query);

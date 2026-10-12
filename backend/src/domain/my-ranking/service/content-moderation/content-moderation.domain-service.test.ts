@@ -19,10 +19,10 @@ describe("ContentModerationDomainService", () => {
   function buildRanking(items: RankingOrderEntity[] = []) {
     const result = RankingAggregate.create({
       rankingId: RankingId.generate(),
-      rankingTitle: new RankingTitle("テストランキング"),
-      publicStatus: new PublicStatus(1),
-      icon: new RankingIcon(1),
-      memo: new RankingMemo(""),
+      rankingTitle: RankingTitle.of("テストランキング"),
+      publicStatus: PublicStatus.of(1),
+      icon: RankingIcon.of(1),
+      memo: RankingMemo.of(""),
       userId,
       rankingOrderEntityList: items,
       rankingTagEntityList: [],
@@ -36,8 +36,8 @@ describe("ContentModerationDomainService", () => {
   it("項目名が未入力(null)の項目は判定対象に含めないこと", async () => {
     vi.mocked(mockRepository.detectInappropriateIndexes).mockResolvedValue([]);
     const items = [
-      new RankingOrderEntity(RankingOrderId.generate(), new ItemName(""), new Order(1), new ItemMemo(""), false),
-      new RankingOrderEntity(RankingOrderId.generate(), new ItemName("ラーメン"), new Order(2), new ItemMemo(""), false),
+      new RankingOrderEntity(RankingOrderId.generate(), ItemName.of(""), Order.of(1), ItemMemo.of(""), false),
+      new RankingOrderEntity(RankingOrderId.generate(), ItemName.of("ラーメン"), Order.of(2), ItemMemo.of(""), false),
     ];
 
     await service.moderate(buildRanking(items), []);
@@ -50,7 +50,7 @@ describe("ContentModerationDomainService", () => {
 
   it("新規タグのタグ名を判定対象に含め、不適切と判定されたタグ名を返すこと", async () => {
     vi.mocked(mockRepository.detectInappropriateIndexes).mockResolvedValue([1]);
-    const newTag = TagAggregate.create({ userId, tagName: new TagName("不適切なタグ") });
+    const newTag = TagAggregate.create({ userId, tagName: TagName.of("不適切なタグ") });
 
     const result = await service.moderate(buildRanking(), [newTag]);
 

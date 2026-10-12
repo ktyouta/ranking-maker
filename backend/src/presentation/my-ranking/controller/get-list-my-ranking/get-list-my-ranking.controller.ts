@@ -28,7 +28,7 @@ const getListMyRanking = new Hono<AppEnv>().get(API_ENDPOINT.MY_RANKING,
     }
     const userId = UserId.of(user.userId.value);
     const { sort, tags, ...condition } = c.req.valid("query");
-    const query = { ...condition, tagNames: tags.map((tag) => new TagName(tag)), sort: new RankingSort(sort) };
+    const query = { ...condition, tagNames: tags.map((tag) => TagName.of(tag)), sort: new RankingSort(sort) };
     const usecase = new GetListMyRankingUsecase(repository);
 
     const result = await usecase.execute(userId, query);

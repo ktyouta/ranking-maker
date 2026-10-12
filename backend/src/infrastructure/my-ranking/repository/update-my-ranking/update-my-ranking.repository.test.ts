@@ -66,12 +66,12 @@ describe("UpdateMyRankingRepository", () => {
         }
         expect(currentRanking.rankingTagEntityList.map((e) => e.tagId).sort()).toEqual([removedTagId, keptTagId, sharedWithTrashTagId].sort());
 
-        const newTag = TagAggregate.create({ userId: UserId.of(userId), tagName: new TagName("新規タグ") });
+        const newTag = TagAggregate.create({ userId: UserId.of(userId), tagName: TagName.of("新規タグ") });
         const updateResult = currentRanking.update({
-            rankingTitle: new RankingTitle("更新後のランキング"),
-            publicStatus: new PublicStatus(publicStatusId),
-            icon: new RankingIcon(1),
-            memo: new RankingMemo(""),
+            rankingTitle: RankingTitle.of("更新後のランキング"),
+            publicStatus: PublicStatus.of(publicStatusId),
+            icon: RankingIcon.of(1),
+            memo: RankingMemo.of(""),
             rankingOrderEntityList: [],
             rankingTagEntityList: [new RankingTagEntity(RankingTagId.generate(), TagId.of(keptTagId), false), new RankingTagEntity(RankingTagId.generate(), TagId.of(newTag.id), false)],
         });

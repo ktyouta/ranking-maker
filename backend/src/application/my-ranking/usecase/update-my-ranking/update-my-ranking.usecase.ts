@@ -49,13 +49,13 @@ export class UpdateMyRankingUsecase {
     }
 
     // タイトル重複（自身は除外し、他の同名ランキングのみ検出する）
-    const rankingTitle = new RankingTitle(body.title);
+    const rankingTitle = RankingTitle.of(body.title);
     if (await this.uniquenessService.isDuplicated({ userId, rankingTitle, rankingId })) {
       return err({ type: "DUPLICATE_TITLE" });
     }
 
     // アイコンの実在・有効性チェック（icon_master が唯一の真実源のため、値オブジェクトではなくここで判定する）
-    const icon = new RankingIcon(body.icon);
+    const icon = RankingIcon.of(body.icon);
     if (!(await this.iconValidityService.isValid(icon))) {
       return err({ type: "INVALID_ICON" });
     }
@@ -63,21 +63,21 @@ export class UpdateMyRankingUsecase {
     // タグ名を既存タグ・新規タグに解決
     const { tags, newTags } = await this.tagResolutionService.resolve({
       userId,
-      tagNames: body.tags.map((e) => new TagName(e)),
+      tagNames: body.tags.map((e) => TagName.of(e)),
     });
 
     // ランキング更新（集約）
     const updateResult = currentRanking.update({
       rankingTitle,
-      publicStatus: new PublicStatus(body.publicStatus),
+      publicStatus: PublicStatus.of(body.publicStatus),
       icon,
-      memo: new RankingMemo(body.memo),
+      memo: RankingMemo.of(body.memo),
       rankingOrderEntityList: body.items.map((e) => {
         return new RankingOrderEntity(
           RankingOrderId.generate(),
-          new ItemName(e.itemName),
-          new Order(e.order),
-          new ItemMemo(e.memo),
+          ItemName.of(e.itemName),
+          Order.of(e.order),
+          ItemMemo.of(e.memo),
           false,
         )
       }),

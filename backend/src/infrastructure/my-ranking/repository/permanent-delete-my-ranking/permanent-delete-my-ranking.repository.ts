@@ -58,17 +58,17 @@ export class PermanentDeleteMyRankingRepository implements IPermanentDeleteMyRan
 
     return RankingAggregate.reconstruct({
       rankingId: RankingId.of(ranking.id),
-      rankingTitle: new RankingTitle(ranking.title),
-      publicStatus: new PublicStatus(ranking.publicStatus),
-      icon: new RankingIcon(ranking.icon),
-      memo: new RankingMemo(ranking.memo),
+      rankingTitle: RankingTitle.of(ranking.title),
+      publicStatus: PublicStatus.of(ranking.publicStatus),
+      icon: RankingIcon.of(ranking.icon),
+      memo: RankingMemo.of(ranking.memo),
       userId: UserId.of(ranking.userId),
       rankingOrderEntityList: orderResult.map((e) =>
         new RankingOrderEntity(
           RankingOrderId.of(e.id),
-          new ItemName(e.itemName),
-          new Order(e.order),
-          new ItemMemo(e.itemMemo ?? ""),
+          ItemName.of(e.itemName),
+          Order.of(e.order),
+          ItemMemo.of(e.itemMemo ?? ""),
           e.deleteFlg,
         )
       ),

@@ -7,10 +7,10 @@ import { RankingId, UserId } from "../../../../domain/shared";
 function buildRanking(id: string, isFavorite: boolean) {
   return RankingAggregate.reconstruct({
     rankingId: RankingId.of(id),
-    rankingTitle: new RankingTitle("テストランキング"),
-    publicStatus: new PublicStatus(1),
-    icon: new RankingIcon(1),
-    memo: new RankingMemo(""),
+    rankingTitle: RankingTitle.of("テストランキング"),
+    publicStatus: PublicStatus.of(1),
+    icon: RankingIcon.of(1),
+    memo: RankingMemo.of(""),
     userId: UserId.of("user-1"),
     rankingOrderEntityList: [],
     rankingTagEntityList: [],

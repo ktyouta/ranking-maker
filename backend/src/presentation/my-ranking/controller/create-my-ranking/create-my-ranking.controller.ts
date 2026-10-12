@@ -1,12 +1,11 @@
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { CreateMyRankingUsecase } from "../../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../../constant";
 import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, type RankingValidationError, RankingTitleUniquenessDomainService, TagResolutionDomainService, UserId } from "../../../../domain";
 import { ContentModerationRepository, CreateMyRankingRepository, IconValidityRepository, RankingTitleUniquenessRepository, TagResolutionRepository } from "../../../../infrastructure";
-import { authMiddleware } from "../../../../middleware";
+import { authMiddleware, validatorMiddleware } from "../../../../middleware";
 import type { AppEnv, ValidationErrorType } from "../../../../types";
-import { formatZodErrors } from "../../../../util";
+import { toInputErrorMessage } from "../../error-message";
 import { CreateMyRankingSchema } from "../../schema";
 
 /**
@@ -16,13 +15,11 @@ import { CreateMyRankingSchema } from "../../schema";
 function toValidationError(error: RankingValidationError): ValidationErrorType {
   switch (error.type) {
     case "DUPLICATE_ITEM_NAME":
-      return { field: "items", message: `名称が重複しています: ${error.itemName}` };
     case "DUPLICATE_ORDER":
-      return { field: "items", message: `順位が重複しています: ${error.order}` };
+      return { field: "items", message: toInputErrorMessage(error) };
     case "DUPLICATE_TAG":
-      return { field: "tags", message: "同じタグが複数指定されています" };
     case "TOO_MANY_TAGS":
-      return { field: "tags", message: `タグは${error.maxCount}個までです` };
+      return { field: "tags", message: toInputErrorMessage(error) };
   }
 }
 
@@ -58,11 +55,7 @@ function toModerationTargetLabel(target: ContentModerationTarget): string {
  */
 const createMyRanking = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING,
   authMiddleware,
-  zValidator("json", CreateMyRankingSchema, (result, c) => {
-    if (!result.success) {
-      return c.json({ message: "バリデーションエラー", data: formatZodErrors(result.error) }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
-    }
-  }),
+  validatorMiddleware("json", CreateMyRankingSchema),
   async (c) => {
     const db = c.get('db');
     const user = c.get("user");
@@ -88,6 +81,8 @@ const createMyRanking = new Hono<AppEnv>().post(API_ENDPOINT.MY_RANKING,
       // 失敗
       (error) => {
         switch (error.type) {
+          case "INVALID_INPUT":
+            return c.json({ message: "入力エラー", data: error.errors.map((e) => ({ field: e.field, message: toInputErrorMessage(e.error) })) }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
           case "VALIDATION":
             return c.json({ message: "入力エラー", data: error.errors.map(toValidationError) }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
           case "DUPLICATE_TITLE":

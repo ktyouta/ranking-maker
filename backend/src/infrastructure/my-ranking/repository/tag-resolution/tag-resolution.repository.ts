@@ -38,7 +38,7 @@ export class TagResolutionRepository implements ITagResolutionRepository {
       TagAggregate.reconstruct({
         tagId: TagId.of(e.id),
         userId: UserId.of(e.userId),
-        tagName: new TagName(e.name),
+        tagName: TagName.of(e.name),
       })
     );
   }
