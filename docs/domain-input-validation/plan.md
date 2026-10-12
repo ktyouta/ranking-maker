@@ -201,7 +201,7 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - [x] テスト（VO の `create` / `of`、Usecase の `INVALID_INPUT`、スキーマの型・構造）
 - [x] 試行の結果を本書に反映する（設計の穴があれば修正してから Phase 2 へ進む）
 - [x] ユーザーによる動作確認（空白だけのタイトルが入力エラーになること・通常の作成ができることを画面で確認）
-- [ ] コミット（ユーザーが実施）
+- [x] コミット（ユーザーが実施）
 
 試行の結果（2026-10-12）:
 
@@ -219,7 +219,7 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - [x] 更新 Controller を `validatorMiddleware` に切り替える
 - [x] テスト
 - [x] ユーザーによる動作確認（空白だけのタイトルが入力エラーになること・通常の更新ができることを画面で確認）
-- [ ] コミット（ユーザーが実施）
+- [x] コミット（ユーザーが実施）
 
 ### Phase 3: 一覧系 API（マイランキング一覧・ゴミ箱一覧）
 
@@ -227,7 +227,10 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - [ ] `RankingListPagination` を新設し、`MyRankingQueryType`・`TrashMyRankingQueryType` の `page` を置き換える
 - [ ] 絞り込みタグを `TagName.create` で判定し、件数上限（`RankingAggregate.MAX_TAG_COUNT`）を Usecase で判定する
 - [ ] `GetListMyRankingUsecase`・`GetTrashListMyRankingUsecase` を Result を返す形にし、文字列の入力を受け取って VO を生成する（現在は Controller が `new TagName`・`new RankingSort` している）
-- [ ] クエリスキーマを型・構造（文字列→数値の変換、省略時の既定値）のみにする
+- [ ] クエリスキーマを型・構造のみにする（`sort`・`page` の `default` は削除し省略可の文字列として受ける。空の `page=` は省略と同じ扱いにする）
+- [ ] 省略時の既定値（並び順は `RankingSort.DEFAULT`・`TrashRankingSort.DEFAULT`、ページは 1）は VO の `create` で決める（ユーザー決定。省略時の扱いは値の意味のため。フロントエンドは URL にない場合に実際に省略して送る）
+- [ ] `favoriteOnly` は zod の変換（`"true"` なら true、それ以外は false）を残し、VO は作らない（ユーザー決定。URL の文字列を真偽値に戻す型の変換であり、フロントエンドも `=== 'true'` で同じ解釈をしている（`use-my-ranking-list.ts`）。厳密にすると画面と API の結果が食い違う）
+  - 破綻ケース: 「お気に入りを除く」など3つ目の状態が増えた場合は値の集合になるため VO に移す
 - [ ] Controller を `validatorMiddleware` に切り替え、`INVALID_INPUT` を返す
 - [ ] テスト
 
