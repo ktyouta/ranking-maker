@@ -63,7 +63,9 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - ranking-maker の既存の応答（ステータス・文言）は、入力値検証に関係しないものは変えない（例: ログイン失敗は 400「IDかパスワードが間違っています。」のまま。yomitsuzuri の 401 には合わせない）
 - 利用者向けの文言は、原則として現在の zod の文言を引き継ぐ。変わるものは「文言の対応表」に明記する
 - 前後の空白の扱い（trim）は現在の VO の挙動を維持する（`RankingTitle`・`ItemName`・`TagName` は trim する。`RankingMemo`・`ItemMemo` は trim しない）。trim を足すと保存値が変わるため
-- 未入力のメモの既定値（`""`）は zod の `.default("")` に残す（型・構造の補完であり値の制約ではないため）
+- （撤回）未入力のメモの既定値（`""`）を zod の `.default("")` に残す案は撤回した。省略時の扱いは値の意味であり型・構造ではなく、yomitsuzuri も `default` を使っていない（`z.string().nullish()` + `BookMemo.create` で扱う）。下記ユーザー決定に置き換える
+- メモ（ランキング・項目）は zod で必須の文字列（`z.string()`）とし、`default` を使わない（ユーザー決定。フロントエンドは未入力でも `""` を常に送っているため、保存値・画面の動きは変わらない。RPC のリクエスト型でメモが必須になるが、フロントエンドは修正なしで型チェックを通過することを確認）
+  - 破綻ケース: メモを省略して送るクライアントが現れた場合は 422（入力形式が不正です）になる。必要になったら yomitsuzuri と同じく省略可とし、VO の `create` で省略時の扱いを決める
 - 期間の絞り込み（`createdAtFrom` 等）・キーワードは現在も検証しておらず、本移行では制約を追加しない
 - 一覧・ゴミ箱一覧のページ番号は、新設する `RankingListPagination`（my-ranking。yomitsuzuri の `BookListPagination` と同じ形）で判定する。一覧とゴミ箱一覧はページ番号の規則が同じため1つの VO を共有する（並び順は許容値が異なるため `RankingSort`・`TrashRankingSort` に分かれている）
 - 空のページ番号（`page=`）は現在どおり省略と同じ扱い（1ページ目）にする
@@ -210,12 +212,14 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 ### Phase 2: ランキング更新 API
 
-- [ ] `UpdateMyRankingUsecase` で `INVALID_INPUT` を返す（入力値の制約 → 更新前のランキング取得 の順）
-- [ ] 更新 Controller の `toValidationError` を `toInputErrorMessage` に統合する
-- [ ] 項目の入力値から VO を生成する処理（作成 Usecase の `createItemParam`）を更新 Usecase でも必要とするため、共通化するか各 Usecase に持つかを着手時にユーザーに確認する
-- [ ] `UpdateMyRankingSchema` を型・構造のみにする
-- [ ] 更新 Controller を `validatorMiddleware` に切り替える
-- [ ] テスト
+- [x] `UpdateMyRankingUsecase` で `INVALID_INPUT` を返す（入力値の制約 → 更新前のランキング取得 の順）
+- [x] 更新 Controller の `toValidationError` を `toInputErrorMessage` に統合する
+- [x] 項目の入力値から VO を生成する処理（作成 Usecase の `createItemParam`）は、各 Usecase に持つ（ユーザー決定。作成・更新の入力の型や Controller の補助関数も Usecase・Controller ごとに定義している前例に合わせる。作成・更新以外の入口（インポート等）が増えた場合はドメインの入力変換への切り出しを検討する）
+- [x] `UpdateMyRankingSchema` を型・構造のみにする
+- [x] 更新 Controller を `validatorMiddleware` に切り替える
+- [x] テスト
+- [x] ユーザーによる動作確認（空白だけのタイトルが入力エラーになること・通常の更新ができることを画面で確認）
+- [ ] コミット（ユーザーが実施）
 
 ### Phase 3: 一覧系 API（マイランキング一覧・ゴミ箱一覧）
 

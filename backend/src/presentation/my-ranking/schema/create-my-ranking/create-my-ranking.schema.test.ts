@@ -30,13 +30,12 @@ describe("CreateMyRankingSchema", () => {
     expect(result.success).toBe(true);
   });
 
-  it("メモを省略した場合は空文字を補うこと", () => {
+  it("メモを省略した場合は型違反になること", () => {
     const result = CreateMyRankingSchema.safeParse(buildBody({ memo: undefined, items: [{ itemName: "ラーメン", order: 1 }] }));
 
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.memo).toBe("");
-      expect(result.data.items[0].memo).toBe("");
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.map((e) => e.path.join("."))).toEqual(["memo", "items.0.memo"]);
     }
   });
 

@@ -49,6 +49,30 @@ describe("UpdateMyRankingUsecase", () => {
     );
   });
 
+  it("入力値の制約違反は項目名付きですべて返し、更新前のランキングを取得せず保存しないこと", async () => {
+    const body = {
+      ...buildBody(["ラーメン", "  "]),
+      title: "   ",
+      icon: 0,
+      items: [{ itemName: "ラーメン", order: 1, memo: "" }, { itemName: "寿司", order: 1.5, memo: "あ".repeat(1001) }],
+    };
+
+    const result = await usecase.execute({ userId, rankingId, body });
+
+    expect(result._unsafeUnwrapErr()).toEqual({
+      type: "INVALID_INPUT",
+      errors: [
+        { field: "title", error: { type: "RANKING_TITLE_EMPTY" } },
+        { field: "icon", error: { type: "RANKING_ICON_INVALID" } },
+        { field: "items.1.order", error: { type: "ORDER_INVALID", min: 1 } },
+        { field: "items.1.memo", error: { type: "ITEM_MEMO_TOO_LONG", max: 1000 } },
+        { field: "tags.1", error: { type: "TAG_NAME_EMPTY" } },
+      ],
+    });
+    expect(repository.findRanking).not.toHaveBeenCalled();
+    expect(repository.updateRanking).not.toHaveBeenCalled();
+  });
+
   it("外したタグのうち未使用と判定されたタグと、新規タグをリポジトリに渡すこと", async () => {
     vi.mocked(repository.findRanking).mockResolvedValue(buildCurrentRanking(["tag-removed"]));
 

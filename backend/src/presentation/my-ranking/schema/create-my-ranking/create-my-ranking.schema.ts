@@ -11,12 +11,12 @@ export const CreateMyRankingSchema = z.object({
   title: z.string(),
   publicStatus: z.number(),
   icon: z.number(),
-  memo: z.string().default(""),
+  memo: z.string(),
   items: z.array(
     z.object({
       itemName: z.string(),
       order: z.number(),
-      memo: z.string().default(""),
+      memo: z.string(),
     })
   ),
   tags: z.array(z.string()),
