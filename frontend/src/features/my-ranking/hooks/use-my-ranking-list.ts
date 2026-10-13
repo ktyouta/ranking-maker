@@ -39,9 +39,9 @@ export const useMyRankingList = () => {
     };
     // 検索条件（フォーム入力中の値）
     const [searchCondition, setSearchCondition] = useState<MyRankingSearchFilter>(initSearchCondition);
-    // 選択中のページ
-    const pageParam = searchParams.get(MY_RANKING_QUERY_KEY.PAGE);
-    const currentPage = pageParam && !Number.isNaN(Number(pageParam)) ? Number(pageParam) : 1;
+    // 選択中のページ（URLの値が1以上の整数でない場合は1ページ目）
+    const pageNumber = Number(searchParams.get(MY_RANKING_QUERY_KEY.PAGE));
+    const currentPage = Number.isInteger(pageNumber) && pageNumber >= 1 ? pageNumber : 1;
     // 並び順（URLの値が選択肢にない場合は既定）
     const sort = MY_RANKING_SORT_OPTIONS.find((option) => option.value === searchParams.get(MY_RANKING_QUERY_KEY.SORT))?.value
         ?? DEFAULT_MY_RANKING_SORT;
@@ -54,8 +54,8 @@ export const useMyRankingList = () => {
         updatedAtTo: searchParams.get(MY_RANKING_QUERY_KEY.UPDATED_AT_TO) || undefined,
         favoriteOnly: searchParams.get(MY_RANKING_QUERY_KEY.FAVORITE_ONLY) || undefined,
         tags: searchParams.get(MY_RANKING_QUERY_KEY.TAGS) || undefined,
-        sort: searchParams.get(MY_RANKING_QUERY_KEY.SORT) || undefined,
-        page: searchParams.get(MY_RANKING_QUERY_KEY.PAGE) || undefined,
+        sort,
+        page: String(currentPage),
     });
     // アイコン候補一覧（idからemojiを引くために使用）
     const iconsQuery = useIcons();

@@ -37,14 +37,14 @@ export function useTrashListScreen() {
     };
     // 検索条件（フォーム入力中の値）
     const [searchCondition, setSearchCondition] = useState<TrashSearchFilter>(initSearchCondition);
-    // 選択中のページ
-    const pageParam = searchParams.get(TRASH_QUERY_KEY.PAGE);
-    const currentPage = pageParam && !Number.isNaN(Number(pageParam)) ? Number(pageParam) : 1;
+    // 選択中のページ（URLの値が1以上の整数でない場合は1ページ目）
+    const pageNumber = Number(searchParams.get(TRASH_QUERY_KEY.PAGE));
+    const currentPage = Number.isInteger(pageNumber) && pageNumber >= 1 ? pageNumber : 1;
     // 並び順（URLの値が選択肢にない場合は既定）
     const sort = TRASH_SORT_OPTIONS.find((option) => option.value === searchParams.get(TRASH_QUERY_KEY.SORT))?.value
         ?? DEFAULT_TRASH_SORT;
     // ゴミ箱一覧取得
-    const trashListQuery = useTrashList({ searchParams });
+    const trashListQuery = useTrashList({ searchParams, sort, page: currentPage });
     // アイコン候補一覧（idからemojiを引くために使用）
     const iconsQuery = useIcons();
     const icons = iconsQuery.data.data;
