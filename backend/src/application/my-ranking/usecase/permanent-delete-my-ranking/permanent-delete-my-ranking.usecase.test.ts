@@ -38,7 +38,7 @@ describe("PermanentDeleteMyRankingUsecase", () => {
     vi.mocked(repository.findRanking).mockResolvedValue(ranking);
     vi.mocked(tagUsageRepository.findReferencedTagIds).mockResolvedValue([{ tagId: "tag-shared" }]);
 
-    const result = await usecase.execute(userId, rankingId);
+    const result = await usecase.execute({ userId, rankingId: rankingId.value });
 
     expect(result.isOk()).toBe(true);
     const [passedRanking, unusedTagIds] = vi.mocked(repository.deleteRanking).mock.calls[0];
@@ -49,7 +49,7 @@ describe("PermanentDeleteMyRankingUsecase", () => {
   it("対象が存在しない場合は NOT_FOUND を返し、削除しないこと", async () => {
     vi.mocked(repository.findRanking).mockResolvedValue(null);
 
-    const result = await usecase.execute(userId, rankingId);
+    const result = await usecase.execute({ userId, rankingId: rankingId.value });
 
     expect(result.isErr()).toBe(true);
     expect(repository.deleteRanking).not.toHaveBeenCalled();

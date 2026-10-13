@@ -57,7 +57,7 @@ describe("UpdateMyRankingUsecase", () => {
       items: [{ itemName: "ラーメン", order: 1, memo: "" }, { itemName: "寿司", order: 1.5, memo: "あ".repeat(1001) }],
     };
 
-    const result = await usecase.execute({ userId, rankingId, body });
+    const result = await usecase.execute({ userId, rankingId: rankingId.value, body });
 
     expect(result._unsafeUnwrapErr()).toEqual({
       type: "INVALID_INPUT",
@@ -76,7 +76,7 @@ describe("UpdateMyRankingUsecase", () => {
   it("外したタグのうち未使用と判定されたタグと、新規タグをリポジトリに渡すこと", async () => {
     vi.mocked(repository.findRanking).mockResolvedValue(buildCurrentRanking(["tag-removed"]));
 
-    const result = await usecase.execute({ userId, rankingId, body: buildBody(["新規タグ"]) });
+    const result = await usecase.execute({ userId, rankingId: rankingId.value, body: buildBody(["新規タグ"]) });
 
     expect(result.isOk()).toBe(true);
     expect(tagUsageRepository.findReferencedTagIds).toHaveBeenCalledWith(userId, rankingId, [TagId.of("tag-removed")]);
@@ -90,7 +90,7 @@ describe("UpdateMyRankingUsecase", () => {
     vi.mocked(repository.findRanking).mockResolvedValue(buildCurrentRanking([]));
     vi.mocked(moderationRepository.detectInappropriateIndexes).mockResolvedValue([2]);
 
-    const result = await usecase.execute({ userId, rankingId, body: buildBody(["不適切なタグ"]) });
+    const result = await usecase.execute({ userId, rankingId: rankingId.value, body: buildBody(["不適切なタグ"]) });
 
     expect(result.isErr()).toBe(true);
     if (result.isErr()) {
@@ -102,7 +102,7 @@ describe("UpdateMyRankingUsecase", () => {
   it("更新対象が存在しない場合は NOT_FOUND を返すこと", async () => {
     vi.mocked(repository.findRanking).mockResolvedValue(null);
 
-    const result = await usecase.execute({ userId, rankingId, body: buildBody([]) });
+    const result = await usecase.execute({ userId, rankingId: rankingId.value, body: buildBody([]) });
 
     expect(result.isErr()).toBe(true);
     if (result.isErr()) {

@@ -1,24 +1,18 @@
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { RestoreMyRankingUsecase } from "../../../../application/my-ranking/usecase/restore-my-ranking/restore-my-ranking.usecase";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../../constant";
-import { RankingId, RankingTitleUniquenessDomainService, UserId } from "../../../../domain";
+import { RankingTitleUniquenessDomainService, UserId } from "../../../../domain";
 import { RankingTitleUniquenessRepository, RestoreMyRankingRepository } from "../../../../infrastructure";
-import { authMiddleware } from "../../../../middleware";
+import { authMiddleware, validatorMiddleware } from "../../../../middleware";
 import { RankingIdParamSchema } from "../../../../schema/ranking-id-param/ranking-id-param.schema";
 import type { AppEnv } from "../../../../types";
-import { formatZodErrors } from "../../../../util";
 
 /**
  * ランキング復元
  */
 const restoreMyRanking = new Hono<AppEnv>().patch(API_ENDPOINT.MY_RANKING_TRASH_ID_RESTORE,
   authMiddleware,
-  zValidator("param", RankingIdParamSchema, (result, c) => {
-    if (!result.success) {
-      return c.json({ message: result.error.message, data: formatZodErrors(result.error) }, HTTP_STATUS.BAD_REQUEST);
-    }
-  }),
+  validatorMiddleware("param", RankingIdParamSchema),
   async (c) => {
     const db = c.get('db');
     const repository = new RestoreMyRankingRepository(db);
@@ -27,11 +21,11 @@ const restoreMyRanking = new Hono<AppEnv>().patch(API_ENDPOINT.MY_RANKING_TRASH_
       return c.json({ message: "認証エラー" }, HTTP_STATUS.UNAUTHORIZED);
     }
     const userId = UserId.of(user.userId.value);
-    const rankingId = RankingId.of(c.req.valid("param").rankingId);
+    const { rankingId } = c.req.valid("param");
     const uniquenessService = new RankingTitleUniquenessDomainService(new RankingTitleUniquenessRepository(db));
     const usecase = new RestoreMyRankingUsecase(repository, uniquenessService);
 
-    const result = await usecase.execute(userId, rankingId);
+    const result = await usecase.execute({ userId, rankingId });
 
     return result.match(
       // 成功

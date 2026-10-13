@@ -6,6 +6,11 @@ export type SoftDeleteMyRankingError =
   | { type: "NOT_FOUND" }
   | { type: "IS_FAVORITE" };
 
+type PropsType = {
+  userId: UserId;
+  rankingId: string;
+}
+
 /**
  * ランキング削除ユースケース
  */
@@ -17,11 +22,13 @@ export class SoftDeleteMyRankingUsecase {
    * @param userId 削除対象を所有するユーザーID
    * @param rankingId 削除対象のランキングID
    * @returns 削除成功時は ok、対象が存在しない場合は NOT_FOUND
+   * @throws rankingId が空の場合（DB は問い合わせない）
    */
-  async execute(userId: UserId, rankingId: RankingId): Promise<Result<void, SoftDeleteMyRankingError>> {
+  async execute({ userId, rankingId }: PropsType): Promise<Result<void, SoftDeleteMyRankingError>> {
+    const id = RankingId.of(rankingId);
 
     // 対象ランキングの存在・所有確認（生存行のみ）
-    const ranking = await this.repository.findRanking(userId, rankingId);
+    const ranking = await this.repository.findRanking(userId, id);
 
     if (!ranking) {
       return err({ type: "NOT_FOUND" });

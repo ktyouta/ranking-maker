@@ -244,10 +244,18 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 ### Phase 4: ID 指定の API（一括削除・一括復元・CSV エクスポート・パスパラメータ）
 
-- [ ] ID 件数（1〜100 件）を Usecase で、空の ID を `RankingId.create` で判定し、`BulkSoftDeleteMyRankingUsecase`・`BulkRestoreMyRankingUsecase`・`GetMyRankingExportUsecase` を Result にして `INVALID_INPUT` を返す
-- [ ] `RankingIdParamSchema` を `z.string()` のみにする
-- [ ] パスパラメータ・お気に入り更新を含む全 Controller を `validatorMiddleware` に切り替える
-- [ ] テスト
+- [x] ID 件数（1〜100 件）を Usecase で、空の ID を `RankingId.create` で判定し、`BulkSoftDeleteMyRankingUsecase`・`BulkRestoreMyRankingUsecase`・`GetMyRankingExportUsecase` を Result にして `INVALID_INPUT` を返す
+- [x] `RankingIdParamSchema` を `z.string()` のみにする
+- [x] パスパラメータ・お気に入り更新を含む全 Controller を `validatorMiddleware` に切り替える
+- [x] テスト
+- [ ] ユーザーによる動作確認（一括削除・一括復元・CSV エクスポート・お気に入り切り替え・詳細表示が従来どおり動くことを画面で確認）
+- [ ] コミット（ユーザーが実施）
+
+実装メモ（2026-10-13）:
+
+- ID の件数の違反のコードは `EMPTY_RANKING_IDS`（0件）・`TOO_MANY_RANKING_IDS`（上限超過）とし、型は各 Usecase に直接書く（Phase 3 の `TOO_MANY_FILTER_TAGS` と同じ）。上限は各 Usecase の static 定数 `MAX_RANKING_ID_COUNT`（D2）。`field` は件数の違反が `ids`、ID ごとの違反が `ids.{添字}`
+- パスパラメータの ID は、yomitsuzuri と同じく Controller から文字列のまま Usecase に渡し、Usecase の先頭で `RankingId.of` で生成する（ユーザー決定。空の ID はルーティングで一致せず届かないため `create` ではなく `of`）。対象はパスパラメータを受け取る8つの Usecase（取得・ゴミ箱取得・論理削除・完全削除・復元・更新・お気に入り更新・公開ランキング取得）で、引数は props オブジェクトにそろえた
+- フロントエンドは一括操作の選択件数を制限していないため、100件を超えて選ぶと 422 になる（トーストの文言が「リクエストが不正です。」から「入力エラー」に変わる）
 
 ### Phase 5: user
 

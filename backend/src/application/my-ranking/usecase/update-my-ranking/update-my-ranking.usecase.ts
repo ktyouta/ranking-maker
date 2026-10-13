@@ -37,7 +37,7 @@ type UpdateMyRankingBody = {
 
 type PropsType = {
   userId: UserId;
-  rankingId: RankingId;
+  rankingId: string;
   body: UpdateMyRankingBody;
 }
 
@@ -75,8 +75,10 @@ export class UpdateMyRankingUsecase {
    * @returns 成功時は更新後のランキングの DTO。
    * 入力値が制約を満たさない（違反はすべて返し、DB は問い合わせない）・ランキングが存在しない・同名ランキングが存在する（自身を除く）・
    * アイコンが無効・ランキングが不変条件に違反する・不適切な内容を含む場合はエラー（いずれも保存しない）
+   * @throws rankingId が空の場合（DB は問い合わせない）
    */
   async execute({ userId, rankingId, body }: PropsType): Promise<Result<UpdateMyRankingResultDto, UpdateMyRankingError>> {
+    const id = RankingId.of(rankingId);
 
     // 入力値の制約チェック
     const input = Result.combineWithAllErrors([
@@ -95,13 +97,13 @@ export class UpdateMyRankingUsecase {
     const [rankingTitle, publicStatus, icon, memo, items, tagNames] = input.value;
 
     // 更新前のランキング取得（他ユーザーのものは取得できないため所有権も担保する）
-    const currentRanking = await this.repository.findRanking(userId, rankingId);
+    const currentRanking = await this.repository.findRanking(userId, id);
     if (!currentRanking) {
       return err({ type: "NOT_FOUND" });
     }
 
     // タイトル重複（自身は除外し、他の同名ランキングのみ検出する）
-    if (await this.uniquenessService.isDuplicated({ userId, rankingTitle, rankingId })) {
+    if (await this.uniquenessService.isDuplicated({ userId, rankingTitle, rankingId: id })) {
       return err({ type: "DUPLICATE_TITLE" });
     }
 
@@ -137,7 +139,7 @@ export class UpdateMyRankingUsecase {
     }
 
     // 手放したタグのうち、どのランキングにも紐づかなくなるタグ
-    const unusedTagIds = await this.tagUsageService.findUnused({ userId, rankingId, releasedTagIds });
+    const unusedTagIds = await this.tagUsageService.findUnused({ userId, rankingId: id, releasedTagIds });
 
     // ランキング更新
     await this.repository.updateRanking(ranking, newTags, unusedTagIds);

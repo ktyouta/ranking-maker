@@ -1,24 +1,18 @@
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { PermanentDeleteMyRankingUsecase } from "../../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../../constant";
-import { RankingId, TagUsageDomainService, UserId } from "../../../../domain";
+import { TagUsageDomainService, UserId } from "../../../../domain";
 import { PermanentDeleteMyRankingRepository, TagUsageRepository } from "../../../../infrastructure";
-import { authMiddleware } from "../../../../middleware";
+import { authMiddleware, validatorMiddleware } from "../../../../middleware";
 import { RankingIdParamSchema } from "../../../../schema/ranking-id-param/ranking-id-param.schema";
 import type { AppEnv } from "../../../../types";
-import { formatZodErrors } from "../../../../util";
 
 /**
  * ランキング完全削除（物理削除）
  */
 const permanentDeleteMyRanking = new Hono<AppEnv>().delete(API_ENDPOINT.MY_RANKING_TRASH_ID,
   authMiddleware,
-  zValidator("param", RankingIdParamSchema, (result, c) => {
-    if (!result.success) {
-      return c.json({ message: result.error.message, data: formatZodErrors(result.error) }, HTTP_STATUS.BAD_REQUEST);
-    }
-  }),
+  validatorMiddleware("param", RankingIdParamSchema),
   async (c) => {
     const db = c.get('db');
     const repository = new PermanentDeleteMyRankingRepository(db);
@@ -27,11 +21,11 @@ const permanentDeleteMyRanking = new Hono<AppEnv>().delete(API_ENDPOINT.MY_RANKI
       return c.json({ message: "認証エラー" }, HTTP_STATUS.UNAUTHORIZED);
     }
     const userId = UserId.of(user.userId.value);
-    const rankingId = RankingId.of(c.req.valid("param").rankingId);
+    const { rankingId } = c.req.valid("param");
     const tagUsageService = new TagUsageDomainService(new TagUsageRepository(db));
     const usecase = new PermanentDeleteMyRankingUsecase(repository, tagUsageService);
 
-    const result = await usecase.execute(userId, rankingId);
+    const result = await usecase.execute({ userId, rankingId });
 
     if (result.isErr()) {
       return c.json({ message: "完全削除対象のランキングが存在しません。" }, HTTP_STATUS.NOT_FOUND);

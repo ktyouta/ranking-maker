@@ -1,16 +1,12 @@
 import { z } from "zod";
 
-// 一度に削除できるランキングの最大件数
-const MAX_BULK_DELETE_IDS = 100;
-
 /**
  * ランキング一括削除（論理削除）対象IDスキーマ
+ *
+ * 型・構造のみを検証する。ランキングIDとして正しいか・件数の上限は、ユースケースで判定する。
  */
 export const BulkSoftDeleteMyRankingSchema = z.object({
-  ids: z
-    .array(z.string().min(1, "ランキングIDが不正です"))
-    .min(1, "ランキングを選択してください")
-    .max(MAX_BULK_DELETE_IDS, `選択できるランキングは${MAX_BULK_DELETE_IDS}件までです`),
+  ids: z.array(z.string()),
 });
 
 export type BulkSoftDeleteMyRankingSchemaType = z.infer<typeof BulkSoftDeleteMyRankingSchema>;

@@ -1,13 +1,11 @@
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { UpdateMyRankingUsecase } from "../../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../../constant";
-import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, type RankingValidationError, RankingId, RankingTitleUniquenessDomainService, TagResolutionDomainService, TagUsageDomainService, UserId } from "../../../../domain";
+import { ContentModerationDomainService, ContentModerationTarget, IconValidityDomainService, type RankingValidationError, RankingTitleUniquenessDomainService, TagResolutionDomainService, TagUsageDomainService, UserId } from "../../../../domain";
 import { ContentModerationRepository, IconValidityRepository, RankingTitleUniquenessRepository, TagResolutionRepository, TagUsageRepository, UpdateMyRankingRepository } from "../../../../infrastructure";
 import { authMiddleware, validatorMiddleware } from "../../../../middleware";
 import { RankingIdParamSchema } from "../../../../schema";
 import type { AppEnv, ValidationErrorType } from "../../../../types";
-import { formatZodErrors } from "../../../../util";
 import { toInputErrorMessage } from "../../error-message";
 import { UpdateMyRankingSchema } from "../../schema";
 
@@ -58,11 +56,7 @@ function toModerationTargetLabel(target: ContentModerationTarget): string {
  */
 const updateMyRanking = new Hono<AppEnv>().patch(API_ENDPOINT.MY_RANKING_ID,
   authMiddleware,
-  zValidator("param", RankingIdParamSchema, (result, c) => {
-    if (!result.success) {
-      return c.json({ message: result.error.message, data: formatZodErrors(result.error) }, HTTP_STATUS.BAD_REQUEST);
-    }
-  }),
+  validatorMiddleware("param", RankingIdParamSchema),
   validatorMiddleware("json", UpdateMyRankingSchema),
   async (c) => {
     const db = c.get('db');
@@ -71,7 +65,7 @@ const updateMyRanking = new Hono<AppEnv>().patch(API_ENDPOINT.MY_RANKING_ID,
       return c.json({ message: "認証エラー" }, HTTP_STATUS.UNAUTHORIZED);
     }
     const userId = UserId.of(user.userId.value);
-    const rankingId = RankingId.of(c.req.valid("param").rankingId);
+    const { rankingId } = c.req.valid("param");
     const body = c.req.valid("json");
     const uniquenessService = new RankingTitleUniquenessDomainService(new RankingTitleUniquenessRepository(db));
     const contentModerationService = new ContentModerationDomainService(new ContentModerationRepository(c.env.AI));

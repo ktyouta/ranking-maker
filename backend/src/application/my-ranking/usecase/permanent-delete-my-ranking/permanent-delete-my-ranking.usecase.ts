@@ -5,6 +5,11 @@ import { UserId } from "../../../../domain/shared";
 export type PermanentDeleteMyRankingError =
   | { type: "NOT_FOUND" };
 
+type PropsType = {
+  userId: UserId;
+  rankingId: string;
+}
+
 /**
  * ランキング完全削除ユースケース
  */
@@ -18,11 +23,13 @@ export class PermanentDeleteMyRankingUsecase {
    * @param userId 削除対象を所有するユーザーID
    * @param rankingId 削除対象のランキングID
    * @returns 削除成功時は ok、対象が存在しない場合は NOT_FOUND
+   * @throws rankingId が空の場合（DB は問い合わせない）
    */
-  async execute(userId: UserId, rankingId: RankingId): Promise<Result<void, PermanentDeleteMyRankingError>> {
+  async execute({ userId, rankingId }: PropsType): Promise<Result<void, PermanentDeleteMyRankingError>> {
+    const id = RankingId.of(rankingId);
 
     // 対象ランキングの存在・所有確認（ゴミ箱内のみ）
-    const ranking = await this.repository.findRanking(userId, rankingId);
+    const ranking = await this.repository.findRanking(userId, id);
 
     if (!ranking) {
       return err({ type: "NOT_FOUND" });
@@ -32,7 +39,7 @@ export class PermanentDeleteMyRankingUsecase {
     const releasedTagIds = ranking.releaseTagsOnPermanentDelete();
 
     // 手放したタグのうち、どのランキングにも紐づかなくなるタグ
-    const unusedTagIds = await this.tagUsageService.findUnused({ userId, rankingId, releasedTagIds });
+    const unusedTagIds = await this.tagUsageService.findUnused({ userId, rankingId: id, releasedTagIds });
 
     // ランキング本体を完全削除
     await this.repository.deleteRanking(ranking, unusedTagIds);

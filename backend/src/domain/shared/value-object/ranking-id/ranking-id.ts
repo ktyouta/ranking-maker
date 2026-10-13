@@ -1,4 +1,10 @@
+import { err, ok, type Result } from "neverthrow";
 import { ulid } from "ulid";
+
+/**
+ * ランキングIDの生成失敗
+ */
+export type RankingIdError = { type: "RANKING_ID_EMPTY" };
 
 /**
  * ランキングID（ULID）
@@ -6,10 +12,10 @@ import { ulid } from "ulid";
 export class RankingId {
   private readonly _value: string;
 
+  /**
+   * @param rankingId 空でないランキングID
+   */
   private constructor(rankingId: string) {
-    if (!rankingId) {
-      throw new Error("ランキングIDが設定されていません。");
-    }
     this._value = rankingId;
   }
 
@@ -25,10 +31,28 @@ export class RankingId {
   }
 
   /**
+   * 外部からの入力値から生成する
+   * @param rankingId ランキングID
+   * @returns 成功時はランキングID、空の場合はその内容を持つ Result
+   */
+  static create(rankingId: string): Result<RankingId, RankingIdError> {
+    if (!rankingId) {
+      return err({ type: "RANKING_ID_EMPTY" });
+    }
+
+    return ok(new RankingId(rankingId));
+  }
+
+  /**
    * 既存のランキングIDからインスタンスを生成
    * @param rankingId ランキングID
+   * @returns ランキングID
+   * @throws 空の場合（呼び出し側の不具合）
    */
   static of(rankingId: string): RankingId {
-    return new RankingId(rankingId);
+    return RankingId.create(rankingId).match(
+      (value) => value,
+      (error) => { throw new Error(`ランキングIDが不正です。type:${error.type}`); },
+    );
   }
 }

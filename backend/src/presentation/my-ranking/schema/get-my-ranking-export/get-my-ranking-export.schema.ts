@@ -1,16 +1,12 @@
 import { z } from "zod";
 
-// 一度にエクスポートできるランキングの最大件数
-const MAX_EXPORT_IDS = 100;
-
 /**
  * ランキングCSVエクスポート対象IDスキーマ
+ *
+ * 型・構造のみを検証する。ランキングIDとして正しいか・件数の上限は、ユースケースで判定する。
  */
 export const GetMyRankingExportSchema = z.object({
-  ids: z
-    .array(z.string().min(1, "ランキングIDが不正です"))
-    .min(1, "ランキングを選択してください")
-    .max(MAX_EXPORT_IDS, `選択できるランキングは${MAX_EXPORT_IDS}件までです`),
+  ids: z.array(z.string()),
 });
 
 export type GetMyRankingExportSchemaType = z.infer<typeof GetMyRankingExportSchema>;

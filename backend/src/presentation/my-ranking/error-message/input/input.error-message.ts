@@ -1,7 +1,7 @@
-import type { ItemMemoError, ItemNameError, OrderError, PublicStatusError, RankingIconError, RankingListPaginationError, RankingMemoError, RankingSortError, RankingTitleError, RankingValidationError, TagNameError, TrashRankingSortError } from "../../../../domain";
+import type { ItemMemoError, ItemNameError, OrderError, PublicStatusError, RankingIconError, RankingIdError, RankingListPaginationError, RankingMemoError, RankingSortError, RankingTitleError, RankingValidationError, TagNameError, TrashRankingSortError } from "../../../../domain";
 
 /**
- * マイランキングコンテキストの入力値の違反（値オブジェクトの制約違反、集約の不変条件の違反、絞り込みタグの件数超過）
+ * マイランキングコンテキストの入力値の違反（値オブジェクトの制約違反、集約の不変条件の違反、絞り込みタグ・ランキングIDの件数の違反）
  */
 type MyRankingInputError =
   | RankingTitleError
@@ -15,8 +15,11 @@ type MyRankingInputError =
   | RankingSortError
   | TrashRankingSortError
   | RankingListPaginationError
+  | RankingIdError
   | RankingValidationError
-  | { type: "TOO_MANY_FILTER_TAGS"; max: number };
+  | { type: "TOO_MANY_FILTER_TAGS"; max: number }
+  | { type: "EMPTY_RANKING_IDS" }
+  | { type: "TOO_MANY_RANKING_IDS"; max: number };
 
 /**
  * 入力値の違反を、利用者向けのメッセージに変換する
@@ -62,6 +65,12 @@ export function toInputErrorMessage(error: MyRankingInputError): string {
       return `タグは${error.maxCount}個までです`;
     case "TOO_MANY_FILTER_TAGS":
       return `タグは${error.max}個までです`;
+    case "RANKING_ID_EMPTY":
+      return "ランキングIDが不正です";
+    case "EMPTY_RANKING_IDS":
+      return "ランキングを選択してください";
+    case "TOO_MANY_RANKING_IDS":
+      return `選択できるランキングは${error.max}件までです`;
     default: {
       // 全てのエラー種別を網羅していることを型で保証する
       error satisfies never;

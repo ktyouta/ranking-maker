@@ -1,11 +1,47 @@
-import { type IGetMyRankingExportRepository, RankingId } from "../../../../domain";
+import { err, ok, Result } from "neverthrow";
+import { type IGetMyRankingExportRepository, RankingId, type RankingIdError } from "../../../../domain";
 import { UserId } from "../../../../domain/shared";
 import { GetMyRankingExportResultDto } from "../../dto";
+
+/**
+ * ランキングCSVエクスポートの入力値の制約違反（field は入力値の項目名。ID は `ids.{IDの添字}`、ID の件数の違反は `ids`）
+ */
+export type GetMyRankingExportInputError =
+  | { field: `ids.${number}`; error: RankingIdError }
+  | { field: "ids"; error: { type: "EMPTY_RANKING_IDS" } | { type: "TOO_MANY_RANKING_IDS"; max: number } };
+
+export type GetMyRankingExportError = { type: "INVALID_INPUT"; errors: GetMyRankingExportInputError[] };
+
+type PropsType = {
+  userId: UserId;
+  rankingIds: string[];
+}
+
+/**
+ * 1回のエクスポートで受け付けるランキングIDの件数を判定する
+ * @param count ランキングIDの件数
+ * @returns 1件以上・上限以下の場合は成功、それ以外は件数の違反を持つ Result
+ */
+function validateRankingIdCount(count: number): Result<undefined, GetMyRankingExportInputError> {
+  if (count === 0) {
+    return err({ field: "ids", error: { type: "EMPTY_RANKING_IDS" } });
+  }
+
+  if (count > GetMyRankingExportUsecase.MAX_RANKING_ID_COUNT) {
+    return err({ field: "ids", error: { type: "TOO_MANY_RANKING_IDS", max: GetMyRankingExportUsecase.MAX_RANKING_ID_COUNT } });
+  }
+
+  return ok(undefined);
+}
 
 /**
  * ランキングCSVエクスポート用データ取得ユースケース
  */
 export class GetMyRankingExportUsecase {
+
+  // 1回のエクスポートで受け付けるランキングIDの最大件数
+  static readonly MAX_RANKING_ID_COUNT = 100;
+
   constructor(private readonly repository: IGetMyRankingExportRepository) { }
 
   /**
@@ -14,20 +50,36 @@ export class GetMyRankingExportUsecase {
    * セキュリティ上必須: 必ず①所有権フィルタ済みのランキング一覧を取得 →
    * ②その結果に含まれる rankingId のみをオーダー取得に渡す、の順序を守る。
    * クライアントから渡された生の rankingIds をオーダー取得にそのまま渡さない。
+   * @param userId エクスポート対象を所有するユーザーID
+   * @param rankingIds エクスポート対象のランキングID一覧（クライアントからの未フィルタな入力）
+   * @returns 成功時はエクスポート対象のランキングと項目一覧（所有するランキングがない場合は空）。
+   * 入力値が制約を満たさない場合は INVALID_INPUT（違反はすべて返し、DB は問い合わせない）
    */
-  async execute(userId: UserId, rankingIds: RankingId[]): Promise<GetMyRankingExportResultDto> {
+  async execute({ userId, rankingIds }: PropsType): Promise<Result<GetMyRankingExportResultDto, GetMyRankingExportError>> {
+
+    // 入力値の制約チェック
+    const input = Result.combineWithAllErrors([
+      Result.combineWithAllErrors(
+        rankingIds.map((id, index) => RankingId.create(id).mapErr((error): GetMyRankingExportInputError => ({ field: `ids.${index}`, error }))),
+      ),
+      validateRankingIdCount(rankingIds.length),
+    ]);
+    if (input.isErr()) {
+      return err({ type: "INVALID_INPUT", errors: input.error.flat() });
+    }
+    const [ids] = input.value;
 
     // ①所有権フィルタ済みのランキング一覧
-    const rankings = await this.repository.findRankings(userId, rankingIds);
+    const rankings = await this.repository.findRankings(userId, ids);
 
     if (rankings.length === 0) {
-      return new GetMyRankingExportResultDto([], []);
+      return ok(new GetMyRankingExportResultDto([], []));
     }
 
     // ②①に含まれる rankingId のみでオーダーを取得
     const ownedRankingIds = rankings.map((ranking) => RankingId.of(ranking.id));
     const orders = await this.repository.findRankingOrders(ownedRankingIds);
 
-    return new GetMyRankingExportResultDto(rankings, orders);
+    return ok(new GetMyRankingExportResultDto(rankings, orders));
   }
 }
