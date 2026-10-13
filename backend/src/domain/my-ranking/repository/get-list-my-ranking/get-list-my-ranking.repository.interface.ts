@@ -1,5 +1,5 @@
 import { UserId } from "../../../shared";
-import { RankingSort, TagName } from "../../value-object";
+import { RankingListPagination, RankingSort, TagName } from "../../value-object";
 
 export type MyRankingListType = {
   id: string;
@@ -27,8 +27,7 @@ export type MyRankingQueryType = {
   // 指定したタグがすべて付いているランキングに絞り込む
   tagNames?: TagName[];
   sort: RankingSort;
-  // 1始まりのページ番号
-  page: number;
+  pagination: RankingListPagination;
 };
 
 /**
@@ -46,8 +45,8 @@ export interface IGetListMyRankingRepository {
   /**
    * 件数取得
    * @param userId ランキングを所有するユーザーID
-   * @param query 絞り込み条件（ページ番号は使わない）
+   * @param query 絞り込み条件（ページング条件は使わない）
    * @returns 絞り込み条件に一致する全件数
    */
-  count(userId: UserId, query: Omit<MyRankingQueryType, "page">): Promise<number>;
+  count(userId: UserId, query: Omit<MyRankingQueryType, "pagination">): Promise<number>;
 }

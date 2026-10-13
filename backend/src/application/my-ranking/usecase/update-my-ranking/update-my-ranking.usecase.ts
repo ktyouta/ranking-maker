@@ -80,12 +80,10 @@ export class UpdateMyRankingUsecase {
 
     // 入力値の制約チェック
     const input = Result.combineWithAllErrors([
-      Result.combineWithAllErrors([
-        RankingTitle.create(body.title).mapErr((error): UpdateMyRankingInputError => ({ field: "title", error })),
-        PublicStatus.create(body.publicStatus).mapErr((error): UpdateMyRankingInputError => ({ field: "publicStatus", error })),
-        RankingIcon.create(body.icon).mapErr((error): UpdateMyRankingInputError => ({ field: "icon", error })),
-        RankingMemo.create(body.memo).mapErr((error): UpdateMyRankingInputError => ({ field: "memo", error })),
-      ]),
+      RankingTitle.create(body.title).mapErr((error): UpdateMyRankingInputError => ({ field: "title", error })),
+      PublicStatus.create(body.publicStatus).mapErr((error): UpdateMyRankingInputError => ({ field: "publicStatus", error })),
+      RankingIcon.create(body.icon).mapErr((error): UpdateMyRankingInputError => ({ field: "icon", error })),
+      RankingMemo.create(body.memo).mapErr((error): UpdateMyRankingInputError => ({ field: "memo", error })),
       Result.combineWithAllErrors(body.items.map(createItemParam)).mapErr((errors) => errors.flat()),
       Result.combineWithAllErrors(
         body.tags.map((tag, index) => TagName.create(tag).mapErr((error): UpdateMyRankingInputError => ({ field: `tags.${index}`, error }))),
@@ -94,7 +92,7 @@ export class UpdateMyRankingUsecase {
     if (input.isErr()) {
       return err({ type: "INVALID_INPUT", errors: input.error.flat() });
     }
-    const [[rankingTitle, publicStatus, icon, memo], items, tagNames] = input.value;
+    const [rankingTitle, publicStatus, icon, memo, items, tagNames] = input.value;
 
     // 更新前のランキング取得（他ユーザーのものは取得できないため所有権も担保する）
     const currentRanking = await this.repository.findRanking(userId, rankingId);

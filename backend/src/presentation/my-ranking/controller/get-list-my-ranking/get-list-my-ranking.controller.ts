@@ -1,12 +1,11 @@
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { GetListMyRankingUsecase } from "../../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../../constant";
-import { RankingSort, TagName, UserId } from "../../../../domain";
+import { UserId } from "../../../../domain";
 import { GetListMyRankingRepository } from "../../../../infrastructure";
-import { authMiddleware } from "../../../../middleware";
+import { authMiddleware, validatorMiddleware } from "../../../../middleware";
 import type { AppEnv } from "../../../../types";
-import { formatZodErrors } from "../../../../util";
+import { toInputErrorMessage } from "../../error-message";
 import { GetListMyRankingQuerySchema } from "../../schema";
 
 /**
@@ -14,11 +13,7 @@ import { GetListMyRankingQuerySchema } from "../../schema";
  */
 const getListMyRanking = new Hono<AppEnv>().get(API_ENDPOINT.MY_RANKING,
   authMiddleware,
-  zValidator("query", GetListMyRankingQuerySchema, (result, c) => {
-    if (!result.success) {
-      return c.json({ message: "クエリが不正です。", data: formatZodErrors(result.error) }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
-    }
-  }),
+  validatorMiddleware("query", GetListMyRankingQuerySchema),
   async (c) => {
     const db = c.get('db');
     const repository = new GetListMyRankingRepository(db);
@@ -27,13 +22,27 @@ const getListMyRanking = new Hono<AppEnv>().get(API_ENDPOINT.MY_RANKING,
       return c.json({ message: "認証エラー" }, HTTP_STATUS.UNAUTHORIZED);
     }
     const userId = UserId.of(user.userId.value);
-    const { sort, tags, ...condition } = c.req.valid("query");
-    const query = { ...condition, tagNames: tags.map((tag) => TagName.of(tag)), sort: new RankingSort(sort) };
+    const query = c.req.valid("query");
     const usecase = new GetListMyRankingUsecase(repository);
 
-    const result = await usecase.execute(userId, query);
+    const result = await usecase.execute({ userId, query });
 
-    return c.json({ message: "ランキング一覧を取得しました。", data: result.value }, HTTP_STATUS.OK);
+    return result.match(
+      // 成功
+      (dto) => c.json({ message: "ランキング一覧を取得しました。", data: dto.value }, HTTP_STATUS.OK),
+      // 失敗
+      (error) => {
+        switch (error.type) {
+          case "INVALID_INPUT":
+            return c.json({ message: "入力エラー", data: error.errors.map((e) => ({ field: e.field, message: toInputErrorMessage(e.error) })) }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
+          default: {
+            // 全てのエラー種別を網羅していることを型で保証する
+            error.type satisfies never;
+            return c.json({ message: "サーバーエラー" }, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+          }
+        }
+      },
+    );
   });
 
 export { getListMyRanking };

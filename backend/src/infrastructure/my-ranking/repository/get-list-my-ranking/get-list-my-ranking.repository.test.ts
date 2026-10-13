@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { env } from "cloudflare:test";
 import { ulid } from "ulid";
 import { describe, expect, it } from "vitest";
-import { RankingSort, type RankingSortType, TagName } from "../../../../domain/my-ranking";
+import { RankingListPagination, RankingSort, type RankingSortType, TagName } from "../../../../domain/my-ranking";
 import { UserId } from "../../../../domain/shared";
 import type { Database } from "../../../db";
 import * as schema from "../../../db/schema/schema";
@@ -74,7 +74,7 @@ async function seedRankings(db: Database, seeds: RankingSeed[]) {
 
 async function findTitles(db: Database, userId: UserId, sort: RankingSortType) {
     const repository = new GetListMyRankingRepository(db);
-    const result = await repository.findAll(userId, { sort: new RankingSort(sort), page: 1 }, PAGE_SIZE);
+    const result = await repository.findAll(userId, { sort: RankingSort.create(sort)._unsafeUnwrap(), pagination: RankingListPagination.create(1)._unsafeUnwrap() }, PAGE_SIZE);
     return result.map((e) => e.title);
 }
 
@@ -162,9 +162,9 @@ describe("GetListMyRankingRepository", () => {
         );
 
         const repository = new GetListMyRankingRepository(db);
-        const sort = new RankingSort("updatedAtDesc");
-        const page1 = await repository.findAll(userId, { sort, page: 1 }, PAGE_SIZE);
-        const page2 = await repository.findAll(userId, { sort, page: 2 }, PAGE_SIZE);
+        const sort = RankingSort.create("updatedAtDesc")._unsafeUnwrap();
+        const page1 = await repository.findAll(userId, { sort, pagination: RankingListPagination.create(1)._unsafeUnwrap() }, PAGE_SIZE);
+        const page2 = await repository.findAll(userId, { sort, pagination: RankingListPagination.create(2)._unsafeUnwrap() }, PAGE_SIZE);
 
         const ids = [...page1, ...page2].map((e) => e.id);
         expect(page1).toHaveLength(PAGE_SIZE);
@@ -183,7 +183,7 @@ describe("GetListMyRankingRepository", () => {
 
         async function findByTags(db: Database, userId: UserId, tags: string[]) {
             const repository = new GetListMyRankingRepository(db);
-            const query = { sort: new RankingSort("updatedAtDesc"), page: 1, tagNames: tags.map((tag) => TagName.of(tag)) };
+            const query = { sort: RankingSort.create("updatedAtDesc")._unsafeUnwrap(), pagination: RankingListPagination.create(1)._unsafeUnwrap(), tagNames: tags.map((tag) => TagName.of(tag)) };
             const [list, total] = await Promise.all([repository.findAll(userId, query, PAGE_SIZE), repository.count(userId, query)]);
             return { titles: list.map((e) => e.title), total };
         }

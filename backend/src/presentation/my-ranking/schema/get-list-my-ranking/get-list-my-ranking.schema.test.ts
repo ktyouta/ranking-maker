@@ -1,53 +1,57 @@
 import { describe, expect, it } from "vitest";
-import { RankingAggregate, TagName } from "../../../../domain";
+import { TagName } from "../../../../domain";
 import { GetListMyRankingQuerySchema } from "./get-list-my-ranking.schema";
 
-describe("GetListMyRankingQuerySchema の tags", () => {
-  it("指定がない場合は空配列になること", () => {
-    const result = GetListMyRankingQuerySchema.safeParse({});
+describe("GetListMyRankingQuerySchema", () => {
+  it("値の制約（空のタグ・上限超過・許容値以外の並び順・不正なページ番号等）は判定せず通過すること", () => {
+    const result = GetListMyRankingQuerySchema.safeParse({
+      tags: ["", "あ".repeat(TagName.MAX_LENGTH + 1)].join(TagName.SEPARATOR),
+      sort: "nameAsc",
+      page: "abc",
+    });
 
-    expect(result.success && result.data.tags).toEqual([]);
+    expect(result.success).toBe(true);
   });
 
-  it("空文字の場合は空配列になること", () => {
-    const result = GetListMyRankingQuerySchema.safeParse({ tags: "" });
+  describe("tags", () => {
+    it("指定がない場合は空配列になること", () => {
+      const result = GetListMyRankingQuerySchema.safeParse({});
 
-    expect(result.success && result.data.tags).toEqual([]);
+      expect(result.success && result.data.tags).toEqual([]);
+    });
+
+    it("空文字の場合は空配列になること", () => {
+      const result = GetListMyRankingQuerySchema.safeParse({ tags: "" });
+
+      expect(result.success && result.data.tags).toEqual([]);
+    });
+
+    it("区切り文字でつながれた場合は、前後の空白を残したまま分割した配列になること", () => {
+      const result = GetListMyRankingQuerySchema.safeParse({ tags: ["ラーメン", " 東京 "].join(TagName.SEPARATOR) });
+
+      expect(result.success && result.data.tags).toEqual(["ラーメン", " 東京 "]);
+    });
   });
 
-  it("1個だけ指定された場合は要素1つの配列になること", () => {
-    const result = GetListMyRankingQuerySchema.safeParse({ tags: "ラーメン" });
+  describe("sort", () => {
+    it("指定がない場合は省略のまま（既定値を入れない）であること", () => {
+      const result = GetListMyRankingQuerySchema.safeParse({});
 
-    expect(result.success && result.data.tags).toEqual(["ラーメン"]);
+      expect(result.success && result.data.sort).toBeUndefined();
+    });
   });
 
-  it("区切り文字でつながれた場合は分割し、前後の空白を除いた配列になること", () => {
-    const result = GetListMyRankingQuerySchema.safeParse({ tags: ["ラーメン", " 東京 "].join(TagName.SEPARATOR) });
+  describe("page", () => {
+    it("数値に変換すること", () => {
+      const result = GetListMyRankingQuerySchema.safeParse({ page: "2" });
 
-    expect(result.success && result.data.tags).toEqual(["ラーメン", "東京"]);
-  });
+      expect(result.success && result.data.page).toBe(2);
+    });
 
-  it("区切り文字の間が空の場合はエラーになること", () => {
-    expect(GetListMyRankingQuerySchema.safeParse({ tags: ["ラーメン", "", "東京"].join(TagName.SEPARATOR) }).success).toBe(false);
-  });
+    it.each([undefined, ""])("%j の場合は省略として扱うこと", (page) => {
+      const result = GetListMyRankingQuerySchema.safeParse({ page });
 
-  it("空白だけのタグはエラーになること", () => {
-    expect(GetListMyRankingQuerySchema.safeParse({ tags: "  " }).success).toBe(false);
-  });
-
-  it("タグ名の上限文字数を超える場合はエラーになること", () => {
-    expect(GetListMyRankingQuerySchema.safeParse({ tags: "あ".repeat(TagName.MAX_LENGTH + 1) }).success).toBe(false);
-  });
-
-  it("タグが上限件数ちょうどの場合はバリデーションを通過すること", () => {
-    const tags = Array.from({ length: RankingAggregate.MAX_TAG_COUNT }, (_, i) => `タグ${i}`);
-
-    expect(GetListMyRankingQuerySchema.safeParse({ tags: tags.join(TagName.SEPARATOR) }).success).toBe(true);
-  });
-
-  it("タグが上限件数を超える場合はエラーになること", () => {
-    const tags = Array.from({ length: RankingAggregate.MAX_TAG_COUNT + 1 }, (_, i) => `タグ${i}`);
-
-    expect(GetListMyRankingQuerySchema.safeParse({ tags: tags.join(TagName.SEPARATOR) }).success).toBe(false);
+      expect(result.success && result.data.page).toBeUndefined();
+    });
   });
 });

@@ -26,7 +26,7 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
         .where(and(...conditions))
         .orderBy(...this.buildOrderBy(query.sort, this.countItems()))
         .limit(pageSize)
-        .offset((query.page - 1) * pageSize)
+        .offset((query.pagination.value - 1) * pageSize)
     );
 
     return await this.db
@@ -55,7 +55,7 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
   /**
    * 件数取得
    */
-  async count(userId: UserId, query: Omit<MyRankingQueryType, "page">): Promise<number> {
+  async count(userId: UserId, query: Omit<MyRankingQueryType, "pagination">): Promise<number> {
 
     const conditions = this.buildConditions(userId, query);
 
@@ -97,7 +97,7 @@ export class GetListMyRankingRepository implements IGetListMyRankingRepository {
       .where(and(eq(rankingOrderMaster.rankingId, rankingMaster.id), eq(rankingOrderMaster.deleteFlg, false)));
   }
 
-  private buildConditions(userId: UserId, query: Omit<MyRankingQueryType, "page">) {
+  private buildConditions(userId: UserId, query: Omit<MyRankingQueryType, "pagination">) {
     return [
       eq(rankingMaster.deleteFlg, false),
       eq(rankingMaster.userId, userId.value),

@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { env } from "cloudflare:test";
 import { ulid } from "ulid";
 import { describe, expect, it } from "vitest";
-import { TagName, TrashRankingSort, type TrashRankingSortType } from "../../../../domain/my-ranking";
+import { RankingListPagination, TagName, TrashRankingSort, type TrashRankingSortType } from "../../../../domain/my-ranking";
 import { UserId } from "../../../../domain/shared";
 import type { Database } from "../../../db";
 import * as schema from "../../../db/schema/schema";
@@ -75,7 +75,7 @@ async function seedTrash(db: Database, seeds: TrashSeed[]) {
 
 async function findTitles(db: Database, userId: UserId, sort: TrashRankingSortType) {
     const repository = new GetTrashListMyRankingRepository(db);
-    const result = await repository.findAll(userId, { sort: new TrashRankingSort(sort), page: 1 }, PAGE_SIZE);
+    const result = await repository.findAll(userId, { sort: TrashRankingSort.create(sort)._unsafeUnwrap(), pagination: RankingListPagination.create(1)._unsafeUnwrap() }, PAGE_SIZE);
     return result.map((e) => e.title);
 }
 
@@ -152,9 +152,9 @@ describe("GetTrashListMyRankingRepository", () => {
         );
 
         const repository = new GetTrashListMyRankingRepository(db);
-        const sort = new TrashRankingSort("updatedAtDesc");
-        const page1 = await repository.findAll(userId, { sort, page: 1 }, PAGE_SIZE);
-        const page2 = await repository.findAll(userId, { sort, page: 2 }, PAGE_SIZE);
+        const sort = TrashRankingSort.create("updatedAtDesc")._unsafeUnwrap();
+        const page1 = await repository.findAll(userId, { sort, pagination: RankingListPagination.create(1)._unsafeUnwrap() }, PAGE_SIZE);
+        const page2 = await repository.findAll(userId, { sort, pagination: RankingListPagination.create(2)._unsafeUnwrap() }, PAGE_SIZE);
 
         const ids = [...page1, ...page2].map((e) => e.id);
         expect(page1).toHaveLength(PAGE_SIZE);
@@ -173,7 +173,7 @@ describe("GetTrashListMyRankingRepository", () => {
 
         async function findByTags(db: Database, userId: UserId, tags: string[]) {
             const repository = new GetTrashListMyRankingRepository(db);
-            const query = { sort: new TrashRankingSort("updatedAtDesc"), page: 1, tagNames: tags.map((tag) => TagName.of(tag)) };
+            const query = { sort: TrashRankingSort.create("updatedAtDesc")._unsafeUnwrap(), pagination: RankingListPagination.create(1)._unsafeUnwrap(), tagNames: tags.map((tag) => TagName.of(tag)) };
             const [list, total] = await Promise.all([repository.findAll(userId, query, PAGE_SIZE), repository.count(userId, query)]);
             return { titles: list.map((e) => e.title), total };
         }

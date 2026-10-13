@@ -223,16 +223,24 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 ### Phase 3: 一覧系 API（マイランキング一覧・ゴミ箱一覧）
 
-- [ ] `RankingSort`・`TrashRankingSort` を private コンストラクタ + `create` にする
-- [ ] `RankingListPagination` を新設し、`MyRankingQueryType`・`TrashMyRankingQueryType` の `page` を置き換える
-- [ ] 絞り込みタグを `TagName.create` で判定し、件数上限（`RankingAggregate.MAX_TAG_COUNT`）を Usecase で判定する
-- [ ] `GetListMyRankingUsecase`・`GetTrashListMyRankingUsecase` を Result を返す形にし、文字列の入力を受け取って VO を生成する（現在は Controller が `new TagName`・`new RankingSort` している）
-- [ ] クエリスキーマを型・構造のみにする（`sort`・`page` の `default` は削除し省略可の文字列として受ける。空の `page=` は省略と同じ扱いにする）
-- [ ] 省略時の既定値（並び順は `RankingSort.DEFAULT`・`TrashRankingSort.DEFAULT`、ページは 1）は VO の `create` で決める（ユーザー決定。省略時の扱いは値の意味のため。フロントエンドは URL にない場合に実際に省略して送る）
-- [ ] `favoriteOnly` は zod の変換（`"true"` なら true、それ以外は false）を残し、VO は作らない（ユーザー決定。URL の文字列を真偽値に戻す型の変換であり、フロントエンドも `=== 'true'` で同じ解釈をしている（`use-my-ranking-list.ts`）。厳密にすると画面と API の結果が食い違う）
+- [x] `RankingSort`・`TrashRankingSort` を private コンストラクタ + `create` にする
+- [x] `RankingListPagination` を新設し、`MyRankingQueryType`・`TrashMyRankingQueryType` の `page` を置き換える
+- [x] 絞り込みタグを `TagName.create` で判定し、件数上限（`RankingAggregate.MAX_TAG_COUNT`）を Usecase で判定する
+- [x] `GetListMyRankingUsecase`・`GetTrashListMyRankingUsecase` を Result を返す形にし、文字列の入力を受け取って VO を生成する（現在は Controller が `new TagName`・`new RankingSort` している）
+- [x] クエリスキーマを型・構造のみにする（`sort`・`page` の `default` は削除し省略可の文字列として受ける。空の `page=` は省略と同じ扱いにする）
+- [x] 省略時の既定値（並び順は `RankingSort.DEFAULT`・`TrashRankingSort.DEFAULT`、ページは 1）は VO の `create` で決める（ユーザー決定。省略時の扱いは値の意味のため。フロントエンドは URL にない場合に実際に省略して送る）
+- [x] `favoriteOnly` は zod の変換（`"true"` なら true、それ以外は false）を残し、VO は作らない（ユーザー決定。URL の文字列を真偽値に戻す型の変換であり、フロントエンドも `=== 'true'` で同じ解釈をしている（`use-my-ranking-list.ts`）。厳密にすると画面と API の結果が食い違う）
   - 破綻ケース: 「お気に入りを除く」など3つ目の状態が増えた場合は値の集合になるため VO に移す
-- [ ] Controller を `validatorMiddleware` に切り替え、`INVALID_INPUT` を返す
-- [ ] テスト
+- [x] Controller を `validatorMiddleware` に切り替え、`INVALID_INPUT` を返す
+- [x] テスト
+- [ ] ユーザーによる動作確認（マイランキング一覧・ゴミ箱一覧で、絞り込み・並び替え・ページ移動が従来どおり動くことを画面で確認）
+- [ ] コミット（ユーザーが実施）
+
+実装メモ（2026-10-13）:
+
+- `page` の数値への変換と空文字（`page=`）の省略扱いは zod で行う（クエリの表記の問題のため）。省略時の既定値は `RankingListPagination.create` が決める
+- `tags` は区切り文字での分割のみ zod で行い、前後の空白の除去と制約の判定は `TagName.create` で行う
+- 絞り込みタグの件数上限は、各 Usecase の static 定数 `MAX_FILTER_TAG_COUNT`（値は `RankingAggregate.MAX_TAG_COUNT`）とする（D2）。違反のコードは集約の `TOO_MANY_TAGS` と概念が異なるため `TOO_MANY_FILTER_TAGS` とする
 
 ### Phase 4: ID 指定の API（一括削除・一括復元・CSV エクスポート・パスパラメータ）
 

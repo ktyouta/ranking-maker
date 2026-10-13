@@ -26,7 +26,7 @@ export class GetTrashListMyRankingRepository implements IGetTrashListMyRankingRe
         .where(and(...conditions))
         .orderBy(...this.buildOrderBy(query.sort, this.countItems()))
         .limit(pageSize)
-        .offset((query.page - 1) * pageSize)
+        .offset((query.pagination.value - 1) * pageSize)
     );
 
     return await this.db
@@ -56,7 +56,7 @@ export class GetTrashListMyRankingRepository implements IGetTrashListMyRankingRe
   /**
    * 削除済み件数取得
    */
-  async count(userId: UserId, query: Omit<TrashMyRankingQueryType, "page">): Promise<number> {
+  async count(userId: UserId, query: Omit<TrashMyRankingQueryType, "pagination">): Promise<number> {
 
     const conditions = this.buildConditions(userId, query);
 
@@ -101,7 +101,7 @@ export class GetTrashListMyRankingRepository implements IGetTrashListMyRankingRe
       ));
   }
 
-  private buildConditions(userId: UserId, query: Omit<TrashMyRankingQueryType, "page">) {
+  private buildConditions(userId: UserId, query: Omit<TrashMyRankingQueryType, "pagination">) {
     return [
       eq(rankingMaster.deleteFlg, true),
       eq(rankingMaster.userId, userId.value),

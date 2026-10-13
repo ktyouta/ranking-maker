@@ -1,7 +1,7 @@
-import type { ItemMemoError, ItemNameError, OrderError, PublicStatusError, RankingIconError, RankingMemoError, RankingTitleError, RankingValidationError, TagNameError } from "../../../../domain";
+import type { ItemMemoError, ItemNameError, OrderError, PublicStatusError, RankingIconError, RankingListPaginationError, RankingMemoError, RankingSortError, RankingTitleError, RankingValidationError, TagNameError, TrashRankingSortError } from "../../../../domain";
 
 /**
- * マイランキングコンテキストの入力値の違反（値オブジェクトの制約違反、集約の不変条件の違反）
+ * マイランキングコンテキストの入力値の違反（値オブジェクトの制約違反、集約の不変条件の違反、絞り込みタグの件数超過）
  */
 type MyRankingInputError =
   | RankingTitleError
@@ -12,7 +12,11 @@ type MyRankingInputError =
   | OrderError
   | ItemMemoError
   | TagNameError
-  | RankingValidationError;
+  | RankingSortError
+  | TrashRankingSortError
+  | RankingListPaginationError
+  | RankingValidationError
+  | { type: "TOO_MANY_FILTER_TAGS"; max: number };
 
 /**
  * 入力値の違反を、利用者向けのメッセージに変換する
@@ -43,6 +47,11 @@ export function toInputErrorMessage(error: MyRankingInputError): string {
       return `タグは${error.max}文字以内で入力してください`;
     case "TAG_NAME_INVALID_CHARACTER":
       return `タグに「${error.separator}」は使えません`;
+    case "RANKING_SORT_INVALID":
+    case "TRASH_RANKING_SORT_INVALID":
+      return "並び順が不正です";
+    case "RANKING_LIST_PAGE_INVALID":
+      return `ページ番号は${error.min}以上の整数で指定してください`;
     case "DUPLICATE_ITEM_NAME":
       return `名称が重複しています: ${error.itemName}`;
     case "DUPLICATE_ORDER":
@@ -51,6 +60,8 @@ export function toInputErrorMessage(error: MyRankingInputError): string {
       return "同じタグが複数指定されています";
     case "TOO_MANY_TAGS":
       return `タグは${error.maxCount}個までです`;
+    case "TOO_MANY_FILTER_TAGS":
+      return `タグは${error.max}個までです`;
     default: {
       // 全てのエラー種別を網羅していることを型で保証する
       error satisfies never;

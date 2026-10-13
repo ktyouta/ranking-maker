@@ -4,6 +4,7 @@ export * from "./item-name";
 export * from "./order";
 export * from "./public-status";
 export * from "./ranking-icon";
+export * from "./ranking-list-pagination";
 export * from "./ranking-memo";
 export * from "./ranking-order-id";
 export * from "./ranking-sort";

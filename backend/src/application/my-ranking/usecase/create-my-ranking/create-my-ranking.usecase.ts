@@ -76,12 +76,10 @@ export class CreateMyRankingUsecase {
 
     // 入力値の制約チェック
     const input = Result.combineWithAllErrors([
-      Result.combineWithAllErrors([
-        RankingTitle.create(body.title).mapErr((error): CreateMyRankingInputError => ({ field: "title", error })),
-        PublicStatus.create(body.publicStatus).mapErr((error): CreateMyRankingInputError => ({ field: "publicStatus", error })),
-        RankingIcon.create(body.icon).mapErr((error): CreateMyRankingInputError => ({ field: "icon", error })),
-        RankingMemo.create(body.memo).mapErr((error): CreateMyRankingInputError => ({ field: "memo", error })),
-      ]),
+      RankingTitle.create(body.title).mapErr((error): CreateMyRankingInputError => ({ field: "title", error })),
+      PublicStatus.create(body.publicStatus).mapErr((error): CreateMyRankingInputError => ({ field: "publicStatus", error })),
+      RankingIcon.create(body.icon).mapErr((error): CreateMyRankingInputError => ({ field: "icon", error })),
+      RankingMemo.create(body.memo).mapErr((error): CreateMyRankingInputError => ({ field: "memo", error })),
       Result.combineWithAllErrors(body.items.map(createItemParam)).mapErr((errors) => errors.flat()),
       Result.combineWithAllErrors(
         body.tags.map((tag, index) => TagName.create(tag).mapErr((error): CreateMyRankingInputError => ({ field: `tags.${index}`, error }))),
@@ -90,7 +88,7 @@ export class CreateMyRankingUsecase {
     if (input.isErr()) {
       return err({ type: "INVALID_INPUT", errors: input.error.flat() });
     }
-    const [[rankingTitle, publicStatus, icon, memo], items, tagNames] = input.value;
+    const [rankingTitle, publicStatus, icon, memo, items, tagNames] = input.value;
 
     const rankingId = RankingId.generate();
     // タイトル重複（rankingId は未使用の新規 ID のため自己除外は実質的に無効）
