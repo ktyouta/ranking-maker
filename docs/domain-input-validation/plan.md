@@ -259,13 +259,22 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 ### Phase 5: user
 
-- [ ] `UserName` に `create` / `of`、`UserBirthday` に `create` を追加する
-- [ ] `NewPassword` を新設する
-- [ ] `CreateUserUsecase`・`UpdateUserUsecase` を Result にし、`INVALID_INPUT`（確認用パスワードの不一致を含む）を返す
-- [ ] `UserTheme` に `create` を追加し、`UpdateUserThemeUsecase` を Result にして `INVALID_INPUT` を返す
-- [ ] スキーマを型・構造のみにし、Controller を `validatorMiddleware` に切り替える
-- [ ] `presentation/user/error-message/input/` を置く
-- [ ] テスト
+- [x] `UserName` に `create` / `of`、`UserBirthday` に `create` を追加する
+- [x] `NewPassword` を新設する
+- [x] `CreateUserUsecase`・`UpdateUserUsecase` を Result にし、`INVALID_INPUT`（確認用パスワードの不一致を含む）を返す
+- [x] `UserTheme` に `create` を追加し、`UpdateUserThemeUsecase` を Result にして `INVALID_INPUT` を返す
+- [x] スキーマを型・構造のみにし、Controller を `validatorMiddleware` に切り替える
+- [x] `presentation/user/error-message/input/` を置く
+- [x] テスト
+- [ ] ユーザーによる動作確認（ユーザー登録・ユーザー情報の更新・テーマ切り替えが従来どおり動くこと、空白を含むなど制約外の入力が入力エラーになることを画面で確認）
+- [ ] コミット（ユーザーが実施）
+
+実装メモ（2026-10-13）:
+
+- `UserName`・`UserBirthday`・`NewPassword`、作成・更新の Usecase・スキーマ・Controller・エラーメッセージ変換は yomitsuzuri と同じ内容（ranking-maker 独自の差分はテーマのみ）。user の Usecase は yomitsuzuri と同じく props オブジェクトで `UserId` を受け取る
+- `UserTheme` は ranking-maker 独自。`create`（`USER_THEME_INVALID`）を追加し、`of` は `create` を使って throw する形にした。`UpdateUserThemeUsecase` は Result を返し、更新できなかった場合は `NOT_FOUND`（応答は従来どおり 404「テーマを更新できませんでした。」）
+- Phase 6 で `LoginName` に置き換えるまでの間、`LoginUsecase` は `UserName.create` が err なら DB を問い合わせずに認証失敗（従来どおり 400）とする（yomitsuzuri の Phase 4 と同じ。`of` だと制約外の名前で 500 になるため）
+- Repository が DB の値から生成する `UserName` は `of` にした。結合テストのログイン名（`login-${ULID}` で 32 文字）が上限 30 文字を超えて 500 になったため、yomitsuzuri と同じく ULID そのもの（26 文字）に直した。ログインのテストは名前の長さで先に弾かれて意図と違う経路で通っていたため、同様に直した
 
 ### Phase 6: auth
 

@@ -1,6 +1,21 @@
-import { UserId } from "../../../../domain/shared";
-import { UserTheme } from "../../../../domain/user";
+import { err, ok, type Result } from "neverthrow";
+import type { UserId } from "../../../../domain/shared";
+import { UserTheme, type UserThemeError } from "../../../../domain/user";
 import type { IUpdateUserThemeRepository } from "../../../../domain/user";
+
+/**
+ * ユーザーテーマ更新の入力値の制約違反（field は入力値の項目名）
+ */
+export type UpdateUserThemeInputError = { field: "theme"; error: UserThemeError };
+
+export type UpdateUserThemeError =
+  | { type: "INVALID_INPUT"; errors: UpdateUserThemeInputError[] }
+  | { type: "NOT_FOUND" };
+
+type PropsType = {
+  userId: UserId;
+  theme: string;
+}
 
 /**
  * ユーザーテーマ更新ユースケース
@@ -9,12 +24,23 @@ export class UpdateUserThemeUsecase {
   constructor(private readonly repository: IUpdateUserThemeRepository) { }
 
   /**
-   * @returns 更新に成功したか
+   * ユーザーのテーマを更新する
+   * @param userId 更新対象のユーザーID
+   * @param theme テーマ値
+   * @returns 成功時は ok。
+   * テーマが許容値以外の場合は INVALID_INPUT（DB は問い合わせない）、ユーザーが存在しない場合は NOT_FOUND
    */
-  async execute(userId: string, theme: string): Promise<boolean> {
-    const userIdObj = UserId.of(userId);
-    const themeObj = UserTheme.of(theme);
+  async execute({ userId, theme }: PropsType): Promise<Result<void, UpdateUserThemeError>> {
+    // 入力値の制約チェック
+    const userTheme = UserTheme.create(theme);
+    if (userTheme.isErr()) {
+      return err({ type: "INVALID_INPUT", errors: [{ field: "theme", error: userTheme.error }] });
+    }
 
-    return await this.repository.updateTheme(userIdObj, themeObj);
+    if (!(await this.repository.updateTheme(userId, userTheme.value))) {
+      return err({ type: "NOT_FOUND" });
+    }
+
+    return ok(undefined);
   }
 }

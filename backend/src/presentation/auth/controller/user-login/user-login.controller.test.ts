@@ -14,7 +14,7 @@ describe("POST /api/v1/user-login", () => {
         const now = new Date().toISOString();
 
         const userId = ulid();
-        const loginId = `login-${userId}`;
+        const loginId = userId;
         const config = createEnvConfig(env);
         const pepper = new Pepper(config.pepper);
 
@@ -46,7 +46,7 @@ describe("POST /api/v1/user-login", () => {
         const res = await SELF.fetch("http://localhost/api/v1/user-login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: `not-exist-${ulid()}`, password: "CorrectHorse1!" }),
+            body: JSON.stringify({ name: ulid(), password: "CorrectHorse1!" }),
         });
 
         expect(res.status).toBe(400);

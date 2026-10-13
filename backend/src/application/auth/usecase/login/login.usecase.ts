@@ -16,8 +16,12 @@ export class LoginUsecase {
   ) { }
 
   async execute(name: string, password: string): Promise<LoginResultDto | null> {
-    const loginId = new UserName(name);
-    const credential = await this.loginRepository.getLoginUser(loginId);
+    // ユーザー名の制約を満たさない名前のユーザーは存在しないため、DB を問い合わせずに認証失敗とする
+    const loginId = UserName.create(name);
+    if (loginId.isErr()) {
+      return null;
+    }
+    const credential = await this.loginRepository.getLoginUser(loginId.value);
     if (!credential) {
       return null;
     }

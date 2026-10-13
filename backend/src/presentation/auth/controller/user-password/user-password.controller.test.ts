@@ -34,7 +34,7 @@ describe("PATCH /api/v1/user-password", () => {
             {
                 id: ulid(),
                 userId: authenticatedUserId,
-                loginId: `login-${authenticatedUserId}`,
+                loginId: authenticatedUserId,
                 passwordHash: authenticatedUserPasswordHash.value,
                 salt: authenticatedUserSalt.value,
                 createdAt: now,
@@ -43,7 +43,7 @@ describe("PATCH /api/v1/user-password", () => {
             {
                 id: ulid(),
                 userId: otherUserId,
-                loginId: `login-${otherUserId}`,
+                loginId: otherUserId,
                 passwordHash: otherUserPasswordHash.value,
                 salt: otherUserSalt.value,
                 createdAt: now,
@@ -91,7 +91,7 @@ describe("PATCH /api/v1/user-password", () => {
         await db.insert(userLoginMaster).values({
             id: ulid(),
             userId,
-            loginId: `login-${userId}`,
+            loginId: userId,
             passwordHash: passwordHash.value,
             salt: salt.value,
             createdAt: now,

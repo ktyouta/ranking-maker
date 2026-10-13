@@ -1,3 +1,10 @@
+import { err, ok, type Result } from "neverthrow";
+
+/**
+ * ユーザーテーマの生成失敗
+ */
+export type UserThemeError = { type: "USER_THEME_INVALID" };
+
 /**
  * ユーザーテーマ
  */
@@ -11,12 +18,10 @@ export class UserTheme {
 
     private readonly _value: string;
 
+    /**
+     * @param theme 許容値のテーマ値
+     */
     private constructor(theme: string) {
-
-        if (!UserTheme.VALUES.includes(theme)) {
-            throw new Error(`テーマが不正です。value:${theme}`);
-        }
-
         this._value = theme;
     }
 
@@ -25,11 +30,29 @@ export class UserTheme {
     }
 
     /**
+     * 外部からの入力値から生成する
+     * @param theme テーマ値
+     * @returns 成功時はテーマ、許容値以外の場合はその内容を持つ Result
+     */
+    static create(theme: string): Result<UserTheme, UserThemeError> {
+        if (!UserTheme.VALUES.includes(theme)) {
+            return err({ type: "USER_THEME_INVALID" });
+        }
+
+        return ok(new UserTheme(theme));
+    }
+
+    /**
      * 既存のテーマ値からインスタンスを生成
      * @param theme テーマ値
+     * @returns テーマ
+     * @throws 許容値以外の場合（呼び出し側の不具合）
      */
     static of(theme: string): UserTheme {
-        return new UserTheme(theme);
+        return UserTheme.create(theme).match(
+            (value) => value,
+            (error) => { throw new Error(`テーマが不正です。type:${error.type} value:${theme}`); },
+        );
     }
 
     /**
