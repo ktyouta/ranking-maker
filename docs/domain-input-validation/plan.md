@@ -278,11 +278,19 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 ### Phase 6: auth
 
-- [ ] `LoginName`・`RawPassword` を新設し、`UserLoginEntity`・`IUserLoginRepository` の引数を VO にする
-- [ ] `LoginUsecase`・`UpdatePasswordUsecase` を Result にし、`INVALID_INPUT` を返す（ログイン失敗・パスワード不一致の応答は現在のまま）
-- [ ] スキーマを型・構造のみにし、Controller を `validatorMiddleware` に切り替える
-- [ ] `presentation/auth/error-message/input/` を置く
-- [ ] テスト
+- [x] `LoginName`・`RawPassword` を新設し、`UserLoginEntity`・`IUserLoginRepository` の引数を VO にする
+- [x] `LoginUsecase`・`UpdatePasswordUsecase` を Result にし、`INVALID_INPUT` を返す（ログイン失敗・パスワード不一致の応答は現在のまま）
+- [x] スキーマを型・構造のみにし、Controller を `validatorMiddleware` に切り替える
+- [x] `presentation/auth/error-message/input/` を置く
+- [x] テスト
+- [ ] ユーザーによる動作確認（ログイン・パスワード変更が従来どおり動くこと、短い新しいパスワードや確認用パスワードの不一致が入力エラーになることを画面で確認）
+- [ ] コミット（ユーザーが実施）
+
+実装メモ（2026-10-14）:
+
+- VO・エンティティ・リポジトリの引数・Usecase・スキーマ・エラーメッセージ変換は yomitsuzuri と同じ内容。Usecase のテストも yomitsuzuri から移した（`UserProfile` の形のみ ranking-maker に合わせた）
+- 失敗時の応答は ranking-maker の現在のまま。ログイン失敗（`AUTHENTICATION_FAILED`）は 400「IDかパスワードが間違っています。」、パスワード更新の失敗（`CURRENT_PASSWORD_MISMATCH`・`NOT_FOUND`）は 400「パスワードの更新に失敗しました。」（yomitsuzuri はいずれも 401）
+- `LoginUsecase` は Phase 5 で入れた `UserName.create` による仮の判定をやめ、`LoginName`（空でないことのみ）で DB を問い合わせる
 
 ### Phase 7: 仕上げ
 

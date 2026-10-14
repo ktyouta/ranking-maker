@@ -34,14 +34,14 @@ export class UserPasswordRepository implements IUserPasswordRepository {
     );
   }
 
-  async updateLoginUser(userId: UserId, password: UserPassword): Promise<boolean> {
+  async updateLoginUser(userLogin: UserLoginEntity): Promise<boolean> {
     const now = new Date().toISOString();
     const result = await this.db
       .update(userLoginMaster)
-      .set({ passwordHash: password.value, updatedAt: now })
+      .set({ passwordHash: userLogin.passwordHash, updatedAt: now })
       .where(
         and(
-          eq(userLoginMaster.userId, userId.value),
+          eq(userLoginMaster.id, userLogin.loginId),
           eq(userLoginMaster.deleteFlg, false)
         )
       )

@@ -1,6 +1,5 @@
 import type { UserId } from "../../../shared";
 import type { UserLoginEntity } from "../../entity";
-import type { UserPassword } from "../../value-object";
 
 /**
  * パスワード変更リポジトリインターフェース
@@ -12,7 +11,9 @@ export interface IUserPasswordRepository {
   getLoginUser(userId: UserId): Promise<UserLoginEntity | undefined>;
 
   /**
-   * パスワードを更新
+   * ログイン資格情報のパスワードを保存する
+   * @param userLogin パスワードを変更したログイン資格情報
+   * @returns 更新できた場合は true（削除済み・存在しない場合は false）
    */
-  updateLoginUser(userId: UserId, password: UserPassword): Promise<boolean>;
+  updateLoginUser(userLogin: UserLoginEntity): Promise<boolean>;
 }

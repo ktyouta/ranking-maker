@@ -1,6 +1,12 @@
+import { err, ok, type Result } from "neverthrow";
 import type { UserId, UserName } from "../../../shared";
-import type { Pepper, UserSalt } from "../../value-object";
+import type { NewPassword, Pepper, RawPassword, UserSalt } from "../../value-object";
 import { UserPassword } from "../../value-object";
+
+/**
+ * パスワード変更時のエラー
+ */
+export type PasswordChangeError = { type: "CURRENT_PASSWORD_MISMATCH" };
 
 /**
  * ユーザーログインエンティティ
@@ -9,7 +15,7 @@ export class UserLoginEntity {
   private readonly _loginId: UserId; // ログインレコード自身のID（ULID）
   private readonly _userId: UserId;  // user_master.id（FK）
   private readonly _loginName: UserName;
-  private readonly _passwordHash: UserPassword;
+  private _passwordHash: UserPassword;
   private readonly _salt: UserSalt;
 
   constructor(
@@ -48,16 +54,28 @@ export class UserLoginEntity {
 
   /**
    * 入力パスワードが登録済みパスワードと一致するか検証する
+   * @param rawPassword 照合用のパスワード（平文）
+   * @param pepper ペッパー
+   * @returns 一致する場合は true
    */
-  async verifyPassword(inputPassword: string, pepper: Pepper): Promise<boolean> {
-    const hashed = await UserPassword.hash(inputPassword, this._salt, pepper);
+  async verifyPassword(rawPassword: RawPassword, pepper: Pepper): Promise<boolean> {
+    const hashed = await UserPassword.hash(rawPassword.value, this._salt, pepper);
     return hashed.equals(this._passwordHash);
   }
 
   /**
-   * 登録時と同じソルトで新しいパスワードをハッシュ化する
+   * パスワードを変更する
+   * 現在のパスワードが一致する場合のみ、登録時と同じソルトでハッシュ化した新しいパスワードに置き換える
+   * @param currentPassword 照合用の現在のパスワード（平文）
+   * @param newPassword 新しく設定するパスワード
+   * @param pepper ペッパー
+   * @returns 変更成功時は ok、現在のパスワードが一致しない場合は CURRENT_PASSWORD_MISMATCH（変更しない）
    */
-  async hashNewPassword(newPassword: string, pepper: Pepper): Promise<UserPassword> {
-    return await UserPassword.hash(newPassword, this._salt, pepper);
+  async changePassword(currentPassword: RawPassword, newPassword: NewPassword, pepper: Pepper): Promise<Result<void, PasswordChangeError>> {
+    if (!(await this.verifyPassword(currentPassword, pepper))) {
+      return err({ type: "CURRENT_PASSWORD_MISMATCH" });
+    }
+    this._passwordHash = await UserPassword.hash(newPassword.value, this._salt, pepper);
+    return ok(undefined);
   }
 }
