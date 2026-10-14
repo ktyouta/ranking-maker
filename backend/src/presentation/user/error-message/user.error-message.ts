@@ -1,4 +1,4 @@
-import type { NewPasswordError, UserBirthdayError, UserNameError, UserThemeError } from "../../../../domain";
+import type { NewPasswordError, UserBirthdayError, UserNameError, UserThemeError } from "../../../domain";
 
 /**
  * ユーザーコンテキストの入力値の違反（値オブジェクトの制約違反、確認用パスワードの不一致）

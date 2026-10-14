@@ -48,7 +48,7 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - エラーは VO ごとにドメインの言葉（コード）で型定義する。コード名は VO 名を接頭辞にし全体で一意にする。VO にメッセージを書かない
 - Usecase は入力から VO を `create` で生成し、`Result.combineWithAllErrors` で違反をすべて集めて `{ type: "INVALID_INPUT"; errors: { field, error }[] }` を返す（この時点では DB を問い合わせない）。その後に DB を要する判定・集約の操作・保存を行う
 - `field` は zod の `path.join(".")` と同じ形式（`items.2.itemName` など）
-- メッセージ変換関数はコンテキストごとに1つ（`presentation/{コンテキスト}/error-message/input/input.error-message.ts` の `toInputErrorMessage`）。`satisfies never` で網羅性を保証する。集約の違反もこの関数で扱う
+- メッセージ変換関数はコンテキストごとに1つ（`presentation/{コンテキスト}/error-message/{コンテキスト}.error-message.ts` の `toInputErrorMessage`。エラーの種類ではフォルダを分けない）。`satisfies never` で網羅性を保証する。集約の違反もこの関数で扱う
 - zod の検証は `validatorMiddleware`（`middleware/validator/`）で行う。型・構造の違反は zod のメッセージを返さず、`field`（zod の path）と固定のメッセージ「入力形式が不正です」で 422 を返す。`formatZodErrors`・`ValidationErrorType` は削除する
 - パスパラメータの ID は形式を判定しない。`RankingIdParamSchema` は `z.string()` のみとし、空の ID はルーティングで一致せず 404 になる
 - 確認用パスワードの一致は Usecase で判定する（`PASSWORD_CONFIRMATION_MISMATCH`）
@@ -129,8 +129,8 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 ### プレゼンテーション
 
-- `presentation/my-ranking/error-message/input/input.error-message.ts`: my-ranking の全 VO エラーと `RankingValidationError` を受け取る `toInputErrorMessage`。作成・更新の Controller にある重複した `toValidationError` はこれに統合する
-- `presentation/user/error-message/input/`・`presentation/auth/error-message/input/`: yomitsuzuri と同じ
+- `presentation/my-ranking/error-message/my-ranking.error-message.ts`: my-ranking の全 VO エラーと `RankingValidationError` を受け取る `toInputErrorMessage`。作成・更新の Controller にある重複した `toValidationError` はこれに統合する
+- `presentation/user/error-message/user.error-message.ts`・`presentation/auth/error-message/auth.error-message.ts`: 変換の内容は yomitsuzuri と同じ（構成は Phase 7 で変更。yomitsuzuri は `error-message/input/`）
 - `INVALID_INPUT` は `{ message: "入力エラー", data: [{ field, message }] }`（422）
 - `middleware/validator/validator.middleware.ts`: yomitsuzuri と同じ
 
@@ -294,9 +294,17 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 ### Phase 7: 仕上げ
 
-- [ ] `formatZodErrors`・`ValidationErrorType` を削除する。不適切内容の判定結果（`toInappropriateContentError`。`field` が画面向けの名前）は入力値の違反（`field` が入力の位置）と概念が異なるため、専用の型を定義する（Phase 1 の backend-review で検出）
-- [ ] `errorHandler` が `HTTPException` のメッセージを返さないようにする（D3。テストを含む）
-- [ ] CLAUDE.md に「入力値検証とエラーの扱い」を追記する
+- [x] `formatZodErrors`・`ValidationErrorType` を削除する。不適切内容の判定結果（`toInappropriateContentError`。`field` が画面向けの名前）は入力値の違反（`field` が入力の位置）と概念が異なるため、専用の型を定義する（Phase 1 の backend-review で検出）
+- [x] `errorHandler` が `HTTPException` のメッセージを返さないようにする（D3。テストを含む）
+- [x] CLAUDE.md に「入力値検証とエラーの扱い」を追記する
+- [ ] コミット（ユーザーが実施）
+
+実装メモ（2026-10-14）:
+
+- `errorHandler` とそのテスト、CLAUDE.md の追記は yomitsuzuri と同じ内容
+- 不適切内容の判定結果の型（`InappropriateContentErrorType`）と変換関数（ranking-maker 独自。yomitsuzuri に該当機能なし）は、作成・更新の Controller に重複していたものを `presentation/my-ranking/error-message/my-ranking.error-message.ts` にまとめた
+- `error-message/` は yomitsuzuri を踏襲して `input/` でエラーの種類ごとに分けていたが、「変換関数はコンテキストごとに1つ」の決定と合わず、入力値の違反でないエラー（不適切内容）の置き場所が定まらなかった。種類ではフォルダを分けず、コンテキストごとに1ファイル（`{コンテキスト}.error-message.ts`）に変更した（ユーザー決定）
+- ランキングの不変条件の違反に `field`（`items`・`tags`）を付ける `toValidationError` は、yomitsuzuri（`INVALID_WORKS` の `field` を Controller で付ける）と同じく各 Controller に残した
 
 ## 実装時の注意（yomitsuzuri で判明済み）
 

@@ -1,1 +1,1 @@
-export * from "./input";
+export * from "./my-ranking.error-message";

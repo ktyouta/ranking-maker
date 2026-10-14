@@ -1,4 +1,4 @@
-import type { LoginNameError, NewPasswordError, RawPasswordError } from "../../../../domain";
+import type { LoginNameError, NewPasswordError, RawPasswordError } from "../../../domain";
 
 /**
  * 認証コンテキストの入力値の違反（値オブジェクトの制約違反、確認用パスワードの不一致）
