@@ -361,6 +361,18 @@ export class RankingAggregate {
   }
 
   /**
+   * お気に入り状態を変更する
+   * ゴミ箱内（削除済み）のランキングは対象外とする
+   * @param isFavorite 変更後のお気に入り状態
+   */
+  changeFavorite(isFavorite: boolean) {
+    if (this._deleteFlg) {
+      throw new Error(`削除済みのランキングです。`);
+    }
+    this._isFavorite = isFavorite;
+  }
+
+  /**
    * ランキングを削除
    * 配下の項目・タグ付けもあわせて削除する
    * @returns 削除成功時は ok、お気に入り登録中で削除できない場合は IS_FAVORITE

@@ -31,11 +31,14 @@ export class UpdateFavoriteMyRankingUsecase {
     // 対象ランキングの存在・所有確認（生存行のみ）
     const ranking = await this.repository.findRanking(userId, id);
 
-    if (ranking.length === 0) {
+    if (!ranking) {
       return err({ type: "NOT_FOUND" });
     }
 
-    await this.repository.updateFavorite(id, isFavorite);
+    // お気に入り状態の変更
+    ranking.changeFavorite(isFavorite);
+
+    await this.repository.updateFavorite(ranking);
 
     return ok(undefined);
   }

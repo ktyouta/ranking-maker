@@ -233,6 +233,30 @@ describe("RankingAggregate", () => {
     expect(ranking.toSnapshot().rankingTagList.every((e) => !e.deleteFlg)).toBe(true);
   });
 
+  it.each([true, false])("changeFavorite: お気に入り状態を %s に変更すること", (isFavorite) => {
+    const ranking = RankingAggregate.reconstruct({
+      ...buildBaseParams(),
+      rankingOrderEntityList: [],
+      isDeleted: false,
+      isFavorite: !isFavorite,
+    });
+
+    ranking.changeFavorite(isFavorite);
+
+    expect(ranking.isFavorite()).toBe(isFavorite);
+  });
+
+  it("changeFavorite: 削除済みのランキングはエラーになること", () => {
+    const ranking = RankingAggregate.reconstruct({
+      ...buildBaseParams(),
+      rankingOrderEntityList: [],
+      isDeleted: true,
+      isFavorite: false,
+    });
+
+    expect(() => ranking.changeFavorite(true)).toThrow();
+  });
+
   it("項目とタグの両方に重複がある場合は両方のエラーを返すこと", () => {
     const items = [
       new RankingOrderEntity(RankingOrderId.generate(), ItemName.of("ラーメン"), Order.of(1), ItemMemo.of(""), false),
