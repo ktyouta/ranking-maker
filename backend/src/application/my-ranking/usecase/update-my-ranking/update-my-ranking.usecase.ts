@@ -97,8 +97,8 @@ export class UpdateMyRankingUsecase {
     const [rankingTitle, publicStatus, icon, memo, items, tagNames] = input.value;
 
     // 更新前のランキング取得（他ユーザーのものは取得できないため所有権も担保する）
-    const currentRanking = await this.repository.findRanking(userId, id);
-    if (!currentRanking) {
+    const ranking = await this.repository.findRanking(userId, id);
+    if (!ranking) {
       return err({ type: "NOT_FOUND" });
     }
 
@@ -116,7 +116,7 @@ export class UpdateMyRankingUsecase {
     const { tags, newTags } = await this.tagResolutionService.resolve({ userId, tagNames });
 
     // ランキング更新（集約）
-    const updateResult = currentRanking.update({
+    const updateResult = ranking.update({
       rankingTitle,
       publicStatus,
       icon,
@@ -130,7 +130,7 @@ export class UpdateMyRankingUsecase {
       return err({ type: "VALIDATION", errors: updateResult.error });
     }
 
-    const { ranking, releasedTagIds } = updateResult.value;
+    const releasedTagIds = updateResult.value;
 
     // 不適切内容チェック
     const inappropriateTargets = await this.contentModerationService.moderate(ranking, newTags);

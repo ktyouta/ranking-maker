@@ -28,14 +28,6 @@ type RankingAggregateReconstructParams = RankingAggregateParams & {
 type RankingAggregateUpdateParams = Omit<RankingAggregateParams, "rankingId" | "userId">;
 
 /**
- * ランキング更新の結果
- */
-type RankingUpdateResult = {
-  ranking: RankingAggregate;
-  releasedTagIds: TagId[];
-};
-
-/**
  * ランキングの不変条件の違反（作成・更新共通）
  */
 export type RankingValidationError =
@@ -79,15 +71,15 @@ export class RankingAggregate {
   static readonly MAX_TAG_COUNT = 20;
 
   private constructor(private readonly _rankingId: RankingId,
-    private readonly _rankingTitle: RankingTitle,
-    private readonly _publicStatus: PublicStatus,
-    private readonly _icon: RankingIcon,
-    private readonly _memo: RankingMemo,
+    private _rankingTitle: RankingTitle,
+    private _publicStatus: PublicStatus,
+    private _icon: RankingIcon,
+    private _memo: RankingMemo,
     private readonly _userId: UserId,
-    private readonly _rankingOrderEntityList: RankingOrderEntity[],
+    private _rankingOrderEntityList: RankingOrderEntity[],
     private _deleteFlg: boolean,
     private _isFavorite: boolean,
-    private readonly _rankingTagEntityList: RankingTagEntity[],
+    private _rankingTagEntityList: RankingTagEntity[],
   ) { }
 
   /**
@@ -184,12 +176,12 @@ export class RankingAggregate {
    * ランキングを更新する（全置換更新の入口）。
    *
    * 削除されていないランキングのみ対象とする。
-   * 識別子・所有者・お気に入り状態は引き継ぎ、それ以外を指定内容で置き換えた集約を生成する。
-   * 不変条件の検証は create と同じく、違反をすべて収集して err で返す。
+   * 識別子・所有者・お気に入り状態は引き継ぎ、それ以外を指定内容で置き換える。
+   * 不変条件の検証は create と同じく、違反をすべて収集して err で返す（違反がある場合は変更しない）。
    * @param params 更新後の構成要素
-   * @returns 検証成功時は更新後の集約と手放したタグ、失敗時は違反一覧を持つ Result
+   * @returns 検証成功時は手放したタグID一覧、失敗時は違反一覧を持つ Result
    */
-  update(params: RankingAggregateUpdateParams): Result<RankingUpdateResult, RankingValidationError[]> {
+  update(params: RankingAggregateUpdateParams): Result<TagId[], RankingValidationError[]> {
     if (this._deleteFlg) {
       throw new Error(`削除されたランキングです。`);
     }
@@ -200,25 +192,20 @@ export class RankingAggregate {
       return err(errors);
     }
 
+    // 手放したタグ
     const updatedTagIds = new Set(params.rankingTagEntityList.map((e) => e.tagId));
+    const releasedTagIds = this._rankingTagEntityList
+      .filter((e) => !updatedTagIds.has(e.tagId))
+      .map((e) => TagId.of(e.tagId));
 
-    return ok({
-      ranking: new RankingAggregate(
-        this._rankingId,
-        params.rankingTitle,
-        params.publicStatus,
-        params.icon,
-        params.memo,
-        this._userId,
-        params.rankingOrderEntityList,
-        this._deleteFlg,
-        this._isFavorite,
-        params.rankingTagEntityList,
-      ),
-      releasedTagIds: this._rankingTagEntityList
-        .filter((e) => !updatedTagIds.has(e.tagId))
-        .map((e) => TagId.of(e.tagId)),
-    });
+    this._rankingTitle = params.rankingTitle;
+    this._publicStatus = params.publicStatus;
+    this._icon = params.icon;
+    this._memo = params.memo;
+    this._rankingOrderEntityList = params.rankingOrderEntityList;
+    this._rankingTagEntityList = params.rankingTagEntityList;
+
+    return ok(releasedTagIds);
   }
 
   /**

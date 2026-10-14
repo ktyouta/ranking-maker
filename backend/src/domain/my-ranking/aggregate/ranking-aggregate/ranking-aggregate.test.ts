@@ -130,16 +130,16 @@ describe("RankingAggregate", () => {
       throw new Error("unexpected error");
     }
 
-    const { ranking, releasedTagIds } = result.value;
-    expect(ranking.id).toBe(base.rankingId.value);
-    expect(ranking.userId).toBe(base.userId.value);
-    expect(ranking.isFavorite()).toBe(true);
-    expect(ranking.title).toBe("更新後のタイトル");
-    expect(ranking.rankingTagEntityList.map((e) => e.tagId)).toEqual([keptTagId.value, addedTagId.value]);
+    const releasedTagIds = result.value;
+    expect(current.id).toBe(base.rankingId.value);
+    expect(current.userId).toBe(base.userId.value);
+    expect(current.isFavorite()).toBe(true);
+    expect(current.title).toBe("更新後のタイトル");
+    expect(current.rankingTagEntityList.map((e) => e.tagId)).toEqual([keptTagId.value, addedTagId.value]);
     expect(releasedTagIds.map((e) => e.value)).toEqual([removedTagId.value]);
   });
 
-  it("update: 重複がある場合は違反一覧を返すこと", () => {
+  it("update: 重複がある場合は違反一覧を返し、集約を変更しないこと", () => {
     const tagId = TagId.generate();
     const current = RankingAggregate.reconstruct({
       ...buildBaseParams(),
@@ -147,9 +147,10 @@ describe("RankingAggregate", () => {
       isDeleted: false,
       isFavorite: false,
     });
+    const before = current.toSnapshot();
 
     const result = current.update({
-      rankingTitle: RankingTitle.of("テストランキング"),
+      rankingTitle: RankingTitle.of("更新後のタイトル"),
       publicStatus: PublicStatus.of(1),
       icon: RankingIcon.of(1),
       memo: RankingMemo.of(""),
@@ -161,6 +162,7 @@ describe("RankingAggregate", () => {
       throw new Error("unexpected ok");
     }
     expect(result.error).toEqual([{ type: "DUPLICATE_TAG", tagId: tagId.value }]);
+    expect(current.toSnapshot()).toEqual(before);
   });
 
   it("update: 削除済みのランキングはエラーになること", () => {

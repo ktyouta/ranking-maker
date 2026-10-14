@@ -60,14 +60,14 @@ describe("UpdateMyRankingRepository", () => {
         ]);
 
         const repository = new UpdateMyRankingRepository(db);
-        const currentRanking = await repository.findRanking(UserId.of(userId), RankingId.of(rankingId));
-        if (!currentRanking) {
+        const ranking = await repository.findRanking(UserId.of(userId), RankingId.of(rankingId));
+        if (!ranking) {
             throw new Error("unexpected null");
         }
-        expect(currentRanking.rankingTagEntityList.map((e) => e.tagId).sort()).toEqual([removedTagId, keptTagId, sharedWithTrashTagId].sort());
+        expect(ranking.rankingTagEntityList.map((e) => e.tagId).sort()).toEqual([removedTagId, keptTagId, sharedWithTrashTagId].sort());
 
         const newTag = TagAggregate.create({ userId: UserId.of(userId), tagName: TagName.of("新規タグ") });
-        const updateResult = currentRanking.update({
+        const updateResult = ranking.update({
             rankingTitle: RankingTitle.of("更新後のランキング"),
             publicStatus: PublicStatus.of(publicStatusId),
             icon: RankingIcon.of(1),
@@ -78,7 +78,7 @@ describe("UpdateMyRankingRepository", () => {
         if (updateResult.isErr()) {
             throw new Error("unexpected error");
         }
-        const { ranking, releasedTagIds } = updateResult.value;
+        const releasedTagIds = updateResult.value;
         expect(ranking.isFavorite()).toBe(true);
         expect(releasedTagIds.map((e) => e.value).sort()).toEqual([removedTagId, sharedWithTrashTagId].sort());
 
