@@ -7,13 +7,14 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { type BaseSyntheticEvent, type KeyboardEvent } from 'react';
 import { type Control, type FieldErrors, type UseFormRegister } from 'react-hook-form';
 import { HiArrowLeft, HiOutlineChevronLeft, HiOutlineTag } from 'react-icons/hi2';
+import { type ViolationType } from '../api/update-my-ranking';
 import { MAX_TAG_COUNT, type UpdateMyRankingRequestType } from '../types/update-my-ranking-request-type';
 import { type ItemFieldType, ItemRow } from './item-row';
 
 type PropsType = {
     title: string;
     errMessage: string;
-    violations: { field: string; message: string }[];
+    violations: ViolationType[];
     register: UseFormRegister<UpdateMyRankingRequestType>;
     control: Control<UpdateMyRankingRequestType>;
     errors: FieldErrors<UpdateMyRankingRequestType>;

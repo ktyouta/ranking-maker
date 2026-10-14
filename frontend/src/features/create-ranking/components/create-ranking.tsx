@@ -6,6 +6,7 @@ import { closestCenter, DndContext, type DragEndEvent, type SensorDescriptor, ty
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { type BaseSyntheticEvent, type KeyboardEvent } from 'react';
 import { type FieldErrors, type UseFormRegister } from 'react-hook-form';
+import { type ViolationType } from '../api/create-ranking';
 import { type CreateRankingRequestType, MAX_TAG_COUNT } from '../types/create-ranking-request-type';
 import { type ItemFieldType, ItemRow } from './item-row';
 import { TagSettingButton } from './tag-setting-button';
@@ -13,7 +14,7 @@ import { TemplateSelectDialog } from './template-select-dialog';
 
 type PropsType = {
     errMessage: string;
-    violations: { field: string; message: string }[];
+    violations: ViolationType[];
     register: UseFormRegister<CreateRankingRequestType>;
     errors: FieldErrors<CreateRankingRequestType>;
     items: ItemFieldType[];

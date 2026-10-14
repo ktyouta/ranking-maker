@@ -7,10 +7,7 @@ const endpoint = rpc.api.v1['my-ranking'].$post;
 type SuccessResponseType = InferResponseType<typeof endpoint, 201>;
 type RequestType = InferRequestType<typeof endpoint>['json'];
 
-export type ViolationType = {
-    field: string;
-    message: string;
-};
+export type ViolationType = InferResponseType<typeof endpoint, 422>['data'][number];
 
 /**
  * バリデーションエラー・不適切内容エラーの `data` を保持する専用エラー型
