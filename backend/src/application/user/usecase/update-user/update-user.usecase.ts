@@ -53,18 +53,26 @@ export class UpdateUserUsecase {
     }
     const [userName, userBirthday] = input.value;
 
+    // 更新前のユーザー取得
+    const user = await this.repository.findUser(userId);
+    if (!user) {
+      return err({ type: "NOT_FOUND" });
+    }
+
     // ユーザー名の重複チェック
     if (await this.repository.checkUserNameExists(userId, userName)) {
       return err({ type: "DUPLICATE_NAME" });
     }
 
-    const entity = await this.repository.updateUserWithLogin(userId, userName, userBirthday);
-    if (!entity) {
+    // プロフィールの変更
+    user.changeProfile(userName, userBirthday);
+
+    if (!(await this.repository.updateUserWithLogin(user))) {
       return err({ type: "NOT_FOUND" });
     }
 
     const refreshToken = await RefreshToken.create(userId, this.config);
 
-    return ok(new UpdateUserResultDto(entity, refreshToken));
+    return ok(new UpdateUserResultDto(user, refreshToken));
   }
 }

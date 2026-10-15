@@ -102,7 +102,7 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 | `RankingSort` | my-ranking | `RANKING_SORT_INVALID` | 不要（DB の値から生成しない） | |
 | `TrashRankingSort` | my-ranking | `TRASH_RANKING_SORT_INVALID` | 不要（DB の値から生成しない） | |
 | `UserName` | shared | `USER_NAME_TOO_SHORT`(min) / `USER_NAME_TOO_LONG`(max) | 要（Repository） | yomitsuzuri と同じ |
-| `UserBirthday` | user | `USER_BIRTHDAY_INVALID_FORMAT` / `USER_BIRTHDAY_NOT_EXIST` | 不要 | yomitsuzuri と同じ |
+| `UserBirthday` | user | `USER_BIRTHDAY_INVALID_FORMAT` / `USER_BIRTHDAY_NOT_EXIST` | 要（`UpdateUserRepository`。移行後のユーザー更新の見直しで追加） | yomitsuzuri と同じ |
 | `UserTheme` | user | `USER_THEME_INVALID` | 既存（`UpdateUserRepository` が DB の値から生成） | `create` を追加 |
 | `LoginName`（新設） | auth | `LOGIN_NAME_EMPTY` | 不要 | yomitsuzuri と同じ |
 | `RawPassword`（新設） | auth | `RAW_PASSWORD_EMPTY` | 不要 | yomitsuzuri と同じ |
@@ -129,7 +129,7 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 ### プレゼンテーション
 
-- `presentation/my-ranking/error-message/my-ranking.error-message.ts`: my-ranking の全 VO エラーと `RankingValidationError` を受け取る `toInputErrorMessage`。作成・更新の Controller にある重複した `toValidationError` はこれに統合する
+- `presentation/my-ranking/error-message/my-ranking.error-message.ts`: my-ranking の全 VO エラーと `RankingValidationError` を受け取る `toInputErrorMessage`。作成・更新の Controller の `toValidationError` は、文言の変換をこの関数に統合し、`field`（`items`・`tags`）の付与は各 Controller に残す（yomitsuzuri と同じ）
 - `presentation/user/error-message/user.error-message.ts`・`presentation/auth/error-message/auth.error-message.ts`: 変換の内容は yomitsuzuri と同じ（構成は Phase 7 で変更。yomitsuzuri は `error-message/input/`）
 - `INVALID_INPUT` は `{ message: "入力エラー", data: [{ field, message }] }`（422）
 - `middleware/validator/validator.middleware.ts`: yomitsuzuri と同じ
@@ -233,8 +233,8 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
   - 破綻ケース: 「お気に入りを除く」など3つ目の状態が増えた場合は値の集合になるため VO に移す
 - [x] Controller を `validatorMiddleware` に切り替え、`INVALID_INPUT` を返す
 - [x] テスト
-- [ ] ユーザーによる動作確認（マイランキング一覧・ゴミ箱一覧で、絞り込み・並び替え・ページ移動が従来どおり動くことを画面で確認）
-- [ ] コミット（ユーザーが実施）
+- [x] ユーザーによる動作確認（マイランキング一覧・ゴミ箱一覧で、絞り込み・並び替え・ページ移動が従来どおり動くことを画面で確認）
+- [x] コミット（ユーザーが実施）
 
 実装メモ（2026-10-13）:
 
@@ -248,8 +248,8 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - [x] `RankingIdParamSchema` を `z.string()` のみにする
 - [x] パスパラメータ・お気に入り更新を含む全 Controller を `validatorMiddleware` に切り替える
 - [x] テスト
-- [ ] ユーザーによる動作確認（一括削除・一括復元・CSV エクスポート・お気に入り切り替え・詳細表示が従来どおり動くことを画面で確認）
-- [ ] コミット（ユーザーが実施）
+- [x] ユーザーによる動作確認（一括削除・一括復元・CSV エクスポート・お気に入り切り替え・詳細表示が従来どおり動くことを画面で確認）
+- [x] コミット（ユーザーが実施）
 
 実装メモ（2026-10-13）:
 
@@ -266,8 +266,8 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - [x] スキーマを型・構造のみにし、Controller を `validatorMiddleware` に切り替える
 - [x] `presentation/user/error-message/input/` を置く
 - [x] テスト
-- [ ] ユーザーによる動作確認（ユーザー登録・ユーザー情報の更新・テーマ切り替えが従来どおり動くこと、空白を含むなど制約外の入力が入力エラーになることを画面で確認）
-- [ ] コミット（ユーザーが実施）
+- [x] ユーザーによる動作確認（ユーザー登録・ユーザー情報の更新・テーマ切り替えが従来どおり動くこと、空白を含むなど制約外の入力が入力エラーになることを画面で確認）
+- [x] コミット（ユーザーが実施）
 
 実装メモ（2026-10-13）:
 
@@ -283,8 +283,8 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - [x] スキーマを型・構造のみにし、Controller を `validatorMiddleware` に切り替える
 - [x] `presentation/auth/error-message/input/` を置く
 - [x] テスト
-- [ ] ユーザーによる動作確認（ログイン・パスワード変更が従来どおり動くこと、短い新しいパスワードや確認用パスワードの不一致が入力エラーになることを画面で確認）
-- [ ] コミット（ユーザーが実施）
+- [x] ユーザーによる動作確認（ログイン・パスワード変更が従来どおり動くこと、短い新しいパスワードや確認用パスワードの不一致が入力エラーになることを画面で確認）
+- [x] コミット（ユーザーが実施）
 
 実装メモ（2026-10-14）:
 
@@ -297,7 +297,7 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - [x] `formatZodErrors`・`ValidationErrorType` を削除する。不適切内容の判定結果（`toInappropriateContentError`。`field` が画面向けの名前）は入力値の違反（`field` が入力の位置）と概念が異なるため、専用の型を定義する（Phase 1 の backend-review で検出）
 - [x] `errorHandler` が `HTTPException` のメッセージを返さないようにする（D3。テストを含む）
 - [x] CLAUDE.md に「入力値検証とエラーの扱い」を追記する
-- [ ] コミット（ユーザーが実施）
+- [x] コミット（ユーザーが実施）
 
 実装メモ（2026-10-14）:
 
@@ -305,6 +305,19 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - 不適切内容の判定結果の型（`InappropriateContentErrorType`）と変換関数（ranking-maker 独自。yomitsuzuri に該当機能なし）は、作成・更新の Controller に重複していたものを `presentation/my-ranking/error-message/my-ranking.error-message.ts` にまとめた
 - `error-message/` は yomitsuzuri を踏襲して `input/` でエラーの種類ごとに分けていたが、「変換関数はコンテキストごとに1つ」の決定と合わず、入力値の違反でないエラー（不適切内容）の置き場所が定まらなかった。種類ではフォルダを分けず、コンテキストごとに1ファイル（`{コンテキスト}.error-message.ts`）に変更した（ユーザー決定）
 - ランキングの不変条件の違反に `field`（`items`・`tags`）を付ける `toValidationError` は、yomitsuzuri（`INVALID_WORKS` の `field` を Controller で付ける）と同じく各 Controller に残した
+
+### 対応しないと決めたこと
+
+- 不適切内容の判定結果を、入力値の違反と同じ流れ（Usecase が入力の位置で `field` を付け、文言は `toInputErrorMessage` で作る）にそろえる案は、今は対応しない（ユーザー判断。害がないため）
+  - 背景: `toInappropriateContentError` が返す `field`（「項目名（3件目）」等の表示名）は、フロントエンドでは React の `key` にしか使っておらず、画面に表示されていない
+
+### 移行の途中で見つけて対応したこと（入力値検証の範囲外）
+
+- パスワード変更: 現在のパスワードの照合と新しいパスワードの設定を `UserLoginEntity.changePassword` に移し、リポジトリはエンティティを受け取って保存する
+- お気に入り切り替え: `RankingAggregate.changeFavorite` を通し、リポジトリは集約を復元・保存する
+- エンティティ・集約の状態変更は、自身を書き換える形（新しいインスタンスを返さない）にそろえた（`RankingAggregate.update` を含む。ユーザー決定）
+- ユーザー更新: `UserEntity.changeProfile` でユーザー名・生年月日を変更し、リポジトリは `UserEntity` を受け取って保存する。ユーザー名は `user_login_master.login_id` にも保存する（ログイン名はユーザー名を別の列にも保存したもので、ドメインでは独立した値として扱わない）
+- フロントエンドのランキング作成・更新の違反の型（`ViolationType`）を、手書きから RPC の型の推論に変えた
 
 ## 実装時の注意（yomitsuzuri で判明済み）
 

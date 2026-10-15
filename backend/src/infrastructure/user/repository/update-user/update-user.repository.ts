@@ -1,7 +1,7 @@
 import { and, eq, ne } from "drizzle-orm";
-import { UserEntity, UserTheme } from "../../../../domain/user";
-import type { UserId, UserName } from "../../../../domain/shared";
-import type { IUpdateUserRepository, UserBirthday } from "../../../../domain/user";
+import { UserBirthday, UserEntity, UserTheme } from "../../../../domain/user";
+import { UserId, UserName } from "../../../../domain/shared";
+import type { IUpdateUserRepository } from "../../../../domain/user";
 import type { Database } from "../../../db";
 import { userLoginMaster, userMaster } from "../../../db";
 
@@ -25,39 +25,57 @@ export class UpdateUserRepository implements IUpdateUserRepository {
     return result.length > 0;
   }
 
-  async updateUserWithLogin(
-    userId: UserId,
-    userName: UserName,
-    userBirthday: UserBirthday
-  ): Promise<UserEntity | undefined> {
+  async findUser(userId: UserId): Promise<UserEntity | undefined> {
+    const result = await this.db
+      .select()
+      .from(userMaster)
+      .where(
+        and(
+          eq(userMaster.id, userId.value),
+          eq(userMaster.deleteFlg, false)
+        )
+      );
+    const row = result[0];
+    if (!row) {
+      return undefined;
+    }
+    if (row.birthday === null) {
+      throw new Error(`生年月日が登録されていないユーザーです。userId:${row.id}`);
+    }
+    return new UserEntity(
+      UserId.of(row.id),
+      UserName.of(row.name),
+      UserBirthday.of(row.birthday),
+      UserTheme.of(row.theme)
+    );
+  }
+
+  async updateUserWithLogin(user: UserEntity): Promise<boolean> {
     const now = new Date().toISOString();
     const [, updateResult] = await this.db.batch([
       this.db.update(userLoginMaster)
-        .set({ loginId: userName.value, updatedAt: now })
+        .set({ loginId: user.userName, updatedAt: now })
         .where(
           and(
-            eq(userLoginMaster.userId, userId.value),
+            eq(userLoginMaster.userId, user.userId),
             eq(userLoginMaster.deleteFlg, false)
           )
         ),
       this.db.update(userMaster)
         .set({
-          name: userName.value,
-          birthday: userBirthday.value,
+          name: user.userName,
+          birthday: user.userBirthday,
           updatedAt: now,
         })
         .where(
           and(
-            eq(userMaster.id, userId.value),
+            eq(userMaster.id, user.userId),
             eq(userMaster.deleteFlg, false)
           )
         )
         .returning(),
     ]);
 
-    if (!updateResult[0]) {
-      return undefined;
-    }
-    return new UserEntity(userId, userName, userBirthday, UserTheme.of(updateResult[0].theme));
+    return updateResult.length > 0;
   }
 }

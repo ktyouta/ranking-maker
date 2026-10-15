@@ -19,8 +19,8 @@ describe("PATCH /api/v1/user", () => {
         const otherUserId = ulid();
 
         await db.insert(userMaster).values([
-            { id: authenticatedUserId, name: `test-user-${authenticatedUserId}`, birthday: "19900101", createdAt: now, updatedAt: now },
-            { id: otherUserId, name: `test-user-${otherUserId}`, birthday: "19900101", createdAt: now, updatedAt: now },
+            { id: authenticatedUserId, name: authenticatedUserId, birthday: "19900101", createdAt: now, updatedAt: now },
+            { id: otherUserId, name: otherUserId, birthday: "19900101", createdAt: now, updatedAt: now },
         ]);
 
         const config = createEnvConfig(env);
@@ -41,6 +41,6 @@ describe("PATCH /api/v1/user", () => {
         const [otherUserRow] = await db.select().from(userMaster).where(eq(userMaster.id, otherUserId));
 
         expect(authenticatedUserRow.name).toBe("RenamedByAttacker");
-        expect(otherUserRow.name).toBe(`test-user-${otherUserId}`);
+        expect(otherUserRow.name).toBe(otherUserId);
     });
 });
