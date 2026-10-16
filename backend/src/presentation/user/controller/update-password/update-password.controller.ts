@@ -1,17 +1,17 @@
 import { Hono } from "hono";
 import { UpdatePasswordUsecase } from "../../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../../constant";
-import { UserPasswordRepository } from "../../../../infrastructure";
+import { UpdatePasswordRepository } from "../../../../infrastructure";
 import { authMiddleware, userOperationGuardMiddleware, validatorMiddleware } from "../../../../middleware";
 import type { AppEnv } from "../../../../types";
 import { toInputErrorMessage } from "../../error-message";
-import { UserPasswordSchema } from "../../schema";
+import { UpdatePasswordSchema } from "../../schema";
 
-const userPassword = new Hono<AppEnv>().patch(
+const updatePassword = new Hono<AppEnv>().patch(
     API_ENDPOINT.USER_PASSWORD,
     userOperationGuardMiddleware,
     authMiddleware,
-    validatorMiddleware("json", UserPasswordSchema),
+    validatorMiddleware("json", UpdatePasswordSchema),
     async (c) => {
         const user = c.get("user");
         if (!user) {
@@ -20,7 +20,7 @@ const userPassword = new Hono<AppEnv>().patch(
         const body = c.req.valid("json");
         const db = c.get('db');
         const config = c.get('envConfig');
-        const repository = new UserPasswordRepository(db);
+        const repository = new UpdatePasswordRepository(db);
         const usecase = new UpdatePasswordUsecase(repository, config);
 
         const result = await usecase.execute({ userId: user.userId, body });
@@ -45,4 +45,4 @@ const userPassword = new Hono<AppEnv>().patch(
     }
 );
 
-export { userPassword };
+export { updatePassword };

@@ -1,6 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import type { EnvConfig } from "../../../../config";
-import { AccessToken, LoginName, Pepper, RawPassword, RefreshToken, type LoginNameError, type RawPasswordError } from "../../../../domain/auth";
+import { AccessToken, RefreshToken } from "../../../../domain/auth";
+import { LoginId, Pepper, RawPassword, type LoginIdError, type RawPasswordError } from "../../../../domain/user";
 import type { IUserLoginRepository } from "../../../../domain/auth";
 import { UserId } from "../../../../domain/shared";
 import type { IGetUserProfileRepository } from "../../../../domain/user";
@@ -10,7 +11,7 @@ import { LoginResultDto } from "../../dto";
  * ログインの入力値の制約違反（field は入力値の項目名）
  */
 export type LoginInputError =
-  | { field: "name"; error: LoginNameError }
+  | { field: "name"; error: LoginIdError }
   | { field: "password"; error: RawPasswordError };
 
 export type LoginError =
@@ -43,15 +44,15 @@ export class LoginUsecase {
   async execute({ name, password }: PropsType): Promise<Result<LoginResultDto, LoginError>> {
     // 入力値の制約チェック
     const input = Result.combineWithAllErrors([
-      LoginName.create(name).mapErr((error): LoginInputError => ({ field: "name", error })),
+      LoginId.create(name).mapErr((error): LoginInputError => ({ field: "name", error })),
       RawPassword.create(password).mapErr((error): LoginInputError => ({ field: "password", error })),
     ]);
     if (input.isErr()) {
       return err({ type: "INVALID_INPUT", errors: input.error });
     }
-    const [loginName, rawPassword] = input.value;
+    const [loginId, rawPassword] = input.value;
 
-    const credential = await this.loginRepository.getLoginUser(loginName);
+    const credential = await this.loginRepository.getLoginUser(loginId);
     if (!credential) {
       return err({ type: "AUTHENTICATION_FAILED" });
     }

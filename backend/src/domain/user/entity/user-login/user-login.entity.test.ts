@@ -14,17 +14,17 @@ describe("UserLoginEntity", () => {
   const pepper = new Pepper("test-pepper");
 
   it("エンティティを生成できること", async () => {
-    const loginId = UserId.of("01ARZ3NDEKTSV4RRFFQ69G5FAV");
+    const loginCredentialId = UserId.of("01ARZ3NDEKTSV4RRFFQ69G5FAV");
     const userId = UserId.of("01BX5ZZKBKACTAV9WEVGEMMVRZ");
-    const loginName = UserName.of("testuser");
+    const loginId = UserName.of("testuser");
     const salt = UserSalt.generate();
     const password = await UserPassword.hash("password123", salt, pepper);
 
-    const entity = new UserLoginEntity(loginId, userId, loginName, password, salt);
+    const entity = new UserLoginEntity(loginCredentialId, userId, loginId, password, salt);
 
-    expect(entity.loginId).toBe(loginId.value);
+    expect(entity.loginCredentialId).toBe(loginCredentialId.value);
     expect(entity.userId).toBe(userId.value);
-    expect(entity.loginName).toBe("testuser");
+    expect(entity.loginId).toBe("testuser");
     expect(entity.passwordHash).toBe(password.value);
     expect(entity.salt).toBe(salt.value);
   });

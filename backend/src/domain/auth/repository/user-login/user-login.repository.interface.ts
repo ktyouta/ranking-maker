@@ -1,6 +1,5 @@
 import type { UserId } from "../../../shared";
-import type { UserLoginEntity } from "../../entity";
-import type { LoginName } from "../../value-object";
+import type { UserLoginEntity, LoginId } from "../../../user";
 
 /**
  * ログインリポジトリインターフェース
@@ -8,10 +7,10 @@ import type { LoginName } from "../../value-object";
 export interface IUserLoginRepository {
   /**
    * ログインID（ユーザー名）でログイン資格情報を取得
-   * @param loginName ログイン時に入力されたユーザー名
+   * @param loginId ログイン時に入力されたユーザー名
    * @returns 削除されていない資格情報（存在しない場合は undefined）
    */
-  getLoginUser(loginName: LoginName): Promise<UserLoginEntity | undefined>;
+  getLoginUser(loginId: LoginId): Promise<UserLoginEntity | undefined>;
 
   /**
    * 最終ログイン日時を更新

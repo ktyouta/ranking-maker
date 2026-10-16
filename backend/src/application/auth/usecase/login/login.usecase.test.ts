@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { LoginUsecase } from "..";
-import { Pepper, UserLoginEntity, UserPassword, UserSalt } from "../../../../domain/auth";
+import { Pepper, UserLoginEntity, UserPassword, UserSalt, UserName } from "../../../../domain/user";
 import type { IUserLoginRepository } from "../../../../domain/auth";
-import { UserId, UserName } from "../../../../domain/shared";
+import { UserId } from "../../../../domain/shared";
 import type { IGetUserProfileRepository, UserProfile } from "../../../../domain/user";
 import type { EnvConfig } from "../../../../config";
 
@@ -96,7 +96,7 @@ describe("LoginUsecase", () => {
     expect(result._unsafeUnwrapErr()).toEqual({
       type: "INVALID_INPUT",
       errors: [
-        { field: "name", error: { type: "LOGIN_NAME_EMPTY" } },
+        { field: "name", error: { type: "LOGIN_ID_EMPTY" } },
         { field: "password", error: { type: "RAW_PASSWORD_EMPTY" } },
       ],
     });

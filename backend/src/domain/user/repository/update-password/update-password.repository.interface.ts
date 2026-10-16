@@ -4,7 +4,7 @@ import type { UserLoginEntity } from "../../entity";
 /**
  * パスワード変更リポジトリインターフェース
  */
-export interface IUserPasswordRepository {
+export interface IUpdatePasswordRepository {
   /**
    * ユーザーIDでログイン資格情報を取得
    */

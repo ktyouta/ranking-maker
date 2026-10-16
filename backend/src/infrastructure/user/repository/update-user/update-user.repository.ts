@@ -1,6 +1,6 @@
 import { and, eq, ne } from "drizzle-orm";
-import { UserBirthday, UserEntity, UserTheme } from "../../../../domain/user";
-import { UserId, UserName } from "../../../../domain/shared";
+import { UserBirthday, UserEntity, UserTheme, UserName } from "../../../../domain/user";
+import { UserId } from "../../../../domain/shared";
 import type { IUpdateUserRepository } from "../../../../domain/user";
 import type { Database } from "../../../db";
 import { userLoginMaster, userMaster } from "../../../db";

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { UpdatePasswordUsecase } from "..";
-import { Pepper, UserLoginEntity, UserPassword, UserSalt } from "../../../../domain/auth";
-import type { IUserPasswordRepository } from "../../../../domain/auth";
-import { UserId, UserName } from "../../../../domain/shared";
+import { Pepper, UserLoginEntity, UserPassword, UserSalt, UserName } from "../../../../domain/user";
+import type { IUpdatePasswordRepository } from "../../../../domain/user";
+import { UserId } from "../../../../domain/shared";
 import type { EnvConfig } from "../../../../config";
 
 const testConfig: EnvConfig = {
@@ -30,9 +30,9 @@ async function createCredential() {
 
 function createRepository(credential: UserLoginEntity | undefined, updated: boolean) {
   return {
-    getLoginUser: vi.fn<IUserPasswordRepository["getLoginUser"]>().mockResolvedValue(credential),
-    updateLoginUser: vi.fn<IUserPasswordRepository["updateLoginUser"]>().mockResolvedValue(updated),
-  } satisfies IUserPasswordRepository;
+    getLoginUser: vi.fn<IUpdatePasswordRepository["getLoginUser"]>().mockResolvedValue(credential),
+    updateLoginUser: vi.fn<IUpdatePasswordRepository["updateLoginUser"]>().mockResolvedValue(updated),
+  } satisfies IUpdatePasswordRepository;
 }
 
 describe("UpdatePasswordUsecase", () => {

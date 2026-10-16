@@ -1,7 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import type { EnvConfig } from "../../../../config";
-import { NewPassword, Pepper, RawPassword, type NewPasswordError, type RawPasswordError } from "../../../../domain/auth";
-import type { IUserPasswordRepository } from "../../../../domain/auth";
+import { NewPassword, Pepper, RawPassword, type NewPasswordError, type RawPasswordError } from "../../../../domain/user";
+import type { IUpdatePasswordRepository } from "../../../../domain/user";
 import type { UserId } from "../../../../domain/shared";
 
 /**
@@ -33,7 +33,7 @@ type PropsType = {
  */
 export class UpdatePasswordUsecase {
   constructor(
-    private readonly repository: IUserPasswordRepository,
+    private readonly repository: IUpdatePasswordRepository,
     private readonly config: EnvConfig
   ) { }
 

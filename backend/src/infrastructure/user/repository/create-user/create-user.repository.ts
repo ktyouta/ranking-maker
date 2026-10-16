@@ -1,7 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import type { UserLoginEntity } from "../../../../domain/auth";
-import type { ICreateUserRepository, UserEntity } from "../../../../domain/user";
-import type { UserName } from "../../../../domain/shared";
+import type { UserLoginEntity, ICreateUserRepository, UserEntity, UserName } from "../../../../domain/user";
 import type { Database } from "../../../db";
 import { userLoginMaster, userMaster } from "../../../db";
 
@@ -37,9 +35,9 @@ export class CreateUserRepository implements ICreateUserRepository {
         updatedAt: now,
       }),
       this.db.insert(userLoginMaster).values({
-        id: login.loginId,
+        id: login.loginCredentialId,
         userId: login.userId,
-        loginId: login.loginName,
+        loginId: login.loginId,
         passwordHash: login.passwordHash,
         salt: login.salt,
         authProvider: "password",

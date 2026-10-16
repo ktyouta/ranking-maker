@@ -1,9 +1,9 @@
 import { err, ok, Result } from "neverthrow";
 import type { EnvConfig } from "../../../../config";
-import { AccessToken, NewPassword, Pepper, RefreshToken, UserLoginEntity, UserPassword, UserSalt, type NewPasswordError } from "../../../../domain/auth";
-import { UserId, UserName, type UserNameError } from "../../../../domain/shared";
+import { AccessToken, RefreshToken } from "../../../../domain/auth";
+import { NewPassword, Pepper, UserLoginEntity, UserPassword, UserSalt, type NewPasswordError, UserName, type UserNameError, UserBirthday, UserEntity, UserTheme, type UserBirthdayError } from "../../../../domain/user";
+import { UserId } from "../../../../domain/shared";
 import type { ICreateUserRepository } from "../../../../domain/user";
-import { UserBirthday, UserEntity, UserTheme, type UserBirthdayError } from "../../../../domain/user";
 import { CreateUserResultDto } from "../../dto";
 
 /**
@@ -70,9 +70,9 @@ export class CreateUserUsecase {
     const userPassword = await UserPassword.hash(newPassword.value, salt, pepper);
 
     const userId = UserId.generate();
-    const loginId = UserId.generate();
+    const loginCredentialId = UserId.generate();
     const userEntity = new UserEntity(userId, userName, userBirthday, UserTheme.default());
-    const userLoginEntity = new UserLoginEntity(loginId, userId, userName, userPassword, salt);
+    const userLoginEntity = new UserLoginEntity(loginCredentialId, userId, userName, userPassword, salt);
 
     // ユーザー情報作成
     await this.repository.createUserWithLogin(userEntity, userLoginEntity);

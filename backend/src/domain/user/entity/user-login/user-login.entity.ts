@@ -1,6 +1,6 @@
 import { err, ok, type Result } from "neverthrow";
-import type { UserId, UserName } from "../../../shared";
-import type { NewPassword, Pepper, RawPassword, UserSalt } from "../../value-object";
+import type { UserId } from "../../../shared";
+import type { NewPassword, Pepper, RawPassword, UserName, UserSalt } from "../../value-object";
 import { UserPassword } from "../../value-object";
 
 /**
@@ -12,36 +12,36 @@ export type PasswordChangeError = { type: "CURRENT_PASSWORD_MISMATCH" };
  * ユーザーログインエンティティ
  */
 export class UserLoginEntity {
-  private readonly _loginId: UserId; // ログインレコード自身のID（ULID）
+  private readonly _loginCredentialId: UserId; // ログインレコード自身のID（ULID）
   private readonly _userId: UserId;  // user_master.id（FK）
-  private readonly _loginName: UserName;
+  private readonly _loginId: UserName;
   private _passwordHash: UserPassword;
   private readonly _salt: UserSalt;
 
   constructor(
-    loginId: UserId,
+    loginCredentialId: UserId,
     userId: UserId,
-    loginName: UserName,
+    loginId: UserName,
     passwordHash: UserPassword,
     salt: UserSalt
   ) {
-    this._loginId = loginId;
+    this._loginCredentialId = loginCredentialId;
     this._userId = userId;
-    this._loginName = loginName;
+    this._loginId = loginId;
     this._passwordHash = passwordHash;
     this._salt = salt;
   }
 
-  get loginId(): string {
-    return this._loginId.value;
+  get loginCredentialId(): string {
+    return this._loginCredentialId.value;
   }
 
   get userId(): string {
     return this._userId.value;
   }
 
-  get loginName(): string {
-    return this._loginName.value;
+  get loginId(): string {
+    return this._loginId.value;
   }
 
   get passwordHash(): string {

@@ -1,7 +1,8 @@
 import { and, eq } from "drizzle-orm";
-import { UserLoginEntity, UserPassword, UserSalt } from "../../../../domain/auth";
-import type { IUserLoginRepository, LoginName } from "../../../../domain/auth";
-import { UserId, UserName } from "../../../../domain/shared";
+import { UserLoginEntity, UserPassword, UserSalt, UserName } from "../../../../domain/user";
+import type { IUserLoginRepository } from "../../../../domain/auth";
+import type { LoginId } from "../../../../domain/user";
+import { UserId } from "../../../../domain/shared";
 import type { Database } from "../../../db";
 import { userLoginMaster, userMaster } from "../../../db";
 
@@ -11,13 +12,13 @@ import { userLoginMaster, userMaster } from "../../../db";
 export class UserLoginRepository implements IUserLoginRepository {
   constructor(private readonly db: Database) { }
 
-  async getLoginUser(loginName: LoginName): Promise<UserLoginEntity | undefined> {
+  async getLoginUser(loginId: LoginId): Promise<UserLoginEntity | undefined> {
     const result = await this.db
       .select()
       .from(userLoginMaster)
       .where(
         and(
-          eq(userLoginMaster.loginId, loginName.value),
+          eq(userLoginMaster.loginId, loginId.value),
           eq(userLoginMaster.deleteFlg, false)
         )
       );

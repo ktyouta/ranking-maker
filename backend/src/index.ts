@@ -2,7 +2,7 @@ import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
 import { health } from "./presentation/health";
 import { user } from "./presentation/user";
-import { userLogin, userLogout, userPassword, refresh, verify } from "./presentation/auth";
+import { userLogin, userLogout, refresh, verify } from "./presentation/auth";
 import { ranking } from "./presentation/ranking";
 import { myRanking } from "./presentation/my-ranking";
 import {
@@ -54,7 +54,6 @@ const routes = app
   .route("/", refresh)
   .route("/", verify)
   .route("/", userLogout)
-  .route("/", userPassword)
   .route("/", ranking)
   .route("/", myRanking);
 

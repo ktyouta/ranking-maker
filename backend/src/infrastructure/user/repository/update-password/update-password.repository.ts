@@ -1,14 +1,14 @@
 import { and, eq } from "drizzle-orm";
-import { UserLoginEntity, UserPassword, UserSalt } from "../../../../domain/auth";
-import type { IUserPasswordRepository } from "../../../../domain/auth";
-import { UserId, UserName } from "../../../../domain/shared";
+import { UserLoginEntity, UserPassword, UserSalt, UserName } from "../../../../domain/user";
+import type { IUpdatePasswordRepository } from "../../../../domain/user";
+import { UserId } from "../../../../domain/shared";
 import type { Database } from "../../../db";
 import { userLoginMaster } from "../../../db";
 
 /**
  * パスワード変更リポジトリ実装
  */
-export class UserPasswordRepository implements IUserPasswordRepository {
+export class UpdatePasswordRepository implements IUpdatePasswordRepository {
   constructor(private readonly db: Database) { }
 
   async getLoginUser(userId: UserId): Promise<UserLoginEntity | undefined> {
@@ -41,7 +41,7 @@ export class UserPasswordRepository implements IUserPasswordRepository {
       .set({ passwordHash: userLogin.passwordHash, updatedAt: now })
       .where(
         and(
-          eq(userLoginMaster.id, userLogin.loginId),
+          eq(userLoginMaster.id, userLogin.loginCredentialId),
           eq(userLoginMaster.deleteFlg, false)
         )
       )
