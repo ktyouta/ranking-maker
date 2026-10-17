@@ -17,7 +17,7 @@ describe("UserLoginEntity", () => {
     const loginCredentialId = UserId.of("01ARZ3NDEKTSV4RRFFQ69G5FAV");
     const userId = UserId.of("01BX5ZZKBKACTAV9WEVGEMMVRZ");
     const loginId = UserName.of("testuser");
-    const salt = UserSalt.generate();
+    const salt = UserSalt.create();
     const password = await UserPassword.hash(RawPassword.create("password123")._unsafeUnwrap(), salt, pepper);
 
     const entity = new UserLoginEntity(loginCredentialId, userId, loginId, password, salt);
@@ -30,7 +30,7 @@ describe("UserLoginEntity", () => {
   });
 
   it("verifyPasswordで正しいパスワードを検証できること", async () => {
-    const salt = UserSalt.generate();
+    const salt = UserSalt.create();
     const password = await UserPassword.hash(RawPassword.create("password123")._unsafeUnwrap(), salt, pepper);
     const entity = new UserLoginEntity(
       UserId.of("01ARZ3NDEKTSV4RRFFQ69G5FAV"),
@@ -44,7 +44,7 @@ describe("UserLoginEntity", () => {
   });
 
   it("verifyPasswordで誤ったパスワードを拒否すること", async () => {
-    const salt = UserSalt.generate();
+    const salt = UserSalt.create();
     const password = await UserPassword.hash(RawPassword.create("password123")._unsafeUnwrap(), salt, pepper);
     const entity = new UserLoginEntity(
       UserId.of("01ARZ3NDEKTSV4RRFFQ69G5FAV"),
@@ -59,7 +59,7 @@ describe("UserLoginEntity", () => {
 
   describe("changePassword", () => {
     async function createEntity() {
-      const salt = UserSalt.generate();
+      const salt = UserSalt.create();
       const password = await UserPassword.hash(RawPassword.create("password123")._unsafeUnwrap(), salt, pepper);
       return new UserLoginEntity(
         UserId.of("01ARZ3NDEKTSV4RRFFQ69G5FAV"),

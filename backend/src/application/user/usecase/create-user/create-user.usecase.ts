@@ -65,12 +65,12 @@ export class CreateUserUsecase {
       return err({ type: "DUPLICATE_NAME" });
     }
 
-    const salt = UserSalt.generate();
+    const salt = UserSalt.create();
     const pepper = new Pepper(this.config.pepper);
     const userPassword = await UserPassword.hash(RawPassword.of(newPassword.value), salt, pepper);
 
-    const userId = UserId.generate();
-    const loginCredentialId = UserId.generate();
+    const userId = UserId.create();
+    const loginCredentialId = UserId.create();
     const userEntity = new UserEntity(userId, userName, userBirthday, UserTheme.default());
     const userLoginEntity = new UserLoginEntity(loginCredentialId, userId, userName, userPassword, salt);
 

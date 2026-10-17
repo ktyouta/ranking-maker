@@ -16,7 +16,7 @@ function buildCurrentRanking(tagIds: string[]) {
     memo: RankingMemo.of(""),
     userId,
     rankingOrderEntityList: [],
-    rankingTagEntityList: tagIds.map((id) => new RankingTagEntity(RankingTagId.generate(), TagId.of(id), false)),
+    rankingTagEntityList: tagIds.map((id) => new RankingTagEntity(RankingTagId.create(), TagId.of(id), false)),
     isDeleted: false,
     isFavorite: false,
   });

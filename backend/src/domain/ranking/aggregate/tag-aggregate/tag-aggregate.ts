@@ -39,7 +39,7 @@ export class TagAggregate {
    */
   static create(params: TagAggregateCreateParams): TagAggregate {
     return new TagAggregate(
-      TagId.generate(),
+      TagId.create(),
       params.userId,
       params.tagName,
     );

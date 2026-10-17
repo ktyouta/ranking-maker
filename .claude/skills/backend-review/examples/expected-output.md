@@ -101,7 +101,7 @@
 ### 違反あり
 - **ファイル**: backend/src/application/user/usecase/create-user/create-user.usecase.ts:39
 - **違反内容**: `new Theme(Theme.LAVENDER)` という自己参照的な生成になっている。`Theme` は「値検証によるインスタンス化」と「デフォルト値生成」という2つの生成意味を持つが、`public constructor` のみで表現されている
-- **修正方針**: `UserId` の `static generate()`/`static of()` と同様に `private constructor` + `static of(value)` / `static default()` に分離する
+- **修正方針**: `UserId` の `static create()`/`static of()` と同様に `private constructor` + `static of(value)` / `static default()` に分離する
 ```
 
 ---

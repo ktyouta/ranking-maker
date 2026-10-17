@@ -78,15 +78,15 @@ export class UserAggregate {
      * ユーザーを作成
      */
     static async create(params: CreateUserParamType) {
-        const salt = UserSalt.generate();
+        const salt = UserSalt.create();
         const password = await UserPassword.hash(params.password, salt, params.pepper);
 
         return new UserAggregate(
-            UserId.generate(),
+            UserId.create(),
             params.name,
             params.birthday,
             UserTheme.default(),
-            LoginCredentialId.generate(),
+            LoginCredentialId.create(),
             LoginId.of(params.name.value),
             password,
             salt,

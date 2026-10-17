@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { RankingTagId } from "../../..";
 
 describe("RankingTagId", () => {
-  it("generate: 空でないIDを生成すること", () => {
-    expect(RankingTagId.generate().value).not.toBe("");
+  it("create: 空でないIDを生成すること", () => {
+    expect(RankingTagId.create().value).not.toBe("");
   });
 
   it("of: 指定したIDを保持すること", () => {

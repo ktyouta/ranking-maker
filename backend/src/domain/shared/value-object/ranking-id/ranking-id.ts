@@ -26,7 +26,7 @@ export class RankingId {
   /**
    * ULIDでランキングIDを生成
    */
-  static generate(): RankingId {
+  static create(): RankingId {
     return new RankingId(ulid());
   }
 
@@ -35,7 +35,7 @@ export class RankingId {
    * @param rankingId ランキングID
    * @returns 成功時はランキングID、空の場合はその内容を持つ Result
    */
-  static create(rankingId: string): Result<RankingId, RankingIdError> {
+  static fromInput(rankingId: string): Result<RankingId, RankingIdError> {
     if (!rankingId) {
       return err({ type: "RANKING_ID_EMPTY" });
     }
@@ -50,7 +50,7 @@ export class RankingId {
    * @throws 空の場合（呼び出し側の不具合）
    */
   static of(rankingId: string): RankingId {
-    return RankingId.create(rankingId).match(
+    return RankingId.fromInput(rankingId).match(
       (value) => value,
       (error) => { throw new Error(`ランキングIDが不正です。type:${error.type}`); },
     );

@@ -19,26 +19,26 @@ import { UserId } from "../../../shared";
 
 function buildBaseParams() {
   return {
-    rankingId: RankingId.generate(),
+    rankingId: RankingId.create(),
     rankingTitle: RankingTitle.of("テストランキング"),
     publicStatus: PublicStatus.of(1),
     icon: RankingIcon.of(1),
     memo: RankingMemo.of(""),
-    userId: UserId.generate(),
+    userId: UserId.create(),
     rankingTagEntityList: [] as RankingTagEntity[],
   };
 }
 
 function buildRankingTag(tagId: TagId) {
-  return new RankingTagEntity(RankingTagId.generate(), tagId, false);
+  return new RankingTagEntity(RankingTagId.create(), tagId, false);
 }
 
 describe("RankingAggregate", () => {
   it("項目名が未入力(null)の項目が複数あっても重複エラーにならないこと", () => {
     const items = [
-      new RankingOrderEntity(RankingOrderId.generate(), ItemName.of(""), Order.of(1), ItemMemo.of(""), false),
-      new RankingOrderEntity(RankingOrderId.generate(), ItemName.of(""), Order.of(2), ItemMemo.of(""), false),
-      new RankingOrderEntity(RankingOrderId.generate(), ItemName.of(""), Order.of(3), ItemMemo.of(""), false),
+      new RankingOrderEntity(RankingOrderId.create(), ItemName.of(""), Order.of(1), ItemMemo.of(""), false),
+      new RankingOrderEntity(RankingOrderId.create(), ItemName.of(""), Order.of(2), ItemMemo.of(""), false),
+      new RankingOrderEntity(RankingOrderId.create(), ItemName.of(""), Order.of(3), ItemMemo.of(""), false),
     ];
 
     const result = RankingAggregate.create({ ...buildBaseParams(), rankingOrderEntityList: items });
@@ -48,8 +48,8 @@ describe("RankingAggregate", () => {
 
   it("項目名が入力されていて重複している場合はエラーになること", () => {
     const items = [
-      new RankingOrderEntity(RankingOrderId.generate(), ItemName.of("ラーメン"), Order.of(1), ItemMemo.of(""), false),
-      new RankingOrderEntity(RankingOrderId.generate(), ItemName.of("ラーメン"), Order.of(2), ItemMemo.of(""), false),
+      new RankingOrderEntity(RankingOrderId.create(), ItemName.of("ラーメン"), Order.of(1), ItemMemo.of(""), false),
+      new RankingOrderEntity(RankingOrderId.create(), ItemName.of("ラーメン"), Order.of(2), ItemMemo.of(""), false),
     ];
 
     const result = RankingAggregate.create({ ...buildBaseParams(), rankingOrderEntityList: items });
@@ -58,7 +58,7 @@ describe("RankingAggregate", () => {
   });
 
   it("同じタグが重複して付けられている場合はエラーになること", () => {
-    const tagId = TagId.generate();
+    const tagId = TagId.create();
 
     const result = RankingAggregate.create({
       ...buildBaseParams(),
@@ -76,7 +76,7 @@ describe("RankingAggregate", () => {
     const result = RankingAggregate.create({
       ...buildBaseParams(),
       rankingOrderEntityList: [],
-      rankingTagEntityList: Array.from({ length: RankingAggregate.MAX_TAG_COUNT }, () => buildRankingTag(TagId.generate())),
+      rankingTagEntityList: Array.from({ length: RankingAggregate.MAX_TAG_COUNT }, () => buildRankingTag(TagId.create())),
     });
 
     expect(result.isOk()).toBe(true);
@@ -86,7 +86,7 @@ describe("RankingAggregate", () => {
     const result = RankingAggregate.create({
       ...buildBaseParams(),
       rankingOrderEntityList: [],
-      rankingTagEntityList: Array.from({ length: RankingAggregate.MAX_TAG_COUNT + 1 }, () => buildRankingTag(TagId.generate())),
+      rankingTagEntityList: Array.from({ length: RankingAggregate.MAX_TAG_COUNT + 1 }, () => buildRankingTag(TagId.create())),
     });
 
     if (result.isOk()) {
@@ -99,16 +99,16 @@ describe("RankingAggregate", () => {
     const result = RankingAggregate.create({
       ...buildBaseParams(),
       rankingOrderEntityList: [],
-      rankingTagEntityList: [buildRankingTag(TagId.generate()), buildRankingTag(TagId.generate())],
+      rankingTagEntityList: [buildRankingTag(TagId.create()), buildRankingTag(TagId.create())],
     });
 
     expect(result.isOk()).toBe(true);
   });
 
   it("update: 識別子・所有者・お気に入り状態を引き継ぎ、外したタグを手放したタグとして返すこと", () => {
-    const keptTagId = TagId.generate();
-    const removedTagId = TagId.generate();
-    const addedTagId = TagId.generate();
+    const keptTagId = TagId.create();
+    const removedTagId = TagId.create();
+    const addedTagId = TagId.create();
     const base = buildBaseParams();
     const current = RankingAggregate.reconstruct({
       ...base,
@@ -140,7 +140,7 @@ describe("RankingAggregate", () => {
   });
 
   it("update: 重複がある場合は違反一覧を返し、集約を変更しないこと", () => {
-    const tagId = TagId.generate();
+    const tagId = TagId.create();
     const current = RankingAggregate.reconstruct({
       ...buildBaseParams(),
       rankingOrderEntityList: [],
@@ -184,7 +184,7 @@ describe("RankingAggregate", () => {
   });
 
   it("releaseTagsOnPermanentDelete: 削除済みのランキングは付いていたタグをすべて手放すこと", () => {
-    const tagIds = [TagId.generate(), TagId.generate()];
+    const tagIds = [TagId.create(), TagId.create()];
     const ranking = RankingAggregate.reconstruct({
       ...buildBaseParams(),
       rankingOrderEntityList: [],
@@ -211,7 +211,7 @@ describe("RankingAggregate", () => {
     const ranking = RankingAggregate.reconstruct({
       ...buildBaseParams(),
       rankingOrderEntityList: [],
-      rankingTagEntityList: [buildRankingTag(TagId.generate())],
+      rankingTagEntityList: [buildRankingTag(TagId.create())],
       isDeleted: false,
       isFavorite: false,
     });
@@ -225,7 +225,7 @@ describe("RankingAggregate", () => {
     const ranking = RankingAggregate.reconstruct({
       ...buildBaseParams(),
       rankingOrderEntityList: [],
-      rankingTagEntityList: [new RankingTagEntity(RankingTagId.generate(), TagId.generate(), true)],
+      rankingTagEntityList: [new RankingTagEntity(RankingTagId.create(), TagId.create(), true)],
       isDeleted: true,
       isFavorite: false,
     });
@@ -261,10 +261,10 @@ describe("RankingAggregate", () => {
 
   it("項目とタグの両方に重複がある場合は両方のエラーを返すこと", () => {
     const items = [
-      new RankingOrderEntity(RankingOrderId.generate(), ItemName.of("ラーメン"), Order.of(1), ItemMemo.of(""), false),
-      new RankingOrderEntity(RankingOrderId.generate(), ItemName.of("ラーメン"), Order.of(2), ItemMemo.of(""), false),
+      new RankingOrderEntity(RankingOrderId.create(), ItemName.of("ラーメン"), Order.of(1), ItemMemo.of(""), false),
+      new RankingOrderEntity(RankingOrderId.create(), ItemName.of("ラーメン"), Order.of(2), ItemMemo.of(""), false),
     ];
-    const tagId = TagId.generate();
+    const tagId = TagId.create();
 
     const result = RankingAggregate.create({
       ...buildBaseParams(),

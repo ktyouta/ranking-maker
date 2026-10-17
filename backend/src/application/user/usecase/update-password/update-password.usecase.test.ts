@@ -23,7 +23,7 @@ const NEW_PASSWORD = "new-password";
 const BODY = { nowPassword: NOW_PASSWORD, newPassword: NEW_PASSWORD, confirmPassword: NEW_PASSWORD };
 
 async function createCredential() {
-  const salt = UserSalt.generate();
+  const salt = UserSalt.create();
   const passwordHash = await UserPassword.hash(RawPassword.create(NOW_PASSWORD)._unsafeUnwrap(), salt, new Pepper(testConfig.pepper));
   return new UserLoginEntity(UserId.of(LOGIN_ID), UserId.of(USER_ID), UserName.of("testuser"), passwordHash, salt);
 }

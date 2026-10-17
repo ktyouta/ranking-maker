@@ -60,7 +60,7 @@ export class BulkSoftDeleteRankingUsecase {
     // 入力値の制約チェック
     const input = Result.combineWithAllErrors([
       Result.combineWithAllErrors(
-        rankingIds.map((id, index) => RankingId.create(id).mapErr((error): BulkSoftDeleteRankingInputError => ({ field: `ids.${index}`, error }))),
+        rankingIds.map((id, index) => RankingId.fromInput(id).mapErr((error): BulkSoftDeleteRankingInputError => ({ field: `ids.${index}`, error }))),
       ),
       validateRankingIdCount(rankingIds.length),
     ]);

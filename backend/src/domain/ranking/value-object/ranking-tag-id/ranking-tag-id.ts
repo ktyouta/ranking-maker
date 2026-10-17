@@ -20,7 +20,7 @@ export class RankingTagId {
   /**
    * ULIDでランキングタグIDを生成
    */
-  static generate(): RankingTagId {
+  static create(): RankingTagId {
     return new RankingTagId(ulid());
   }
 

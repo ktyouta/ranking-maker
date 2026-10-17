@@ -16,7 +16,7 @@ function buildTrashedRanking(tagIds: string[]) {
     memo: RankingMemo.of(""),
     userId,
     rankingOrderEntityList: [],
-    rankingTagEntityList: tagIds.map((id) => new RankingTagEntity(RankingTagId.generate(), TagId.of(id), true)),
+    rankingTagEntityList: tagIds.map((id) => new RankingTagEntity(RankingTagId.create(), TagId.of(id), true)),
     isDeleted: true,
     isFavorite: false,
   });

@@ -90,7 +90,7 @@ export class CreateRankingUsecase {
     }
     const [rankingTitle, publicStatus, icon, memo, items, tagNames] = input.value;
 
-    const rankingId = RankingId.generate();
+    const rankingId = RankingId.create();
     // タイトル重複（rankingId は未使用の新規 ID のため自己除外は実質的に無効）
     if (await this.uniquenessService.isDuplicated({ userId, rankingTitle, rankingId })) {
       return err({ type: "DUPLICATE_TITLE" });
@@ -112,8 +112,8 @@ export class CreateRankingUsecase {
       icon,
       memo,
       userId,
-      rankingOrderEntityList: items.map((e) => new RankingOrderEntity(RankingOrderId.generate(), e.itemName, e.order, e.memo, false)),
-      rankingTagEntityList: tags.map((e) => new RankingTagEntity(RankingTagId.generate(), TagId.of(e.id), false)),
+      rankingOrderEntityList: items.map((e) => new RankingOrderEntity(RankingOrderId.create(), e.itemName, e.order, e.memo, false)),
+      rankingTagEntityList: tags.map((e) => new RankingTagEntity(RankingTagId.create(), TagId.of(e.id), false)),
     });
 
     // 集約時エラー

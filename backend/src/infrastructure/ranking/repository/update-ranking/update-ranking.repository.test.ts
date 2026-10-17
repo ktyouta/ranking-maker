@@ -73,7 +73,7 @@ describe("UpdateRankingRepository", () => {
             icon: RankingIcon.of(1),
             memo: RankingMemo.of(""),
             rankingOrderEntityList: [],
-            rankingTagEntityList: [new RankingTagEntity(RankingTagId.generate(), TagId.of(keptTagId), false), new RankingTagEntity(RankingTagId.generate(), TagId.of(newTag.id), false)],
+            rankingTagEntityList: [new RankingTagEntity(RankingTagId.create(), TagId.of(keptTagId), false), new RankingTagEntity(RankingTagId.create(), TagId.of(newTag.id), false)],
         });
         if (updateResult.isErr()) {
             throw new Error("unexpected error");

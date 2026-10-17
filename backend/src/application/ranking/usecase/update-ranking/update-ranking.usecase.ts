@@ -121,8 +121,8 @@ export class UpdateRankingUsecase {
       publicStatus,
       icon,
       memo,
-      rankingOrderEntityList: items.map((e) => new RankingOrderEntity(RankingOrderId.generate(), e.itemName, e.order, e.memo, false)),
-      rankingTagEntityList: tags.map((e) => new RankingTagEntity(RankingTagId.generate(), TagId.of(e.id), false)),
+      rankingOrderEntityList: items.map((e) => new RankingOrderEntity(RankingOrderId.create(), e.itemName, e.order, e.memo, false)),
+      rankingTagEntityList: tags.map((e) => new RankingTagEntity(RankingTagId.create(), TagId.of(e.id), false)),
     });
 
     // 集約時エラー

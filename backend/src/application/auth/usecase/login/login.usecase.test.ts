@@ -27,7 +27,7 @@ const PROFILE: UserProfile = {
 };
 
 async function createCredential() {
-  const salt = UserSalt.generate();
+  const salt = UserSalt.create();
   const passwordHash = await UserPassword.hash(RawPassword.create(PASSWORD)._unsafeUnwrap(), salt, new Pepper(testConfig.pepper));
   return new UserLoginEntity(UserId.of(LOGIN_ID), UserId.of(PROFILE.id), UserName.of(PROFILE.name), passwordHash, salt);
 }

@@ -18,7 +18,7 @@ describe("ContentModerationDomainService", () => {
 
   function buildRanking(items: RankingOrderEntity[] = []) {
     const result = RankingAggregate.create({
-      rankingId: RankingId.generate(),
+      rankingId: RankingId.create(),
       rankingTitle: RankingTitle.of("テストランキング"),
       publicStatus: PublicStatus.of(1),
       icon: RankingIcon.of(1),
@@ -36,8 +36,8 @@ describe("ContentModerationDomainService", () => {
   it("項目名が未入力(null)の項目は判定対象に含めないこと", async () => {
     vi.mocked(mockRepository.detectInappropriateIndexes).mockResolvedValue([]);
     const items = [
-      new RankingOrderEntity(RankingOrderId.generate(), ItemName.of(""), Order.of(1), ItemMemo.of(""), false),
-      new RankingOrderEntity(RankingOrderId.generate(), ItemName.of("ラーメン"), Order.of(2), ItemMemo.of(""), false),
+      new RankingOrderEntity(RankingOrderId.create(), ItemName.of(""), Order.of(1), ItemMemo.of(""), false),
+      new RankingOrderEntity(RankingOrderId.create(), ItemName.of("ラーメン"), Order.of(2), ItemMemo.of(""), false),
     ];
 
     await service.moderate(buildRanking(items), []);

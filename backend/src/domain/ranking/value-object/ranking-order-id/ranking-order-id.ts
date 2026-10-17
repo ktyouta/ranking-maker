@@ -20,7 +20,7 @@ export class RankingOrderId {
   /**
    * ULIDでランキングオーダーIDを生成
    */
-  static generate(): RankingOrderId {
+  static create(): RankingOrderId {
     return new RankingOrderId(ulid());
   }
 

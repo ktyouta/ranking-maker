@@ -20,7 +20,7 @@ export class TagId {
     /**
      * ULIDでタグIDを生成
      */
-    static generate(): TagId {
+    static create(): TagId {
         return new TagId(ulid());
     }
 
