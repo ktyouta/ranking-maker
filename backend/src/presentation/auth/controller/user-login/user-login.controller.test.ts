@@ -3,7 +3,7 @@ import { env, SELF } from "cloudflare:test";
 import { ulid } from "ulid";
 import { describe, expect, it } from "vitest";
 import { createEnvConfig } from "../../../../config";
-import { Pepper, UserPassword, UserSalt } from "../../../../domain/user";
+import { Pepper, UserPassword, UserSalt, RawPassword } from "../../../../domain/user";
 import { userLoginMaster, userMaster } from "../../../../infrastructure/db";
 import * as schema from "../../../../infrastructure/db/schema/schema";
 
@@ -21,7 +21,7 @@ describe("POST /api/v1/user-login", () => {
         await db.insert(userMaster).values({ id: userId, name: `test-user-${userId}`, createdAt: now, updatedAt: now });
 
         const salt = UserSalt.generate();
-        const passwordHash = await UserPassword.hash("CorrectHorse1!", salt, pepper);
+        const passwordHash = await UserPassword.hash(RawPassword.create("CorrectHorse1!")._unsafeUnwrap(), salt, pepper);
 
         await db.insert(userLoginMaster).values({
             id: ulid(),

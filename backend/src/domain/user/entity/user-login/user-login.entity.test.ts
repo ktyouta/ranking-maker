@@ -18,7 +18,7 @@ describe("UserLoginEntity", () => {
     const userId = UserId.of("01BX5ZZKBKACTAV9WEVGEMMVRZ");
     const loginId = UserName.of("testuser");
     const salt = UserSalt.generate();
-    const password = await UserPassword.hash("password123", salt, pepper);
+    const password = await UserPassword.hash(RawPassword.create("password123")._unsafeUnwrap(), salt, pepper);
 
     const entity = new UserLoginEntity(loginCredentialId, userId, loginId, password, salt);
 
@@ -31,7 +31,7 @@ describe("UserLoginEntity", () => {
 
   it("verifyPasswordで正しいパスワードを検証できること", async () => {
     const salt = UserSalt.generate();
-    const password = await UserPassword.hash("password123", salt, pepper);
+    const password = await UserPassword.hash(RawPassword.create("password123")._unsafeUnwrap(), salt, pepper);
     const entity = new UserLoginEntity(
       UserId.of("01ARZ3NDEKTSV4RRFFQ69G5FAV"),
       UserId.of("01BX5ZZKBKACTAV9WEVGEMMVRZ"),
@@ -45,7 +45,7 @@ describe("UserLoginEntity", () => {
 
   it("verifyPasswordで誤ったパスワードを拒否すること", async () => {
     const salt = UserSalt.generate();
-    const password = await UserPassword.hash("password123", salt, pepper);
+    const password = await UserPassword.hash(RawPassword.create("password123")._unsafeUnwrap(), salt, pepper);
     const entity = new UserLoginEntity(
       UserId.of("01ARZ3NDEKTSV4RRFFQ69G5FAV"),
       UserId.of("01BX5ZZKBKACTAV9WEVGEMMVRZ"),
@@ -60,7 +60,7 @@ describe("UserLoginEntity", () => {
   describe("changePassword", () => {
     async function createEntity() {
       const salt = UserSalt.generate();
-      const password = await UserPassword.hash("password123", salt, pepper);
+      const password = await UserPassword.hash(RawPassword.create("password123")._unsafeUnwrap(), salt, pepper);
       return new UserLoginEntity(
         UserId.of("01ARZ3NDEKTSV4RRFFQ69G5FAV"),
         UserId.of("01BX5ZZKBKACTAV9WEVGEMMVRZ"),
@@ -80,7 +80,7 @@ describe("UserLoginEntity", () => {
       );
 
       expect(result.isOk()).toBe(true);
-      const expectedHash = await UserPassword.hash("new-password", UserSalt.of(entity.salt), pepper);
+      const expectedHash = await UserPassword.hash(RawPassword.create("new-password")._unsafeUnwrap(), UserSalt.of(entity.salt), pepper);
       expect(entity.passwordHash).toBe(expectedHash.value);
       expect(await entity.verifyPassword(RawPassword.create("new-password")._unsafeUnwrap(), pepper)).toBe(true);
     });

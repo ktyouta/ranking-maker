@@ -5,7 +5,7 @@ import { ulid } from "ulid";
 import { describe, expect, it } from "vitest";
 import { createEnvConfig } from "../../../../config";
 import { AccessToken } from "../../../../domain/auth";
-import { Pepper, UserPassword, UserSalt } from "../../../../domain/user";
+import { Pepper, UserPassword, UserSalt, RawPassword } from "../../../../domain/user";
 import { UserId } from "../../../../domain/shared";
 import { userLoginMaster, userMaster } from "../../../../infrastructure/db";
 import * as schema from "../../../../infrastructure/db/schema/schema";
@@ -27,9 +27,9 @@ describe("PATCH /api/v1/user-password", () => {
         ]);
 
         const authenticatedUserSalt = UserSalt.generate();
-        const authenticatedUserPasswordHash = await UserPassword.hash("CorrectHorse1!", authenticatedUserSalt, pepper);
+        const authenticatedUserPasswordHash = await UserPassword.hash(RawPassword.create("CorrectHorse1!")._unsafeUnwrap(), authenticatedUserSalt, pepper);
         const otherUserSalt = UserSalt.generate();
-        const otherUserPasswordHash = await UserPassword.hash("OtherPassw0rd!", otherUserSalt, pepper);
+        const otherUserPasswordHash = await UserPassword.hash(RawPassword.create("OtherPassw0rd!")._unsafeUnwrap(), otherUserSalt, pepper);
 
         await db.insert(userLoginMaster).values([
             {
@@ -87,7 +87,7 @@ describe("PATCH /api/v1/user-password", () => {
         await db.insert(userMaster).values({ id: userId, name: `test-user-${userId}`, createdAt: now, updatedAt: now });
 
         const salt = UserSalt.generate();
-        const passwordHash = await UserPassword.hash("CorrectHorse1!", salt, pepper);
+        const passwordHash = await UserPassword.hash(RawPassword.create("CorrectHorse1!")._unsafeUnwrap(), salt, pepper);
 
         await db.insert(userLoginMaster).values({
             id: ulid(),

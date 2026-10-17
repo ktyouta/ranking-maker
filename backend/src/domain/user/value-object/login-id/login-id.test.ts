@@ -11,4 +11,14 @@ describe("LoginId", () => {
       expect(LoginId.create("")._unsafeUnwrapErr()).toEqual({ type: "LOGIN_ID_EMPTY" });
     });
   });
+
+  describe("of", () => {
+    it("空でなければ、そのまま保持すること", () => {
+      expect(LoginId.of("testuser").value).toBe("testuser");
+    });
+
+    it("空の場合、throw すること", () => {
+      expect(() => LoginId.of("")).toThrow("ログインIDが不正です。type:LOGIN_ID_EMPTY");
+    });
+  });
 });

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { LoginUsecase } from "..";
-import { Pepper, UserLoginEntity, UserPassword, UserSalt, UserName } from "../../../../domain/user";
+import { Pepper, UserLoginEntity, UserPassword, UserSalt, UserName, RawPassword } from "../../../../domain/user";
 import type { IUserLoginRepository } from "../../../../domain/auth";
 import { UserId } from "../../../../domain/shared";
 import type { IGetUserProfileRepository, UserProfile } from "../../../../domain/user";
@@ -28,7 +28,7 @@ const PROFILE: UserProfile = {
 
 async function createCredential() {
   const salt = UserSalt.generate();
-  const passwordHash = await UserPassword.hash(PASSWORD, salt, new Pepper(testConfig.pepper));
+  const passwordHash = await UserPassword.hash(RawPassword.create(PASSWORD)._unsafeUnwrap(), salt, new Pepper(testConfig.pepper));
   return new UserLoginEntity(UserId.of(LOGIN_ID), UserId.of(PROFILE.id), UserName.of(PROFILE.name), passwordHash, salt);
 }
 

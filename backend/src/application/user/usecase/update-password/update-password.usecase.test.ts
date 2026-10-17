@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { UpdatePasswordUsecase } from "..";
-import { Pepper, UserLoginEntity, UserPassword, UserSalt, UserName } from "../../../../domain/user";
+import { Pepper, UserLoginEntity, UserPassword, UserSalt, UserName, RawPassword } from "../../../../domain/user";
 import type { IUpdatePasswordRepository } from "../../../../domain/user";
 import { UserId } from "../../../../domain/shared";
 import type { EnvConfig } from "../../../../config";
@@ -24,7 +24,7 @@ const BODY = { nowPassword: NOW_PASSWORD, newPassword: NEW_PASSWORD, confirmPass
 
 async function createCredential() {
   const salt = UserSalt.generate();
-  const passwordHash = await UserPassword.hash(NOW_PASSWORD, salt, new Pepper(testConfig.pepper));
+  const passwordHash = await UserPassword.hash(RawPassword.create(NOW_PASSWORD)._unsafeUnwrap(), salt, new Pepper(testConfig.pepper));
   return new UserLoginEntity(UserId.of(LOGIN_ID), UserId.of(USER_ID), UserName.of("testuser"), passwordHash, salt);
 }
 
@@ -46,7 +46,7 @@ describe("UpdatePasswordUsecase", () => {
     expect(result.isOk()).toBe(true);
     expect(repository.updateLoginUser).toHaveBeenCalledTimes(1);
     const savedLogin = repository.updateLoginUser.mock.calls[0]?.[0];
-    const expectedHash = await UserPassword.hash(NEW_PASSWORD, UserSalt.of(credential.salt), new Pepper(testConfig.pepper));
+    const expectedHash = await UserPassword.hash(RawPassword.create(NEW_PASSWORD)._unsafeUnwrap(), UserSalt.of(credential.salt), new Pepper(testConfig.pepper));
     expect(savedLogin?.passwordHash).toBe(expectedHash.value);
   });
 

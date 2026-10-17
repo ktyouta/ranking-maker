@@ -1,7 +1,7 @@
 import { err, ok, type Result } from "neverthrow";
 import type { UserId } from "../../../shared";
-import type { NewPassword, Pepper, RawPassword, UserName, UserSalt } from "../../value-object";
-import { UserPassword } from "../../value-object";
+import type { NewPassword, Pepper, UserName, UserSalt } from "../../value-object";
+import { RawPassword, UserPassword } from "../../value-object";
 
 /**
  * パスワード変更時のエラー
@@ -59,7 +59,7 @@ export class UserLoginEntity {
    * @returns 一致する場合は true
    */
   async verifyPassword(rawPassword: RawPassword, pepper: Pepper): Promise<boolean> {
-    const hashed = await UserPassword.hash(rawPassword.value, this._salt, pepper);
+    const hashed = await UserPassword.hash(rawPassword, this._salt, pepper);
     return hashed.equals(this._passwordHash);
   }
 
@@ -75,7 +75,7 @@ export class UserLoginEntity {
     if (!(await this.verifyPassword(currentPassword, pepper))) {
       return err({ type: "CURRENT_PASSWORD_MISMATCH" });
     }
-    this._passwordHash = await UserPassword.hash(newPassword.value, this._salt, pepper);
+    this._passwordHash = await UserPassword.hash(RawPassword.of(newPassword.value), this._salt, pepper);
     return ok(undefined);
   }
 }

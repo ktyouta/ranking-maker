@@ -34,4 +34,17 @@ export class LoginId {
 
     return ok(new LoginId(loginId));
   }
+
+  /**
+   * 永続化済みの値など、制約を満たすことが保証された値から生成する
+   * @param loginId ログインID
+   * @returns ログインID
+   * @throws 制約を満たさない場合（呼び出し側の不具合）
+   */
+  static of(loginId: string): LoginId {
+    return LoginId.create(loginId).match(
+      (value) => value,
+      (error) => { throw new Error(`ログインIDが不正です。type:${error.type}`); },
+    );
+  }
 }

@@ -1,7 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 import type { EnvConfig } from "../../../../config";
 import { AccessToken, RefreshToken } from "../../../../domain/auth";
-import { NewPassword, Pepper, UserLoginEntity, UserPassword, UserSalt, type NewPasswordError, UserName, type UserNameError, UserBirthday, UserEntity, UserTheme, type UserBirthdayError } from "../../../../domain/user";
+import { NewPassword, Pepper, RawPassword, UserLoginEntity, UserPassword, UserSalt, type NewPasswordError, UserName, type UserNameError, UserBirthday, UserEntity, UserTheme, type UserBirthdayError } from "../../../../domain/user";
 import { UserId } from "../../../../domain/shared";
 import type { ICreateUserRepository } from "../../../../domain/user";
 import { CreateUserResultDto } from "../../dto";
@@ -67,7 +67,7 @@ export class CreateUserUsecase {
 
     const salt = UserSalt.generate();
     const pepper = new Pepper(this.config.pepper);
-    const userPassword = await UserPassword.hash(newPassword.value, salt, pepper);
+    const userPassword = await UserPassword.hash(RawPassword.of(newPassword.value), salt, pepper);
 
     const userId = UserId.generate();
     const loginCredentialId = UserId.generate();

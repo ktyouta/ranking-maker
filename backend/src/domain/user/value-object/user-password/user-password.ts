@@ -1,5 +1,7 @@
-import { UserSalt } from "../user-salt/user-salt";
+import type { NewPassword } from "../new-password";
 import { Pepper } from "../pepper/pepper";
+import type { RawPassword } from "../raw-password/raw-password";
+import { UserSalt } from "../user-salt/user-salt";
 
 /**
  * ユーザーパスワード
@@ -20,12 +22,12 @@ export class UserPassword {
 
   /**
    * パスワードをハッシュ化（HMAC-SHA256 + PBKDF2）
-   * @param inputPassword 入力パスワード
+   * @param rawPassword 平文のパスワード
    * @param salt ソルト
    * @param pepper ペッパー
    */
   static async hash(
-    inputPassword: string,
+    rawPassword: RawPassword | NewPassword,
     salt: UserSalt,
     pepper: Pepper
   ): Promise<UserPassword> {
@@ -41,7 +43,7 @@ export class UserPassword {
     const keyedPassword = await crypto.subtle.sign(
       "HMAC",
       pepperKey,
-      encoder.encode(inputPassword)
+      encoder.encode(rawPassword.value)
     );
 
     const baseKey = await crypto.subtle.importKey(

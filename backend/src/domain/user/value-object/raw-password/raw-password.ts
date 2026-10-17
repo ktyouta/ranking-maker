@@ -1,12 +1,12 @@
 import { err, ok, type Result } from "neverthrow";
 
 /**
- * 照合用のパスワードの生成失敗
+ * 平文のパスワードの生成失敗
  */
 export type RawPasswordError = { type: "RAW_PASSWORD_EMPTY" };
 
 /**
- * 照合用のパスワード（ハッシュ化前の平文。パスワードの方針は適用しない）
+ * 平文のパスワード（ハッシュ化前の値。パスワードの方針は適用しない）
  */
 export class RawPassword {
   private readonly _value: string;
@@ -25,7 +25,7 @@ export class RawPassword {
   /**
    * 外部からの入力値から生成する
    * @param rawPassword 平文のパスワード
-   * @returns 成功時は照合用のパスワード、空の場合はその内容を持つ Result
+   * @returns 成功時は平文のパスワード、空の場合はその内容を持つ Result
    */
   static create(rawPassword: string): Result<RawPassword, RawPasswordError> {
     if (!rawPassword) {
@@ -33,5 +33,18 @@ export class RawPassword {
     }
 
     return ok(new RawPassword(rawPassword));
+  }
+
+  /**
+   * 永続化済みの値など、制約を満たすことが保証された値から生成する
+   * @param rawPassword 平文のパスワード
+   * @returns 平文のパスワード
+   * @throws 制約を満たさない場合（呼び出し側の不具合）
+   */
+  static of(rawPassword: string): RawPassword {
+    return RawPassword.create(rawPassword).match(
+      (value) => value,
+      (error) => { throw new Error(`平文のパスワードが不正です。type:${error.type}`); },
+    );
   }
 }
