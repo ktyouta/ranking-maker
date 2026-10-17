@@ -1,4 +1,4 @@
-import { useMyRankings } from '@/app/api/get-my-rankings';
+import { useRankings } from '@/app/api/get-rankings';
 import { useState } from 'react';
 
 /**
@@ -9,7 +9,7 @@ export function useTemplateRankingList() {
     // 選択中のページ
     const [page, setPage] = useState(1);
     // ランキング一覧取得
-    const rankingListQuery = useMyRankings({ page: String(page) });
+    const rankingListQuery = useRankings({ page: String(page) });
     // ランキング一覧・件数
     const { list, totalPages } = rankingListQuery.data.data;
 

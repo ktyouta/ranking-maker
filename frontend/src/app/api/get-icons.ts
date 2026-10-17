@@ -3,7 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import type { InferResponseType } from 'hono/client';
 import { iconKeys } from './query-key';
 
-const endpoint = rpc.api.v1['my-ranking'].icons.$get;
+const endpoint = rpc.api.v1['ranking'].icons.$get;
 
 export type IconType = InferResponseType<typeof endpoint, 200>['data'][number];
 

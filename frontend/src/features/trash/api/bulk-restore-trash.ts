@@ -2,7 +2,7 @@ import { rpc } from '@/lib/rpc-client';
 import { useMutation } from '@tanstack/react-query';
 import { type InferResponseType } from 'hono/client';
 
-const endpoint = rpc.api.v1['my-ranking']['bulk-restore'].$post;
+const endpoint = rpc.api.v1['ranking']['bulk-restore'].$post;
 
 type PropsType = {
     onSuccess: (data: SuccessResponseType) => void;

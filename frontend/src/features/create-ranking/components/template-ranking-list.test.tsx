@@ -1,9 +1,9 @@
-import { type MyRankingListReturnType } from '@/app/api/get-my-rankings';
+import { type RankingListReturnType } from '@/app/api/get-rankings';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import { TemplateRankingList } from './template-ranking-list';
 
-function buildRanking(overrides: Partial<MyRankingListReturnType['list'][number]> = {}): MyRankingListReturnType['list'][number] {
+function buildRanking(overrides: Partial<RankingListReturnType['list'][number]> = {}): RankingListReturnType['list'][number] {
     return {
         id: 'ranking-1',
         title: '好きなラーメン屋ランキング',

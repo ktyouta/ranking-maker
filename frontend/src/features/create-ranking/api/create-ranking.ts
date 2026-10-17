@@ -2,7 +2,7 @@ import { rpc } from '@/lib/rpc-client';
 import { useMutation } from '@tanstack/react-query';
 import type { InferRequestType, InferResponseType } from 'hono/client';
 
-const endpoint = rpc.api.v1['my-ranking'].$post;
+const endpoint = rpc.api.v1['ranking'].$post;
 
 type SuccessResponseType = InferResponseType<typeof endpoint, 201>;
 type RequestType = InferRequestType<typeof endpoint>['json'];

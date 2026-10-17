@@ -1,0 +1,48 @@
+import { err, ok, Result } from "neverthrow";
+import { type ISoftDeleteRankingRepository, RankingId } from "../../../../domain";
+import { UserId } from "../../../../domain/shared";
+
+export type SoftDeleteRankingError =
+  | { type: "NOT_FOUND" }
+  | { type: "IS_FAVORITE" };
+
+type PropsType = {
+  userId: UserId;
+  rankingId: string;
+}
+
+/**
+ * ランキング削除ユースケース
+ */
+export class SoftDeleteRankingUsecase {
+  constructor(private readonly repository: ISoftDeleteRankingRepository) { }
+
+  /**
+   * ランキング削除（論理削除）
+   * @param userId 削除対象を所有するユーザーID
+   * @param rankingId 削除対象のランキングID
+   * @returns 削除成功時は ok、対象が存在しない場合は NOT_FOUND
+   * @throws rankingId が空の場合（DB は問い合わせない）
+   */
+  async execute({ userId, rankingId }: PropsType): Promise<Result<void, SoftDeleteRankingError>> {
+    const id = RankingId.of(rankingId);
+
+    // 対象ランキングの存在・所有確認（生存行のみ）
+    const ranking = await this.repository.findRanking(userId, id);
+
+    if (!ranking) {
+      return err({ type: "NOT_FOUND" });
+    }
+
+    // ランキング本体と項目を論理削除（お気に入り登録中の場合は delete() が拒否する）
+    const deleteResult = ranking.delete();
+
+    if (deleteResult.isErr()) {
+      return err(deleteResult.error);
+    }
+
+    await this.repository.deleteRanking(ranking);
+
+    return ok(undefined);
+  }
+}

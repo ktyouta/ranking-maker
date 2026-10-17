@@ -12,7 +12,7 @@ import { ThemeSelectDialogContainer } from './theme-select-dialog-container';
 
 const navItems = [
     // { to: paths.home.path, label: 'ホーム', icon: <HiOutlineHome className="h-5 w-5 shrink-0" />, isProtected: paths.home.isProtected },
-    { to: paths.myRanking.path, label: 'ホーム', icon: <HiOutlineListBullet className="h-5 w-5 shrink-0" />, isProtected: paths.myRanking.isProtected },
+    { to: paths.ranking.path, label: 'ホーム', icon: <HiOutlineListBullet className="h-5 w-5 shrink-0" />, isProtected: paths.ranking.isProtected },
     { to: paths.rankingCreate.path, label: 'ランキング作成', icon: <HiOutlinePlusCircle className="h-5 w-5 shrink-0" />, isProtected: paths.rankingCreate.isProtected },
     { to: paths.trash.path, label: 'ゴミ箱', icon: <HiOutlineTrash className="h-5 w-5 shrink-0" />, isProtected: paths.trash.isProtected },
 ];
@@ -63,7 +63,7 @@ export function DashboardContainer() {
      * ホーム画面遷移
      */
     function moveHome() {
-        appNavigate(paths.myRanking.path);
+        appNavigate(paths.ranking.path);
     }
 
     /**

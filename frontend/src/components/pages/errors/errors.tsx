@@ -28,7 +28,7 @@ export function Errors() {
                 <span
                     onClick={() => {
                         resetBoundary();
-                        navigate(`${paths.myRanking.path}`);
+                        navigate(`${paths.ranking.path}`);
                     }}
                     className="cursor-pointer underline text-xl hover:opacity-80"
                 >

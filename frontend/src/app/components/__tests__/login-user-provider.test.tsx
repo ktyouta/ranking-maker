@@ -39,7 +39,7 @@ describe("LoginUserProvider", () => {
 
     test("should clear all query cache when login is reset", () => {
 
-        queryClient.setQueryData(["myRanking", "list"], { rankings: ["previous-user-data"] });
+        queryClient.setQueryData(["ranking", "list"], { rankings: ["previous-user-data"] });
         queryClient.setQueryData(["trash", "list"], { rankings: ["previous-user-data"] });
         renderProvider(<div />);
 
@@ -52,9 +52,9 @@ describe("LoginUserProvider", () => {
 
     test("should not clear query cache before login is reset", () => {
 
-        queryClient.setQueryData(["myRanking", "list"], { rankings: ["current-user-data"] });
+        queryClient.setQueryData(["ranking", "list"], { rankings: ["current-user-data"] });
         renderProvider(<div />);
 
-        expect(queryClient.getQueryData(["myRanking", "list"])).toEqual({ rankings: ["current-user-data"] });
+        expect(queryClient.getQueryData(["ranking", "list"])).toEqual({ rankings: ["current-user-data"] });
     });
 });

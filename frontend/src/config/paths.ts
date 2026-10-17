@@ -3,14 +3,14 @@ export const paths = {
         path: '/',
         isProtected: false,
     },
-    myRanking: {
-        path: '/my-ranking',
+    ranking: {
+        path: '/ranking',
         isProtected: true,
     },
     rankingDetail: {
-        path: '/my-ranking/:rankingId',
+        path: '/ranking/:rankingId',
         isProtected: true,
-        getHref: (rankingId: string) => `/my-ranking/${rankingId}`,
+        getHref: (rankingId: string) => `/ranking/${rankingId}`,
     },
     rankingCreate: {
         path: '/ranking-create',

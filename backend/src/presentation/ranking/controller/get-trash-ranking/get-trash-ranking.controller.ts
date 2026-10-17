@@ -1,0 +1,36 @@
+import { Hono } from "hono";
+import { GetTrashRankingUsecase } from "../../../../application";
+import { API_ENDPOINT, HTTP_STATUS } from "../../../../constant";
+import { UserId } from "../../../../domain";
+import { GetTrashRankingRepository } from "../../../../infrastructure";
+import { authMiddleware, validatorMiddleware } from "../../../../middleware";
+import { RankingIdParamSchema } from "../../../../schema/ranking-id-param/ranking-id-param.schema";
+import type { AppEnv } from "../../../../types";
+
+/**
+ * ゴミ箱のランキング取得
+ */
+const getTrashRanking = new Hono<AppEnv>().get(API_ENDPOINT.RANKING_TRASH_ID,
+  authMiddleware,
+  validatorMiddleware("param", RankingIdParamSchema),
+  async (c) => {
+    const db = c.get('db');
+    const repository = new GetTrashRankingRepository(db);
+    const user = c.get("user");
+    if (!user) {
+      return c.json({ message: "認証エラー" }, HTTP_STATUS.UNAUTHORIZED);
+    }
+    const userId = UserId.of(user.userId.value);
+    const { rankingId } = c.req.valid("param");
+    const usecase = new GetTrashRankingUsecase(repository);
+
+    const result = await usecase.execute({ userId, rankingId });
+
+    if (!result) {
+      return c.json({ message: "削除済みランキングが存在しません" }, HTTP_STATUS.NOT_FOUND);
+    }
+
+    return c.json({ message: "削除済みランキングを取得しました。", data: result.value }, HTTP_STATUS.OK);
+  });
+
+export { getTrashRanking };

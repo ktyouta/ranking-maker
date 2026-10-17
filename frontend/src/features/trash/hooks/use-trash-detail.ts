@@ -1,5 +1,5 @@
 import { useIcons } from '@/app/api/get-icons';
-import { myRankingKeys, tagKeys } from '@/app/api/query-key';
+import { rankingKeys, tagKeys } from '@/app/api/query-key';
 import { paths } from '@/config/paths';
 import { useAppNavigation } from '@/hooks/use-app-navigation';
 import { useSwitch } from '@/hooks/use-switch';
@@ -61,8 +61,8 @@ export function useTrashDetailScreen() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: trashKeys.lists() });
             queryClient.invalidateQueries({ queryKey: trashKeys.filterTags() });
-            queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
-            queryClient.invalidateQueries({ queryKey: myRankingKeys.filterTags() });
+            queryClient.invalidateQueries({ queryKey: rankingKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: rankingKeys.filterTags() });
             appGoBack(paths.trash.path);
         },
         // 失敗後の処理

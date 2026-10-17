@@ -1,0 +1,37 @@
+import { Hono } from "hono";
+import { PermanentDeleteRankingUsecase } from "../../../../application";
+import { API_ENDPOINT, HTTP_STATUS } from "../../../../constant";
+import { TagUsageDomainService, UserId } from "../../../../domain";
+import { PermanentDeleteRankingRepository, TagUsageRepository } from "../../../../infrastructure";
+import { authMiddleware, validatorMiddleware } from "../../../../middleware";
+import { RankingIdParamSchema } from "../../../../schema/ranking-id-param/ranking-id-param.schema";
+import type { AppEnv } from "../../../../types";
+
+/**
+ * ランキング完全削除（物理削除）
+ */
+const permanentDeleteRanking = new Hono<AppEnv>().delete(API_ENDPOINT.RANKING_TRASH_ID,
+  authMiddleware,
+  validatorMiddleware("param", RankingIdParamSchema),
+  async (c) => {
+    const db = c.get('db');
+    const repository = new PermanentDeleteRankingRepository(db);
+    const user = c.get("user");
+    if (!user) {
+      return c.json({ message: "認証エラー" }, HTTP_STATUS.UNAUTHORIZED);
+    }
+    const userId = UserId.of(user.userId.value);
+    const { rankingId } = c.req.valid("param");
+    const tagUsageService = new TagUsageDomainService(new TagUsageRepository(db));
+    const usecase = new PermanentDeleteRankingUsecase(repository, tagUsageService);
+
+    const result = await usecase.execute({ userId, rankingId });
+
+    if (result.isErr()) {
+      return c.json({ message: "完全削除対象のランキングが存在しません。" }, HTTP_STATUS.NOT_FOUND);
+    }
+
+    return c.json({ message: "ランキングを完全に削除しました。" }, HTTP_STATUS.OK);
+  });
+
+export { permanentDeleteRanking };

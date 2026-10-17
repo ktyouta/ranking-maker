@@ -1,7 +1,7 @@
 import { useIcons } from '@/app/api/get-icons';
-import { fetchMyRankingDetail } from '@/app/api/get-my-ranking';
+import { fetchRankingDetail } from '@/app/api/get-ranking';
 import { useTags } from '@/app/api/get-tags';
-import { myRankingKeys, tagKeys } from '@/app/api/query-key';
+import { rankingKeys, tagKeys } from '@/app/api/query-key';
 import { paths } from '@/config/paths';
 import { PUBLIC_STATUS } from '@/constants/public-status';
 import { TAG_NAME_SEPARATOR } from '@/constants/tag-name';
@@ -60,11 +60,11 @@ export function useCreateRanking() {
     const postMutation = useCreateRankingMutation({
         // 正常終了後の処理
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: myRankingKeys.lists() });
-            queryClient.invalidateQueries({ queryKey: myRankingKeys.filterTags() });
+            queryClient.invalidateQueries({ queryKey: rankingKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: rankingKeys.filterTags() });
             queryClient.invalidateQueries({ queryKey: tagKeys.all });
             toast.success(data.message);
-            navigate(paths.myRanking.path);
+            navigate(paths.ranking.path);
         },
         // 失敗後の処理
         onError: (message, errViolations) => {
@@ -272,7 +272,7 @@ export function useCreateRanking() {
      */
     const selectTemplate = useCallback(async (rankingId: string) => {
         try {
-            const detail = await fetchMyRankingDetail(queryClient, rankingId);
+            const detail = await fetchRankingDetail(queryClient, rankingId);
             // ランキング本体と項目一覧・タグ一覧
             const { ranking, items, tags } = detail.data;
             // 項目一覧を順位順に整形したもの

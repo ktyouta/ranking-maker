@@ -2,7 +2,7 @@ import { rpc } from '@/lib/rpc-client';
 import { useMutation } from '@tanstack/react-query';
 import type { InferResponseType } from 'hono/client';
 
-const endpoint = rpc.api.v1['my-ranking'].trash[':rankingId'].restore.$patch;
+const endpoint = rpc.api.v1['ranking'].trash[':rankingId'].restore.$patch;
 
 type SuccessResponseType = InferResponseType<typeof endpoint, 200>;
 

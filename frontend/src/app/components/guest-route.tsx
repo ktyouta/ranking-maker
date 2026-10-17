@@ -11,7 +11,7 @@ export function GuestRoute() {
     if (loginUser) {
         return (
             <Navigate
-                to={paths.myRanking.path}
+                to={paths.ranking.path}
                 replace
             />
         );

@@ -2,7 +2,7 @@ import { rpc } from '@/lib/rpc-client';
 import { useQuery } from '@tanstack/react-query';
 import { trashKeys } from './query-key';
 
-const endpoint = rpc.api.v1['my-ranking'].trash['filter-tags'].$get;
+const endpoint = rpc.api.v1['ranking'].trash['filter-tags'].$get;
 
 /**
  * ゴミ箱一覧の絞り込み候補タグ取得API呼び出し hook

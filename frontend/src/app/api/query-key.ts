@@ -14,7 +14,7 @@ export const tagKeys = {
 };
 
 // ランキング一覧取得APIのクエリパラメータ（検索条件）
-export type MyRankingListParamsType = {
+export type RankingListParamsType = {
     keyword?: string;
     createdAtFrom?: string;
     createdAtTo?: string;
@@ -27,11 +27,11 @@ export type MyRankingListParamsType = {
 };
 
 // ランキング一覧・詳細・一覧の絞り込み候補タグ取得用のキー
-export const myRankingKeys = {
-    all: ['myRanking'] as const,
-    lists: () => [myRankingKeys.all, 'list'] as const,
-    list: (params: MyRankingListParamsType) => [...myRankingKeys.lists(), params] as const,
-    details: () => [...myRankingKeys.all, 'detail'] as const,
-    detail: (id: string) => [...myRankingKeys.details(), id] as const,
-    filterTags: () => [...myRankingKeys.all, 'filterTags'] as const,
+export const rankingKeys = {
+    all: ['ranking'] as const,
+    lists: () => [rankingKeys.all, 'list'] as const,
+    list: (params: RankingListParamsType) => [...rankingKeys.lists(), params] as const,
+    details: () => [...rankingKeys.all, 'detail'] as const,
+    detail: (id: string) => [...rankingKeys.details(), id] as const,
+    filterTags: () => [...rankingKeys.all, 'filterTags'] as const,
 };

@@ -1,8 +1,8 @@
-import { type MyRankingListReturnType } from '@/app/api/get-my-rankings';
+import { type RankingListReturnType } from '@/app/api/get-rankings';
 import { Pagination } from '@/components';
 
 type PropsType = {
-    list: MyRankingListReturnType['list'];
+    list: RankingListReturnType['list'];
     totalPages: number;
     currentPage: number;
     onPageChange: (page: number) => void;

@@ -2,8 +2,8 @@ import { NotFound } from '@/components';
 import { paths } from '@/config/paths';
 import { CreateRankingContainer } from '@/features/create-ranking/components/create-ranking-container';
 import { LoginContainer } from '@/features/login/components/login-container';
-import { MyRankingContainer } from '@/features/my-ranking/components/my-ranking-container';
-import { MyRankingDetailContainer } from '@/features/my-ranking/components/my-ranking-detail-container';
+import { RankingContainer } from '@/features/ranking/components/ranking-container';
+import { RankingDetailContainer } from '@/features/ranking/components/ranking-detail-container';
 import { SignupContainer } from '@/features/signup/components/signup-container';
 import { TrashContainer } from '@/features/trash/components/trash-container';
 import { TrashDetailContainer } from '@/features/trash/components/trash-detail-container';
@@ -21,7 +21,7 @@ const routerList = [
         path: paths.home.path,
         element: (
             // マイランキング画面をホームとして使う
-            <Navigate to={paths.myRanking.path} replace />
+            <Navigate to={paths.ranking.path} replace />
         )
     },
     {
@@ -31,9 +31,9 @@ const routerList = [
                 element: <DashboardContainer />,
                 children: [
                     {
-                        path: paths.myRanking.path,
+                        path: paths.ranking.path,
                         element: (
-                            <MyRankingContainer />
+                            <RankingContainer />
                         )
                     },
                     {
@@ -45,7 +45,7 @@ const routerList = [
                     {
                         path: paths.rankingDetail.path,
                         element: (
-                            <MyRankingDetailContainer />
+                            <RankingDetailContainer />
                         )
                     },
                     {

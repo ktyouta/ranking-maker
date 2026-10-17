@@ -1,7 +1,7 @@
 import { rpc } from '@/lib/rpc-client';
 import { useMutation } from '@tanstack/react-query';
 
-const endpoint = rpc.api.v1['my-ranking'].trash[':rankingId'].$delete;
+const endpoint = rpc.api.v1['ranking'].trash[':rankingId'].$delete;
 
 type PropsType = {
     rankingId: string;

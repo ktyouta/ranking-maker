@@ -1,0 +1,243 @@
+import { useIcons } from '@/app/api/get-icons';
+import { type RankingDetailQueryDataType, useRanking } from '@/app/api/get-ranking';
+import { type RankingListQueryDataType } from '@/app/api/get-rankings';
+import { rankingKeys } from '@/app/api/query-key';
+import { paths } from '@/config/paths';
+import { PUBLIC_STATUS } from '@/constants/public-status';
+import { useAppNavigation } from '@/hooks/use-app-navigation';
+import { useSwitch } from '@/hooks/use-switch';
+import { formatDate } from '@/utils/date-util';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useDeleteRankingMutation } from '../api/delete-ranking';
+import { useToggleRankingFavoriteMutation } from '../api/toggle-ranking-favorite';
+
+type PropsType = {
+    onStartEdit: () => void;
+};
+
+export function useRankingDetailView({ onStartEdit }: PropsType) {
+
+    const { rankingId } = useParams();
+    if (!rankingId) {
+        throw new Error('rankingIdが指定されていません');
+    }
+
+    // ルーティング用
+    const { appGoBack } = useAppNavigation();
+    const queryClient = useQueryClient();
+    // エラーメッセージ
+    const [errMessage, setErrMessage] = useState(``);
+    // 削除確認ダイアログの開閉
+    const deleteDialog = useSwitch();
+    // メモダイアログの開閉
+    const memoDialog = useSwitch();
+    // タグダイアログの開閉
+    const tagDialog = useSwitch();
+    // 項目メモダイアログで表示中の項目（未選択時は null）
+    const [selectedItemMemo, setSelectedItemMemo] = useState<{ itemName: string; itemMemo: string } | null>(null);
+
+    // ランキング取得（Suspense対応のため取得中は呼び出し元で中断される）
+    const rankingQuery = useRanking(rankingId);
+    // ランキング本体と項目一覧・タグ一覧
+    const { ranking, items, tags } = rankingQuery.data.data;
+    // アイコン候補一覧（idからemojiを引くために使用）
+    const iconsQuery = useIcons();
+    const icons = iconsQuery.data.data;
+
+    // 項目一覧を順位順に整形したもの
+    const sortedItems = useMemo(() => {
+        return [...items].sort((a, b) => a.order - b.order);
+    }, [items]);
+
+    // 削除リクエスト
+    const deleteMutation = useDeleteRankingMutation({
+        rankingId,
+        // 正常終了後の処理
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: rankingKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: rankingKeys.filterTags() });
+            toast.success(data.message);
+            appGoBack(paths.ranking.path);
+        },
+        onError: (message) => {
+            setErrMessage(message);
+        },
+    });
+
+    // お気に入り登録・解除
+    const toggleFavoriteMutation = useToggleRankingFavoriteMutation({
+        // APIコール前の楽観的更新
+        onMutate: async ({ isFavorite }) => {
+
+            await queryClient.cancelQueries({ queryKey: rankingKeys.detail(rankingId) });
+            await queryClient.cancelQueries({ queryKey: rankingKeys.lists() });
+
+            const previousDetail = queryClient.getQueryData<RankingDetailQueryDataType>(rankingKeys.detail(rankingId));
+            const previousLists = queryClient.getQueriesData<RankingListQueryDataType>({
+                queryKey: rankingKeys.lists(),
+            });
+
+            queryClient.setQueryData<RankingDetailQueryDataType>(rankingKeys.detail(rankingId), (prev) => {
+                if (!prev) {
+                    return prev;
+                }
+                return {
+                    ...prev,
+                    data: {
+                        ...prev.data,
+                        ranking: { ...prev.data.ranking, isFavorite },
+                    },
+                };
+            });
+
+            queryClient.setQueriesData<RankingListQueryDataType>(
+                { queryKey: rankingKeys.lists() },
+                (prev) => {
+                    if (!prev) {
+                        return prev;
+                    }
+                    return {
+                        ...prev,
+                        data: {
+                            ...prev.data,
+                            list: prev.data.list.map((ranking) => {
+                                return ranking.id === rankingId ? { ...ranking, isFavorite } : ranking
+                            }),
+                        },
+                    };
+                }
+            );
+
+            return { previousDetail, previousLists };
+        },
+        onError: (context, message) => {
+            // 失敗時はキャッシュから復元
+            if (context?.previousDetail) {
+                queryClient.setQueryData(rankingKeys.detail(rankingId), context.previousDetail);
+            }
+            context?.previousLists.forEach(([queryKey, data]) => {
+                queryClient.setQueryData(queryKey, data);
+            });
+            toast.error(message);
+        },
+    });
+
+    /**
+     * お気に入りボタン押下イベント
+     */
+    const toggleFavorite = useCallback(() => {
+        toggleFavoriteMutation.mutate({ rankingId, isFavorite: !ranking.isFavorite });
+    }, [toggleFavoriteMutation, rankingId, ranking.isFavorite]);
+
+    /**
+     * 一覧画面へ戻る
+     */
+    const goBack = useCallback(() => {
+        appGoBack(paths.ranking.path);
+    }, [appGoBack]);
+
+    /**
+     * 削除確認ダイアログを開く
+     */
+    const clickDelete = useCallback(() => {
+        setErrMessage(``);
+        deleteDialog.on();
+    }, [deleteDialog]);
+
+    /**
+     * 削除確認ダイアログを閉じる
+     */
+    const cancelDelete = useCallback(() => {
+        deleteDialog.off();
+    }, [deleteDialog]);
+
+    /**
+     * 削除実行
+     */
+    const confirmDelete = useCallback(() => {
+        deleteDialog.off();
+        deleteMutation.mutate();
+    }, [deleteDialog, deleteMutation]);
+
+    /**
+     * メモダイアログを開く
+     */
+    const clickMemo = useCallback(() => {
+        memoDialog.on();
+    }, [memoDialog]);
+
+    /**
+     * メモダイアログを閉じる
+     */
+    const closeMemo = useCallback(() => {
+        memoDialog.off();
+    }, [memoDialog]);
+
+    /**
+     * タグダイアログを開く
+     */
+    const clickTag = useCallback(() => {
+        tagDialog.on();
+    }, [tagDialog]);
+
+    /**
+     * タグダイアログを閉じる
+     */
+    const closeTag = useCallback(() => {
+        tagDialog.off();
+    }, [tagDialog]);
+
+    /**
+     * 項目メモダイアログを開く
+     */
+    const clickItemMemo = useCallback((item: { itemName: string; itemMemo: string }) => {
+        setSelectedItemMemo(item);
+    }, []);
+
+    /**
+     * 項目メモダイアログを閉じる
+     */
+    const closeItemMemo = useCallback(() => {
+        setSelectedItemMemo(null);
+    }, []);
+
+    return {
+        title: ranking.title,
+        icon: icons.find((icon) => icon.id === ranking.icon)?.emoji ?? '',
+        publicStatusLabel: ranking.publicStatusName,
+        isPublic: ranking.publicStatus === PUBLIC_STATUS.PUBLIC,
+        isFavorite: ranking.isFavorite,
+        onToggleFavorite: toggleFavorite,
+        memo: ranking.memo ?? ``,
+        items: sortedItems.map((item) => ({
+            id: item.id,
+            order: item.order,
+            itemName: item.itemName ?? ``,
+            itemMemo: item.itemMemo ?? ``,
+        })),
+        updatedAt: formatDate(ranking.updatedAt),
+        errMessage,
+        isLoading: deleteMutation.isPending,
+        onStartEdit,
+        onBack: goBack,
+        isDeleteDialogOpen: deleteDialog.flag,
+        onClickDelete: clickDelete,
+        onCancelDelete: cancelDelete,
+        onConfirmDelete: confirmDelete,
+        isMemoDialogOpen: memoDialog.flag,
+        onClickMemo: clickMemo,
+        onCloseMemo: closeMemo,
+        tags: tags.map((tag) => tag.name),
+        isTagDialogOpen: tagDialog.flag,
+        onClickTag: clickTag,
+        onCloseTag: closeTag,
+        isItemMemoDialogOpen: selectedItemMemo !== null,
+        selectedItemName: selectedItemMemo?.itemName ?? ``,
+        selectedItemMemo: selectedItemMemo?.itemMemo ?? ``,
+        onClickItemMemo: clickItemMemo,
+        onCloseItemMemo: closeItemMemo,
+    };
+}

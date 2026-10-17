@@ -1,0 +1,77 @@
+import { Hono } from "hono";
+import { CreateRankingUsecase } from "../../../../application";
+import { API_ENDPOINT, HTTP_STATUS } from "../../../../constant";
+import { ContentModerationDomainService, IconValidityDomainService, type RankingValidationError, RankingTitleUniquenessDomainService, TagResolutionDomainService, UserId } from "../../../../domain";
+import { ContentModerationRepository, CreateRankingRepository, IconValidityRepository, RankingTitleUniquenessRepository, TagResolutionRepository } from "../../../../infrastructure";
+import { authMiddleware, validatorMiddleware } from "../../../../middleware";
+import type { AppEnv } from "../../../../types";
+import { toInappropriateContentError, toInputErrorMessage } from "../../error-message";
+import { CreateRankingSchema } from "../../schema";
+
+/**
+ * ランキングの不変条件の違反をレスポンス用のバリデーションエラーに変換する
+ * @param error ランキングの不変条件の違反
+ */
+function toValidationError(error: RankingValidationError): { field: "items" | "tags"; message: string } {
+  switch (error.type) {
+    case "DUPLICATE_ITEM_NAME":
+    case "DUPLICATE_ORDER":
+      return { field: "items", message: toInputErrorMessage(error) };
+    case "DUPLICATE_TAG":
+    case "TOO_MANY_TAGS":
+      return { field: "tags", message: toInputErrorMessage(error) };
+  }
+}
+
+/**
+ * ランキング作成
+ */
+const createRanking = new Hono<AppEnv>().post(API_ENDPOINT.RANKING,
+  authMiddleware,
+  validatorMiddleware("json", CreateRankingSchema),
+  async (c) => {
+    const db = c.get('db');
+    const user = c.get("user");
+    if (!user) {
+      return c.json({ message: "認証エラー" }, HTTP_STATUS.UNAUTHORIZED);
+    }
+    const userId = UserId.of(user.userId.value);
+    const body = c.req.valid("json");
+    const uniquenessService = new RankingTitleUniquenessDomainService(new RankingTitleUniquenessRepository(db));
+    const contentModerationService = new ContentModerationDomainService(new ContentModerationRepository(c.env.AI));
+    const iconValidityService = new IconValidityDomainService(new IconValidityRepository(db));
+    const tagResolutionService = new TagResolutionDomainService(new TagResolutionRepository(db));
+    const service = new CreateRankingUsecase(new CreateRankingRepository(db), uniquenessService, contentModerationService, iconValidityService, tagResolutionService);
+
+    const result = await service.execute({ userId, body });
+
+    return result.match(
+      // 成功
+      (dto) => c.json(
+        { message: "ランキングを作成しました。", data: dto.value },
+        HTTP_STATUS.CREATED,
+      ),
+      // 失敗
+      (error) => {
+        switch (error.type) {
+          case "INVALID_INPUT":
+            return c.json({ message: "入力エラー", data: error.errors.map((e) => ({ field: e.field, message: toInputErrorMessage(e.error) })) }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
+          case "VALIDATION":
+            return c.json({ message: "入力エラー", data: error.errors.map(toValidationError) }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
+          case "DUPLICATE_TITLE":
+            return c.json({ message: "同名のランキングが既に存在します。" }, HTTP_STATUS.CONFLICT);
+          case "INVALID_ICON":
+            return c.json({ message: "入力エラー", data: [{ field: "icon", message: "指定されたアイコンは存在しません。" }] }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
+          case "INAPPROPRIATE_CONTENT":
+            return c.json({ message: "不適切な内容が含まれています。", data: error.targets.map(toInappropriateContentError) }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
+          default: {
+            // 全てのエラー種別を網羅していることを型で保証する
+            error satisfies never;
+            return c.json({ message: "サーバーエラー" }, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+          }
+        }
+      },
+    );
+  });
+
+export { createRanking };

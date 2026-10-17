@@ -3,7 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import type { InferResponseType } from 'hono/client';
 import { tagKeys } from './query-key';
 
-const endpoint = rpc.api.v1['my-ranking'].tags.$get;
+const endpoint = rpc.api.v1['ranking'].tags.$get;
 
 export type TagType = InferResponseType<typeof endpoint, 200>['data'][number];
 
