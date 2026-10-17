@@ -78,6 +78,13 @@
       "when": 1790338852936,
       "tag": "0010_perpetual_ultron",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1792209458367,
+      "tag": "0011_early_moira_mactaggert",
+      "breakpoints": true
     }
   ]
 }

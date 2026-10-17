@@ -6,14 +6,20 @@ import { foreignKey, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm
  */
 export const userMaster = sqliteTable("user_master", {
   id: text("id").primaryKey(), // ULID
-  name: text("name").notNull().unique(),
+  name: text("name").notNull(),
   birthday: text("birthday"),
   lastLoginDate: text("last_login_date"),
   theme: text("theme").notNull().default("lavender"),
   deleteFlg: integer("delete_flg", { mode: "boolean" }).notNull().default(false),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
-});
+},
+  (table) => [
+    // 論理削除された行は一意判定の対象外とし、生存行のみで name を一意にする
+    uniqueIndex("ux_user_master_name")
+      .on(table.name)
+      .where(sql`${table.deleteFlg} = false`),
+  ]);
 
 export type UserMaster = typeof userMaster.$inferSelect;
 export type NewUserMaster = typeof userMaster.$inferInsert;
@@ -24,7 +30,7 @@ export type NewUserMaster = typeof userMaster.$inferInsert;
 export const userLoginMaster = sqliteTable("user_login_master", {
   id: text("id").primaryKey(), // ULID（ログインレコード自身のID）
   userId: text("user_id").notNull().references(() => userMaster.id, { onDelete: "cascade" }),
-  loginId: text("login_id").notNull().unique(),
+  loginId: text("login_id").notNull(),
   passwordHash: text("password_hash"),
   salt: text("salt"),
   authProvider: text("auth_provider").notNull().default("password"),
@@ -32,7 +38,13 @@ export const userLoginMaster = sqliteTable("user_login_master", {
   deleteFlg: integer("delete_flg", { mode: "boolean" }).notNull().default(false),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
-});
+},
+  (table) => [
+    // 論理削除された行は一意判定の対象外とし、生存行のみで loginId を一意にする
+    uniqueIndex("ux_user_login_master_login_id")
+      .on(table.loginId)
+      .where(sql`${table.deleteFlg} = false`),
+  ]);
 
 export type UserLoginMaster = typeof userLoginMaster.$inferSelect;
 export type NewUserLoginMaster = typeof userLoginMaster.$inferInsert;
