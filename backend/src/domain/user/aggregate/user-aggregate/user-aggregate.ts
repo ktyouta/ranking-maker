@@ -12,6 +12,9 @@ type CreateUserParamType = {
 type UpdateUserParamType = {
     name: UserName;
     birthday: UserBirthday;
+};
+
+type UpdateThemeParamType = {
     theme: UserTheme;
 };
 
@@ -123,13 +126,24 @@ export class UserAggregate {
      */
     updateUser(params: UpdateUserParamType) {
         if (this._deleteFlg) {
-            throw new Error(`削除済みのユーザーです。ID:${this._userId.value}`);
+            throw new Error(`削除済みのユーザーのためユーザー情報を更新できません。ID:${this._userId.value}`);
         }
 
         this._userName = params.name;
         this._birthday = params.birthday;
-        this._theme = params.theme;
         this._loginId = LoginId.of(params.name.value);
+    }
+
+    /**
+     * テーマを更新
+     * @param params 
+     */
+    updateTheme(params: UpdateThemeParamType) {
+        if (this._deleteFlg) {
+            throw new Error(`削除済みのユーザーのためテーマを更新できません。ID:${this._userId.value}`);
+        }
+
+        this._theme = params.theme;
     }
 
     /**
@@ -140,7 +154,7 @@ export class UserAggregate {
      */
     async changePassword(nowPassword: RawPassword, newPassword: NewPassword, pepper: Pepper): Promise<Result<undefined, UserValidationError>> {
         if (this._deleteFlg) {
-            throw new Error(`削除済みのユーザーです。ID:${this._userId.value}`);
+            throw new Error(`削除済みのユーザーのためパスワードを変更できません。ID:${this._userId.value}`);
         }
 
         // パスワードチェック
@@ -152,6 +166,16 @@ export class UserAggregate {
         const newHashedPassword = await UserPassword.hash(newPassword, this.salt, pepper);
         this._password = newHashedPassword;
         return ok(undefined);
+    }
+
+    /**
+     * ユーザー削除
+     */
+    delete() {
+        if (this._deleteFlg) {
+            throw new Error(`既に削除されたユーザーです。ID:${this._userId.value}`);
+        }
+        this._deleteFlg = true;
     }
 
     /**

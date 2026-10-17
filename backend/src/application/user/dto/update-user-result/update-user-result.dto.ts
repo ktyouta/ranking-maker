@@ -1,5 +1,5 @@
 import type { RefreshToken } from "../../../../domain/auth";
-import type { UserEntity } from "../../../../domain/user";
+import type { UserAggregate } from "../../../../domain/user";
 
 export type UpdateUserResultType = {
   refreshToken: string;
@@ -17,14 +17,14 @@ export type UpdateUserResultType = {
 export class UpdateUserResultDto {
   private readonly _value: UpdateUserResultType;
 
-  constructor(entity: UserEntity, refreshToken: RefreshToken) {
+  constructor(aggregate: UserAggregate, refreshToken: RefreshToken) {
     this._value = {
       refreshToken: refreshToken.value,
       user: {
-        id: entity.userId,
-        name: entity.userName,
-        birthday: entity.userBirthday,
-        theme: entity.userTheme,
+        id: aggregate.id.value,
+        name: aggregate.name.value,
+        birthday: aggregate.birthday.value,
+        theme: aggregate.theme.value,
       },
     };
   }

@@ -65,20 +65,19 @@ describe("UserAggregate", () => {
   });
 
   describe("updateUser", () => {
-    it("ユーザー名・生年月日・テーマを変更し、ログインIDもユーザー名に合わせて変更すること", async () => {
+    it("ユーザー名・生年月日を変更し、ログインIDもユーザー名に合わせて変更し、テーマは変更しないこと", async () => {
       const entity = await createEntity();
       const before = entity.toSnapshot();
 
       entity.updateUser({
         name: UserName.of("newuser"),
         birthday: UserBirthday.of("20000202"),
-        theme: UserTheme.of("dark"),
       });
 
       const after = entity.toSnapshot();
       expect(after.name).toBe("newuser");
       expect(after.birthday).toBe("20000202");
-      expect(after.theme).toBe("dark");
+      expect(after.theme).toBe(before.theme);
       expect(after.loginId).toBe("newuser");
       expect(after.id).toBe(before.id);
       expect(after.passwordHash).toBe(before.passwordHash);
@@ -90,7 +89,6 @@ describe("UserAggregate", () => {
       expect(() => entity.updateUser({
         name: UserName.of("newuser"),
         birthday: UserBirthday.of("20000202"),
-        theme: UserTheme.of("dark"),
       })).toThrow();
     });
   });

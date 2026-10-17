@@ -1,7 +1,6 @@
-import { and, eq, ne } from "drizzle-orm";
-import { UserBirthday, UserEntity, UserTheme, UserName } from "../../../../domain/user";
+import { and, eq } from "drizzle-orm";
 import { UserId } from "../../../../domain/shared";
-import type { IUpdateUserRepository } from "../../../../domain/user";
+import { UserAggregate, type IUpdateUserRepository } from "../../../../domain/user";
 import type { Database } from "../../../db";
 import { userLoginMaster, userMaster } from "../../../db";
 
@@ -11,65 +10,71 @@ import { userLoginMaster, userMaster } from "../../../db";
 export class UpdateUserRepository implements IUpdateUserRepository {
   constructor(private readonly db: Database) { }
 
-  async checkUserNameExists(userId: UserId, userName: UserName): Promise<boolean> {
+  async findUser(userId: UserId): Promise<UserAggregate | null> {
     const result = await this.db
-      .select()
+      .select({
+        userId: userMaster.id,
+        name: userMaster.name,
+        birthday: userMaster.birthday,
+        theme: userMaster.theme,
+        loginCredentialId: userLoginMaster.id,
+        loginId: userLoginMaster.loginId,
+        passwordHash: userLoginMaster.passwordHash,
+        salt: userLoginMaster.salt,
+        deleteFlg: userMaster.deleteFlg,
+      })
       .from(userMaster)
-      .where(
-        and(
-          eq(userMaster.name, userName.value),
-          ne(userMaster.id, userId.value),
-          eq(userMaster.deleteFlg, false)
-        )
-      );
-    return result.length > 0;
-  }
-
-  async findUser(userId: UserId): Promise<UserEntity | undefined> {
-    const result = await this.db
-      .select()
-      .from(userMaster)
+      .innerJoin(userLoginMaster, eq(userMaster.id, userLoginMaster.userId))
       .where(
         and(
           eq(userMaster.id, userId.value),
-          eq(userMaster.deleteFlg, false)
+          eq(userMaster.deleteFlg, false),
+          eq(userLoginMaster.deleteFlg, false)
         )
       );
     const row = result[0];
     if (!row) {
-      return undefined;
+      return null;
     }
-    if (row.birthday === null) {
-      throw new Error(`生年月日が登録されていないユーザーです。userId:${row.id}`);
+    if (row.birthday === null || row.passwordHash === null || row.salt === null) {
+      throw new Error(`ユーザー情報が登録されていないユーザーです。userId:${row.userId}`);
     }
-    return new UserEntity(
-      UserId.of(row.id),
-      UserName.of(row.name),
-      UserBirthday.of(row.birthday),
-      UserTheme.of(row.theme)
-    );
+
+    return UserAggregate.reconstruct({
+      id: row.userId,
+      name: row.name,
+      birthday: row.birthday,
+      theme: row.theme,
+      loginCredentialId: row.loginCredentialId,
+      loginId: row.loginId,
+      passwordHash: row.passwordHash,
+      salt: row.salt,
+      deleteFlg: row.deleteFlg
+    });
   }
 
-  async updateUserWithLogin(user: UserEntity): Promise<boolean> {
+  async updateUser(user: UserAggregate): Promise<boolean> {
     const now = new Date().toISOString();
+    const userSnapshot = user.toSnapshot();
+
     const [, updateResult] = await this.db.batch([
       this.db.update(userLoginMaster)
-        .set({ loginId: user.userName, updatedAt: now })
+        .set({ loginId: userSnapshot.loginId, updatedAt: now })
         .where(
           and(
-            eq(userLoginMaster.userId, user.userId),
+            eq(userLoginMaster.userId, userSnapshot.id),
             eq(userLoginMaster.deleteFlg, false)
           )
         ),
       this.db.update(userMaster)
         .set({
-          name: user.userName,
-          birthday: user.userBirthday,
+          name: userSnapshot.name,
+          birthday: userSnapshot.birthday,
           updatedAt: now,
         })
         .where(
           and(
-            eq(userMaster.id, user.userId),
+            eq(userMaster.id, userSnapshot.id),
             eq(userMaster.deleteFlg, false)
           )
         )

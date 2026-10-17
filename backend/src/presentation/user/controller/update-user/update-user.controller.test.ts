@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import { createEnvConfig } from "../../../../config";
 import { AccessToken } from "../../../../domain/auth";
 import { UserId } from "../../../../domain/shared";
-import { userMaster } from "../../../../infrastructure/db";
+import { userLoginMaster, userMaster } from "../../../../infrastructure/db";
 import * as schema from "../../../../infrastructure/db/schema/schema";
 
 describe("PATCH /api/v1/user", () => {
@@ -21,6 +21,10 @@ describe("PATCH /api/v1/user", () => {
         await db.insert(userMaster).values([
             { id: authenticatedUserId, name: authenticatedUserId, birthday: "19900101", createdAt: now, updatedAt: now },
             { id: otherUserId, name: otherUserId, birthday: "19900101", createdAt: now, updatedAt: now },
+        ]);
+        await db.insert(userLoginMaster).values([
+            { id: ulid(), userId: authenticatedUserId, loginId: authenticatedUserId, passwordHash: "hash", salt: "salt", createdAt: now, updatedAt: now },
+            { id: ulid(), userId: otherUserId, loginId: otherUserId, passwordHash: "hash", salt: "salt", createdAt: now, updatedAt: now },
         ]);
 
         const config = createEnvConfig(env);

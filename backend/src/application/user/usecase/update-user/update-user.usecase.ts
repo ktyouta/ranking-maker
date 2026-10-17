@@ -1,9 +1,6 @@
 import { err, ok, Result } from "neverthrow";
 import type { EnvConfig } from "../../../../config";
-import { RefreshToken } from "../../../../domain/auth";
-import { UserBirthday, type UserBirthdayError, UserName, type UserNameError } from "../../../../domain/user";
-import type { UserId } from "../../../../domain/shared";
-import type { IUpdateUserRepository } from "../../../../domain/user";
+import { RefreshToken, UserBirthday, UserName, type IUpdateUserRepository, type UserBirthdayError, type UserId, type UserNameError, type UserNameUniquenessDomainService } from "../../../../domain";
 import { UpdateUserResultDto } from "../../dto";
 
 /**
@@ -30,7 +27,8 @@ type PropsType = {
 export class UpdateUserUsecase {
   constructor(
     private readonly repository: IUpdateUserRepository,
-    private readonly config: EnvConfig
+    private readonly config: EnvConfig,
+    private readonly userNameUniquenessDomainService: UserNameUniquenessDomainService,
   ) { }
 
   /**
@@ -59,14 +57,14 @@ export class UpdateUserUsecase {
     }
 
     // ユーザー名の重複チェック
-    if (await this.repository.checkUserNameExists(userId, userName)) {
+    if (await this.userNameUniquenessDomainService.isDuplicated({ userId, userName })) {
       return err({ type: "DUPLICATE_NAME" });
     }
 
     // プロフィールの変更
-    user.changeProfile(userName, userBirthday);
+    user.updateUser({ name: userName, birthday: userBirthday });
 
-    if (!(await this.repository.updateUserWithLogin(user))) {
+    if (!(await this.repository.updateUser(user))) {
       return err({ type: "NOT_FOUND" });
     }
 
