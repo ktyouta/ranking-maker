@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { CreateUserUsecase } from "..";
-import type { ICreateUserRepository } from "../../../../domain/user";
+import { UserNameUniquenessDomainService, type ICreateUserRepository, type IUserNameUniquenessRepository } from "../../../../domain/user";
 import type { EnvConfig } from "../../../../config";
 
 const testConfig: EnvConfig = {
@@ -16,41 +16,48 @@ const testConfig: EnvConfig = {
 
 const BODY = { name: "testuser", birthday: "19900101", password: "password", confirmPassword: "password" };
 
-function createRepository(exists: boolean) {
+function createRepository() {
   return {
-    existsByUserName: vi.fn<ICreateUserRepository["existsByUserName"]>().mockResolvedValue(exists),
-    createUserWithLogin: vi.fn<ICreateUserRepository["createUserWithLogin"]>().mockResolvedValue(undefined),
+    createUser: vi.fn<ICreateUserRepository["createUser"]>().mockResolvedValue(undefined),
   } satisfies ICreateUserRepository;
+}
+
+function createUniquenessRepository(exists: boolean) {
+  return {
+    findUser: vi.fn<IUserNameUniquenessRepository["findUser"]>().mockResolvedValue(exists ? [{ id: "01BX5ZZKBKACTAV9WEVGEMMVRZ" }] : []),
+  } satisfies IUserNameUniquenessRepository;
 }
 
 describe("CreateUserUsecase", () => {
   it("名前が重複していない場合、ユーザーを1件作成し、トークンを含む結果を返すこと", async () => {
-    const repository = createRepository(false);
-    const usecase = new CreateUserUsecase(repository, testConfig);
+    const repository = createRepository();
+    const usecase = new CreateUserUsecase(repository, testConfig, new UserNameUniquenessDomainService(createUniquenessRepository(false)));
 
     const result = await usecase.execute({ body: BODY });
 
     const dto = result._unsafeUnwrap();
     expect(dto.value.user.name).toBe("testuser");
     expect(dto.value.user.birthday).toBe("19900101");
+    expect(dto.value.user.theme).toBe("lavender");
     expect(dto.value.accessToken).toBeTruthy();
     expect(dto.value.refreshToken).toBeTruthy();
-    expect(repository.createUserWithLogin).toHaveBeenCalledTimes(1);
+    expect(repository.createUser).toHaveBeenCalledTimes(1);
   });
 
   it("名前が重複している場合、DUPLICATE_NAME を返し、ユーザーを作成しないこと", async () => {
-    const repository = createRepository(true);
-    const usecase = new CreateUserUsecase(repository, testConfig);
+    const repository = createRepository();
+    const usecase = new CreateUserUsecase(repository, testConfig, new UserNameUniquenessDomainService(createUniquenessRepository(true)));
 
     const result = await usecase.execute({ body: BODY });
 
     expect(result._unsafeUnwrapErr()).toEqual({ type: "DUPLICATE_NAME" });
-    expect(repository.createUserWithLogin).not.toHaveBeenCalled();
+    expect(repository.createUser).not.toHaveBeenCalled();
   });
 
   it("入力値が制約を満たさない場合、INVALID_INPUT で違反をすべて項目名とともに返し、DB を問い合わせず作成しないこと", async () => {
-    const repository = createRepository(false);
-    const usecase = new CreateUserUsecase(repository, testConfig);
+    const repository = createRepository();
+    const uniquenessRepository = createUniquenessRepository(false);
+    const usecase = new CreateUserUsecase(repository, testConfig, new UserNameUniquenessDomainService(uniquenessRepository));
 
     const result = await usecase.execute({ body: { name: "ab", birthday: "19990229", password: "short", confirmPassword: "other" } });
 
@@ -63,13 +70,13 @@ describe("CreateUserUsecase", () => {
         { field: "confirmPassword", error: { type: "PASSWORD_CONFIRMATION_MISMATCH" } },
       ],
     });
-    expect(repository.existsByUserName).not.toHaveBeenCalled();
-    expect(repository.createUserWithLogin).not.toHaveBeenCalled();
+    expect(uniquenessRepository.findUser).not.toHaveBeenCalled();
+    expect(repository.createUser).not.toHaveBeenCalled();
   });
 
   it("確認用パスワードだけが一致しない場合も、INVALID_INPUT を返し作成しないこと", async () => {
-    const repository = createRepository(false);
-    const usecase = new CreateUserUsecase(repository, testConfig);
+    const repository = createRepository();
+    const usecase = new CreateUserUsecase(repository, testConfig, new UserNameUniquenessDomainService(createUniquenessRepository(false)));
 
     const result = await usecase.execute({ body: { ...BODY, confirmPassword: "password2" } });
 
@@ -77,6 +84,6 @@ describe("CreateUserUsecase", () => {
       type: "INVALID_INPUT",
       errors: [{ field: "confirmPassword", error: { type: "PASSWORD_CONFIRMATION_MISMATCH" } }],
     });
-    expect(repository.createUserWithLogin).not.toHaveBeenCalled();
+    expect(repository.createUser).not.toHaveBeenCalled();
   });
 });

@@ -5,7 +5,7 @@ import { LoginCredentialId, LoginId, NewPassword, Pepper, RawPassword, UserBirth
 type CreateUserParamType = {
     name: UserName;
     birthday: UserBirthday;
-    password: RawPassword;
+    password: NewPassword;
     pepper: Pepper;
 };
 
@@ -64,6 +64,10 @@ export class UserAggregate {
 
     get birthday() {
         return this._birthday;
+    }
+
+    get theme() {
+        return this._theme;
     }
 
     get password() {

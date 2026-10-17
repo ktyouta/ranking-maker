@@ -8,7 +8,7 @@ describe("UserAggregate", () => {
     return UserAggregate.create({
       name: UserName.of("testuser"),
       birthday: UserBirthday.of("19900101"),
-      password: RawPassword.of("password123"),
+      password: NewPassword.create("password123")._unsafeUnwrap(),
       pepper,
     });
   }

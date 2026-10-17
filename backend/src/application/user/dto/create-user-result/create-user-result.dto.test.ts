@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { CreateUserResultDto } from "..";
-import { AccessToken, RefreshToken, UserEntity, UserId, UserName, UserBirthday, UserTheme } from "../../../../domain";
+import { AccessToken, RefreshToken, UserAggregate } from "../../../../domain";
 import type { EnvConfig } from "../../../../config";
 
 const testConfig: EnvConfig = {
@@ -15,16 +15,22 @@ const testConfig: EnvConfig = {
 };
 
 describe("CreateUserResultDto", () => {
-  it("エンティティとトークンからDTOを生成できること", async () => {
-    const userId = UserId.of("01ARZ3NDEKTSV4RRFFQ69G5FAV");
-    const userName = UserName.of("testuser");
-    const userBirthday = UserBirthday.create("19900101")._unsafeUnwrap();
-    const theme = UserTheme.default();
-    const entity = new UserEntity(userId, userName, userBirthday, theme);
-    const accessToken = await AccessToken.create(userId, testConfig);
-    const refreshToken = await RefreshToken.create(userId, testConfig);
+  it("集約とトークンからDTOを生成できること", async () => {
+    const aggregate = UserAggregate.reconstruct({
+      id: "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+      name: "testuser",
+      birthday: "19900101",
+      theme: "lavender",
+      loginCredentialId: "01BX5ZZKBKACTAV9WEVGEMMVRZ",
+      loginId: "testuser",
+      passwordHash: "hash",
+      salt: "salt",
+      deleteFlg: false,
+    });
+    const accessToken = await AccessToken.create(aggregate.id, testConfig);
+    const refreshToken = await RefreshToken.create(aggregate.id, testConfig);
 
-    const dto = new CreateUserResultDto(entity, accessToken, refreshToken);
+    const dto = new CreateUserResultDto(aggregate, accessToken, refreshToken);
 
     expect(dto.value.accessToken).toBe(accessToken.token);
     expect(dto.value.refreshToken).toBe(refreshToken.value);

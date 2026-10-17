@@ -1,5 +1,4 @@
-import { and, eq } from "drizzle-orm";
-import type { UserLoginEntity, ICreateUserRepository, UserEntity, UserName } from "../../../../domain/user";
+import type { ICreateUserRepository, UserAggregate } from "../../../../domain/user";
 import type { Database } from "../../../db";
 import { userLoginMaster, userMaster } from "../../../db";
 
@@ -9,39 +8,28 @@ import { userLoginMaster, userMaster } from "../../../db";
 export class CreateUserRepository implements ICreateUserRepository {
   constructor(private readonly db: Database) { }
 
-  async existsByUserName(userName: UserName): Promise<boolean> {
-    const result = await this.db
-      .select()
-      .from(userMaster)
-      .where(
-        and(
-          eq(userMaster.name, userName.value),
-          eq(userMaster.deleteFlg, false)
-        )
-      );
-    return result.length > 0;
-  }
-
-  async createUserWithLogin(user: UserEntity, login: UserLoginEntity): Promise<void> {
+  async createUser(user: UserAggregate): Promise<void> {
     const now = new Date().toISOString();
+    const userSnapshot = user.toSnapshot();
+
     await this.db.batch([
       this.db.insert(userMaster).values({
-        id: user.userId,
-        name: user.userName,
-        birthday: user.userBirthday,
-        theme: user.userTheme,
-        deleteFlg: false,
+        id: userSnapshot.id,
+        name: userSnapshot.name,
+        birthday: userSnapshot.birthday,
+        theme: userSnapshot.theme,
+        deleteFlg: userSnapshot.deleteFlg,
         createdAt: now,
         updatedAt: now,
       }),
       this.db.insert(userLoginMaster).values({
-        id: login.loginCredentialId,
-        userId: login.userId,
-        loginId: login.loginId,
-        passwordHash: login.passwordHash,
-        salt: login.salt,
+        id: userSnapshot.loginCredentialId,
+        userId: userSnapshot.id,
+        loginId: userSnapshot.loginId,
+        passwordHash: userSnapshot.passwordHash,
+        salt: userSnapshot.salt,
         authProvider: "password",
-        deleteFlg: false,
+        deleteFlg: userSnapshot.deleteFlg,
         createdAt: now,
         updatedAt: now,
       }),
