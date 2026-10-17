@@ -10,8 +10,6 @@ export const API_ENDPOINT = {
   VERIFY: "/api/v1/verify",
   USER_LOGOUT: "/api/v1/user-logout",
   USER_PASSWORD: "/api/v1/user-password",
-  RANKING: "/api/v1/ranking",
-  RANKING_ID: "/api/v1/ranking/:rankingId",
   MY_RANKING: "/api/v1/my-ranking",
   MY_RANKING_ICONS: "/api/v1/my-ranking/icons",
   MY_RANKING_TAGS: "/api/v1/my-ranking/tags",
