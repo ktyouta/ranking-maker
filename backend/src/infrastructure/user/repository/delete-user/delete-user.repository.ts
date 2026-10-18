@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
+import { UserAggregate, type IDeleteUserRepository } from "../../../../domain";
 import type { UserId } from "../../../../domain/shared";
-import type { IDeleteUserRepository } from "../../../../domain/user";
 import type { Database } from "../../../db";
 import { userLoginMaster, userMaster } from "../../../db";
 
@@ -10,22 +10,64 @@ import { userLoginMaster, userMaster } from "../../../db";
 export class DeleteUserRepository implements IDeleteUserRepository {
   constructor(private readonly db: Database) { }
 
-  async deleteUserWithLogin(userId: UserId): Promise<boolean> {
+  async findUser(userId: UserId): Promise<UserAggregate | null> {
+    const result = await this.db
+      .select({
+        userId: userMaster.id,
+        name: userMaster.name,
+        birthday: userMaster.birthday,
+        theme: userMaster.theme,
+        loginCredentialId: userLoginMaster.id,
+        loginId: userLoginMaster.loginId,
+        passwordHash: userLoginMaster.passwordHash,
+        salt: userLoginMaster.salt,
+        deleteFlg: userMaster.deleteFlg,
+      })
+      .from(userMaster)
+      .innerJoin(userLoginMaster, eq(userMaster.id, userLoginMaster.userId))
+      .where(
+        and(
+          eq(userMaster.id, userId.value),
+          eq(userMaster.deleteFlg, false),
+          eq(userLoginMaster.deleteFlg, false)
+        )
+      );
+    const row = result[0];
+    if (!row) {
+      return null;
+    }
+
+    return UserAggregate.reconstruct({
+      id: row.userId,
+      name: row.name,
+      birthday: row.birthday,
+      theme: row.theme,
+      loginCredentialId: row.loginCredentialId,
+      loginId: row.loginId,
+      passwordHash: row.passwordHash,
+      salt: row.salt,
+      deleteFlg: row.deleteFlg
+    });
+  }
+
+  async deleteUser(user: UserAggregate): Promise<boolean> {
     const now = new Date().toISOString();
+    const userSnapshot = user.toSnapshot();
+
     const [, deleteResult] = await this.db.batch([
       this.db.update(userLoginMaster)
-        .set({ deleteFlg: true, updatedAt: now })
+        .set({ deleteFlg: userSnapshot.deleteFlg, updatedAt: now })
         .where(
           and(
-            eq(userLoginMaster.userId, userId.value),
+            eq(userLoginMaster.userId, userSnapshot.id),
             eq(userLoginMaster.deleteFlg, false)
           )
         ),
       this.db.update(userMaster)
-        .set({ deleteFlg: true, updatedAt: now })
+        .set({ deleteFlg: userSnapshot.deleteFlg, updatedAt: now })
         .where(
           and(
-            eq(userMaster.id, userId.value),
+            eq(userMaster.id, userSnapshot.id),
             eq(userMaster.deleteFlg, false)
           )
         )

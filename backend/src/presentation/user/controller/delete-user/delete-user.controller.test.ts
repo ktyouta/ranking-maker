@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import { createEnvConfig } from "../../../../config";
 import { AccessToken } from "../../../../domain/auth";
 import { UserId } from "../../../../domain/shared";
-import { userMaster } from "../../../../infrastructure/db";
+import { userLoginMaster, userMaster } from "../../../../infrastructure/db";
 import * as schema from "../../../../infrastructure/db/schema/schema";
 
 describe("DELETE /api/v1/user", () => {
@@ -19,8 +19,12 @@ describe("DELETE /api/v1/user", () => {
         const otherUserId = ulid();
 
         await db.insert(userMaster).values([
-            { id: authenticatedUserId, name: `test-user-${authenticatedUserId}`, birthday: "19900101", createdAt: now, updatedAt: now },
-            { id: otherUserId, name: `test-user-${otherUserId}`, birthday: "19900101", createdAt: now, updatedAt: now },
+            { id: authenticatedUserId, name: authenticatedUserId, birthday: "19900101", createdAt: now, updatedAt: now },
+            { id: otherUserId, name: otherUserId, birthday: "19900101", createdAt: now, updatedAt: now },
+        ]);
+        await db.insert(userLoginMaster).values([
+            { id: ulid(), userId: authenticatedUserId, loginId: authenticatedUserId, passwordHash: "hash", salt: "salt", createdAt: now, updatedAt: now },
+            { id: ulid(), userId: otherUserId, loginId: otherUserId, passwordHash: "hash", salt: "salt", createdAt: now, updatedAt: now },
         ]);
 
         const config = createEnvConfig(env);
@@ -38,7 +42,12 @@ describe("DELETE /api/v1/user", () => {
         const [authenticatedUserRow] = await db.select().from(userMaster).where(eq(userMaster.id, authenticatedUserId));
         const [otherUserRow] = await db.select().from(userMaster).where(eq(userMaster.id, otherUserId));
 
+        const [authenticatedUserLoginRow] = await db.select().from(userLoginMaster).where(eq(userLoginMaster.userId, authenticatedUserId));
+        const [otherUserLoginRow] = await db.select().from(userLoginMaster).where(eq(userLoginMaster.userId, otherUserId));
+
         expect(authenticatedUserRow.deleteFlg).toBe(true);
         expect(otherUserRow.deleteFlg).toBe(false);
+        expect(authenticatedUserLoginRow.deleteFlg).toBe(true);
+        expect(otherUserLoginRow.deleteFlg).toBe(false);
     });
 });
