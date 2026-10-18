@@ -85,6 +85,13 @@
       "when": 1792209458367,
       "tag": "0011_early_moira_mactaggert",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1792293424655,
+      "tag": "0012_cold_dreadnoughts",
+      "breakpoints": true
     }
   ]
 }

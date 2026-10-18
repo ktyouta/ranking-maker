@@ -31,10 +31,8 @@ export const userLoginMaster = sqliteTable("user_login_master", {
   id: text("id").primaryKey(), // ULID（ログインレコード自身のID）
   userId: text("user_id").notNull().references(() => userMaster.id, { onDelete: "cascade" }),
   loginId: text("login_id").notNull(),
-  passwordHash: text("password_hash"),
-  salt: text("salt"),
-  authProvider: text("auth_provider").notNull().default("password"),
-  googleId: text("google_id"),
+  passwordHash: text("password_hash").notNull(),
+  salt: text("salt").notNull(),
   deleteFlg: integer("delete_flg", { mode: "boolean" }).notNull().default(false),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
@@ -44,10 +42,39 @@ export const userLoginMaster = sqliteTable("user_login_master", {
     uniqueIndex("ux_user_login_master_login_id")
       .on(table.loginId)
       .where(sql`${table.deleteFlg} = false`),
+    // 論理削除された行は一意判定の対象外とし、生存行のみで userId を一意にする
+    uniqueIndex("ux_user_login_master_user_id")
+      .on(table.userId)
+      .where(sql`${table.deleteFlg} = false`),
   ]);
 
 export type UserLoginMaster = typeof userLoginMaster.$inferSelect;
 export type NewUserLoginMaster = typeof userLoginMaster.$inferInsert;
+
+/**
+ * ユーザーGoogleログインマスタ
+ */
+export const userGoogleLoginMaster = sqliteTable("user_google_login_master", {
+  id: text("id").primaryKey(), // ULID（ログインレコード自身のID）
+  userId: text("user_id").notNull().references(() => userMaster.id, { onDelete: "cascade" }),
+  googleId: text("google_id").notNull(),
+  deleteFlg: integer("delete_flg", { mode: "boolean" }).notNull().default(false),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+},
+  (table) => [
+    // 論理削除された行は一意判定の対象外とし、生存行のみで googleId を一意にする
+    uniqueIndex("ux_user_google_login_master_google_id")
+      .on(table.googleId)
+      .where(sql`${table.deleteFlg} = false`),
+    // 論理削除された行は一意判定の対象外とし、生存行のみで userId を一意にする
+    uniqueIndex("ux_user_google_login_master_user_id")
+      .on(table.userId)
+      .where(sql`${table.deleteFlg} = false`),
+  ]);
+
+export type UserGoogleLoginMaster = typeof userGoogleLoginMaster.$inferSelect;
+export type NewUserGoogleLoginMaster = typeof userGoogleLoginMaster.$inferInsert;
 
 
 /**

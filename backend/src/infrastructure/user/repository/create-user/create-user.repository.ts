@@ -28,7 +28,6 @@ export class CreateUserRepository implements ICreateUserRepository {
         loginId: userSnapshot.loginId,
         passwordHash: userSnapshot.passwordHash,
         salt: userSnapshot.salt,
-        authProvider: "password",
         deleteFlg: userSnapshot.deleteFlg,
         createdAt: now,
         updatedAt: now,

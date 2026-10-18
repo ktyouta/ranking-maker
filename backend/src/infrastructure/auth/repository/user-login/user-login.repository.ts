@@ -23,7 +23,7 @@ export class UserLoginRepository implements IUserLoginRepository {
         )
       );
     const row = result[0];
-    if (!row || !row.salt || !row.passwordHash) {
+    if (!row) {
       return undefined;
     }
     return new UserLoginEntity(
