@@ -1,8 +1,8 @@
 import { err, ok, Result } from "neverthrow";
 import type { EnvConfig } from "../../../../config";
-import { NewPassword, Pepper, RawPassword, type NewPasswordError, type RawPasswordError } from "../../../../domain/user";
-import type { IUpdatePasswordRepository } from "../../../../domain/user";
 import type { UserId } from "../../../../domain/shared";
+import type { IUpdatePasswordRepository } from "../../../../domain/user";
+import { NewPassword, Pepper, RawPassword, type NewPasswordError, type RawPasswordError } from "../../../../domain/user";
 
 /**
  * パスワード更新の入力値の制約違反（field は入力値の項目名）
@@ -43,7 +43,7 @@ export class UpdatePasswordUsecase {
    * @param body 現在のパスワード・新しいパスワード・確認用パスワード
    * @returns 成功時は ok（新しいパスワードで更新する）。
    * 入力値が制約を満たさない（確認用パスワードの不一致を含む。違反はすべて返し、DB は問い合わせない）場合は INVALID_INPUT、
-   * 資格情報・更新対象がない場合は NOT_FOUND、現在のパスワードが一致しない場合は CURRENT_PASSWORD_MISMATCH（いずれも更新しない）
+   * ユーザー・更新対象がない場合は NOT_FOUND、現在のパスワードが一致しない場合は CURRENT_PASSWORD_MISMATCH（いずれも更新しない）
    */
   async execute({ userId, body }: PropsType): Promise<Result<void, UpdatePasswordError>> {
     // 入力値の制約チェック
@@ -59,19 +59,19 @@ export class UpdatePasswordUsecase {
     }
     const [nowPassword, newPassword] = input.value;
 
-    const credential = await this.repository.getLoginUser(userId);
-    if (!credential) {
+    const user = await this.repository.findUser(userId);
+    if (!user) {
       return err({ type: "NOT_FOUND" });
     }
 
     // パスワードの変更（現在のパスワードが一致しない場合は changePassword() が拒否する）
     const pepper = new Pepper(this.config.pepper);
-    const changeResult = await credential.changePassword(nowPassword, newPassword, pepper);
+    const changeResult = await user.changePassword(nowPassword, newPassword, pepper);
     if (changeResult.isErr()) {
       return err(changeResult.error);
     }
 
-    if (!(await this.repository.updateLoginUser(credential))) {
+    if (!(await this.repository.updateUser(user))) {
       return err({ type: "NOT_FOUND" });
     }
 

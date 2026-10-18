@@ -1,19 +1,19 @@
 import type { UserId } from "../../../shared";
-import type { UserLoginEntity } from "../../entity";
+import type { UserAggregate } from "../../aggregate";
 
 /**
  * パスワード変更リポジトリインターフェース
  */
 export interface IUpdatePasswordRepository {
   /**
-   * ユーザーIDでログイン資格情報を取得
+   * ユーザーIDでユーザーを取得
    */
-  getLoginUser(userId: UserId): Promise<UserLoginEntity | undefined>;
+  findUser(userId: UserId): Promise<UserAggregate | null>;
 
   /**
-   * ログイン資格情報のパスワードを保存する
-   * @param userLogin パスワードを変更したログイン資格情報
+   * ユーザーのパスワードを保存する
+   * @param user パスワードを変更したユーザー
    * @returns 更新できた場合は true（削除済み・存在しない場合は false）
    */
-  updateLoginUser(userLogin: UserLoginEntity): Promise<boolean>;
+  updateUser(user: UserAggregate): Promise<boolean>;
 }
