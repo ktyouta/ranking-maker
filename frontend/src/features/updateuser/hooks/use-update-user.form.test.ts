@@ -26,18 +26,4 @@ describe("useUpdateUserForm", () => {
             birthday: { year: `1990`, month: `05`, day: `15` },
         });
     });
-
-    it("loginUser.birthdayがnullの場合、birthdayは空文字で初期化されること", () => {
-        const { result } = renderHook(() => useUpdateUserForm({
-            id: `test-id`,
-            name: `TestUser`,
-            birthday: null,
-            theme: `lavender`,
-        }));
-
-        expect(result.current.getValues()).toEqual({
-            name: `TestUser`,
-            birthday: { year: ``, month: ``, day: `` },
-        });
-    });
 });

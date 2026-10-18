@@ -19,7 +19,7 @@ describe("RestoreRankingRepository", () => {
         const tagId = ulid();
         const rankingTagId = ulid();
 
-        await db.insert(userMaster).values({ id: userId, name: `test-user-${userId}`, createdAt: now, updatedAt: now });
+        await db.insert(userMaster).values({ id: userId, name: `test-user-${userId}`, birthday: "19900101", createdAt: now, updatedAt: now });
         await db.insert(publicStatusMaster).values({
             id: publicStatusId,
             name: `test-status-${publicStatusId}`,

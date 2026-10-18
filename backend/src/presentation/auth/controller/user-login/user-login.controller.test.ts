@@ -18,7 +18,7 @@ describe("POST /api/v1/user-login", () => {
         const config = createEnvConfig(env);
         const pepper = new Pepper(config.pepper);
 
-        await db.insert(userMaster).values({ id: userId, name: `test-user-${userId}`, createdAt: now, updatedAt: now });
+        await db.insert(userMaster).values({ id: userId, name: `test-user-${userId}`, birthday: "19900101", createdAt: now, updatedAt: now });
 
         const salt = UserSalt.create();
         const passwordHash = await UserPassword.hash(RawPassword.create("CorrectHorse1!")._unsafeUnwrap(), salt, pepper);

@@ -5,11 +5,11 @@ import { UpdateUserRequestSchema, type UpdateUserRequestType } from "../types/up
 
 /**
  * yyyyMMdd形式の生年月日を年・月・日に分割する
- * @param birthday yyyyMMdd形式の文字列（nullの場合は空文字を返す）
+ * @param birthday yyyyMMdd形式の文字列
  * @returns 年・月・日に分割したオブジェクト
  */
-function parseBirthday(birthday: string | null): { year: string; month: string; day: string } {
-    if (!birthday || !/^\d{8}$/.test(birthday)) {
+function parseBirthday(birthday: string): { year: string; month: string; day: string } {
+    if (!/^\d{8}$/.test(birthday)) {
         return { year: ``, month: ``, day: `` };
     }
     return {

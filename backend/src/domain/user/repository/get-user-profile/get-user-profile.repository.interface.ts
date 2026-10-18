@@ -6,7 +6,7 @@ import type { UserId } from "../../../shared";
 export type UserProfile = {
   id: string;
   name: string;
-  birthday: string | null;
+  birthday: string;
   theme: string;
 };
 

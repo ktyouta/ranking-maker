@@ -22,8 +22,8 @@ describe("PATCH /api/v1/user-password", () => {
         const pepper = new Pepper(config.pepper);
 
         await db.insert(userMaster).values([
-            { id: authenticatedUserId, name: `test-user-${authenticatedUserId}`, createdAt: now, updatedAt: now },
-            { id: otherUserId, name: `test-user-${otherUserId}`, createdAt: now, updatedAt: now },
+            { id: authenticatedUserId, name: `test-user-${authenticatedUserId}`, birthday: "19900101", createdAt: now, updatedAt: now },
+            { id: otherUserId, name: `test-user-${otherUserId}`, birthday: "19900101", createdAt: now, updatedAt: now },
         ]);
 
         const authenticatedUserSalt = UserSalt.create();
@@ -84,7 +84,7 @@ describe("PATCH /api/v1/user-password", () => {
         const config = createEnvConfig(env);
         const pepper = new Pepper(config.pepper);
 
-        await db.insert(userMaster).values({ id: userId, name: `test-user-${userId}`, createdAt: now, updatedAt: now });
+        await db.insert(userMaster).values({ id: userId, name: `test-user-${userId}`, birthday: "19900101", createdAt: now, updatedAt: now });
 
         const salt = UserSalt.create();
         const passwordHash = await UserPassword.hash(RawPassword.create("CorrectHorse1!")._unsafeUnwrap(), salt, pepper);

@@ -6,7 +6,7 @@ export type VerifyResultType = {
   user: {
     id: string;
     name: string;
-    birthday: string | null;
+    birthday: string;
     theme: string;
   };
 };

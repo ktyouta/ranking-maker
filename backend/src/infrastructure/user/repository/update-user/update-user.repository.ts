@@ -36,9 +36,6 @@ export class UpdateUserRepository implements IUpdateUserRepository {
     if (!row) {
       return null;
     }
-    if (row.birthday === null) {
-      throw new Error(`ユーザー情報が登録されていないユーザーです。userId:${row.userId}`);
-    }
 
     return UserAggregate.reconstruct({
       id: row.userId,

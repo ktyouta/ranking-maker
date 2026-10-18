@@ -19,8 +19,8 @@ describe("PATCH /api/v1/user/theme", () => {
         const otherUserId = ulid();
 
         await db.insert(userMaster).values([
-            { id: authenticatedUserId, name: `test-user-${authenticatedUserId}`, theme: "lavender", createdAt: now, updatedAt: now },
-            { id: otherUserId, name: `test-user-${otherUserId}`, theme: "lavender", createdAt: now, updatedAt: now },
+            { id: authenticatedUserId, name: `test-user-${authenticatedUserId}`, birthday: "19900101", theme: "lavender", createdAt: now, updatedAt: now },
+            { id: otherUserId, name: `test-user-${otherUserId}`, birthday: "19900101", theme: "lavender", createdAt: now, updatedAt: now },
         ]);
 
         const config = createEnvConfig(env);

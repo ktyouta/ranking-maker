@@ -18,8 +18,8 @@ describe("TagResolutionRepository", () => {
         const ramenTagId = ulid();
 
         await db.insert(userMaster).values([
-            { id: userId, name: `test-user-${userId}`, createdAt: now, updatedAt: now },
-            { id: otherUserId, name: `test-user-${otherUserId}`, createdAt: now, updatedAt: now },
+            { id: userId, name: `test-user-${userId}`, birthday: "19900101", createdAt: now, updatedAt: now },
+            { id: otherUserId, name: `test-user-${otherUserId}`, birthday: "19900101", createdAt: now, updatedAt: now },
         ]);
         await db.insert(tagMaster).values([
             { id: ramenTagId, userId, name: "ラーメン", createdAt: now, updatedAt: now },

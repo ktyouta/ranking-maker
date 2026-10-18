@@ -20,6 +20,7 @@ describe("GetRankingRepository", () => {
         await db.insert(userMaster).values({
             id: userId,
             name: `test-user-${userId}`,
+            birthday: "19900101",
             createdAt: now,
             updatedAt: now,
         });
@@ -62,6 +63,7 @@ describe("GetRankingRepository", () => {
         await db.insert(userMaster).values({
             id: userId,
             name: `test-user-${userId}`,
+            birthday: "19900101",
             createdAt: now,
             updatedAt: now,
         });
@@ -101,6 +103,7 @@ describe("GetRankingRepository", () => {
         await db.insert(userMaster).values({
             id: userId,
             name: `test-user-${userId}`,
+            birthday: "19900101",
             createdAt: now,
             updatedAt: now,
         });

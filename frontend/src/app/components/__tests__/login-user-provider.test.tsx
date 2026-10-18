@@ -17,7 +17,7 @@ describe("LoginUserProvider", () => {
                 <ThemeProvider>
                     <QueryClientProvider client={queryClient}>
                         <LoginUserProvider
-                            loginUser={{ id: "1", name: "user", birthday: null, theme: "lavender" }}
+                            loginUser={{ id: "1", name: "user", birthday: "19900101", theme: "lavender" }}
                         >
                             {children}
                         </LoginUserProvider>

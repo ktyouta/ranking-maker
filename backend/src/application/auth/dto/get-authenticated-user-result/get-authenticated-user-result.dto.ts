@@ -3,7 +3,7 @@ import type { UserProfile } from "../../../../domain/user";
 export type GetAuthenticatedUserResultType = {
   id: string;
   name: string;
-  birthday: string | null;
+  birthday: string;
   theme: string;
 };
 

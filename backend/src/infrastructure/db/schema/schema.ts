@@ -7,7 +7,7 @@ import { foreignKey, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm
 export const userMaster = sqliteTable("user_master", {
   id: text("id").primaryKey(), // ULID
   name: text("name").notNull(),
-  birthday: text("birthday"),
+  birthday: text("birthday").notNull(),
   lastLoginDate: text("last_login_date"),
   theme: text("theme").notNull().default("lavender"),
   deleteFlg: integer("delete_flg", { mode: "boolean" }).notNull().default(false),
