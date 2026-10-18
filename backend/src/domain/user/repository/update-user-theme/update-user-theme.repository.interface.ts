@@ -1,13 +1,19 @@
 import type { UserId } from "../../../shared";
-import type { UserTheme } from "../../value-object";
+import type { UserAggregate } from "../../aggregate";
 
 /**
  * ユーザーテーマ更新リポジトリインターフェース
  */
 export interface IUpdateUserThemeRepository {
   /**
-   * テーマを更新する
-   * @returns 更新に成功したか
+   * ユーザーIDでユーザーを取得
    */
-  updateTheme(userId: UserId, theme: UserTheme): Promise<boolean>;
+  findUser(userId: UserId): Promise<UserAggregate | null>;
+
+  /**
+   * ユーザーのテーマを保存する
+   * @param user テーマを変更したユーザー
+   * @returns 更新できた場合は true（削除済み・存在しない場合は false）
+   */
+  updateTheme(user: UserAggregate): Promise<boolean>;
 }

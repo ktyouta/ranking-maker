@@ -1,7 +1,7 @@
 import { err, ok, type Result } from "neverthrow";
 import type { UserId } from "../../../../domain/shared";
-import { UserTheme, type UserThemeError } from "../../../../domain/user";
 import type { IUpdateUserThemeRepository } from "../../../../domain/user";
+import { UserTheme, type UserThemeError } from "../../../../domain/user";
 
 /**
  * ユーザーテーマ更新の入力値の制約違反（field は入力値の項目名）
@@ -37,7 +37,14 @@ export class UpdateUserThemeUsecase {
       return err({ type: "INVALID_INPUT", errors: [{ field: "theme", error: userTheme.error }] });
     }
 
-    if (!(await this.repository.updateTheme(userId, userTheme.value))) {
+    const user = await this.repository.findUser(userId);
+    if (!user) {
+      return err({ type: "NOT_FOUND" });
+    }
+
+    user.updateTheme({ theme: userTheme.value });
+
+    if (!(await this.repository.updateTheme(user))) {
       return err({ type: "NOT_FOUND" });
     }
 
