@@ -1,4 +1,4 @@
-import type { NewPasswordError, RawPasswordError, UserBirthdayError, UserNameError, UserThemeError } from "../../../domain";
+import type { LoginIdError, NewPasswordError, RawPasswordError, UserBirthdayError, UserNameError, UserThemeError } from "../../../domain";
 
 /**
  * ユーザーコンテキストの入力値の違反（値オブジェクトの制約違反、確認用パスワードの不一致）
@@ -6,6 +6,7 @@ import type { NewPasswordError, RawPasswordError, UserBirthdayError, UserNameErr
 type UserInputError =
   | UserNameError
   | UserBirthdayError
+  | LoginIdError
   | RawPasswordError
   | NewPasswordError
   | UserThemeError
@@ -26,6 +27,8 @@ export function toInputErrorMessage(error: UserInputError): string {
       return "生年月日は日付形式(yyyyMMdd)で入力してください";
     case "USER_BIRTHDAY_NOT_EXIST":
       return "生年月日は実在する日付を入力してください";
+    case "LOGIN_ID_EMPTY":
+      return "ユーザー名を入力してください";
     case "RAW_PASSWORD_EMPTY":
       return "パスワードを入力してください";
     case "NEW_PASSWORD_TOO_SHORT":

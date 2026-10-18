@@ -2,7 +2,6 @@ import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
 import { health } from "./presentation/health";
 import { user } from "./presentation/user";
-import { userLogin, userLogout, refresh, verify } from "./presentation/auth";
 import { ranking } from "./presentation/ranking";
 import {
   accessLogMiddleware,
@@ -49,10 +48,6 @@ app.notFound(notFoundHandler);
 const routes = app
   .route("/", health)
   .route("/", user)
-  .route("/", userLogin)
-  .route("/", refresh)
-  .route("/", verify)
-  .route("/", userLogout)
   .route("/", ranking);
 
 // RPC用の型エクスポート

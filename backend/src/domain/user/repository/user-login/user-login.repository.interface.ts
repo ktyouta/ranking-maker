@@ -1,5 +1,6 @@
 import type { UserId } from "../../../shared";
-import type { LoginId, UserAggregate } from "../../../user";
+import type { UserAggregate } from "../../aggregate";
+import type { LoginId } from "../../value-object";
 
 /**
  * ログインリポジトリインターフェース

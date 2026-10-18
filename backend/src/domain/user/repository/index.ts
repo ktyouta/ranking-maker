@@ -4,4 +4,5 @@ export * from "./get-user-profile";
 export * from "./update-password";
 export * from "./update-user";
 export * from "./update-user-theme";
+export * from "./user-login";
 export * from "./user-name-uniqueness";

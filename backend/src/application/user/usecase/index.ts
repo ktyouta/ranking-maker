@@ -3,3 +3,7 @@ export * from "./update-user";
 export * from "./delete-user";
 export * from "./update-user-theme";
 export * from "./update-password";
+export * from "./login";
+export * from "./refresh";
+export * from "./verify";
+export * from "./get-authenticated-user";

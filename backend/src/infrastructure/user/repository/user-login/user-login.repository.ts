@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import type { IUserLoginRepository } from "../../../../domain/auth";
+import type { IUserLoginRepository } from "../../../../domain/user";
 import type { UserId } from "../../../../domain/shared";
 import { UserAggregate, type LoginId } from "../../../../domain/user";
 import type { Database } from "../../../db";

@@ -1,5 +1,5 @@
 import type { EnvConfig } from "../../../../config";
-import { AccessToken, RefreshToken } from "../../../../domain/auth";
+import { AccessToken, RefreshToken } from "../../../../domain/user";
 import type { IGetUserProfileRepository } from "../../../../domain/user";
 import { RefreshResultDto } from "../../dto";
 
@@ -26,7 +26,7 @@ export class RefreshUsecase {
       return { status: "invalid_token" };
     }
 
-    const userInfo = await this.repository.findById(userId);
+    const userInfo = await this.repository.findUserProfile(userId);
     if (!userInfo) {
       return { status: "user_not_found" };
     }

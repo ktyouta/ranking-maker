@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { LoginResultDto } from "..";
-import { AccessToken, RefreshToken } from "../../../../domain/auth";
-import { UserAggregate } from "../../../../domain/user";
+import { AccessToken, RefreshToken, UserAggregate } from "../../../../domain/user";
 import type { EnvConfig } from "../../../../config";
 
 const testConfig: EnvConfig = {
