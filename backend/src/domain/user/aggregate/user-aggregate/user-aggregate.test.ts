@@ -93,6 +93,26 @@ describe("UserAggregate", () => {
     });
   });
 
+  describe("verifyPassword", () => {
+    it("パスワードが一致する場合、true を返すこと", async () => {
+      const entity = await createEntity();
+
+      expect(await entity.verifyPassword(RawPassword.of("password123"), pepper)).toBe(true);
+    });
+
+    it("パスワードが一致しない場合、false を返すこと", async () => {
+      const entity = await createEntity();
+
+      expect(await entity.verifyPassword(RawPassword.of("wrong-password"), pepper)).toBe(false);
+    });
+
+    it("削除済みユーザーの場合は例外を投げること", async () => {
+      const entity = reconstructEntity(true);
+
+      await expect(entity.verifyPassword(RawPassword.of("password123"), pepper)).rejects.toThrow();
+    });
+  });
+
   describe("changePassword", () => {
     it("現在のパスワードが一致する場合、新しいパスワードのハッシュに変更すること", async () => {
       const entity = await createEntity();

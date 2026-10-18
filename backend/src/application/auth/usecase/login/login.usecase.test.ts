@@ -1,9 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { LoginUsecase } from "..";
-import { Pepper, UserLoginEntity, UserPassword, UserSalt, UserName, RawPassword } from "../../../../domain/user";
+import { Pepper, UserAggregate, UserPassword, UserSalt, RawPassword } from "../../../../domain/user";
 import type { IUserLoginRepository } from "../../../../domain/auth";
-import { UserId } from "../../../../domain/shared";
-import type { IGetUserProfileRepository, UserProfile } from "../../../../domain/user";
 import type { EnvConfig } from "../../../../config";
 
 const testConfig: EnvConfig = {
@@ -17,36 +15,38 @@ const testConfig: EnvConfig = {
   allowUserOperation: true,
 };
 
-const LOGIN_ID = "01ARZ3NDEKTSV4RRFFQ69G5FAW";
 const PASSWORD = "correct-password";
-const PROFILE: UserProfile = {
+const PROFILE = {
   id: "01ARZ3NDEKTSV4RRFFQ69G5FAV",
   name: "testuser",
   birthday: "19900101",
   theme: "lavender",
 };
 
-async function createCredential() {
+async function createUser() {
   const salt = UserSalt.create();
   const passwordHash = await UserPassword.hash(RawPassword.create(PASSWORD)._unsafeUnwrap(), salt, new Pepper(testConfig.pepper));
-  return new UserLoginEntity(UserId.of(LOGIN_ID), UserId.of(PROFILE.id), UserName.of(PROFILE.name), passwordHash, salt);
+  return UserAggregate.reconstruct({
+    ...PROFILE,
+    loginCredentialId: "01ARZ3NDEKTSV4RRFFQ69G5FAW",
+    loginId: PROFILE.name,
+    passwordHash: passwordHash.value,
+    salt: salt.value,
+    deleteFlg: false,
+  });
 }
 
-function createRepositories(credential: UserLoginEntity | undefined, profile: UserProfile | undefined) {
-  const loginRepository = {
-    getLoginUser: vi.fn<IUserLoginRepository["getLoginUser"]>().mockResolvedValue(credential),
+function createRepository(user: UserAggregate | null) {
+  return {
+    findUser: vi.fn<IUserLoginRepository["findUser"]>().mockResolvedValue(user),
     updateLastLoginDate: vi.fn<IUserLoginRepository["updateLastLoginDate"]>().mockResolvedValue(undefined),
   } satisfies IUserLoginRepository;
-  const userProfileRepository = {
-    findById: vi.fn<IGetUserProfileRepository["findById"]>().mockResolvedValue(profile),
-  } satisfies IGetUserProfileRepository;
-  return { loginRepository, userProfileRepository };
 }
 
 describe("LoginUsecase", () => {
   it("名前とパスワードが正しい場合、トークンとプロフィールを返し、最終ログイン日時を1回更新すること", async () => {
-    const { loginRepository, userProfileRepository } = createRepositories(await createCredential(), PROFILE);
-    const usecase = new LoginUsecase(loginRepository, userProfileRepository, testConfig);
+    const repository = createRepository(await createUser());
+    const usecase = new LoginUsecase(repository, testConfig);
 
     const result = await usecase.execute({ name: PROFILE.name, password: PASSWORD });
 
@@ -54,42 +54,33 @@ describe("LoginUsecase", () => {
     expect(dto.value.user).toEqual(PROFILE);
     expect(dto.value.accessToken).toBeTruthy();
     expect(dto.value.refreshToken).toBeTruthy();
-    expect(loginRepository.updateLastLoginDate).toHaveBeenCalledTimes(1);
+    expect(repository.updateLastLoginDate).toHaveBeenCalledTimes(1);
+    expect(repository.updateLastLoginDate.mock.calls[0]?.[0].value).toBe(PROFILE.id);
   });
 
   it("ユーザーが存在しない場合、AUTHENTICATION_FAILED を返し、最終ログイン日時を更新しないこと", async () => {
-    const { loginRepository, userProfileRepository } = createRepositories(undefined, PROFILE);
-    const usecase = new LoginUsecase(loginRepository, userProfileRepository, testConfig);
+    const repository = createRepository(null);
+    const usecase = new LoginUsecase(repository, testConfig);
 
     const result = await usecase.execute({ name: PROFILE.name, password: PASSWORD });
 
     expect(result._unsafeUnwrapErr()).toEqual({ type: "AUTHENTICATION_FAILED" });
-    expect(loginRepository.updateLastLoginDate).not.toHaveBeenCalled();
+    expect(repository.updateLastLoginDate).not.toHaveBeenCalled();
   });
 
   it("パスワードが違う場合、AUTHENTICATION_FAILED を返し、最終ログイン日時を更新しないこと", async () => {
-    const { loginRepository, userProfileRepository } = createRepositories(await createCredential(), PROFILE);
-    const usecase = new LoginUsecase(loginRepository, userProfileRepository, testConfig);
+    const repository = createRepository(await createUser());
+    const usecase = new LoginUsecase(repository, testConfig);
 
     const result = await usecase.execute({ name: PROFILE.name, password: "wrong-password" });
 
     expect(result._unsafeUnwrapErr()).toEqual({ type: "AUTHENTICATION_FAILED" });
-    expect(loginRepository.updateLastLoginDate).not.toHaveBeenCalled();
-  });
-
-  it("プロフィールが存在しない場合、AUTHENTICATION_FAILED を返し、最終ログイン日時を更新しないこと", async () => {
-    const { loginRepository, userProfileRepository } = createRepositories(await createCredential(), undefined);
-    const usecase = new LoginUsecase(loginRepository, userProfileRepository, testConfig);
-
-    const result = await usecase.execute({ name: PROFILE.name, password: PASSWORD });
-
-    expect(result._unsafeUnwrapErr()).toEqual({ type: "AUTHENTICATION_FAILED" });
-    expect(loginRepository.updateLastLoginDate).not.toHaveBeenCalled();
+    expect(repository.updateLastLoginDate).not.toHaveBeenCalled();
   });
 
   it("入力値が空の場合、INVALID_INPUT で違反をすべて項目名とともに返し、DB を問い合わせないこと", async () => {
-    const { loginRepository, userProfileRepository } = createRepositories(await createCredential(), PROFILE);
-    const usecase = new LoginUsecase(loginRepository, userProfileRepository, testConfig);
+    const repository = createRepository(await createUser());
+    const usecase = new LoginUsecase(repository, testConfig);
 
     const result = await usecase.execute({ name: "", password: "" });
 
@@ -100,16 +91,16 @@ describe("LoginUsecase", () => {
         { field: "password", error: { type: "RAW_PASSWORD_EMPTY" } },
       ],
     });
-    expect(loginRepository.getLoginUser).not.toHaveBeenCalled();
-    expect(loginRepository.updateLastLoginDate).not.toHaveBeenCalled();
+    expect(repository.findUser).not.toHaveBeenCalled();
+    expect(repository.updateLastLoginDate).not.toHaveBeenCalled();
   });
 
-  it("入力した名前で資格情報を問い合わせること（ユーザー名の文字数は判定しない）", async () => {
-    const { loginRepository, userProfileRepository } = createRepositories(undefined, PROFILE);
-    const usecase = new LoginUsecase(loginRepository, userProfileRepository, testConfig);
+  it("入力した名前でユーザーを問い合わせること（ユーザー名の文字数は判定しない）", async () => {
+    const repository = createRepository(null);
+    const usecase = new LoginUsecase(repository, testConfig);
 
     await usecase.execute({ name: "ab", password: PASSWORD });
 
-    expect(loginRepository.getLoginUser.mock.calls[0]?.[0].value).toBe("ab");
+    expect(repository.findUser.mock.calls[0]?.[0].value).toBe("ab");
   });
 });

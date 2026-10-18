@@ -1,8 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { LoginResultDto } from "..";
 import { AccessToken, RefreshToken } from "../../../../domain/auth";
-import { UserId } from "../../../../domain/shared";
-import type { UserProfile } from "../../../../domain/user";
+import { UserAggregate } from "../../../../domain/user";
 import type { EnvConfig } from "../../../../config";
 
 const testConfig: EnvConfig = {
@@ -17,18 +16,22 @@ const testConfig: EnvConfig = {
 };
 
 describe("LoginResultDto", () => {
-  it("プロフィールとトークンからDTOを生成できること", async () => {
-    const profile: UserProfile = {
+  it("集約とトークンからDTOを生成できること", async () => {
+    const aggregate = UserAggregate.reconstruct({
       id: "01ARZ3NDEKTSV4RRFFQ69G5FAV",
       name: "testuser",
       birthday: "19900101",
       theme: "lavender",
-    };
-    const userId = UserId.of(profile.id);
-    const accessToken = await AccessToken.create(userId, testConfig);
-    const refreshToken = await RefreshToken.create(userId, testConfig);
+      loginCredentialId: "01BX5ZZKBKACTAV9WEVGEMMVRZ",
+      loginId: "testuser",
+      passwordHash: "hash",
+      salt: "salt",
+      deleteFlg: false,
+    });
+    const accessToken = await AccessToken.create(aggregate.id, testConfig);
+    const refreshToken = await RefreshToken.create(aggregate.id, testConfig);
 
-    const dto = new LoginResultDto(profile, accessToken, refreshToken);
+    const dto = new LoginResultDto(aggregate, accessToken, refreshToken);
 
     expect(dto.value.accessToken).toBe(accessToken.token);
     expect(dto.value.refreshToken).toBe(refreshToken.value);

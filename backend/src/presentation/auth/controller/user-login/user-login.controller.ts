@@ -3,7 +3,7 @@ import { setCookie } from "hono/cookie";
 import { LoginUsecase } from "../../../../application";
 import { API_ENDPOINT, HTTP_STATUS } from "../../../../constant";
 import { RefreshToken } from "../../../../domain";
-import { GetUserProfileRepository, UserLoginRepository } from "../../../../infrastructure";
+import { UserLoginRepository } from "../../../../infrastructure";
 import { validatorMiddleware } from "../../../../middleware";
 import type { AppEnv } from "../../../../types";
 import { toInputErrorMessage } from "../../error-message";
@@ -17,8 +17,7 @@ const userLogin = new Hono<AppEnv>().post(
         const db = c.get('db');
         const config = c.get('envConfig');
         const loginRepository = new UserLoginRepository(db);
-        const userProfileRepository = new GetUserProfileRepository(db);
-        const usecase = new LoginUsecase(loginRepository, userProfileRepository, config);
+        const usecase = new LoginUsecase(loginRepository, config);
 
         const result = await usecase.execute({ name: body.name, password: body.password });
 

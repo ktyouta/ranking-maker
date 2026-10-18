@@ -1,8 +1,7 @@
 import { and, eq } from "drizzle-orm";
-import { UserLoginEntity, UserPassword, UserSalt, UserName } from "../../../../domain/user";
 import type { IUserLoginRepository } from "../../../../domain/auth";
-import type { LoginId } from "../../../../domain/user";
-import { UserId } from "../../../../domain/shared";
+import type { UserId } from "../../../../domain/shared";
+import { UserAggregate, type LoginId } from "../../../../domain/user";
 import type { Database } from "../../../db";
 import { userLoginMaster, userMaster } from "../../../db";
 
@@ -12,27 +11,44 @@ import { userLoginMaster, userMaster } from "../../../db";
 export class UserLoginRepository implements IUserLoginRepository {
   constructor(private readonly db: Database) { }
 
-  async getLoginUser(loginId: LoginId): Promise<UserLoginEntity | undefined> {
+  async findUser(loginId: LoginId): Promise<UserAggregate | null> {
     const result = await this.db
-      .select()
-      .from(userLoginMaster)
+      .select({
+        userId: userMaster.id,
+        name: userMaster.name,
+        birthday: userMaster.birthday,
+        theme: userMaster.theme,
+        loginCredentialId: userLoginMaster.id,
+        loginId: userLoginMaster.loginId,
+        passwordHash: userLoginMaster.passwordHash,
+        salt: userLoginMaster.salt,
+        deleteFlg: userMaster.deleteFlg,
+      })
+      .from(userMaster)
+      .innerJoin(userLoginMaster, eq(userMaster.id, userLoginMaster.userId))
       .where(
         and(
           eq(userLoginMaster.loginId, loginId.value),
+          eq(userMaster.deleteFlg, false),
           eq(userLoginMaster.deleteFlg, false)
         )
       );
     const row = result[0];
     if (!row) {
-      return undefined;
+      return null;
     }
-    return new UserLoginEntity(
-      UserId.of(row.id),
-      UserId.of(row.userId),
-      UserName.of(row.loginId),
-      UserPassword.of(row.passwordHash),
-      UserSalt.of(row.salt)
-    );
+
+    return UserAggregate.reconstruct({
+      id: row.userId,
+      name: row.name,
+      birthday: row.birthday,
+      theme: row.theme,
+      loginCredentialId: row.loginCredentialId,
+      loginId: row.loginId,
+      passwordHash: row.passwordHash,
+      salt: row.salt,
+      deleteFlg: row.deleteFlg
+    });
   }
 
   async updateLastLoginDate(userId: UserId): Promise<void> {

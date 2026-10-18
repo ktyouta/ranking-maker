@@ -147,10 +147,25 @@ export class UserAggregate {
     }
 
     /**
+     * パスワード照合
+     * @param rawPassword
+     * @param pepper
+     * @returns
+     */
+    async verifyPassword(rawPassword: RawPassword, pepper: Pepper): Promise<boolean> {
+        if (this._deleteFlg) {
+            throw new Error(`削除済みのユーザーのためパスワードを照合できません。ID:${this._userId.value}`);
+        }
+
+        const hashedPassword = await UserPassword.hash(rawPassword, this.salt, pepper);
+        return hashedPassword.equals(this.password);
+    }
+
+    /**
      * パスワード変更
-     * @param newPassword 
-     * @param pepper 
-     * @returns 
+     * @param newPassword
+     * @param pepper
+     * @returns
      */
     async changePassword(nowPassword: RawPassword, newPassword: NewPassword, pepper: Pepper): Promise<Result<undefined, UserValidationError>> {
         if (this._deleteFlg) {
@@ -158,8 +173,7 @@ export class UserAggregate {
         }
 
         // パスワードチェック
-        const nowHashedPassword = await UserPassword.hash(nowPassword, this.salt, pepper);
-        if (!nowHashedPassword.equals(this.password)) {
+        if (!(await this.verifyPassword(nowPassword, pepper))) {
             return err({ type: "CURRENT_PASSWORD_MISMATCH" });
         }
 

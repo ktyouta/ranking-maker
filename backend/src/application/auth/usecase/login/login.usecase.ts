@@ -1,10 +1,8 @@
 import { err, ok, Result } from "neverthrow";
 import type { EnvConfig } from "../../../../config";
+import type { IUserLoginRepository } from "../../../../domain/auth";
 import { AccessToken, RefreshToken } from "../../../../domain/auth";
 import { LoginId, Pepper, RawPassword, type LoginIdError, type RawPasswordError } from "../../../../domain/user";
-import type { IUserLoginRepository } from "../../../../domain/auth";
-import { UserId } from "../../../../domain/shared";
-import type { IGetUserProfileRepository } from "../../../../domain/user";
 import { LoginResultDto } from "../../dto";
 
 /**
@@ -29,7 +27,6 @@ type PropsType = {
 export class LoginUsecase {
   constructor(
     private readonly loginRepository: IUserLoginRepository,
-    private readonly userProfileRepository: IGetUserProfileRepository,
     private readonly config: EnvConfig
   ) { }
 
@@ -39,7 +36,7 @@ export class LoginUsecase {
    * @param password 平文のパスワード
    * @returns 成功時はトークンとプロフィールの DTO（最終ログイン日時を更新する）。
    * 入力値が空の場合は INVALID_INPUT（違反はすべて返し、DB は問い合わせない）。
-   * ユーザーが存在しない・パスワードが一致しない・プロフィールが存在しない場合は AUTHENTICATION_FAILED（最終ログイン日時は更新しない）
+   * ユーザーが存在しない・パスワードが一致しない場合は AUTHENTICATION_FAILED（最終ログイン日時は更新しない）
    */
   async execute({ name, password }: PropsType): Promise<Result<LoginResultDto, LoginError>> {
     // 入力値の制約チェック
@@ -52,28 +49,24 @@ export class LoginUsecase {
     }
     const [loginId, rawPassword] = input.value;
 
-    const credential = await this.loginRepository.getLoginUser(loginId);
-    if (!credential) {
+    const user = await this.loginRepository.findUser(loginId);
+    if (!user) {
       return err({ type: "AUTHENTICATION_FAILED" });
     }
 
+    // パスワードチェック
     const pepper = new Pepper(this.config.pepper);
-    const isValid = await credential.verifyPassword(rawPassword, pepper);
+    const isValid = await user.verifyPassword(rawPassword, pepper);
     if (!isValid) {
       return err({ type: "AUTHENTICATION_FAILED" });
     }
 
-    const userId = UserId.of(credential.userId);
-    const userInfo = await this.userProfileRepository.findById(userId);
-    if (!userInfo) {
-      return err({ type: "AUTHENTICATION_FAILED" });
-    }
+    // トークン発行
+    const accessToken = await AccessToken.create(user.id, this.config);
+    const refreshToken = await RefreshToken.create(user.id, this.config);
 
-    const accessToken = await AccessToken.create(userId, this.config);
-    const refreshToken = await RefreshToken.create(userId, this.config);
+    await this.loginRepository.updateLastLoginDate(user.id);
 
-    await this.loginRepository.updateLastLoginDate(userId);
-
-    return ok(new LoginResultDto(userInfo, accessToken, refreshToken));
+    return ok(new LoginResultDto(user, accessToken, refreshToken));
   }
 }
