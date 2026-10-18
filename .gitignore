@@ -58,5 +58,8 @@ lerna-debug.log*
 !.claude/agents/**
 !.claude/skills/
 !.claude/skills/**
+!.claude/settings.json
+!.claude/hooks/
+!.claude/hooks/**
 
 tmpclaude-*

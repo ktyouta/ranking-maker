@@ -144,9 +144,9 @@ docs/[機能名]/spec.md が存在する場合のみ実施する。
 
 Step 4 の差分設計に沿ってバックエンドを変更する。
 
-- `schema.ts` を変更した場合は `npm run db:generate` を実行し、生成された `drizzle/*.sql` と `drizzle/meta/` の変更をセットで扱う
-- `drizzle/*.sql` を手動で新規作成・編集してはならない（`db:generate` が対応できない変更は `db:generate --custom` を使う）
-- `schema.ts` を変更した場合、`db:generate` の後に必ず `npm run db:migrate:local` を実行してローカル D1 に反映する。`db:generate` はマイグレーションファイルの生成のみで DB 状態には反映されないため、適用を怠るとユーザーが実際に画面を開くまで SQL エラーが検出されない
+- `schema.ts` を変更した場合は db-migration スキルを実行し、その手順（生成 → SQL の確認 → 必要なら退避・戻しの追加 → 使い捨て D1 での検証 → ユーザーに断ってからローカルに適用 → 子孫テーブルを含む件数の報告）を完了する
+- `drizzle/*.sql` を手で新規作成してはならない（生成された SQL への退避・戻しの追加は db-migration スキルの手順として許可する）
+- ローカル D1 への適用を省略しない。`db:generate` はマイグレーションファイルの生成のみで DB 状態には反映されないため、適用を怠るとユーザーが実際に画面を開くまで SQL エラーが検出されない
 
 ---
 
@@ -247,6 +247,6 @@ Step 6・9・10 でいずれかの NG があった場合、skill-gap-detector �
 - バックエンド・フロントエンドの実装完了後は、ルートで `npm run typecheck` と `npm run lint` を実行し、エラーが 0 件であることを確認する
 - 指示にない機能を変更に追加しない
 - エラーや NG を無視して次のステップに進まない
-- schema.ts を変更した場合は必ず `db:generate` を実行する。`drizzle/*.sql` を手動作成しない
-- schema.ts を変更した場合は `db:generate` に加えて必ず `db:migrate:local` を実行し、ローカル D1 に反映する
+- schema.ts を変更した場合は必ず db-migration スキルの手順に従う。`drizzle/*.sql` を手で新規作成しない
+- schema.ts を変更した場合は、db-migration スキルの検証を通してから、ユーザーに断って `db:migrate:local` でローカル D1 に反映する
 - コーディング規約・チェック項目の追加は skill ファイルにのみ行う。skill で対応できる内容を CLAUDE.md に追記しない

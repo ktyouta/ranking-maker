@@ -187,6 +187,13 @@ React + Hono + RPC を用いたフロントエンド・バックエンド統合�
   * 入力からの生成と新規生成の両方を持つ値オブジェクト（`RankingId`）は、入力からの生成を `fromInput`（Result）とする
 * 経緯・詳細は `docs/domain-input-validation/plan.md` を参照
 
+### マイグレーション
+
+* `schema.ts` の変更・マイグレーションの生成・適用は、db-migration スキルの手順に従う
+* 生成された SQL は、確認せずに適用しない。`DROP TABLE` を含む SQL は、子孫テーブルを退避して戻す形にしてから適用する（D1 では `PRAGMA foreign_keys=OFF` が効かず、子孫テーブルの行が CASCADE で全件削除される）
+* `db:migrate:*` の pre スクリプト（`backend/scripts/check-migrations.mjs`）で止められたマイグレーションを、回避して適用しない
+* 本番への適用（`db:migrate:prod`）は Claude が実行しない
+
 ---
 
 ## コードレビュー指針
