@@ -46,7 +46,7 @@ describe("BulkSoftDeleteRankingUsecase", () => {
     expect(mockRepository.deleteRankings).toHaveBeenCalledTimes(1);
     const passedRankings = vi.mocked(mockRepository.deleteRankings).mock.calls[0][0];
     expect(passedRankings.map((ranking) => ranking.id)).toEqual(["ranking-1", "ranking-2"]);
-    expect(passedRankings.every((ranking) => ranking.isDeleted())).toBe(true);
+    expect(passedRankings.every((ranking) => ranking.toSnapshot().deleteFlg)).toBe(true);
   });
 
   it("お気に入りが一部含まれる場合、お気に入り以外のみ削除されスキップ件数が返ること", async () => {
@@ -61,7 +61,7 @@ describe("BulkSoftDeleteRankingUsecase", () => {
     expect(mockRepository.deleteRankings).toHaveBeenCalledTimes(1);
     const passedRankings = vi.mocked(mockRepository.deleteRankings).mock.calls[0][0];
     expect(passedRankings.map((ranking) => ranking.id)).toEqual(["ranking-2"]);
-    expect(passedRankings.every((ranking) => ranking.isDeleted())).toBe(true);
+    expect(passedRankings.every((ranking) => ranking.toSnapshot().deleteFlg)).toBe(true);
   });
 
   it("全件お気に入りの場合、いずれも削除されずスキップ件数のみ返ること", async () => {

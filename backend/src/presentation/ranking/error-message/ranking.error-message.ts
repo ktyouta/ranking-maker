@@ -1,7 +1,7 @@
 import type { ContentModerationTarget, ItemMemoError, ItemNameError, OrderError, PublicStatusError, RankingIconError, RankingIdError, RankingListPaginationError, RankingMemoError, RankingSortError, RankingTitleError, RankingValidationError, TagNameError, TrashRankingSortError } from "../../../domain";
 
 /**
- * マイランキングコンテキストの入力値の違反（値オブジェクトの制約違反、集約の不変条件の違反、絞り込みタグ・ランキングIDの件数の違反）
+ * ランキングコンテキストの入力値の違反（値オブジェクトの制約違反、集約の不変条件の違反、絞り込みタグ・ランキングIDの件数の違反）
  */
 type RankingInputError =
   | RankingTitleError

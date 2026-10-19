@@ -164,14 +164,6 @@ export class RankingAggregate {
     return [...this._rankingOrderEntityList];
   }
 
-  get deleteFlg() {
-    return this._deleteFlg;
-  }
-
-  get rankingTagEntityList() {
-    return [...this._rankingTagEntityList];
-  }
-
   /**
    * ランキングを更新する（全置換更新の入口）。
    *
@@ -337,14 +329,6 @@ export class RankingAggregate {
    */
   isFavorite() {
     return this._isFavorite;
-  }
-
-  /**
-   * ランキング削除判定
-   * @returns
-   */
-  isDeleted() {
-    return this._deleteFlg;
   }
 
   /**

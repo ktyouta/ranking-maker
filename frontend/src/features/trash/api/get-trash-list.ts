@@ -1,13 +1,10 @@
 import { rpc } from '@/lib/rpc-client';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { type InferResponseType } from 'hono';
 import { TRASH_QUERY_KEY } from '../constants/trash-query-params';
 import { type TrashSortType } from '../constants/trash-sort-options';
 import { trashKeys } from './query-key';
 
 const endpoint = rpc.api.v1['ranking'].trash.$get;
-
-export type TrashListReturnType = InferResponseType<typeof endpoint, 200>['data'];
 
 type PropsType = {
   searchParams: URLSearchParams;

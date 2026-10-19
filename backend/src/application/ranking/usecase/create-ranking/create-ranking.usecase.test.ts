@@ -75,7 +75,7 @@ describe("CreateRankingUsecase", () => {
     expect(result.isOk()).toBe(true);
     const [ranking, newTags] = vi.mocked(repository.createRanking).mock.calls[0];
     expect(newTags.map((e) => e.name)).toEqual(["寿司"]);
-    expect(ranking.rankingTagEntityList.map((e) => e.tagId)).toEqual(["tag-existing", newTags[0].id]);
+    expect(ranking.toSnapshot().rankingTagList.map((e) => e.tagId)).toEqual(["tag-existing", newTags[0].id]);
   });
 
   it("新規タグのタグ名が不適切と判定された場合は作成しないこと", async () => {

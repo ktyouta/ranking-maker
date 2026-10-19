@@ -2,14 +2,6 @@ import { RankingId, UserId } from "../../../shared";
 import { RankingAggregate } from "../../aggregate";
 
 /**
- * 一括削除対象の判定に必要な最小限の情報
- */
-export type BulkSoftDeleteTargetType = {
-  id: string;
-  isFavorite: boolean;
-};
-
-/**
  * ランキング一括削除リポジトリインターフェース
  */
 export interface IBulkSoftDeleteRankingRepository {
@@ -23,7 +15,7 @@ export interface IBulkSoftDeleteRankingRepository {
 
   /**
    * ランキング一括削除（論理削除）
-   * @param rankingIds 削除対象のランキングID一覧（呼び出し元で所有権フィルタ済みであること）
+   * @param deletableRankings 削除対象のランキング一覧（呼び出し元で所有権フィルタ済みであること）
    * @returns なし
    */
   deleteRankings(deletableRankings: RankingAggregate[]): Promise<void>;

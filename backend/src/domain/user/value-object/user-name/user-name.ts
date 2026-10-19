@@ -54,13 +54,4 @@ export class UserName {
       (error) => { throw new Error(`ユーザー名が不正です。type:${error.type}`); },
     );
   }
-
-  /**
-   * 同じユーザー名か判定する
-   * @param other 比較対象
-   * @returns 同じ値の場合は true
-   */
-  equals(other: UserName): boolean {
-    return this._value === other.value;
-  }
 }

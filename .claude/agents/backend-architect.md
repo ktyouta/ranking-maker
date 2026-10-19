@@ -20,29 +20,21 @@ tools: Read, Glob, Grep
 
 ```
 backend/src/
-├── domain/            # Entity・Value Object・Repository interface（何にも依存しない）
-│   ├── shared/        #   複数コンテキストで共有する概念（UserId・UserName・RankingId）
-│   ├── user/          #   プロフィール管理
-│   ├── auth/          #   認証（login/logout/password/token/credential）
-│   ├── my-ranking/    #   自分のランキングの管理（作成・編集・お気に入り・ゴミ箱・タグ・アイコン・エクスポート）。aggregate・service を持つ
-│   └── ranking/       #   ランキングの閲覧（一覧・詳細）
+├── domain/            # Aggregate・Entity・Value Object・Domain Service・Repository interface（何にも依存しない）
+│   ├── shared/        #   複数コンテキストで共有する概念（UserId・RankingId）
+│   ├── user/          #   ユーザー（プロフィール・ログイン・パスワード・トークン）。aggregate・service を持つ
+│   └── ranking/       #   自分のランキングの管理（作成・編集・お気に入り・ゴミ箱・タグ・アイコン・エクスポート）。aggregate・entity・service を持つ
 ├── application/        # Usecase・Result DTO（メインロジック。Repository interface経由でdomainを操作）
 │   ├── user/{usecase,dto}/
-│   ├── auth/{usecase,dto}/
-│   ├── my-ranking/{usecase,dto}/
 │   └── ranking/{usecase,dto}/
 ├── infrastructure/     # Repository実装（Drizzle ORM）・DBスキーマ・DBクライアント
 │   ├── db/
 │   ├── user/repository/
-│   ├── auth/repository/
-│   ├── my-ranking/repository/
 │   └── ranking/repository/
-├── presentation/        # Controller・Zodスキーマ（HTTP入出力のみ）
-│   ├── user/
-│   ├── auth/
-│   ├── health/
-│   ├── my-ranking/
-│   └── ranking/
+├── presentation/        # Controller・Zodスキーマ・エラーメッセージ変換（HTTP入出力のみ）
+│   ├── user/{controller,schema,error-message}/
+│   ├── ranking/{controller,schema,error-message}/
+│   └── health/
 ├── schema/       # 機能をまたいで使うリクエストスキーマ（Zod）
 ├── config/       # 環境変数（EnvConfig ファクトリ）
 ├── constant/     # 定数（エンドポイント名・HTTPステータス）
@@ -52,9 +44,9 @@ backend/src/
 └── util/         # ユーティリティ
 ```
 
-**モジュール分割の考え方**：`user` はプロフィール管理専任、`auth` は認証・トークン・資格情報を扱う（login/logout/password/refresh/verifyはすべて`auth`に属する）。境界は「同じデータに触るか」ではなく「同じ理由で変更されるか」で判断する。
+**モジュール分割の考え方**：コンテキストの境界は、機能名やテーブル名ではなく、一緒に守る必要があるルール（集約）で引く（CLAUDE.md の設計品質）。`user` は `UserAggregate`（プロフィール・ログインID・パスワード）を、`ranking` は `RankingAggregate`・`TagAggregate` を持つ。
 
-**戦術パターンの採用範囲**：Entity・Value Object・Repository（interface/実装分離）のみを採用する。Aggregate Root・Domain Event・Specificationは現状の要件規模では導入しない（複数テーブルにまたがる整合性がDB制約で表現できなくなった場合に再検討する）。
+**戦術パターンの採用範囲**：Aggregate・Entity・Value Object・Domain Service・Repository（interface/実装分離）を使う。状態の変更は集約のメソッドを通し、リポジトリは集約を復元・保存する。Domain Event・Specification は現在使っていない。
 
 ## 設計規約
 
@@ -88,11 +80,11 @@ backend/src/
 ### フォルダ・ファイル配置
 - 新しい機能が `domain/<機能名>/`・`application/<機能名>/`（usecase, dto）・`infrastructure/<機能名>/repository/`・`presentation/<機能名>/` の4層に正しく配置されているか
 - バックエンドのファイルが1単位1フォルダ（`<名前>/<名前>.<種別>.ts` + `index.ts`）になっており、テストも同じフォルダに置かれているか
-- Entity・Value Object・Repository interface が `domain/` に集約されているか
+- Aggregate・Entity・Value Object・Domain Service・Repository interface が `domain/` に置かれているか
 - 複数のドメインで共有する VO が `domain/shared/` に置かれ、ドメイン同士が直接 import していないか
 - Repository実装（DB アクセス）が `infrastructure/` に分離されているか
 - 共通ロジックが適切なレイヤーに配置されているか
-- 機能の境界（どのモジュールに属するか）が「変更理由の一致」で切られているか（データの近さだけで判断していないか）
+- 機能の境界（どのモジュールに属するか）が、一緒に守る必要があるルール（集約）で切られているか（機能名・テーブル名・データの近さだけで判断していないか）
 
 ### レイヤー設計
 - Controller(presentation)・Usecase(application)・Repository(infrastructure)・Entity/VO(domain) が適切に分離されているか

@@ -35,7 +35,7 @@ describe("RestoreRankingRepository", () => {
         if (!ranking) {
             throw new Error("unexpected null");
         }
-        expect(ranking.rankingTagEntityList.map((e) => e.id)).toEqual([rankingTagId]);
+        expect(ranking.toSnapshot().rankingTagList.map((e) => e.id)).toEqual([rankingTagId]);
 
         ranking.restore();
         await repository.restoreRanking(ranking);

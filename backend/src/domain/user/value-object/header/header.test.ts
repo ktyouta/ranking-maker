@@ -19,7 +19,7 @@ describe("Header", () => {
 
       const header = new Header(request);
 
-      expect(header.headers.get("Content-Type")).toBe("application/json");
+      expect(header.get("Content-Type")).toBe("application/json");
     });
 
     it("リクエストが存在しない場合にエラーになること", () => {
@@ -57,18 +57,6 @@ describe("Header", () => {
       const header = new Header(request);
 
       expect(header.get("Authorization")).toBeNull();
-    });
-  });
-
-  describe("headers getter", () => {
-    it("内部のHeadersオブジェクトを取得できること", () => {
-      const request = createMockRequest({
-        "X-Custom-Header": "custom-value",
-      });
-
-      const header = new Header(request);
-
-      expect(header.headers.get("X-Custom-Header")).toBe("custom-value");
     });
   });
 });

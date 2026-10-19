@@ -35,7 +35,7 @@ describe("SoftDeleteRankingRepository", () => {
         if (!ranking) {
             throw new Error("unexpected null");
         }
-        expect(ranking.rankingTagEntityList.map((e) => e.id)).toEqual([rankingTagId]);
+        expect(ranking.toSnapshot().rankingTagList.map((e) => e.id)).toEqual([rankingTagId]);
 
         ranking.delete();
         await repository.deleteRanking(ranking);

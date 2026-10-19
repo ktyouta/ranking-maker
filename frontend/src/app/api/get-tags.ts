@@ -1,11 +1,8 @@
 import { rpc } from '@/lib/rpc-client';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import type { InferResponseType } from 'hono/client';
 import { tagKeys } from './query-key';
 
 const endpoint = rpc.api.v1['ranking'].tags.$get;
-
-export type TagType = InferResponseType<typeof endpoint, 200>['data'][number];
 
 /**
  * タグ一覧取得API呼び出し hook（Suspense対応）

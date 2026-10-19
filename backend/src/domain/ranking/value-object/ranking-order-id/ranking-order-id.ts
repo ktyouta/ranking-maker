@@ -26,7 +26,7 @@ export class RankingOrderId {
 
   /**
    * 既存のランキングオーダーIDからインスタンスを生成
-   * @param rankingId ランキングオーダーID
+   * @param rankingOrderId ランキングオーダーID
    */
   static of(rankingOrderId: string): RankingOrderId {
     return new RankingOrderId(rankingOrderId);

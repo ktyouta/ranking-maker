@@ -26,7 +26,7 @@ export const resetAccessToken = () => {
 
 /**
  * ログインリセット処理を登録
- * @param setter 
+ * @param props
  */
 export const registerResetLogin = (props: ResetLoginType) => {
     resetLoginRef = props;

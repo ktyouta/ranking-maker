@@ -64,7 +64,7 @@ describe("UpdateRankingRepository", () => {
         if (!ranking) {
             throw new Error("unexpected null");
         }
-        expect(ranking.rankingTagEntityList.map((e) => e.tagId).sort()).toEqual([removedTagId, keptTagId, sharedWithTrashTagId].sort());
+        expect(ranking.toSnapshot().rankingTagList.map((e) => e.tagId).sort()).toEqual([removedTagId, keptTagId, sharedWithTrashTagId].sort());
 
         const newTag = TagAggregate.create({ userId: UserId.of(userId), tagName: TagName.of("新規タグ") });
         const updateResult = ranking.update({

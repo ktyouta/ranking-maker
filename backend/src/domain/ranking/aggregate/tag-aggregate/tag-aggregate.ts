@@ -62,10 +62,6 @@ export class TagAggregate {
     return this._tagId.value;
   }
 
-  get userId() {
-    return this._userId.value;
-  }
-
   get name() {
     return this._tagName.value;
   }

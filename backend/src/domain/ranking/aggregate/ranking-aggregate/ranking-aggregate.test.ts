@@ -135,7 +135,7 @@ describe("RankingAggregate", () => {
     expect(current.userId).toBe(base.userId.value);
     expect(current.isFavorite()).toBe(true);
     expect(current.title).toBe("更新後のタイトル");
-    expect(current.rankingTagEntityList.map((e) => e.tagId)).toEqual([keptTagId.value, addedTagId.value]);
+    expect(current.toSnapshot().rankingTagList.map((e) => e.tagId)).toEqual([keptTagId.value, addedTagId.value]);
     expect(releasedTagIds.map((e) => e.value)).toEqual([removedTagId.value]);
   });
 

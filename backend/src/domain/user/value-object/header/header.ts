@@ -10,10 +10,6 @@ export class Header {
         this._value = req.headers;
     }
 
-    get headers() {
-        return this._value;
-    }
-
     get(name: string) {
 
         const value = this._value.get(name.toLowerCase());

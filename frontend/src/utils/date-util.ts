@@ -42,8 +42,7 @@ export function getFormatDatetime(date: Date, format: DateFormat): string {
 
 /**
  * 現在日付(yyyyMMdd)を取得する
- * @param format 
- * @returns 
+ * @returns
  */
 export function getNowDateYYYYMMDD() {
     return getFormatDatetime(new Date(), 'yyyyMMdd');

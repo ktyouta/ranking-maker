@@ -30,7 +30,7 @@ describe("TagResolutionRepository", () => {
         const repository = new TagResolutionRepository(db);
         const result = await repository.findTags(UserId.of(userId), [TagName.of("ラーメン"), TagName.of("カレー")]);
 
-        expect(result.map((e) => ({ id: e.id, userId: e.userId, name: e.name }))).toEqual([
+        expect(result.map((e) => ({ id: e.id, userId: e.toSnapshot().userId, name: e.name }))).toEqual([
             { id: ramenTagId, userId, name: "ラーメン" },
         ]);
     });

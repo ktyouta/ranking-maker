@@ -37,7 +37,7 @@ describe("TagResolutionDomainService", () => {
     expect(result.tags).toHaveLength(1);
     expect(result.newTags).toEqual(result.tags);
     expect(result.newTags[0].name).toBe("寿司");
-    expect(result.newTags[0].userId).toBe("user-1");
+    expect(result.newTags[0].toSnapshot().userId).toBe("user-1");
   });
 
   it("既存タグと新規タグが混在する場合、指定順に解決すること", async () => {

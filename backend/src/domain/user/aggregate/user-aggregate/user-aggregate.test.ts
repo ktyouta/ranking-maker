@@ -41,7 +41,7 @@ describe("UserAggregate", () => {
     it("パスワードを生成したソルトとペッパーでハッシュ化して保持すること", async () => {
       const snapshot = (await createEntity()).toSnapshot();
 
-      const expectedHash = await UserPassword.hash(RawPassword.of("password123"), UserSalt.of(snapshot.salt), pepper);
+      const expectedHash = await UserPassword.hash(RawPassword.create("password123")._unsafeUnwrap(), UserSalt.of(snapshot.salt), pepper);
       expect(snapshot.passwordHash).toBe(expectedHash.value);
     });
   });
@@ -97,19 +97,19 @@ describe("UserAggregate", () => {
     it("パスワードが一致する場合、true を返すこと", async () => {
       const entity = await createEntity();
 
-      expect(await entity.verifyPassword(RawPassword.of("password123"), pepper)).toBe(true);
+      expect(await entity.verifyPassword(RawPassword.create("password123")._unsafeUnwrap(), pepper)).toBe(true);
     });
 
     it("パスワードが一致しない場合、false を返すこと", async () => {
       const entity = await createEntity();
 
-      expect(await entity.verifyPassword(RawPassword.of("wrong-password"), pepper)).toBe(false);
+      expect(await entity.verifyPassword(RawPassword.create("wrong-password")._unsafeUnwrap(), pepper)).toBe(false);
     });
 
     it("削除済みユーザーの場合は例外を投げること", async () => {
       const entity = reconstructEntity(true);
 
-      await expect(entity.verifyPassword(RawPassword.of("password123"), pepper)).rejects.toThrow();
+      await expect(entity.verifyPassword(RawPassword.create("password123")._unsafeUnwrap(), pepper)).rejects.toThrow();
     });
   });
 
@@ -118,14 +118,14 @@ describe("UserAggregate", () => {
       const entity = await createEntity();
 
       const result = await entity.changePassword(
-        RawPassword.of("password123"),
+        RawPassword.create("password123")._unsafeUnwrap(),
         NewPassword.create("new-password")._unsafeUnwrap(),
         pepper,
       );
 
       expect(result.isOk()).toBe(true);
       const snapshot = entity.toSnapshot();
-      const expectedHash = await UserPassword.hash(RawPassword.of("new-password"), UserSalt.of(snapshot.salt), pepper);
+      const expectedHash = await UserPassword.hash(RawPassword.create("new-password")._unsafeUnwrap(), UserSalt.of(snapshot.salt), pepper);
       expect(snapshot.passwordHash).toBe(expectedHash.value);
     });
 
@@ -134,7 +134,7 @@ describe("UserAggregate", () => {
       const before = entity.toSnapshot();
 
       const result = await entity.changePassword(
-        RawPassword.of("wrong-password"),
+        RawPassword.create("wrong-password")._unsafeUnwrap(),
         NewPassword.create("new-password")._unsafeUnwrap(),
         pepper,
       );
@@ -147,7 +147,7 @@ describe("UserAggregate", () => {
       const entity = reconstructEntity(true);
 
       await expect(entity.changePassword(
-        RawPassword.of("password123"),
+        RawPassword.create("password123")._unsafeUnwrap(),
         NewPassword.create("new-password")._unsafeUnwrap(),
         pepper,
       )).rejects.toThrow();

@@ -82,7 +82,7 @@ describe("UpdateRankingUsecase", () => {
     expect(tagUsageRepository.findReferencedTagIds).toHaveBeenCalledWith(userId, rankingId, [TagId.of("tag-removed")]);
     const [ranking, newTags, unusedTagIds] = vi.mocked(repository.updateRanking).mock.calls[0];
     expect(newTags.map((e) => e.name)).toEqual(["新規タグ"]);
-    expect(ranking.rankingTagEntityList.map((e) => e.tagId)).toEqual(newTags.map((e) => e.id));
+    expect(ranking.toSnapshot().rankingTagList.map((e) => e.tagId)).toEqual(newTags.map((e) => e.id));
     expect(unusedTagIds.map((e) => e.value)).toEqual(["tag-removed"]);
   });
 

@@ -1,6 +1,4 @@
-import { and, eq } from "drizzle-orm";
-import { type ICreateRankingRepository, RankingAggregate, RankingTitle, TagAggregate } from "../../../../domain";
-import { UserId } from "../../../../domain/shared";
+import { type ICreateRankingRepository, RankingAggregate, TagAggregate } from "../../../../domain";
 import { rankingMaster, rankingOrderMaster, rankingTagMaster, tagMaster, type Database } from "../../../db";
 
 /**
@@ -10,22 +8,7 @@ export class CreateRankingRepository implements ICreateRankingRepository {
   constructor(private readonly db: Database) { }
 
   /**
-   * ランキングマスタ取得
-   */
-  async findRanking(userId: UserId, rankingTitle: RankingTitle): Promise<{ id: string }[]> {
-    const result = await this.db
-      .select({
-        id: rankingMaster.id,
-      })
-      .from(rankingMaster)
-      .where(and(eq(rankingMaster.deleteFlg, false), eq(rankingMaster.userId, userId.value), eq(rankingMaster.title, rankingTitle.value)));
-
-    return result;
-  }
-
-  /**
    * ランキング作成
-   * @param db 
    * @param rankingAggregate
    * @param newTagAggregates ランキングに付与する新規タグ
    */

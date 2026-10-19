@@ -34,17 +34,4 @@ export class RawPassword {
 
     return ok(new RawPassword(rawPassword));
   }
-
-  /**
-   * 永続化済みの値など、制約を満たすことが保証された値から生成する
-   * @param rawPassword 平文のパスワード
-   * @returns 平文のパスワード
-   * @throws 制約を満たさない場合（呼び出し側の不具合）
-   */
-  static of(rawPassword: string): RawPassword {
-    return RawPassword.create(rawPassword).match(
-      (value) => value,
-      (error) => { throw new Error(`平文のパスワードが不正です。type:${error.type}`); },
-    );
-  }
 }

@@ -10,7 +10,6 @@ export type LoginUserType = InferResponseType<typeof endpoint, 200>['data']['use
 
 /**
  * 認証チェック
- * @param props
  * @returns
  */
 export function useVerify() {

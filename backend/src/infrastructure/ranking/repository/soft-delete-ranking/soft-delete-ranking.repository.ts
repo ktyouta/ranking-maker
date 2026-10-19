@@ -78,7 +78,7 @@ export class SoftDeleteRankingRepository implements ISoftDeleteRankingRepository
    * ランキング削除（論理削除）
    * ランキング本体と紐づく項目・タグ付けを同時に削除する
    * 配下の項目・タグ付けには、ランキング本体と同じ集約の削除状態をランキング単位でまとめて書き込む
-   * @param rankingId
+   * @param ranking 論理削除するランキング集約
    */
   async deleteRanking(ranking: RankingAggregate): Promise<void> {
     const now = new Date().toISOString();

@@ -36,12 +36,4 @@ describe("UserName", () => {
       expect(() => UserName.of("")).toThrow();
     });
   });
-
-  it("equalsで同じ値を比較できること", () => {
-    expect(UserName.of("testuser").equals(UserName.of("testuser"))).toBe(true);
-  });
-
-  it("equalsで異なる値を比較できること", () => {
-    expect(UserName.of("testuser").equals(UserName.of("otheruser"))).toBe(false);
-  });
 });

@@ -32,7 +32,7 @@ describe("BulkSoftDeleteRankingRepository", () => {
 
         const repository = new BulkSoftDeleteRankingRepository(db);
         const rankings = await repository.findRankings(UserId.of(userId), rankingIds.map((id) => RankingId.of(id)));
-        expect(rankings.flatMap((e) => e.rankingTagEntityList.map((tag) => tag.id)).sort()).toEqual([...rankingTagIds].sort());
+        expect(rankings.flatMap((e) => e.toSnapshot().rankingTagList.map((tag) => tag.id)).sort()).toEqual([...rankingTagIds].sort());
 
         rankings.forEach((ranking) => ranking.delete());
         await repository.deleteRankings(rankings);
