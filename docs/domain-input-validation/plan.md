@@ -16,6 +16,15 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - タグの重複・上限を zod（タグ名基準）と集約（タグID基準）の2か所で判定している
 - 422 のトップの `message` が API ごとに異なる（「バリデーションエラー」「クエリが不正です。」「リクエストが不正です。」、パスパラメータは zod のエラー全文を 400 で返す）
 
+### 移行後の変更（本書の記述と現在のコードの違い）
+
+本書の名前は現在のコード（my-ranking → ranking、auth → user に統合後）に合わせている。名前の置き換えで表せない変更は以下のとおり。
+
+- ユーザーの集約化（`b1adcf2`〜`f15971c`）: `UserLoginEntity`・`UserEntity` の操作は `UserAggregate` に移った（`verifyPassword`・`changePassword`・`updateUser`）。`IUserLoginRepository` は `findUser(LoginId)` で `UserAggregate` を返す
+- `UserName`・`UserBirthday`・`UserTheme` の `of` は、Repository ではなく `UserAggregate.reconstruct` が呼ぶ
+- ログインID は `UserAggregate` が `LoginId` として持ち、ユーザー名の変更時にユーザー名から作り直す（「移行の途中で見つけて対応したこと」のユーザー更新の記述は当時のもの）
+- 公開ランキングの API を削除した（`e7d4db7`）。Phase 4 の「パスパラメータを受け取る8つの Usecase」のうち公開ランキング取得はなくなった
+
 ## 決定事項
 
 ### ユーザー決定事項
@@ -26,10 +35,10 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - 設計は全 API 分を先に詰める。実装はランキング作成で試行して設計を検証してから他へ広げる
 - 既存データは、ユーザーの認識では新しい制約を満たしている（確認作業は未実施）
 - D1: 文字列の列挙値（並び順 `sort`・テーマ `theme`）も、許容値の判定は VO の `create` で行う。zod は `z.string()` のみとする（zod は JSON の型だけを見て、許容値の判定はしない）
-  - 経緯: Claude は当初「`z.enum` ならリクエストの RPC 型に許容値が伝わる」として zod に残す案を推奨したが、並び順はクエリのため RPC 型はもともと `string`（`backend/dist-types/presentation/my-ranking/controller/get-trash-list-my-ranking/get-trash-list-my-ranking.controller.d.ts`）で、根拠が誤っていた
+  - 経緯: Claude は当初「`z.enum` ならリクエストの RPC 型に許容値が伝わる」として zod に残す案を推奨したが、並び順はクエリのため RPC 型はもともと `string`（`backend/dist-types/presentation/ranking/controller/get-trash-list-ranking/get-trash-list-ranking.controller.d.ts`）で、根拠が誤っていた
   - 影響（D1）: テーマのリクエストの RPC 型が `"lavender" | "teal" | "peach" | "dark"` から `string` に広がる。フロントエンドは自前の `ThemeType` を渡しているため型エラーにはならない（コード修正なし）
 
-- D2: 1回のリクエストで受け付ける件数の上限（一括削除・一括復元・CSV エクスポートの ID 件数 1〜100 件、一覧・ゴミ箱一覧の絞り込みタグ 20 個まで）は Usecase で判定する。上限の定数は各 Usecase の static 定数とする（前例: `GetListMyRankingUsecase.PAGE_SIZE`）
+- D2: 1回のリクエストで受け付ける件数の上限（一括削除・一括復元・CSV エクスポートの ID 件数 1〜100 件、一覧・ゴミ箱一覧の絞り込みタグ 20 個まで）は Usecase で判定する。上限の定数は各 Usecase の static 定数とする（前例: `GetListRankingUsecase.PAGE_SIZE`）
   - 理由: ID やタグ名の不変条件ではなく、1回の操作で受け付ける量の約束であるため（yomitsuzuri の確認用パスワードの一致（U6）と同じ扱い）
   - ID 一覧の要素の空文字は `RankingId.create`（`RANKING_ID_EMPTY`）で判定する（外部入力が原因のため err。zod の `.min(1)` を外すと `RankingId.of` が throw して 500 になるため）
   - 破綻ケース: 件数の上限が業務上の意味を持つようになった場合（例: 1フォルダに入れられるランキングの上限）は、ドメインに移す
@@ -52,10 +61,10 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - zod の検証は `validatorMiddleware`（`middleware/validator/`）で行う。型・構造の違反は zod のメッセージを返さず、`field`（zod の path）と固定のメッセージ「入力形式が不正です」で 422 を返す。`formatZodErrors`・`ValidationErrorType` は削除する
 - パスパラメータの ID は形式を判定しない。`RankingIdParamSchema` は `z.string()` のみとし、空の ID はルーティングで一致せず 404 になる
 - 確認用パスワードの一致は Usecase で判定する（`PASSWORD_CONFIRMATION_MISMATCH`）
-- ログインのユーザー名は `LoginName`（auth。「空でない」のみ）、照合用のパスワードは `RawPassword`（auth。「空でない」のみ）、新しく設定するパスワードは `NewPassword`（auth。8文字以上・半角英数記号）を新設する
-- `UserName` に `create`（3〜30 文字）/ `of` を追加する。`UserLoginEntity.verifyPassword` は `RawPassword`、`hashNewPassword` は `NewPassword`、`IUserLoginRepository.getLoginUser` は `LoginName` を受け取る
+- ログインのユーザー名は `LoginId`（user。「空でない」のみ）、照合用のパスワードは `RawPassword`（user。「空でない」のみ）、新しく設定するパスワードは `NewPassword`（user。8文字以上・半角英数記号）を新設する
+- `UserName` に `create`（3〜30 文字）/ `of` を追加する。`UserLoginEntity.verifyPassword` は `RawPassword`、`hashNewPassword` は `NewPassword`、`IUserLoginRepository.getLoginUser` は `LoginId` を受け取る（現在の形は「移行後の変更」を参照）
 - `RAW_PASSWORD_EMPTY` の文言はログイン・パスワード変更とも「パスワードを入力してください」にそろえる
-- user・auth の Usecase は neverthrow の Result を返す。`CreateUserUsecase.execute` の引数はオブジェクトにする
+- user の Usecase（ログイン・パスワード変更を含む）は neverthrow の Result を返す。`CreateUserUsecase.execute` の引数はオブジェクトにする
 - CLAUDE.md の「バックエンド固有の設計指針」に「入力値検証とエラーの扱い」を追記する（yomitsuzuri と同じ内容）
 
 ### Claudeの提案をユーザーが承認したもの
@@ -67,7 +76,7 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - メモ（ランキング・項目）は zod で必須の文字列（`z.string()`）とし、`default` を使わない（ユーザー決定。フロントエンドは未入力でも `""` を常に送っているため、保存値・画面の動きは変わらない。RPC のリクエスト型でメモが必須になるが、フロントエンドは修正なしで型チェックを通過することを確認）
   - 破綻ケース: メモを省略して送るクライアントが現れた場合は 422（入力形式が不正です）になる。必要になったら yomitsuzuri と同じく省略可とし、VO の `create` で省略時の扱いを決める
 - 期間の絞り込み（`createdAtFrom` 等）・キーワードは現在も検証しておらず、本移行では制約を追加しない
-- 一覧・ゴミ箱一覧のページ番号は、新設する `RankingListPagination`（my-ranking。yomitsuzuri の `BookListPagination` と同じ形）で判定する。一覧とゴミ箱一覧はページ番号の規則が同じため1つの VO を共有する（並び順は許容値が異なるため `RankingSort`・`TrashRankingSort` に分かれている）
+- 一覧・ゴミ箱一覧のページ番号は、新設する `RankingListPagination`（ranking。yomitsuzuri の `BookListPagination` と同じ形）で判定する。一覧とゴミ箱一覧はページ番号の規則が同じため1つの VO を共有する（並び順は許容値が異なるため `RankingSort`・`TrashRankingSort` に分かれている）
 - 空のページ番号（`page=`）は現在どおり省略と同じ扱い（1ページ目）にする
 - ランキングの不変条件の違反（`RankingValidationError`）の `field` は現在どおり `items` / `tags` とする
 
@@ -89,24 +98,24 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 | VO | コンテキスト | エラー | `of` の要否 | 備考 |
 |---|---|---|---|---|
-| `RankingTitle` | my-ranking | `RANKING_TITLE_EMPTY` / `RANKING_TITLE_TOO_LONG`(max) | 要（Repository・`RestoreMyRankingUsecase`） | trim する |
-| `PublicStatus` | my-ranking | `PUBLIC_STATUS_INVALID` | 要（Repository） | |
-| `RankingIcon` | my-ranking | `RANKING_ICON_INVALID` | 要（Repository） | 実在確認は従来どおり `IconValidityDomainService` |
-| `RankingMemo` | my-ranking | `RANKING_MEMO_TOO_LONG`(max) | 要（Repository） | trim しない |
-| `ItemName` | my-ranking | `ITEM_NAME_TOO_LONG`(max) | 要（Repository） | trim する。空は null |
-| `Order` | my-ranking | `ORDER_INVALID`(min) | 要（Repository） | 判定の不具合（`&&`）を直す。1以上の整数 |
-| `ItemMemo` | my-ranking | `ITEM_MEMO_TOO_LONG`(max) | 要（Repository） | trim しない |
-| `TagName` | my-ranking | `TAG_NAME_EMPTY` / `TAG_NAME_TOO_LONG`(max) / `TAG_NAME_INVALID_CHARACTER`(separator) | 要（`TagResolutionRepository`） | trim する |
-| `RankingListPagination`（新設） | my-ranking | `RANKING_LIST_PAGE_INVALID`(min) | 不要 | 一覧・ゴミ箱一覧で共有 |
+| `RankingTitle` | ranking | `RANKING_TITLE_EMPTY` / `RANKING_TITLE_TOO_LONG`(max) | 要（Repository・`RestoreRankingUsecase`） | trim する |
+| `PublicStatus` | ranking | `PUBLIC_STATUS_INVALID` | 要（Repository） | |
+| `RankingIcon` | ranking | `RANKING_ICON_INVALID` | 要（Repository） | 実在確認は従来どおり `IconValidityDomainService` |
+| `RankingMemo` | ranking | `RANKING_MEMO_TOO_LONG`(max) | 要（Repository） | trim しない |
+| `ItemName` | ranking | `ITEM_NAME_TOO_LONG`(max) | 要（Repository） | trim する。空は null |
+| `Order` | ranking | `ORDER_INVALID`(min) | 要（Repository） | 判定の不具合（`&&`）を直す。1以上の整数 |
+| `ItemMemo` | ranking | `ITEM_MEMO_TOO_LONG`(max) | 要（Repository） | trim しない |
+| `TagName` | ranking | `TAG_NAME_EMPTY` / `TAG_NAME_TOO_LONG`(max) / `TAG_NAME_INVALID_CHARACTER`(separator) | 要（`TagResolutionRepository`） | trim する |
+| `RankingListPagination`（新設） | ranking | `RANKING_LIST_PAGE_INVALID`(min) | 不要 | 一覧・ゴミ箱一覧で共有 |
 | `RankingId` | shared | `RANKING_ID_EMPTY` | 既存 | `create` を追加（D2） |
-| `RankingSort` | my-ranking | `RANKING_SORT_INVALID` | 不要（DB の値から生成しない） | |
-| `TrashRankingSort` | my-ranking | `TRASH_RANKING_SORT_INVALID` | 不要（DB の値から生成しない） | |
+| `RankingSort` | ranking | `RANKING_SORT_INVALID` | 不要（DB の値から生成しない） | |
+| `TrashRankingSort` | ranking | `TRASH_RANKING_SORT_INVALID` | 不要（DB の値から生成しない） | |
 | `UserName` | shared | `USER_NAME_TOO_SHORT`(min) / `USER_NAME_TOO_LONG`(max) | 要（Repository） | yomitsuzuri と同じ |
 | `UserBirthday` | user | `USER_BIRTHDAY_INVALID_FORMAT` / `USER_BIRTHDAY_NOT_EXIST` | 要（`UpdateUserRepository`。移行後のユーザー更新の見直しで追加） | yomitsuzuri と同じ |
 | `UserTheme` | user | `USER_THEME_INVALID` | 既存（`UpdateUserRepository` が DB の値から生成） | `create` を追加 |
-| `LoginName`（新設） | auth | `LOGIN_NAME_EMPTY` | 不要 | yomitsuzuri と同じ |
-| `RawPassword`（新設） | auth | `RAW_PASSWORD_EMPTY` | 不要 | yomitsuzuri と同じ |
-| `NewPassword`（新設） | auth | `NEW_PASSWORD_TOO_SHORT`(min) / `NEW_PASSWORD_INVALID_CHARACTER` | 不要 | yomitsuzuri と同じ |
+| `LoginId`（新設） | user | `LOGIN_ID_EMPTY` | 不要 | yomitsuzuri と同じ |
+| `RawPassword`（新設） | user | `RAW_PASSWORD_EMPTY` | 不要 | yomitsuzuri と同じ |
+| `NewPassword`（新設） | user | `NEW_PASSWORD_TOO_SHORT`(min) / `NEW_PASSWORD_INVALID_CHARACTER` | 不要 | yomitsuzuri と同じ |
 
 ### 集約
 
@@ -129,8 +138,8 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 ### プレゼンテーション
 
-- `presentation/my-ranking/error-message/my-ranking.error-message.ts`: my-ranking の全 VO エラーと `RankingValidationError` を受け取る `toInputErrorMessage`。作成・更新の Controller の `toValidationError` は、文言の変換をこの関数に統合し、`field`（`items`・`tags`）の付与は各 Controller に残す（yomitsuzuri と同じ）
-- `presentation/user/error-message/user.error-message.ts`・`presentation/auth/error-message/auth.error-message.ts`: 変換の内容は yomitsuzuri と同じ（構成は Phase 7 で変更。yomitsuzuri は `error-message/input/`）
+- `presentation/ranking/error-message/ranking.error-message.ts`: ranking の全 VO エラーと `RankingValidationError` を受け取る `toInputErrorMessage`。作成・更新の Controller の `toValidationError` は、文言の変換をこの関数に統合し、`field`（`items`・`tags`）の付与は各 Controller に残す（yomitsuzuri と同じ）
+- `presentation/user/error-message/user.error-message.ts`: 変換の内容は yomitsuzuri と同じ（構成は Phase 7 で変更。yomitsuzuri は `error-message/input/`）
 - `INVALID_INPUT` は `{ message: "入力エラー", data: [{ field, message }] }`（422）
 - `middleware/validator/validator.middleware.ts`: yomitsuzuri と同じ
 
@@ -166,7 +175,7 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 | `USER_BIRTHDAY_NOT_EXIST` | 生年月日は実在する日付を入力してください | 新規（現在は 500） |
 | `NEW_PASSWORD_TOO_SHORT` / `INVALID_CHARACTER` | パスワードは{min}文字以上で入力してください / パスワードは半角英数記号で入力してください | |
 | `PASSWORD_CONFIRMATION_MISMATCH` | 確認用パスワードが一致しません。 | |
-| `LOGIN_NAME_EMPTY` | ユーザー名を入力してください | |
+| `LOGIN_ID_EMPTY` | ユーザー名を入力してください | |
 | `RAW_PASSWORD_EMPTY` | パスワードを入力してください | パスワード変更の現在のパスワードは現在「現在のパスワードを入力してください」 |
 | zod の型・構造の違反 | 入力形式が不正です | 現在は zod の各メッセージ |
 | 422 のトップの `message` | 入力エラー | 現在は API ごとに異なる |
@@ -194,9 +203,9 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 - [x] `validatorMiddleware` を新設する
 - [x] `RankingTitle`・`PublicStatus`・`RankingIcon`・`RankingMemo`・`ItemName`・`Order`・`ItemMemo`・`TagName` に `create` / `of` / エラー型を追加し、コンストラクタを private にする（`new` の呼び出しはすべて `of` へ置換。更新 API・Repository・一覧 Controller・テストを含む）
 - [x] `Order` の判定の不具合を直す
-- [x] `CreateMyRankingUsecase` で `INVALID_INPUT` を返し、判定順序を「設計」のとおりにする
-- [x] `presentation/my-ranking/error-message/input/` に `toInputErrorMessage` を置き、作成 Controller の `toValidationError` を統合する
-- [x] `CreateMyRankingSchema` を型・構造のみにする
+- [x] `CreateRankingUsecase` で `INVALID_INPUT` を返し、判定順序を「設計」のとおりにする
+- [x] `presentation/ranking/error-message/input/` に `toInputErrorMessage` を置き、作成 Controller の `toValidationError` を統合する
+- [x] `CreateRankingSchema` を型・構造のみにする
 - [x] 作成 Controller を `validatorMiddleware` に切り替える
 - [x] テスト（VO の `create` / `of`、Usecase の `INVALID_INPUT`、スキーマの型・構造）
 - [x] 試行の結果を本書に反映する（設計の穴があれば修正してから Phase 2 へ進む）
@@ -212,10 +221,10 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 ### Phase 2: ランキング更新 API
 
-- [x] `UpdateMyRankingUsecase` で `INVALID_INPUT` を返す（入力値の制約 → 更新前のランキング取得 の順）
+- [x] `UpdateRankingUsecase` で `INVALID_INPUT` を返す（入力値の制約 → 更新前のランキング取得 の順）
 - [x] 更新 Controller の `toValidationError` を `toInputErrorMessage` に統合する
 - [x] 項目の入力値から VO を生成する処理（作成 Usecase の `createItemParam`）は、各 Usecase に持つ（ユーザー決定。作成・更新の入力の型や Controller の補助関数も Usecase・Controller ごとに定義している前例に合わせる。作成・更新以外の入口（インポート等）が増えた場合はドメインの入力変換への切り出しを検討する）
-- [x] `UpdateMyRankingSchema` を型・構造のみにする
+- [x] `UpdateRankingSchema` を型・構造のみにする
 - [x] 更新 Controller を `validatorMiddleware` に切り替える
 - [x] テスト
 - [x] ユーザーによる動作確認（空白だけのタイトルが入力エラーになること・通常の更新ができることを画面で確認）
@@ -224,12 +233,12 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 ### Phase 3: 一覧系 API（マイランキング一覧・ゴミ箱一覧）
 
 - [x] `RankingSort`・`TrashRankingSort` を private コンストラクタ + `create` にする
-- [x] `RankingListPagination` を新設し、`MyRankingQueryType`・`TrashMyRankingQueryType` の `page` を置き換える
+- [x] `RankingListPagination` を新設し、`RankingQueryType`・`TrashRankingQueryType` の `page` を置き換える
 - [x] 絞り込みタグを `TagName.create` で判定し、件数上限（`RankingAggregate.MAX_TAG_COUNT`）を Usecase で判定する
-- [x] `GetListMyRankingUsecase`・`GetTrashListMyRankingUsecase` を Result を返す形にし、文字列の入力を受け取って VO を生成する（現在は Controller が `new TagName`・`new RankingSort` している）
+- [x] `GetListRankingUsecase`・`GetTrashListRankingUsecase` を Result を返す形にし、文字列の入力を受け取って VO を生成する（現在は Controller が `new TagName`・`new RankingSort` している）
 - [x] クエリスキーマを型・構造のみにする（`sort`・`page` の `default` は削除し省略可の文字列として受ける。空の `page=` は省略と同じ扱いにする）
 - [x] 省略時の既定値（並び順は `RankingSort.DEFAULT`・`TrashRankingSort.DEFAULT`、ページは 1）は VO の `create` で決める（ユーザー決定。省略時の扱いは値の意味のため。フロントエンドは URL にない場合に実際に省略して送る）
-- [x] `favoriteOnly` は zod の変換（`"true"` なら true、それ以外は false）を残し、VO は作らない（ユーザー決定。URL の文字列を真偽値に戻す型の変換であり、フロントエンドも `=== 'true'` で同じ解釈をしている（`use-my-ranking-list.ts`）。厳密にすると画面と API の結果が食い違う）
+- [x] `favoriteOnly` は zod の変換（`"true"` なら true、それ以外は false）を残し、VO は作らない（ユーザー決定。URL の文字列を真偽値に戻す型の変換であり、フロントエンドも `=== 'true'` で同じ解釈をしている（`use-ranking-list.ts`）。厳密にすると画面と API の結果が食い違う）
   - 破綻ケース: 「お気に入りを除く」など3つ目の状態が増えた場合は値の集合になるため VO に移す
 - [x] Controller を `validatorMiddleware` に切り替え、`INVALID_INPUT` を返す
 - [x] テスト
@@ -244,7 +253,7 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 ### Phase 4: ID 指定の API（一括削除・一括復元・CSV エクスポート・パスパラメータ）
 
-- [x] ID 件数（1〜100 件）を Usecase で、空の ID を `RankingId.create` で判定し、`BulkSoftDeleteMyRankingUsecase`・`BulkRestoreMyRankingUsecase`・`GetMyRankingExportUsecase` を Result にして `INVALID_INPUT` を返す
+- [x] ID 件数（1〜100 件）を Usecase で、空の ID を `RankingId.create` で判定し、`BulkSoftDeleteRankingUsecase`・`BulkRestoreRankingUsecase`・`GetRankingExportUsecase` を Result にして `INVALID_INPUT` を返す
 - [x] `RankingIdParamSchema` を `z.string()` のみにする
 - [x] パスパラメータ・お気に入り更新を含む全 Controller を `validatorMiddleware` に切り替える
 - [x] テスト
@@ -273,15 +282,15 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 - `UserName`・`UserBirthday`・`NewPassword`、作成・更新の Usecase・スキーマ・Controller・エラーメッセージ変換は yomitsuzuri と同じ内容（ranking-maker 独自の差分はテーマのみ）。user の Usecase は yomitsuzuri と同じく props オブジェクトで `UserId` を受け取る
 - `UserTheme` は ranking-maker 独自。`create`（`USER_THEME_INVALID`）を追加し、`of` は `create` を使って throw する形にした。`UpdateUserThemeUsecase` は Result を返し、更新できなかった場合は `NOT_FOUND`（応答は従来どおり 404「テーマを更新できませんでした。」）
-- Phase 6 で `LoginName` に置き換えるまでの間、`LoginUsecase` は `UserName.create` が err なら DB を問い合わせずに認証失敗（従来どおり 400）とする（yomitsuzuri の Phase 4 と同じ。`of` だと制約外の名前で 500 になるため）
+- Phase 6 で `LoginId` に置き換えるまでの間、`LoginUsecase` は `UserName.create` が err なら DB を問い合わせずに認証失敗（従来どおり 400）とする（yomitsuzuri の Phase 4 と同じ。`of` だと制約外の名前で 500 になるため）
 - Repository が DB の値から生成する `UserName` は `of` にした。結合テストのログイン名（`login-${ULID}` で 32 文字）が上限 30 文字を超えて 500 になったため、yomitsuzuri と同じく ULID そのもの（26 文字）に直した。ログインのテストは名前の長さで先に弾かれて意図と違う経路で通っていたため、同様に直した
 
-### Phase 6: auth
+### Phase 6: ログイン・パスワード変更（当時の auth コンテキスト）
 
-- [x] `LoginName`・`RawPassword` を新設し、`UserLoginEntity`・`IUserLoginRepository` の引数を VO にする
+- [x] `LoginId`・`RawPassword` を新設し、`UserLoginEntity`・`IUserLoginRepository` の引数を VO にする
 - [x] `LoginUsecase`・`UpdatePasswordUsecase` を Result にし、`INVALID_INPUT` を返す（ログイン失敗・パスワード不一致の応答は現在のまま）
 - [x] スキーマを型・構造のみにし、Controller を `validatorMiddleware` に切り替える
-- [x] `presentation/auth/error-message/input/` を置く
+- [x] `presentation/auth/error-message/input/` を置く（現在は `presentation/user/error-message/user.error-message.ts` に統合）
 - [x] テスト
 - [x] ユーザーによる動作確認（ログイン・パスワード変更が従来どおり動くこと、短い新しいパスワードや確認用パスワードの不一致が入力エラーになることを画面で確認）
 - [x] コミット（ユーザーが実施）
@@ -290,7 +299,7 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 - VO・エンティティ・リポジトリの引数・Usecase・スキーマ・エラーメッセージ変換は yomitsuzuri と同じ内容。Usecase のテストも yomitsuzuri から移した（`UserProfile` の形のみ ranking-maker に合わせた）
 - 失敗時の応答は ranking-maker の現在のまま。ログイン失敗（`AUTHENTICATION_FAILED`）は 400「IDかパスワードが間違っています。」、パスワード更新の失敗（`CURRENT_PASSWORD_MISMATCH`・`NOT_FOUND`）は 400「パスワードの更新に失敗しました。」（yomitsuzuri はいずれも 401）
-- `LoginUsecase` は Phase 5 で入れた `UserName.create` による仮の判定をやめ、`LoginName`（空でないことのみ）で DB を問い合わせる
+- `LoginUsecase` は Phase 5 で入れた `UserName.create` による仮の判定をやめ、`LoginId`（空でないことのみ）で DB を問い合わせる
 
 ### Phase 7: 仕上げ
 
@@ -302,7 +311,7 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 実装メモ（2026-10-14）:
 
 - `errorHandler` とそのテスト、CLAUDE.md の追記は yomitsuzuri と同じ内容
-- 不適切内容の判定結果の型（`InappropriateContentErrorType`）と変換関数（ranking-maker 独自。yomitsuzuri に該当機能なし）は、作成・更新の Controller に重複していたものを `presentation/my-ranking/error-message/my-ranking.error-message.ts` にまとめた
+- 不適切内容の判定結果の型（`InappropriateContentErrorType`）と変換関数（ranking-maker 独自。yomitsuzuri に該当機能なし）は、作成・更新の Controller に重複していたものを `presentation/ranking/error-message/ranking.error-message.ts` にまとめた
 - `error-message/` は yomitsuzuri を踏襲して `input/` でエラーの種類ごとに分けていたが、「変換関数はコンテキストごとに1つ」の決定と合わず、入力値の違反でないエラー（不適切内容）の置き場所が定まらなかった。種類ではフォルダを分けず、コンテキストごとに1ファイル（`{コンテキスト}.error-message.ts`）に変更した（ユーザー決定）
 - ランキングの不変条件の違反に `field`（`items`・`tags`）を付ける `toValidationError` は、yomitsuzuri（`INVALID_WORKS` の `field` を Controller で付ける）と同じく各 Controller に残した
 
@@ -310,6 +319,8 @@ zod と VO の両方に同じ制約を書いており（VO は違反時に throw
 
 - 不適切内容の判定結果を、入力値の違反と同じ流れ（Usecase が入力の位置で `field` を付け、文言は `toInputErrorMessage` で作る）にそろえる案は、今は対応しない（ユーザー判断。害がないため）
   - 背景: `toInappropriateContentError` が返す `field`（「項目名（3件目）」等の表示名）は、フロントエンドでは React の `key` にしか使っておらず、画面に表示されていない
+  - Usecase のエラーの種類（`INVALID_INPUT` と `INAPPROPRIATE_CONTENT`）は、そろえる場合も分けたままにする（Claudeからの提案）。両者は同時に返らない（入力値の違反は最初に返し、AI による判定は最後に行う）。前例として、集約の違反（`VALIDATION`）も応答の形だけをそろえ、種類は分けている
+  - 破綻ケース: フロントエンドで入力欄ごとにエラーを表示する場合は、`field` を入力の位置（`items.2.itemName` 等）にそろえる必要がある。タグは新規タグのみを判定しており入力の位置を持たないため、タグ名から入力の位置を探し直す処理が必要になる
 
 ### 移行の途中で見つけて対応したこと（入力値検証の範囲外）
 
