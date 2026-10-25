@@ -56,7 +56,7 @@ export const RankingCard = (props: PropsType) => {
                 }
             </button>
             <div className="flex items-stretch gap-5 px-5 py-5 sm:gap-7 sm:px-6 sm:py-6">
-                <div className="flex w-[70px] shrink-0 items-center justify-center overflow-hidden rounded-lg bg-accent-surface/15 text-5xl sm:w-[90px] sm:text-6xl">
+                <div className="flex size-[70px] shrink-0 items-center justify-center self-center overflow-hidden rounded-lg bg-accent-surface/15 text-5xl sm:size-[90px] sm:text-6xl">
                     {icon}
                 </div>
                 <div className="flex flex-1 flex-col justify-between gap-1 sm:gap-2">

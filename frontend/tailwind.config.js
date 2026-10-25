@@ -58,6 +58,11 @@ export default {
       ringColor: {
         DEFAULT: "rgb(var(--accent-rgb) / <alpha-value>)",
       },
+      gridTemplateColumns: {
+        // カード一覧: 1枚の最小幅 29rem（画面がそれより狭ければ全幅）・最大3列。
+        // 4.5rem は sm:gap-x-9 の隙間2つ分
+        cards: "repeat(auto-fill, minmax(max(min(100%, 29rem), calc((100% - 4.5rem) / 3)), 1fr))",
+      },
       keyframes: {
         "fade-in": {
           "0%": { opacity: "0" },
