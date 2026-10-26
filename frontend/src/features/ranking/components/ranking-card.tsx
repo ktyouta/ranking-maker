@@ -60,7 +60,7 @@ export const RankingCard = (props: PropsType) => {
                     {icon}
                 </div>
                 <div className="flex flex-1 flex-col justify-between gap-1 sm:gap-2">
-                    <h2 className="line-clamp-2 min-h-[3rem] pt-[5px] text-base font-semibold text-ink/90 sm:min-h-[3.5rem] sm:pt-[7px] sm:text-lg">
+                    <h2 className="line-clamp-2 min-h-[3rem] pr-5 pt-[5px] text-base font-semibold text-ink/90 sm:min-h-[3.5rem] sm:pr-8 sm:pt-[7px] sm:text-lg">
                         {title}
                     </h2>
                     <div className="flex flex-wrap items-center justify-between gap-2">
